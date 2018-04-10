@@ -1,0 +1,146 @@
+<?xml version="1.0"?>
+<config>
+    <tabs>
+        <drip translate="label" module="drip_connect">
+            <label>Drip</label>
+            <sort_order>400</sort_order>
+        </drip>
+    </tabs>
+    <sections>
+        <dripconnect_general translate="label">
+            <label>Drip Connect Configuration</label>
+            <tab>drip</tab>
+            <frontend_type>text</frontend_type>
+            <sort_order>75</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+            <groups>
+                <module_settings translate="label">
+                    <label>Module Settings</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>5</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <is_enabled translate="label">
+                            <label>Is Module Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </is_enabled>
+                    </fields>
+                </module_settings>
+                <api_settings translate="label">
+                    <label>Api Settings</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>10</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <account_id translate="label">
+                            <label>DRIP Account ID</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </account_id>
+                        <api_key translate="label">
+                            <label>DRIP Api Key</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </api_key>
+                        <url translate="label">
+                            <label>API endpoint URL</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </url>
+                        <timeout translate="label comment">
+                            <label>Timeout</label>
+                            <comment>Timeout in milliseconds</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </timeout>
+                    </fields>
+                </api_settings>
+                <actions translate="label">
+                    <label>Drip Actions</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>20</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <sync_customers_data translate="label comment button_label">
+                            <label>Sync</label>
+                            <button_label>Sync All Customers To Drip</button_label>
+                            <comment>This will sync all your current Magento customer data into Drip. No automations will be triggered off of this import (e.g. welcome series, order confirmations).</comment>
+                            <frontend_type>button</frontend_type>
+                            <frontend_model>drip_connect/adminhtml_system_config_sync_customers</frontend_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </sync_customers_data>
+                        <sync_orders_data translate="label comment button_label">
+                            <button_label>Sync All Orders To Drip</button_label>
+                            <comment>This will sync all your current Magento orders into Drip. No automations will be triggered off of this import (e.g. welcome series, order confirmations). We will not sync any orders that have been cancelled or refunded.</comment>
+                            <frontend_type>button</frontend_type>
+                            <frontend_model>drip_connect/adminhtml_system_config_sync_orders</frontend_model>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </sync_orders_data>
+                    </fields>
+                </actions>
+                <log_settings translate="label">
+                    <label>Log Settings</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>100</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <is_enabled translate="label">
+                            <label>Is Debug Mode Enabled</label>
+                            <comment>log all requests and responses to a drip.log file</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </is_enabled>
+                        <log_rotation_period translate="label">
+                            <label>Log Rotation Period (days)</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <is_enabled>1</is_enabled>
+                            </depends>
+                        </log_rotation_period>
+                    </fields>
+                </log_settings>
+            </groups>
+        </dripconnect_general>
+    </sections>
+</config>

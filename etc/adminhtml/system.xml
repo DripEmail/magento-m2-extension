@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <section id="drip" translate="label" module="drip_connect">
+        <label>Drip</label>
+    </section>
+    <section id="dripconnect_general" translate="label">
+        <label>Drip Connect Configuration</label>
+        <tab>drip</tab>
+        <group id="module_settings" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1" translate="label">
+            <label>Module Settings</label>
+            <field id="is_enabled" translate="label">
+                <label>Is Module Enabled</label>
+                <source_model>adminhtml/system_config_source_yesno</source_model>
+            </field>
+        </group>
+        <group id="api_settings" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" translate="label">
+            <label>Api Settings</label>
+            <field id="account_id" translate="label">
+                <label>DRIP Account ID</label>
+            </field>
+            <field id="api_key" translate="label">
+                <label>DRIP Api Key</label>
+            </field>
+            <field id="url" translate="label">
+                <label>API endpoint URL</label>
+            </field>
+            <field id="timeout" translate="label comment">
+                <label>Timeout</label>
+                <comment>Timeout in milliseconds</comment>
+            </field>
+        </group>
+        <group id="actions" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" translate="label">
+            <label>Drip Actions</label>
+            <field id="sync_customers_data" translate="label comment button_label">
+                <label>Sync</label>
+                <button_label>Sync All Customers To Drip</button_label>
+                <comment>This will sync all your current Magento customer data into Drip. No automations will be triggered off of this import (e.g. welcome series, order confirmations).</comment>
+                <frontend_model>drip_connect/adminhtml_system_config_sync_customers</frontend_model>
+            </field>
+            <field id="sync_orders_data" translate="label comment button_label">
+                <button_label>Sync All Orders To Drip</button_label>
+                <comment>This will sync all your current Magento orders into Drip. No automations will be triggered off of this import (e.g. welcome series, order confirmations). We will not sync any orders that have been cancelled or refunded.</comment>
+                <frontend_model>drip_connect/adminhtml_system_config_sync_orders</frontend_model>
+            </field>
+        </group>
+        <group id="log_settings" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1" translate="label">
+            <label>Log Settings</label>
+            <field id="is_enabled" translate="label">
+                <label>Is Debug Mode Enabled</label>
+                <comment>log all requests and responses to a drip.log file</comment>
+                <source_model>adminhtml/system_config_source_yesno</source_model>
+            </field>
+            <field id="log_rotation_period" translate="label">
+                <label>Log Rotation Period (days)</label>
+                <depends>
+                    <is_enabled>1</is_enabled>
+                </depends>
+            </field>
+        </group>
+    </section>
+</config>
