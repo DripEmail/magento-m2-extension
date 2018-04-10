@@ -1,24 +1,24 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
-    <event name="customer_address_save_before">
-        <observer name="drip_connect_customer_address_save_before" instance="Drip\Connect\Observer\beforeCustomerAddressSaveFront"/>
+    <!--<event name="customer_address_save_before">
+        <observer name="drip_connect_customer_address_save_before" instance="Drip\Connect\Observer\BeforeCustomerAddressSaveFront"/>
     </event>
     <event name="customer_address_save_commit_after">
-        <observer name="drip_connect_customer_address_save_commit_after" instance="Drip\Connect\Observer\afterCustomerAddressSaveFront"/>
+        <observer name="drip_connect_customer_address_save_commit_after" instance="Drip\Connect\Observer\AfterCustomerAddressSaveFront"/>
     </event>
     <event name="customer_login">
-        <observer name="drip_connect_customer_login" instance="Drip\Connect\Observer\customerLogin"/>
+        <observer name="drip_connect_customer_login" instance="Drip\Connect\Observer\CustomerLogin"/>
     </event>
     <event name="wishlist_add_product">
-        <observer name="wishlist_change_event" instance="Drip\Connect\Observer\addProduct"/>
+        <observer name="wishlist_change_event" instance="Drip\Connect\Observer\AddProduct"/>
     </event>
     <event name="controller_action_predispatch_wishlist_index_remove">
-        <observer name="data_wishlist_delete" instance="Drip\Connect\Observer\removeProduct"/>
+        <observer name="data_wishlist_delete" instance="Drip\Connect\Observer\RemoveProduct"/>
     </event>
     <event name="sales_quote_save_before">
-        <observer name="drip_connect_sales_quote_save_before" instance="Drip\Connect\Observer\beforeQuoteSaved"/>
+        <observer name="drip_connect_sales_quote_save_before" instance="Drip\Connect\Observer\BeforeQuoteSaved"/>
     </event>
     <event name="sales_quote_save_commit_after">
-        <observer name="drip_connect_sales_quote_save_commit_after" instance="Drip\Connect\Observer\afterQuoteSaved"/>
-    </event>
+        <observer name="drip_connect_sales_quote_save_commit_after" instance="Drip\Connect\Observer\AfterQuoteSaved"/>
+    </event>-->
 </config>

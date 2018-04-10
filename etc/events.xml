@@ -1,18 +1,18 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
-    <event name="customer_save_before">
-        <observer name="drip_connect_customer_save_before" instance="Drip\Connect\Observer\checkIfCustomerNew"/>
+    <!--<event name="customer_save_before">
+        <observer name="drip_connect_customer_save_before" instance="Drip\Connect\Observer\CheckIfCustomerNew"/>
     </event>
     <event name="customer_save_commit_after">
-        <observer name="drip_connect_customer_save_commit_after" instance="Drip\Connect\Observer\afterCustomerSave"/>
+        <observer name="drip_connect_customer_save_commit_after" instance="Drip\Connect\Observer\AfterCustomerSave"/>
     </event>
     <event name="customer_delete_commit_after">
-        <observer name="drip_connect_customer_delete_commit_after" instance="Drip\Connect\Observer\afterCustomerDelete"/>
+        <observer name="drip_connect_customer_delete_commit_after" instance="Drip\Connect\Observer\AfterCustomerDelete"/>
     </event>
     <event name="sales_order_save_before">
-        <observer name="drip_connect_sales_order_save_before" instance="Drip\Connect\Observer\beforeOrderSave"/>
+        <observer name="drip_connect_sales_order_save_before" instance="Drip\Connect\Observer\BeforeOrderSave"/>
     </event>
     <event name="sales_order_save_commit_after">
-        <observer name="drip_connect_sales_order_save_commit_after" instance="Drip\Connect\Observer\afterOrderSave"/>
-    </event>
+        <observer name="drip_connect_sales_order_save_commit_after" instance="Drip\Connect\Observer\AfterOrderSave"/>
+    </event>-->
 </config>
