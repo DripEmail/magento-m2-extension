@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="drip" translate="label" sortOrder="500">
+            <label>Drip</label>
+        </tab>
+        <section id="dripconnect_general" translate="label" type="text" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Drip Connect</label>
+            <tab>drip</tab>
+            <resource>Drip_Connect::drip</resource>
+            <group id="module_settings" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Module Settings</label>
+                <field id="is_enabled" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Is Module Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+            </group>
+            <group id="api_settings" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" translate="label">
+                <label>Api Settings</label>
+                <field id="account_id" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>DRIP Account ID</label>
+                </field>
+                <field id="api_key" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>DRIP Api Key</label>
+                </field>
+                <field id="url" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>API endpoint URL</label>
+                </field>
+                <field id="timeout" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Timeout</label>
+                    <comment>Timeout in milliseconds</comment>
+                </field>
+            </group>
+            <group id="actions" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" translate="label">
+                <label>Drip Actions</label>
+                <field id="sync_customers_data" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <button_label>Sync All Customers To Drip</button_label>
+                    <comment>This will sync all your current Magento customer data into Drip. No automations will be triggered off of this import (e.g. welcome series, order confirmations).</comment>
+                    <frontend_model>Drip\Connect\Block\System\Config\Sync\Customers</frontend_model>
+                </field>
+                <field id="sync_orders_data" translate="label" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <button_label>Sync All Orders To Drip</button_label>
+                    <comment>This will sync all your current Magento orders into Drip. No automations will be triggered off of this import (e.g. welcome series, order confirmations). We will not sync any orders that have been cancelled or refunded.</comment>
+                    <frontend_model>Drip\Connect\Block\System\Config\Sync\Orders</frontend_model>
+                </field>
+            </group>
+            <group id="log_settings" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1" translate="label">
+                <label>Log Settings</label>
+                <field id="is_enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Is Debug Mode Enabled</label>
+                    <comment>log all requests and responses to a drip.log file</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="log_rotation_period" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Log Rotation Period (days)</label>
+                    <depends>
+                        <field id="dripconnect_general/log_settings/is_enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

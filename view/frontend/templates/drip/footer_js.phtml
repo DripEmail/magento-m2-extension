@@ -1,0 +1,29 @@
+<?php if (Mage::helper('drip_connect')->isModuleActive()) : ?>
+    <?php $accountId = Mage::getStoreConfig('dripconnect_general/api_settings/account_id'); ?>
+    <!-- Drip -->
+    <script type="text/javascript">
+        var _dcq = _dcq || [];
+        var _dcs = _dcs || {};
+        _dcs.account = '<?=$accountId?>';
+
+        (function() {
+            var dc = document.createElement('script');
+            dc.type = 'text/javascript'; dc.async = true;
+            dc.src = '//tag.getdrip.com/<?=$accountId?>.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(dc, s);
+        })();
+    </script>
+    <!-- end Drip -->
+
+    <?php if (Mage::getSingleton('customer/session')->isLoggedIn()) : ?>
+        <?php $customer = Mage::getSingleton('customer/session')->getCustomer(); ?>
+        <!-- identify Drip customer -->
+        <script type="text/javascript">
+        _dcq.push(["identify", {
+            email: "<?= $customer->getEmail()?>"
+        }]);
+        </script>
+        <!-- end identify -->
+    <?php endif; ?>
+<?php endif; ?>
