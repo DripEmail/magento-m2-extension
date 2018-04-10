@@ -35,6 +35,16 @@
             </group>
             <group id="actions" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" translate="label">
                 <label>Drip Actions</label>
+                <field id="sync_customers_data" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <button_label>Sync All Customers To Drip</button_label>
+                    <comment>This will sync all your current Magento customer data into Drip. No automations will be triggered off of this import (e.g. welcome series, order confirmations).</comment>
+                    <frontend_model>Drip\Connect\Block\System\Config\Sync\Customers</frontend_model>
+                </field>
+                <field id="sync_orders_data" translate="label" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <button_label>Sync All Orders To Drip</button_label>
+                    <comment>This will sync all your current Magento orders into Drip. No automations will be triggered off of this import (e.g. welcome series, order confirmations). We will not sync any orders that have been cancelled or refunded.</comment>
+                    <frontend_model>Drip\Connect\Block\System\Config\Sync\Orders</frontend_model>
+                </field>
             </group>
             <group id="log_settings" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1" translate="label">
                 <label>Log Settings</label>
