@@ -6,7 +6,7 @@ class Client extends \Zend_Http_Client
     /** @var \Zend_Log */
     protected $_logger;
 
-    public function __construct($args)
+    public function __construct(array $args = [])
     {
         $uri = isset($args['uri']) ? $args['uri'] : null;
         $config = isset($args['config']) ? $args['config'] : null;

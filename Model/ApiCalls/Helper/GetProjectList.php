@@ -19,11 +19,13 @@ class GetProjectList
     public function __construct(
         \Drip\Connect\Model\ApiCalls\BaseFactory $connectApiCallsBaseFactory,
         \Drip\Connect\Model\ApiCalls\Request\BaseFactory $connectApiCallsRequestBaseFactory,
-        $data = null)
+        $data = [])
     {
         $this->connectApiCallsBaseFactory = $connectApiCallsBaseFactory;
         $this->connectApiCallsRequestBaseFactory = $connectApiCallsRequestBaseFactory;
-        $this->apiClient = $this->connectApiCallsBaseFactory->create();
+        $this->apiClient = $this->connectApiCallsBaseFactory->create([
+            'options' => ['endpoint' => self::ENDPOINT_ACCOUNTS]
+        ]);
 
         $this->request = $this->connectApiCallsRequestBaseFactory->create()
             ->setMethod(\Zend_Http_Client::GET);

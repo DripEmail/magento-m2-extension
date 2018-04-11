@@ -35,37 +35,40 @@ abstract class RestapiAbstract
     /** @var string */
     protected $_logSettingsXpath = 'dripconnect_general/log_settings';
 
-    /**
-     * @var \Psr\Log\LoggerInterface
-     */
+    /** @var \Psr\Log\LoggerInterface */
     protected $logger;
 
-    /**
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
-     */
+    /** @var \Magento\Framework\App\Config\ScopeConfigInterface */
     protected $scopeConfig;
 
-    /**
-     * @var \Magento\Framework\DataObjectFactory
-     */
+    /** @var \Magento\Framework\Filesystem\DirectoryList */
+    protected $directory;
+
+    /** @var \Magento\Framework\ArchiveFactory */
+    protected $archiveFactory;
+
+    /** @var \Magento\Framework\DataObjectFactory */
     protected $dataObjectFactory;
 
-    /**
-     * @var \Magento\Framework\ArchiveFactory
-     */
-    protected $archiveFactory;
+    /** @var \Magento\Framework\App\Config\Storage\WriterInterface */
+    protected $configWriter;
 
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+        \Magento\Framework\App\Config\Storage\WriterInterface $configWriter,
         \Magento\Framework\DataObjectFactory $dataObjectFactory,
-        \Magento\Framework\ArchiveFactory $archiveFactory
+        \Magento\Framework\ArchiveFactory $archiveFactory,
+        \Magento\Framework\Filesystem\DirectoryList $directory
     ) {
         $this->dataObjectFactory = $dataObjectFactory;
         $this->archiveFactory = $archiveFactory;
         $this->logger = $logger;
         $this->scopeConfig = $scopeConfig;
+        $this->configWriter = $configWriter;
+        $this->directory = $directory;
     }
+
     /**
      * Makes API call and returns response object.
      *
@@ -81,13 +84,13 @@ abstract class RestapiAbstract
         try {
             $rawResponse = $this->_callApiWithBehaviorConsidered($request);
 
-            $className = Mage::getConfig()->getModelClassName($this->_responseModel);
+            $className = $this->_responseModel;
             /** @var \Drip\Connect\Model\Restapi\Response\Abstract $response */
             $response = new $className($rawResponse);
             return $response;
         } catch (Exception $e) {
             $this->logger->log(\Monolog\Logger::ERROR, $e->__toString());
-            $className = Mage::getConfig()->getModelClassName($this->_responseModel);
+            $className = $this->_responseModel;
             /** @var \Drip\Connect\Model\Restapi\Response\Abstract $response */
             $response = new $className(null, $e->getMessage());
             return $response;
@@ -230,8 +233,8 @@ abstract class RestapiAbstract
                 $logger = new \Zend_Log();
                 $writer = new \Zend_Log_Writer_Stream($this->getLogFile());
                 $logger->addWriter($writer);
+                $this->_logger = $logger;
             }
-            $this->_logger = $logger;
         }
         return $this->_logger;
     }
@@ -240,25 +243,25 @@ abstract class RestapiAbstract
     {
         $period = $this->getLogSettings()->getLogRotationPeriod();
         $period = $period * 60 * 60 * 24;
-        $logDir = Mage::getBaseDir('log') . DS . 'drip';
+        $logDir = $this->directory->getPath('log') . DIRECTORY_SEPARATOR . 'drip';
         if (!is_dir($logDir)) {
             @mkdir($logDir);
             @chmod($logDir, 0777);
         }
-        $logDir .= DS . $this->_apiName;
+        $logDir .= DIRECTORY_SEPARATOR . $this->_apiName;
         if (!is_dir($logDir)) {
             @mkdir($logDir);
             @chmod($logDir, 0777);
         }
-        $archiveDir = $logDir . DS . 'archive' . DS;
+        $archiveDir = $logDir . DIRECTORY_SEPARATOR . 'archive' . DIRECTORY_SEPARATOR;
         if (!is_dir($archiveDir)) {
             @mkdir($archiveDir);
             @chmod($archiveDir, 0777);
         }
-        $logFile = $logDir . DS . $this->_logFilename;
+        $logFile = $logDir . DIRECTORY_SEPARATOR . $this->_logFilename;
         $lastCreation = $this->getLogSettings()->getLastLogArchive();
         if (is_file($logFile) && $period && $lastCreation + $period < time()) {
-            Mage::getConfig()->saveConfig($this->_logSettingsXpath.'/last_log_archive', time());
+            $this->configWriter->save($this->_logSettingsXpath.'/last_log_archive', time());
             $archive = $this->archiveFactory->create();
             $archive->pack($logFile, $archiveDir.'archive'.date('Y-m-d-H-i-s').'.tgz');
             unlink($logFile);

@@ -1,7 +1,11 @@
 <?php
 namespace Drip\Connect\Model\ApiCalls;
 
-
+/**
+ * constructor must be implemented individually for every call helper
+ *
+ * two classes should be instantiated in every constructor: ApiClient and Request
+ */
 abstract class Helper
 {
     const ENDPOINT_ACCOUNTS = 'accounts';
@@ -19,13 +23,6 @@ abstract class Helper
 
     /** @var \Drip\Connect\Model\ApiCalls\Request\Base */
     protected $request;
-
-    /**
-     * must be implemented individually for every call helper
-     *
-     * two classes should be instantiated in every constructor: ApiClient and Request
-     */
-    abstract public function __construct($data);
 
     /**
      * call api

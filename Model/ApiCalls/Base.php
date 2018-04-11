@@ -19,17 +19,30 @@ class Base
     /**
      * constructor
      */
-    public function __construct(array $options,
+    public function __construct(
+        \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Drip\Connect\Model\Http\ClientFactory $connectHttpClientFactory
-    )
-    {
-        $this->scopeConfig = $scopeConfig;
+        \Magento\Framework\App\Config\Storage\WriterInterface $configWriter,
+        \Magento\Framework\DataObjectFactory $dataObjectFactory,
+        \Magento\Framework\ArchiveFactory $archiveFactory,
+        \Magento\Framework\Filesystem\DirectoryList $directory,
+        \Drip\Connect\Model\Http\ClientFactory $connectHttpClientFactory,
+        array $options = []
+    ) {
+        parent::__construct(
+            $logger,
+            $scopeConfig,
+            $configWriter,
+            $dataObjectFactory,
+            $archiveFactory,
+            $directory
+        );
+
         $this->connectHttpClientFactory = $connectHttpClientFactory;
         if (isset($options['response_model'])) {
             $this->_responseModel = $options['response_model'];
         } else {
-            $this->_responseModel = 'drip_connect/ApiCalls_Response_Base';
+            $this->_responseModel = \Drip\Connect\Model\ApiCalls\Response\Base::class;
         }
 
         if (isset($options['log_filename'])) {
@@ -59,7 +72,11 @@ class Base
                 $config = array_merge($config, $options['config']);
             }
 
-            $this->_httpClient = $this->connectHttpClientFactory->create();
+            $this->_httpClient = $this->connectHttpClientFactory->create(['args' => [
+                'uri' => $url,
+                'config' => $config,
+                'logger' => $this->getLogger(),
+            ]]);
 
             $this->_httpClient->setHeaders(array(
                 'Accept' => 'application/json',
