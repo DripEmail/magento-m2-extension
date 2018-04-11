@@ -1,4 +1,4 @@
-<?php if ($block->getConfig()->getValue('dripconnect_general/module_settings/is_enabled')) : ?>
+<?php if ($block->isModuleActive()) : ?>
     <?php $accountId = $block->getConfig()->getValue('dripconnect_general/api_settings/account_id'); ?>
     <!-- Drip -->
     <script type="text/javascript">
@@ -15,4 +15,14 @@
         })();
     </script>
     <!-- end Drip -->
+
+    <?php if ($block->isCustomerLoggedIn()) : ?>
+        <!-- identify Drip customer -->
+        <script type="text/javascript">
+        _dcq.push(["identify", {
+            email: "<?= $block->getCustomerEmail()?>"
+        }]);
+        </script>
+        <!-- end identify -->
+    <?php endif; ?>
 <?php endif; ?>
