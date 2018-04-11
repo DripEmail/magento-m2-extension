@@ -1,7 +1,6 @@
 <?php
 namespace Drip\Connect\Model\Source;
 
-
 class Behavior
 {
     const CALL_API              = 'call_api';

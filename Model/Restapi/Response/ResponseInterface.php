@@ -1,8 +1,7 @@
 <?php
 namespace Drip\Connect\Model\Restapi\Response;
 
-
-interface Interface
+interface ResponseInterface
 {
     /**
      * @return string Json response

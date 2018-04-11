@@ -2,7 +2,7 @@
 namespace Drip\Connect\Model\ApiCalls\Request;
 
 class Base
-    implements Drip_Connect_Model_Restapi_Request_Interface
+    implements \Drip\Connect\Model\Restapi\Request\RequestInterface
 {
     protected $parametersGet = array();
 

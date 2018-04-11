@@ -1,8 +1,7 @@
 <?php
 namespace Drip\Connect\Model\Restapi\Response;
 
-
-class Abstract
+class ResponseAbstract
 {
     /**
      * @var \Zend_Http_Response Response as received from API

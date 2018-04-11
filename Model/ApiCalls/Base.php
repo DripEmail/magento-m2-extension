@@ -3,7 +3,7 @@ namespace Drip\Connect\Model\ApiCalls;
 
 
 class Base
-    extends \Drip\Connect\Model\Restapi\Abstract
+    extends \Drip\Connect\Model\Restapi\RestapiAbstract
 {
 
     /**

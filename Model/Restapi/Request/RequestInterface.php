@@ -1,7 +1,7 @@
 <?php
 namespace Drip\Connect\Model\Restapi\Request;
 
-interface Interface
+interface RequestInterface
 {
     /**
      * @param array $params

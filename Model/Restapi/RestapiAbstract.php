@@ -1,9 +1,9 @@
 <?php
 namespace Drip\Connect\Model\Restapi;
 
-abstract class Abstract
+abstract class RestapiAbstract
 {
-    const USERAGENT = 'Drip Connect M1';
+    const USERAGENT = 'Drip Connect M2';
 
     /** @var string */
     protected $_responseModel;

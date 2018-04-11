@@ -3,8 +3,8 @@ namespace Drip\Connect\Model\ApiCalls\Response;
 
 
 class Base
-    extends \Drip\Connect\Model\Restapi\Response\Abstract
-    implements Drip_Connect_Model_Restapi_Response_Interface
+    extends \Drip\Connect\Model\Restapi\Response\ResponseAbstract
+    implements \Drip\Connect\Model\Restapi\Response\ResponseInterface
 {
     /** @var array */
     protected $responseData;
