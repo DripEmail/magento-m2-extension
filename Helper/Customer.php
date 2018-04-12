@@ -16,6 +16,12 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     /** @var \Drip\Connect\Model\ApiCalls\Helper\RecordAnEventFactory */
     protected $connectApiCallsHelperRecordAnEventFactory;
 
+    /** @var \Magento\Framework\HTTP\Header */
+    protected $header;
+
+    /** @var \Drip\Connect\Helper\Data */
+    protected $connectHelper;
+
     /**
      * constructor
      */
@@ -24,13 +30,17 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Customer\Model\GroupFactory $customerGroupFactory,
         \Magento\Framework\HTTP\PhpEnvironment\RemoteAddress $remoteAddress,
         \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateSubscriberFactory $connectApiCallsHelperCreateUpdateSubscriberFactory,
-        \Drip\Connect\Model\ApiCalls\Helper\RecordAnEventFactory $connectApiCallsHelperRecordAnEventFactory
+        \Drip\Connect\Model\ApiCalls\Helper\RecordAnEventFactory $connectApiCallsHelperRecordAnEventFactory,
+        \Magento\Framework\HTTP\Header $header,
+        \Drip\Connect\Helper\Data $connectHelper
     ) {
         parent::__construct($context);
         $this->customerGroupFactory = $customerGroupFactory;
         $this->remoteAddress = $remoteAddress;
         $this->connectApiCallsHelperCreateUpdateSubscriberFactory = $connectApiCallsHelperCreateUpdateSubscriberFactory;
         $this->connectApiCallsHelperRecordAnEventFactory = $connectApiCallsHelperRecordAnEventFactory;
+        $this->header = $header;
+        $this->connectHelper = $connectHelper;
     }
 
     /**
@@ -50,6 +60,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
             'email' => $customer->getEmail(),
             'new_email' => ($newEmail ? $newEmail : ''),
             'ip_address' => $this->remoteAddress->getRemoteAddress(),
+            'user_agent' => $this->header->getHttpUserAgent(),
             'custom_fields' => array(
                 'first_name' => $customer->getFirstname(),
                 'last_name' => $customer->getLastname(),
@@ -62,13 +73,14 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
             ),
         );
 
-        if ($customer->getDefaultShippingAddress()) {
+        /*if ($customer->getDefaultShippingAddress()) {
             $data = array_merge_recursive($data, array('custom_fields'=>$this->getAddressFields($customer->getDefaultShippingAddress())));
-        }
+        }*/
 
         if ($updatableOnly) {
             unset($data['custom_fields']['magento_account_created']);
             unset($data['ip_address']);
+            unset($data['user_agent']);
         }
 
         return $data;

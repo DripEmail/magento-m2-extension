@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
-    <event name="customer_address_save_before">
+    <!--<event name="customer_address_save_before">
         <observer
             name="drip_connect_customer_address_save_before"
             instance="Drip\Connect\Observer\Customer\BeforeAddressSave"
@@ -11,7 +11,7 @@
             name="drip_connect_customer_address_save_commit_after"
             instance="Drip\Connect\Observer\Customer\AfterAddressSave"
             disabled="false" />
-    </event>
+    </event>-->
     <!--<event name="customer_login">
         <observer name="drip_connect_customer_login" instance="Drip\Connect\Observer\CustomerLogin"/>
     </event>
