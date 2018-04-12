@@ -24,6 +24,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     protected $storeManager;
 
+    /** @var \Magento\Framework\App\State */
+    protected $state;
+
     /**
      * @var \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory
      */
@@ -35,12 +38,14 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Customer\Model\GroupFactory $customerGroupFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Magento\Framework\App\State $state,
         \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory $catalogResourceModelCategoryCollectionFactory
     ) {
         $this->request = $request;
         $this->scopeConfig = $scopeConfig;
         $this->customerGroupFactory = $customerGroupFactory;
         $this->storeManager = $storeManager;
+        $this->state = $state;
         $this->catalogResourceModelCategoryCollectionFactory = $catalogResourceModelCategoryCollectionFactory;
         parent::__construct($context);
     }
@@ -94,5 +99,19 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         }
 
         return $categoriesString;
+    }
+
+    /**
+     * get request area
+     *
+     * @return string
+     */
+    public function getArea()
+    {
+        if ($this->state->getAreaCode() == 'adminhtml') {
+            return 'Admin';
+        }
+
+        return 'Storefront';
     }
 }
