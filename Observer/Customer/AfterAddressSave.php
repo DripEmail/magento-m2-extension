@@ -43,7 +43,7 @@ class AfterAddressSave extends \Drip\Connect\Observer\Base
         $customer = $this->customerCustomerFactory->create()->load($address->getCustomerId());
 
         if ($this->isAddressChanged($address)) {
-            // TODO api call customer change
+            $this->customerHelper->proceedAccount($customer);
         }
 
         $this->registry->unregister(self::REGISTRY_KEY_CUSTOMER_OLD_ADDR);

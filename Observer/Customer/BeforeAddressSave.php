@@ -42,9 +42,13 @@ class BeforeAddressSave extends \Drip\Connect\Observer\Base
         if (($customer->getDefaultShippingAddress() && $address->getId() == $customer->getDefaultShippingAddress()->getId())
            || ($address->getDefaultShipping())
         ) {
+            $oldAddr = [];
+            if ($customer->getDefaultShippingAddress()) {
+               $oldAddr = $this->customerHelper->getAddressFields($customer->getDefaultShippingAddress());
+            }
             $this->registry->register(
                 self::REGISTRY_KEY_CUSTOMER_OLD_ADDR,
-                $this->customerHelper->getAddressFields($customer->getDefaultShippingAddress())
+                $oldAddr
             );
         }
     }

@@ -40,10 +40,10 @@ class AfterSave extends \Drip\Connect\Observer\Base
         $customer = $observer->getCustomer();
 
         if ($this->registry->registry(self::REGISTRY_KEY_CUSTOMER_IS_NEW)) {
-            // TODO api call customer new
+            $this->customerHelper->proceedAccountNew($customer);
         } else {
             if ($this->isCustomerChanged($customer)) {
-                // TODO api call customer change
+                $this->customerHelper->proceedAccount($customer);
             }
         }
         $this->registry->unregister(self::REGISTRY_KEY_CUSTOMER_IS_NEW);

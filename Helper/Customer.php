@@ -7,17 +7,30 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     /** @var \Magento\Customer\Model\GroupFactory */
     protected $customerGroupFactory;
 
+    /** @var \Magento\Framework\HTTP\PhpEnvironment\RemoteAddress */
+    protected $remoteAddress;
+
+    /** @var \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateSubscriberFactory */
+    protected $connectApiCallsHelperCreateUpdateSubscriberFactory;
+
+    /** @var \Drip\Connect\Model\ApiCalls\Helper\RecordAnEventFactory */
+    protected $connectApiCallsHelperRecordAnEventFactory;
+
     /**
      * constructor
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Customer\Model\GroupFactory $customerGroupFactory,
-        \Magento\Framework\HTTP\PhpEnvironment\RemoteAddress $remoteAddress
+        \Magento\Framework\HTTP\PhpEnvironment\RemoteAddress $remoteAddress,
+        \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateSubscriberFactory $connectApiCallsHelperCreateUpdateSubscriberFactory,
+        \Drip\Connect\Model\ApiCalls\Helper\RecordAnEventFactory $connectApiCallsHelperRecordAnEventFactory
     ) {
         parent::__construct($context);
         $this->customerGroupFactory = $customerGroupFactory;
         $this->remoteAddress = $remoteAddress;
+        $this->connectApiCallsHelperCreateUpdateSubscriberFactory = $connectApiCallsHelperCreateUpdateSubscriberFactory;
+        $this->connectApiCallsHelperRecordAnEventFactory = $connectApiCallsHelperRecordAnEventFactory;
     }
 
     /**
@@ -69,11 +82,11 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     public function getAddressFields($address)
     {
         return array (
-            'city' => $address->getCity(),
-            'state' => $address->getRegion(),
-            'zip_code' => $address->getPostcode(),
-            'country' => $address->getCountry(),
-            'phone_number' => $address->getTelephone(),
+            'city' => (string) $address->getCity(),
+            'state' => (string) $address->getRegion(),
+            'zip_code' => (string) $address->getPostcode(),
+            'country' => (string) $address->getCountry(),
+            'phone_number' => (string) $address->getTelephone(),
         );
     }
 
@@ -91,5 +104,47 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
             $gender = '';
         }
         return $gender;
+    }
+
+    /**
+     * drip actions for customer account create
+     *
+     * @param \Magento\Customer\Model\Customer $customer
+     */
+    public function proceedAccountNew($customer)
+    {
+        $customerData = $this->prepareCustomerData($customer, false);
+
+        $this->connectApiCallsHelperCreateUpdateSubscriberFactory->create([
+            'data' => $customerData
+        ])->call();
+
+        $this->connectApiCallsHelperRecordAnEventFactory->create([
+            'data' => [
+                'email' => $customer->getEmail(),
+                'action' => \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_NEW,
+            ]
+        ])->call();
+    }
+
+    /**
+     * drip actions for customer account change
+     *
+     * @param \Magento\Customer\Model\Customer $customer
+     */
+    public function proceedAccount($customer)
+    {
+        $customerData = $this->prepareCustomerData($customer);
+
+        $this->connectApiCallsHelperCreateUpdateSubscriberFactory->create([
+            'data' => $customerData
+        ])->call();
+
+        $this->connectApiCallsHelperRecordAnEventFactory->create([
+            'data' => [
+                'email' => $customer->getEmail(),
+                'action' => \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_UPDATED,
+            ]
+        ])->call();
     }
 }
