@@ -66,6 +66,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
                 'last_name' => $customer->getLastname(),
                 'birthday' => $customer->getDob(),
                 'gender' => $this->getGenderText($customer->getGender()),
+                'magento_source' => $this->connectHelper->getArea(),
                 'magento_account_created' => $customer->getCreatedAt(),
                 'magento_customer_group' => $this->customerGroupFactory->create()->load($customer->getGroupId())->getCustomerGroupCode(),
                 'magento_store' => (int) $customer->getStoreId(),
