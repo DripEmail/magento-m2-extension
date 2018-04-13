@@ -4,11 +4,8 @@ namespace Drip\Connect\Observer\Customer;
 
 class Login extends \Drip\Connect\Observer\Base
 {
-    /** @var \Drip\Connect\Helper\Quote */
-    protected $connectQuoteHelper;
-
-    /** @var \Drip\Connect\Model\ApiCalls\Helper\RecordAnEventFactory */
-    protected $connectApiCallsHelperRecordAnEventFactory;
+    /** @var \Drip\Connect\Helper\Customer */
+    protected $connectCustomerHelper;
 
     public function __construct(
         \Drip\Connect\Helper\Data $connectHelper,
