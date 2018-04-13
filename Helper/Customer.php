@@ -160,4 +160,19 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
             ]
         ])->call();
     }
+
+    /**
+     * drip actions for customer log in
+     *
+     * @param \Magento\Customer\Model\Customer $customer
+     */
+    public function proceedLogin($customer)
+    {
+        $this->connectApiCallsHelperRecordAnEventFactory->create([
+            'data' => [
+                'email' => $customer->getEmail(),
+                'action' => \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_LOGIN,
+            ]
+        ])->call();
+    }
 }
