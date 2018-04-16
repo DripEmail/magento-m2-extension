@@ -14,10 +14,10 @@
     </event>-->
     <!--<event name="customer_login">
         <observer name="drip_connect_customer_login" instance="Drip\Connect\Observer\CustomerLogin"/>
-    </event>
+    </event>-->
     <event name="wishlist_add_product">
-        <observer name="wishlist_change_event" instance="Drip\Connect\Observer\AddProduct"/>
-    </event>
+        <observer name="drip_connect_wishlist_add_product" instance="Drip\Connect\Observer\Wishlist\AddProduct"/>
+    </event><!--
     <event name="controller_action_predispatch_wishlist_index_remove">
         <observer name="data_wishlist_delete" instance="Drip\Connect\Observer\RemoveProduct"/>
     </event>
