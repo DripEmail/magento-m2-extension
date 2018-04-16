@@ -49,7 +49,9 @@ class AfterSave extends \Drip\Connect\Observer\Base
             case \Magento\Sales\Model\Order::STATE_NEW :
 
                 //if guest checkout, create subscriber record
-                $this->customerHelper->accountActionsForGuestCheckout($order);
+                if($order->getCustomerIsGuest()) {
+                    $this->customerHelper->accountActionsForGuestCheckout($order);
+                }
 
                 // new order
                 $this->orderHelper->proceedOrderNew($order);
