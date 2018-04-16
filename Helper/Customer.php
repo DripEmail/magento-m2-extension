@@ -31,6 +31,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Framework\HTTP\PhpEnvironment\RemoteAddress $remoteAddress,
         \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateSubscriberFactory $connectApiCallsHelperCreateUpdateSubscriberFactory,
         \Drip\Connect\Model\ApiCalls\Helper\RecordAnEventFactory $connectApiCallsHelperRecordAnEventFactory,
+        \Drip\Connect\Model\ApiCalls\Helper\Batches\SubscribersFactory $connectApiCallsHelperBatchesSubscribersFactory,
         \Magento\Framework\HTTP\Header $header,
         \Drip\Connect\Helper\Data $connectHelper
     ) {
@@ -39,6 +40,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         $this->remoteAddress = $remoteAddress;
         $this->connectApiCallsHelperCreateUpdateSubscriberFactory = $connectApiCallsHelperCreateUpdateSubscriberFactory;
         $this->connectApiCallsHelperRecordAnEventFactory = $connectApiCallsHelperRecordAnEventFactory;
+        $this->connectApiCallsHelperBatchesSubscribersFactory = $connectApiCallsHelperBatchesSubscribersFactory;
         $this->header = $header;
         $this->connectHelper = $connectHelper;
     }
@@ -157,6 +159,24 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
             'data' => [
                 'email' => $customer->getEmail(),
                 'action' => \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_UPDATED,
+            ]
+        ])->call();
+    }
+
+    /**
+     * batch customer update
+     *
+     * @param array $batch
+     * @param int $accountId
+     *
+     * @return \Drip\Connect\Model\Restapi\Response\ResponseAbstract
+     */
+    public function proceedAccountBatch($batch, $accountId = 0)
+    {
+        return $this->connectApiCallsHelperBatchesSubscribersFactory->create([
+            'data' => [
+                'batch' => $batch,
+                'account' => $accountId,
             ]
         ])->call();
     }
