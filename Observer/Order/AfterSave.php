@@ -10,12 +10,12 @@ class AfterSave extends \Drip\Connect\Observer\Base
     public function __construct(
         \Drip\Connect\Helper\Data $connectHelper,
         \Drip\Connect\Helper\Order $orderHelper,
-        \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrderFactory $connectApiCallsHelperCreateUpdateOrderFactory,
+        \Drip\Connect\Helper\Customer $customerHelper,
         \Magento\Framework\Registry $registry
     ) {
         parent::__construct($connectHelper, $registry);
         $this->orderHelper = $orderHelper;
-        $this->connectApiCallsHelperCreateUpdateOrderFactory = $connectApiCallsHelperCreateUpdateOrderFactory;
+        $this->customerHelper = $customerHelper;
     }
 
     /**
@@ -47,11 +47,13 @@ class AfterSave extends \Drip\Connect\Observer\Base
 
         switch ($order->getState()) {
             case \Magento\Sales\Model\Order::STATE_NEW :
+
+                //if guest checkout, create subscriber record
+                $this->customerHelper->accountActionsForGuestCheckout($order);
+
                 // new order
-                $orderData = $this->orderHelper->getOrderDataNew($order);
-                $this->connectApiCallsHelperCreateUpdateOrderFactory->create([
-                    'data' => $orderData
-                ])->call();
+                $this->orderHelper->proceedOrderNew($order);
+
                 break;
         }
     }

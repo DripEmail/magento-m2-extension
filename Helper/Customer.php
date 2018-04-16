@@ -88,6 +88,43 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * @param \Magento\Sales\Model\Order $order
+     */
+    public function prepareCustomerDataForGuestCheckout($order)
+    {
+        return array (
+            'email' => $order->getCustomerEmail(),
+            'ip_address' => $this->remoteAddress->getRemoteAddress(),
+            'user_agent' => $this->header->getHttpUserAgent(),
+            'custom_fields' => array(
+                'first_name' => $order->getCustomerFirstname(),
+                'last_name' => $order->getCustomerLastname(),
+                'birthday' => $order->getCustomerDob(),
+                'gender' => $this->getGenderText($order->getCustomerGender()),
+                'magento_source' => $this->connectHelper->getArea(),
+                'magento_account_created' => $order->getCreatedAt(),
+                'magento_customer_group' => 'Guest',
+                'magento_store' => $order->getStoreId(),
+                'accepts_marketing' => 'no',
+            ),
+        );
+    }
+
+    /**
+     * new customer for guest checkout
+     *
+     * @param \Magento\Sales\Model\Order $order
+     */
+    public function accountActionsForGuestCheckout($order)
+    {
+        $customerData = $this->prepareCustomerDataForGuestCheckout($order);
+
+        $this->connectApiCallsHelperCreateUpdateSubscriberFactory->create([
+            'data' => $customerData
+        ])->call();
+    }
+
+    /**
      * get address fields
      *
      * @param \Magento\Customer\Model\Address $address

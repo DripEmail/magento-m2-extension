@@ -21,12 +21,14 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
         \Drip\Connect\Helper\Data $connectHelper,
         \Magento\Sales\Model\Order\AddressFactory $salesOrderAddressFactory,
         \Magento\Catalog\Model\ProductFactory $catalogProductFactory,
-        \Magento\Catalog\Model\Product\Media\ConfigFactory $catalogProductMediaConfigFactory
+        \Magento\Catalog\Model\Product\Media\ConfigFactory $catalogProductMediaConfigFactory,
+        \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrderFactory $connectApiCallsHelperCreateUpdateOrderFactory
     ) {
         $this->connectHelper = $connectHelper;
         $this->salesOrderAddressFactory = $salesOrderAddressFactory;
         $this->catalogProductFactory = $catalogProductFactory;
         $this->catalogProductMediaConfigFactory = $catalogProductMediaConfigFactory;
+        $this->connectApiCallsHelperCreateUpdateOrderFactory = $connectApiCallsHelperCreateUpdateOrderFactory;
         parent::__construct($context);
     }
 
@@ -151,5 +153,16 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
         }
 
         return $data;
+    }
+
+    /**
+     * @param \Magento\Sales\Model\Order $order
+     */
+    public function proceedOrderNew($order)
+    {
+        $orderData = $this->getOrderDataNew($order);
+        $this->connectApiCallsHelperCreateUpdateOrderFactory->create([
+            'data' => $orderData
+        ])->call();
     }
 }
