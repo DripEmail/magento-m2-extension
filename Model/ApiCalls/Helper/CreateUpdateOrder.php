@@ -2,9 +2,11 @@
 namespace Drip\Connect\Model\ApiCalls\Helper;
 
 
-class CreateUpdateSubscriber
+class CreateUpdateOrder
     extends \Drip\Connect\Model\ApiCalls\Helper
 {
+    const PROVIDER_NAME = 'magento';
+
     /** @var \Drip\Connect\Model\ApiCalls\BaseFactory */
     protected $connectApiCallsBaseFactory;
 
@@ -26,19 +28,18 @@ class CreateUpdateSubscriber
 
         $this->apiClient = $this->connectApiCallsBaseFactory->create([
             'options' => [
-                'endpoint' => $this->scopeConfig->getValue('dripconnect_general/api_settings/account_id', \Magento\Store\Model\ScopeInterface::SCOPE_STORE).'/'.self::ENDPOINT_SUBSCRIBERS
+                'endpoint' => $this->scopeConfig->getValue('dripconnect_general/api_settings/account_id', \Magento\Store\Model\ScopeInterface::SCOPE_STORE).'/'.self::ENDPOINT_ORDERS
             ]
         ]);
 
-        $subscribersInfo = [
-            'subscribers' => [
+        $ordersInfo = [
+            'orders' => [
                 $data
             ]
         ];
 
         $this->request = $this->connectApiCallsRequestBaseFactory->create()
             ->setMethod(\Zend_Http_Client::POST)
-            ->setRawData(json_encode($subscribersInfo));
+            ->setRawData(json_encode($ordersInfo));
     }
 }
-
