@@ -12,9 +12,13 @@
             instance="Drip\Connect\Observer\Customer\AfterAddressSave"
             disabled="false" />
     </event>-->
-    <!--<event name="customer_login">
-        <observer name="drip_connect_customer_login" instance="Drip\Connect\Observer\CustomerLogin"/>
-    </event>-->
+    <event name="customer_login">
+        <observer
+            name="drip_connect_customer_login"
+            instance="Drip\Connect\Observer\Customer\Login"
+            disabled="false" />
+    </event>
+    <!--
     <event name="wishlist_add_product">
         <observer name="drip_connect_wishlist_add_product" instance="Drip\Connect\Observer\Wishlist\AddProduct"/>
     </event>
