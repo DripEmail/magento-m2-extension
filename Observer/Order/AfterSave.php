@@ -57,12 +57,20 @@ class AfterSave extends \Drip\Connect\Observer\Base
                 $this->orderHelper->proceedOrderNew($order);
 
                 break;
+            case \Magento\Sales\Model\Order::STATE_COMPLETE :
+                // full completed order get treated in order items observer
+                // as well as partly completed order
+                break;
         }
     }
 
 
     /**
      * check if order state has not been changed
+     *
+     * @param \Magento\Sales\Model\Order $order
+     *
+     * @return bool
      */
     protected function isSameState($order)
     {
