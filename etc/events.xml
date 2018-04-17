@@ -24,6 +24,18 @@
             instance="Drip\Connect\Observer\Order\BeforeSave"
             disabled="false" />
     </event>
+    <event name="sales_order_item_save_before">
+        <observer
+            name="drip_connect_sales_order_item_save_before"
+            instance="Drip\Connect\Observer\Order\Item\BeforeSave"
+            disabled="false" />
+    </event>
+    <event name="sales_order_item_save_commit_after">
+        <observer
+            name="drip_connect_sales_order_item_save_commit_after"
+            instance="Drip\Connect\Observer\Order\Item\AfterSave"
+            disabled="false" />
+    </event>
     <event name="sales_order_save_commit_after">
         <observer
             name="drip_connect_sales_order_save_commit_after"
