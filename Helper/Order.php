@@ -89,6 +89,25 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * prepare array of order data we use to send in drip for canceled orders
+     *
+     * @param \Magento\Sales\Model\Order $order
+     *
+     * @return array
+     */
+    public function getOrderDataCanceled($order)
+    {
+        $data = array(
+            'email' => $order->getCustomerEmail(),
+            'provider' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::PROVIDER_NAME,
+            'upstream_id' => $order->getIncrementId(),
+            'cancelled_at' => $order->getUpdatedAt(),
+        );
+
+        return $data;
+    }
+
+    /**
      * check fullfilment state of an order
      *
      * @param \Magento\Sales\Model\Order $order
@@ -239,6 +258,17 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     public function proceedOrderCompleted($order)
     {
         $orderData = $this->getOrderDataCompleted($order);
+        $this->connectApiCallsHelperCreateUpdateOrderFactory->create([
+            'data' => $orderData
+        ])->call();
+    }
+
+    /**
+     * @param \Magento\Sales\Model\Order $order
+     */
+    public function proceedOrderCancel($order)
+    {
+        $orderData = $this->getOrderDataCanceled($order);
         $this->connectApiCallsHelperCreateUpdateOrderFactory->create([
             'data' => $orderData
         ])->call();
