@@ -4,6 +4,10 @@ namespace Drip\Connect\Helper;
 
 class Order extends \Magento\Framework\App\Helper\AbstractHelper
 {
+    const FULFILLMENT_NO = 'not_fulfilled';
+    const FULFILLMENT_PARTLY = 'partially_fulfilled';
+    const FULFILLMENT_YES = 'fulfilled';
+
     /** @var \Drip\Connect\Helper\Data */
     protected $connectHelper;
 
@@ -63,6 +67,28 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * prepare array of order data we use to send in drip for full/partly completed orders
+     *
+     * @param \Magento\Sales\Model\Order $order
+     *
+     * @return array
+     */
+    public function getOrderDataCompleted($order)
+    {
+        $data = array(
+            'email' => $order->getCustomerEmail(),
+            'provider' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::PROVIDER_NAME,
+            'upstream_id' => $order->getIncrementId(),
+            'amount' => $this->connectHelper->priceAsCents($order->getGrandTotal()),
+            'fulfillment_state' => $this->getOrderFulfillment($order),
+            'billing_address' => $this->getOrderBillingData($order),
+            'shipping_address' => $this->getOrderShippingData($order),
+        );
+
+        return $data;
+    }
+
+    /**
      * prepare array of order data we use to send in drip for canceled orders
      *
      * @param \Magento\Sales\Model\Order $order
@@ -79,6 +105,28 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
         );
 
         return $data;
+    }
+
+    /**
+     * check fullfilment state of an order
+     *
+     * @param \Magento\Sales\Model\Order $order
+     *
+     * @return string
+     */
+    protected function getOrderFulfillment($order)
+    {
+        if ($order->getState() == \Magento\Sales\Model\Order::STATE_COMPLETE) {
+            return self::FULFILLMENT_YES;
+        }
+
+        foreach ($order->getAllItems() as $item) {
+            if ($item->getStatus() == 'Shipped') {
+                return self::FULFILLMENT_PARTLY;
+            }
+        }
+
+        return self::FULFILLMENT_NO;
     }
 
     /**
@@ -175,11 +223,41 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * @param \Magento\Sales\Model\Order\Item $item
+     * @param bool use normal or orig data
+     *
+     * @return array
+     */
+    public function getOrderItemStatusData($item, $useOrig = false)
+    {
+        return [
+            'status' => ($useOrig ? $item->getOrigData('status') : $item->getStatus()),
+            'qty_backordered' => ($useOrig ? $item->getOrigData('qty_backordered') : $item->getQtyBackordered()),
+            'qty_canceled' => ($useOrig ? $item->getOrigData('qty_canceled') : $item->getQtyCanceled()),
+            'qty_invoiced' => ($useOrig ? $item->getOrigData('qty_invoiced') : $item->getQtyInvoiced()),
+            'qty_ordered' => ($useOrig ? $item->getOrigData('qty_ordered') : $item->getQtyOrdered()),
+            'qty_refunded' => ($useOrig ? $item->getOrigData('qty_refunded') : $item->getQtyRefunded()),
+            'qty_shipped' => ($useOrig ? $item->getOrigData('qty_shipped') : $item->getQtyShipped()),
+        ];
+    }
+
+    /**
      * @param \Magento\Sales\Model\Order $order
      */
     public function proceedOrderNew($order)
     {
         $orderData = $this->getOrderDataNew($order);
+        $this->connectApiCallsHelperCreateUpdateOrderFactory->create([
+            'data' => $orderData
+        ])->call();
+    }
+
+    /**
+     * @param \Magento\Sales\Model\Order $order
+     */
+    public function proceedOrderCompleted($order)
+    {
+        $orderData = $this->getOrderDataCompleted($order);
         $this->connectApiCallsHelperCreateUpdateOrderFactory->create([
             'data' => $orderData
         ])->call();

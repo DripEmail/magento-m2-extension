@@ -47,27 +47,31 @@ class AfterSave extends \Drip\Connect\Observer\Base
 
         switch ($order->getState()) {
             case \Magento\Sales\Model\Order::STATE_NEW :
-
                 //if guest checkout, create subscriber record
                 if($order->getCustomerIsGuest()) {
                     $this->customerHelper->accountActionsForGuestCheckout($order);
                 }
-
                 // new order
                 $this->orderHelper->proceedOrderNew($order);
+                break;
 
+            case \Magento\Sales\Model\Order::STATE_COMPLETE :
+                // full completed order get treated in order items observer
+                // as well as partly completed order
                 break;
 
             case \Magento\Sales\Model\Order::STATE_CANCELED :
                 // cancel order
                 $this->orderHelper->proceedOrderCancel($order);
-                break;
         }
     }
 
-
     /**
      * check if order state has not been changed
+     *
+     * @param \Magento\Sales\Model\Order $order
+     *
+     * @return bool
      */
     protected function isSameState($order)
     {
@@ -78,4 +82,3 @@ class AfterSave extends \Drip\Connect\Observer\Base
         return ($oldValue == $newValue);
     }
 }
-
