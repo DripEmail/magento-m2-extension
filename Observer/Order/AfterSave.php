@@ -57,6 +57,11 @@ class AfterSave extends \Drip\Connect\Observer\Base
                 $this->orderHelper->proceedOrderNew($order);
 
                 break;
+
+            case \Magento\Sales\Model\Order::STATE_CANCELED :
+                // cancel order
+                $this->orderHelper->proceedOrderCancel($order);
+                break;
         }
     }
 
