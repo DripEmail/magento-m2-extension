@@ -25,12 +25,10 @@
         <observer name="drip_connect_controller_action_predispatch_wishlist_index_remove"
                   instance="Drip\Connect\Observer\Wishlist\PredispatchWishlistIndexRemove"/>
     </event>
-	<!--
     <event name="sales_quote_save_before">
-        <observer name="drip_connect_sales_quote_save_before" instance="Drip\Connect\Observer\BeforeQuoteSaved"/>
+        <observer name="drip_connect_sales_quote_save_before" instance="Drip\Connect\Observer\Quote\BeforeQuoteSaved"/>
     </event>
     <event name="sales_quote_save_commit_after">
-        <observer name="drip_connect_sales_quote_save_commit_after" instance="Drip\Connect\Observer\AfterQuoteSaved"/>
+        <observer name="drip_connect_sales_quote_save_commit_after" instance="Drip\Connect\Observer\Quote\AfterQuoteSaved"/>
     </event>
-	-->
 </config>
