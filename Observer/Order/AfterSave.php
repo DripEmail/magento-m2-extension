@@ -63,6 +63,11 @@ class AfterSave extends \Drip\Connect\Observer\Base
             case \Magento\Sales\Model\Order::STATE_CANCELED :
                 // cancel order
                 $this->orderHelper->proceedOrderCancel($order);
+                break;
+
+            case \Magento\Sales\Model\Order::STATE_CLOSED :
+                // all refunds get processed in creditmemo observer
+                break;
         }
     }
 
