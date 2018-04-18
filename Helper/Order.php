@@ -26,13 +26,15 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Sales\Model\Order\AddressFactory $salesOrderAddressFactory,
         \Magento\Catalog\Model\ProductFactory $catalogProductFactory,
         \Magento\Catalog\Model\Product\Media\ConfigFactory $catalogProductMediaConfigFactory,
-        \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrderFactory $connectApiCallsHelperCreateUpdateOrderFactory
+        \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrderFactory $connectApiCallsHelperCreateUpdateOrderFactory,
+        \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateRefundFactory $connectApiCallsHelperCreateUpdateRefundFactory
     ) {
         $this->connectHelper = $connectHelper;
         $this->salesOrderAddressFactory = $salesOrderAddressFactory;
         $this->catalogProductFactory = $catalogProductFactory;
         $this->catalogProductMediaConfigFactory = $catalogProductMediaConfigFactory;
         $this->connectApiCallsHelperCreateUpdateOrderFactory = $connectApiCallsHelperCreateUpdateOrderFactory;
+        $this->connectApiCallsHelperCreateUpdateRefundFactory = $connectApiCallsHelperCreateUpdateRefundFactory;
         parent::__construct($context);
     }
 
@@ -102,6 +104,30 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
             'provider' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::PROVIDER_NAME,
             'upstream_id' => $order->getIncrementId(),
             'cancelled_at' => $order->getUpdatedAt(),
+        );
+
+        return $data;
+    }
+
+    /**
+     * prepare array of order data we use to send in drip for full/partly refunded orders
+     *
+     * @param \Magento\Sales\Model\Order $order
+     * @param int $refundValue
+     *
+     * @return array
+     */
+    public function getOrderDataRefund($order, $refundValue)
+    {
+        $refunds = $order->getCreditmemosCollection();
+        $refund = $refunds->getLastItem();
+        $refundId = $refund->getIncrementId();
+
+        $data = array(
+            'provider' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateRefund::PROVIDER_NAME,
+            'order_upstream_id' => $order->getIncrementId(),
+            'upstream_id' => $refundId,
+            'amount' => $refundValue,
         );
 
         return $data;
@@ -270,6 +296,18 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $orderData = $this->getOrderDataCanceled($order);
         $this->connectApiCallsHelperCreateUpdateOrderFactory->create([
+            'data' => $orderData
+        ])->call();
+    }
+
+    /**
+     * @param \Magento\Sales\Model\Order $order
+     * @param int $refundValue
+     */
+    public function proceedOrderRefund($order, $refundValue)
+    {
+        $orderData = $this->getOrderDataRefund($order, $refundValue);
+        $this->connectApiCallsHelperCreateUpdateRefundFactory->create([
             'data' => $orderData
         ])->call();
     }
