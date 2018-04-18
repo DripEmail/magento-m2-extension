@@ -106,7 +106,8 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
                 ]
        ])->call();
     }
- /**
+
+    /**
      * drip actions existing quote gets changed
      *
      * @param \Magento\Quote\Model\Quote $quote
@@ -186,10 +187,6 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $oldData = $this->registry->registry(self::REGISTRY_KEY_OLD_DATA);
         $newData = $this->prepareQuoteData($quote);
-
-        echo serialize($oldData) . '<br><br>';
-        echo serialize($newData);
-        //exit;
 
         return (serialize($oldData) != serialize($newData));
     }
