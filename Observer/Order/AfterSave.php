@@ -68,6 +68,10 @@ class AfterSave extends \Drip\Connect\Observer\Base
             case \Magento\Sales\Model\Order::STATE_CLOSED :
                 // all refunds get processed in creditmemo observer
                 break;
+
+            default :
+                // other states
+                $this->orderHelper->proceedOrderOther($order);
         }
     }
 

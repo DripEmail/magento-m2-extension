@@ -145,6 +145,31 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * prepare array of order data we use to send in drip for all other order states
+     *
+     * @param \Magento\Sales\Model\Order $order
+     *
+     * @return array
+     */
+    public function getOrderDataOther($order)
+    {
+        $data = array(
+            'email' => $order->getCustomerEmail(),
+            'provider' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::PROVIDER_NAME,
+            'upstream_id' => $order->getIncrementId(),
+            'identifier' => $order->getIncrementId(),
+            'properties' => array(
+                'order_state' => $order->getState(),
+                'order_status' => $order->getStatus(),
+                'provider' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateRefund::PROVIDER_NAME,
+                'magento_source' => $this->connectHelper->getArea(),
+            ),
+        );
+
+        return $data;
+    }
+
+    /**
      * check fullfilment state of an order
      *
      * @param \Magento\Sales\Model\Order $order
@@ -319,6 +344,17 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $orderData = $this->getOrderDataRefund($order, $refundValue);
         $this->connectApiCallsHelperCreateUpdateRefundFactory->create([
+            'data' => $orderData
+        ])->call();
+    }
+
+    /**
+     * @param \Magento\Sales\Model\Order $order
+     */
+    public function proceedOrderOther($order)
+    {
+        $orderData = $this->getOrderDataOther($order);
+        $this->connectApiCallsHelperCreateUpdateOrderFactory->create([
             'data' => $orderData
         ])->call();
     }
