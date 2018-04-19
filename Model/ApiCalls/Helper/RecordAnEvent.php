@@ -33,12 +33,14 @@ class RecordAnEvent
         \Drip\Connect\Model\ApiCalls\BaseFactory $connectApiCallsBaseFactory,
         \Drip\Connect\Model\ApiCalls\Request\BaseFactory $connectApiCallsRequestBaseFactory,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+        \Drip\Connect\Helper\Data $connectHelper,
         $data = []
     )
     {
         $this->connectApiCallsBaseFactory = $connectApiCallsBaseFactory;
         $this->connectApiCallsRequestBaseFactory = $connectApiCallsRequestBaseFactory;
         $this->scopeConfig = $scopeConfig;
+        $this->connectHelper = $connectHelper;
 
         $this->apiClient = $this->connectApiCallsBaseFactory->create([
             'options' => [
@@ -48,7 +50,7 @@ class RecordAnEvent
 
         if (!empty($data) && is_array($data)) {
             $data['properties']['source'] = 'magento';
-            //$data['properties']['magento_source'] = $this->connectHelper->getArea(); //TODO in DRIP-55
+            $data['properties']['magento_source'] = $this->connectHelper->getArea();
         }
 
         $eventsInfo = [
