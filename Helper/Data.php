@@ -108,10 +108,30 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getArea()
     {
+        if ($this->isApiCall()) {
+            return 'API';
+        }
+
         if ($this->state->getAreaCode() == 'adminhtml') {
             return 'Admin';
         }
 
         return 'Storefront';
+    }
+
+    /**
+     * check if current call is being done via API
+     *
+     * @return bool
+     */
+    protected function isApiCall()
+    {
+        $regexp = '/^(?:\/index.php)?\/(?:rest|soap)\/(?:\w+)(?:\/|\?wsdl)/i';
+
+        if (preg_match($regexp, $this->request->getRequestUri())) {
+            return true;
+        }
+
+        return false;
     }
 }
