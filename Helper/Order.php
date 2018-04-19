@@ -20,6 +20,15 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     /** @var \Magento\Catalog\Model\Product\Media\ConfigFactory */
     protected $catalogProductMediaConfigFactory;
 
+    /** @var \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrderFactory */
+    protected $connectApiCallsHelperCreateUpdateOrderFactory;
+
+    /** @var \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateRefundFactory */
+    protected $connectApiCallsHelperCreateUpdateRefundFactory;
+
+    /** @var \Drip\Connect\Model\ApiCalls\Helper\Batches\OrdersFactory */
+    protected $connectApiCallsHelperBatchesOrdersFactory;
+
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Drip\Connect\Helper\Data $connectHelper,
@@ -27,7 +36,8 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Catalog\Model\ProductFactory $catalogProductFactory,
         \Magento\Catalog\Model\Product\Media\ConfigFactory $catalogProductMediaConfigFactory,
         \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrderFactory $connectApiCallsHelperCreateUpdateOrderFactory,
-        \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateRefundFactory $connectApiCallsHelperCreateUpdateRefundFactory
+        \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateRefundFactory $connectApiCallsHelperCreateUpdateRefundFactory,
+        \Drip\Connect\Model\ApiCalls\Helper\Batches\OrdersFactory $connectApiCallsHelperBatchesOrdersFactory
     ) {
         $this->connectHelper = $connectHelper;
         $this->salesOrderAddressFactory = $salesOrderAddressFactory;
@@ -35,6 +45,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
         $this->catalogProductMediaConfigFactory = $catalogProductMediaConfigFactory;
         $this->connectApiCallsHelperCreateUpdateOrderFactory = $connectApiCallsHelperCreateUpdateOrderFactory;
         $this->connectApiCallsHelperCreateUpdateRefundFactory = $connectApiCallsHelperCreateUpdateRefundFactory;
+        $this->connectApiCallsHelperBatchesOrdersFactory = $connectApiCallsHelperBatchesOrdersFactory;
         parent::__construct($context);
     }
 
@@ -345,6 +356,24 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
         $orderData = $this->getOrderDataOther($order);
         $this->connectApiCallsHelperCreateUpdateOrderFactory->create([
             'data' => $orderData
+        ])->call();
+    }
+
+    /**
+     * batch orders update
+     *
+     * @param array $batch
+     * @param int $accountId
+     *
+     * @return \Drip\Connect\Model\Restapi\Response\ResponseAbstract
+     */
+    public function proceedOrderBatch($batch, $accountId = 0)
+    {
+        return $this->connectApiCallsHelperBatchesOrdersFactory->create([
+            'data' => [
+                'batch' => $batch,
+                'account' => $accountId,
+            ]
         ])->call();
     }
 }
