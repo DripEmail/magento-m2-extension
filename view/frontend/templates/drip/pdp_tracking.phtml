@@ -1,28 +1,24 @@
-<?php if (Mage::helper('drip_connect')->isModuleActive()) : ?>
+<?php if ($block->isModuleActive()) : ?>
 <?php
-    $product = Mage::registry('current_product');
-    $title = $product->getName();
-    if (strlen($title) > 10) {
-        $title = substr($title, 0, 10) . '...';
-    }
-    $currentPrice = Mage::helper('drip_connect')->priceAsCents($product->getFinalPrice());
-    $initialPrice = Mage::helper('drip_connect')->priceAsCents($product->getPrice());
+    $product = $block->getProduct();
+    $currentPrice = $block->getHelper()->priceAsCents($product->getFinalPrice());
+    $initialPrice = $block->getHelper()->priceAsCents($product->getPrice());
 ?>
     <!-- Drip track -->
     <script type="text/javascript">
-    _dcq.push(["track", "Viewed <?= $title ?>", {
+    _dcq.push(["track", "Viewed a product", {
         product_id: "<?= $product->getId() ?>",
         sku: "<?= $product->getSku() ?>",
         name: "<?= $product->getName() ?>",
         brand: "<?= $product->getAttributeText('manufacturer') ?>",
-        categories: "<?= Mage::helper('drip_connect')->getProductCategoryNames($product) ?>",
+        categories: "<?= $block->getHelper()->getProductCategoryNames($product) ?>",
         price: "<?= $currentPrice ?>",
         <?php if ($currentPrice != $initialPrice) : ?>
         compared_at_price: "<?= $initialPrice ?>",
         <?php endif; ?>
-        currency: "<?= Mage::app()->getStore()->getCurrentCurrencyCode() ?>",
+        currency: "<?= $block->getStore()->getCurrentCurrencyCode() ?>",
         product_url: "<?= $product->getProductUrl() ?>",
-        image_url: "<?= Mage::getModel('catalog/product_media_config') ->getMediaUrl($product->getThumbnail()) ?>"
+        image_url: "<?= $block->getMediaUrl($product) ?>"
     }]);
     </script>
     <!-- end Drip track -->

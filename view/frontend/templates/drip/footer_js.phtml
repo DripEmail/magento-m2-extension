@@ -1,5 +1,5 @@
-<?php if (Mage::helper('drip_connect')->isModuleActive()) : ?>
-    <?php $accountId = Mage::getStoreConfig('dripconnect_general/api_settings/account_id'); ?>
+<?php if ($block->isModuleActive()) : ?>
+    <?php $accountId = $block->getConfig()->getValue('dripconnect_general/api_settings/account_id'); ?>
     <!-- Drip -->
     <script type="text/javascript">
         var _dcq = _dcq || [];
@@ -16,12 +16,11 @@
     </script>
     <!-- end Drip -->
 
-    <?php if (Mage::getSingleton('customer/session')->isLoggedIn()) : ?>
-        <?php $customer = Mage::getSingleton('customer/session')->getCustomer(); ?>
+    <?php if ($block->isCustomerLoggedIn()) : ?>
         <!-- identify Drip customer -->
         <script type="text/javascript">
         _dcq.push(["identify", {
-            email: "<?= $customer->getEmail()?>"
+            email: "<?= $block->getCustomerEmail()?>"
         }]);
         </script>
         <!-- end identify -->

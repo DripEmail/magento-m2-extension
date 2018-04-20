@@ -1,3 +1,60 @@
-<button onclick="return false;" type="button" id="<?php echo $block->getHtmlId() ?>">
+<button onclick="return false;" type="button" id="<?=$block->getHtmlId()?>">
     <?php echo $block->escapeHtml($block->getButtonLabel()) ?>
-</button><br><b id="sync_customers_result" style="color:green;"></b>
+</button><br><b id="<?=$block->getHtmlId()?>_result"></b>
+
+<script>
+require(
+    ["jquery"],
+    function ($) {
+        var options = {
+            inprogress: 0,
+            elem: $('#<?=$block->getHtmlId()?>'),
+            res: $('#<?=$block->getHtmlId()?>_result'),
+        };
+
+        options.elem.click(function(){
+            startSync();
+        });
+
+        var _ajaxBeforeSend = function () {
+            options.inprogress = 1;
+            options.elem.addClass('disabled');
+        };
+
+        var _ajaxComplete = function () {
+            options.inprogress = 0;
+            options.elem.removeClass('disabled');
+        };
+
+        var startSync = function () {
+            if (options.inprogress) {
+                return;
+            }
+            $.ajax({
+                url: '<?=$block->getAjaxUrl()?>',
+                type: 'post',
+                context: this,
+                data: {
+                    form_key: window.FORM_KEY,
+                    account_id: <?=$block->getAccountId()?>
+                },
+                dataType: 'json',
+                beforeSend: _ajaxBeforeSend,
+                complete: _ajaxComplete,
+
+                success: function (response) {
+                    if (response.success) {
+                        options.res.html('<?=__("Data has been sent to account")." ".$this->getAccountId()?>').css("color", "green");
+                    } else {
+                        options.res.html('Error. '+response.message).css("color", "red");
+                    }
+                },
+
+                error: function () {
+                    options.res.html('Error').css("color", "red");
+                }
+            });
+        }
+    }
+);
+</script>
