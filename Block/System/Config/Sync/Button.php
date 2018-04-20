@@ -7,6 +7,26 @@ abstract class Button extends \Magento\Config\Block\System\Config\Form\Field
 {
     const BUTTON_TEMPLATE = '';
 
+    /** @var \Drip\Connect\Helper\Data */
+    protected $connectHelper;
+
+    public function __construct(
+        \Magento\Backend\Block\Template\Context $context,
+        \Drip\Connect\Helper\Data $connectHelper,
+        array $data = []
+    ) {
+        parent::__construct($context, $data);
+        $this->connectHelper = $connectHelper;
+    }
+
+    /**
+     * check if module active
+     */
+    public function isModuleActive()
+    {
+        return $this->connectHelper->isModuleActive();
+    }
+
     /**
      * Set template to itself
      *
