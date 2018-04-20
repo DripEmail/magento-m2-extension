@@ -14,6 +14,6 @@ class Customers extends \Drip\Connect\Block\System\Config\Sync\Button
      */
     public function getAjaxUrl()
     {
-        return 'TODO';
+        return $this->getUrl('drip/batch/customers');
     }
 }
