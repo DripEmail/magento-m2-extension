@@ -32,6 +32,11 @@ abstract class Helper
      */
     public function call()
     {
-        return $this->apiClient->callApi($this->request);
+        $response = $this->apiClient->callApi($this->request);
+        if (!empty($response->getResponseData()['errors'])) {
+           $response->_setError($response->getResponseData()['errors'][0]['message']);
+        }
+
+        return $response;
     }
 }

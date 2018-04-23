@@ -1,4 +1,6 @@
-<button onclick="return false;" type="button" id="<?=$block->getHtmlId()?>">
+<button onclick="return false;" type="button" id="<?=$block->getHtmlId()?>"
+<?php if (!$block->isModuleActive()) { ?> class="disabled" <?php } ?>
+>
     <?php echo $block->escapeHtml($block->getButtonLabel()) ?>
 </button><br><b id="<?=$block->getHtmlId()?>_result"></b>
 
