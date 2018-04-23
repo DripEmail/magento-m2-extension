@@ -86,7 +86,7 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
         $quote = $this->quoteQuoteFactory->create()->loadByCustomer($customer);
 
         if($this->connectHelper->priceAsCents($quote->getGrandTotal()) == 0) {
-            $this->registry->register(self::REGISTRY_KEY_CUSTOMER_REGISTERED_OR_LOGGED_IN_WITH_EMTPY_QUOTE, (bool)$customer->isObjectNew());
+            $this->registry->register(self::REGISTRY_KEY_CUSTOMER_REGISTERED_OR_LOGGED_IN_WITH_EMTPY_QUOTE, 1);
         }
 
     }

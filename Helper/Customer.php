@@ -33,6 +33,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         \Drip\Connect\Model\ApiCalls\Helper\RecordAnEventFactory $connectApiCallsHelperRecordAnEventFactory,
         \Drip\Connect\Model\ApiCalls\Helper\Batches\SubscribersFactory $connectApiCallsHelperBatchesSubscribersFactory,
         \Magento\Framework\HTTP\Header $header,
+        \Drip\Connect\Helper\Quote $quoteHelper,
         \Drip\Connect\Helper\Data $connectHelper
     ) {
         parent::__construct($context);
@@ -42,6 +43,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         $this->connectApiCallsHelperRecordAnEventFactory = $connectApiCallsHelperRecordAnEventFactory;
         $this->connectApiCallsHelperBatchesSubscribersFactory = $connectApiCallsHelperBatchesSubscribersFactory;
         $this->header = $header;
+        $this->quoteHelper = $quoteHelper;
         $this->connectHelper = $connectHelper;
     }
 
@@ -207,6 +209,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function proceedLogin($customer)
     {
+        $this->quoteHelper->checkForEmptyQuote($customer);
         $this->connectApiCallsHelperRecordAnEventFactory->create([
             'data' => [
                 'email' => $customer->getEmail(),
