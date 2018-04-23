@@ -2,7 +2,7 @@
 
 namespace Drip\Connect\Setup;
 
-use Magento\Framework\Setup\UninstallSchemaInterface;
+use Magento\Framework\Setup\UninstallInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
 
