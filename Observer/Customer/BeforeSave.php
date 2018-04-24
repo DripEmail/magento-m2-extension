@@ -52,6 +52,7 @@ class BeforeSave extends \Drip\Connect\Observer\Base
             $data = $this->customerHelper->prepareCustomerData($orig);
             $this->registry->register(self::REGISTRY_KEY_CUSTOMER_OLD_DATA, $data);
         } else {
+            $customer->setDrip(1);
             //this is needed for M1, but not M2 as it causes duplicate checkout updated calls
             //$this->quoteHelper->checkForEmptyQuote($customer);
         }
