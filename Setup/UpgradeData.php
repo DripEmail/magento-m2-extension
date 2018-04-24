@@ -54,7 +54,7 @@ class UpgradeData implements \Magento\Framework\Setup\UpgradeDataInterface
                 ]
             );
 
-            $attribute = $customerSetup->getEavConfig()->getAttribute(Customer::ENTITY, $attributeCode);
+            $attribute = $customerSetup->getEavConfig()->clear()->getAttribute(Customer::ENTITY, $attributeCode);
             $attribute
                 ->addData(
                     [
