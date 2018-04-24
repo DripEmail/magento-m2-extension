@@ -57,7 +57,7 @@ class ResponseAbstract
      * @param string $errorMessage
      * @return self
      */
-    protected function _setError($errorMessage)
+    public function _setError($errorMessage)
     {
         $this->_isError = true;
         $this->_errorMessage = $errorMessage;
