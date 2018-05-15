@@ -1,8 +1,10 @@
 <button onclick="return false;" type="button" id="<?=$block->getHtmlId()?>"
-<?php if (!$block->isModuleActive()) { ?> class="disabled" <?php } ?>
+<?php if (!$block->isSyncAvailable()) { ?> class="disabled" <?php } ?>
 >
     <?php echo $block->escapeHtml($block->getButtonLabel()) ?>
-</button><br><b id="<?=$block->getHtmlId()?>_result"></b>
+</button>
+ &nbsp; <img id="<?=$block->getHtmlId()?>_loader" src="<?=$block->getViewFileUrl('Drip_Connect::images/loader.gif')?>" width="15" style="display:none;" />
+ &nbsp; <b id="<?=$block->getHtmlId()?>_status"><?= $block->getStateLabel() ?></b>
 
 <script>
 require(
@@ -11,7 +13,8 @@ require(
         var options = {
             inprogress: 0,
             elem: $('#<?=$block->getHtmlId()?>'),
-            res: $('#<?=$block->getHtmlId()?>_result'),
+            res: $('#<?=$block->getHtmlId()?>_status'),
+            loader: $('#<?=$block->getHtmlId()?>_loader'),
         };
 
         options.elem.click(function(){
@@ -21,11 +24,12 @@ require(
         var _ajaxBeforeSend = function () {
             options.inprogress = 1;
             options.elem.addClass('disabled');
+            options.loader.show();
         };
 
         var _ajaxComplete = function () {
             options.inprogress = 0;
-            options.elem.removeClass('disabled');
+            options.loader.hide();
         };
 
         var startSync = function () {
@@ -38,6 +42,7 @@ require(
                 context: this,
                 data: {
                     form_key: window.FORM_KEY,
+                    store_id: <?=$block->getStoreId()?>,
                     account_id: <?=$block->getAccountId()?>
                 },
                 dataType: 'json',
@@ -46,14 +51,15 @@ require(
 
                 success: function (response) {
                     if (response.success) {
-                        options.res.html('<?=__("Data has been sent to account")." ".$this->getAccountId()?>').css("color", "green");
+                        options.res.html('<?=\Drip\Connect\Model\Source\SyncState::getLabel(\Drip\Connect\Model\Source\SyncState::QUEUED)?>');
                     } else {
-                        options.res.html('Error. '+response.message).css("color", "red");
+                        options.res.html('Error. '+response.message);
                     }
                 },
 
                 error: function () {
-                    options.res.html('Error').css("color", "red");
+                    options.res.html('Error');
+                    options.elem.removeClass('disabled');
                 }
             });
         }
