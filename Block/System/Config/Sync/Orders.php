@@ -22,11 +22,7 @@ class Orders extends \Drip\Connect\Block\System\Config\Sync\Button
         if (!$this->isModuleActive()) {
             return false;
         }
-        if ($this->_scopeConfig->getValue(
-            'dripconnect_general/actions/sync_orders_data_state',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-            $this->_request->getParam('store')) != \Drip\Connect\Model\Source\SyncState::READY
-        ) {
+        if ($this->connectHelper->getOrdersSyncStateForStore($this->_request->getParam('store')) != \Drip\Connect\Model\Source\SyncState::READY) {
             return false;
         }
         return true;
@@ -38,11 +34,7 @@ class Orders extends \Drip\Connect\Block\System\Config\Sync\Button
     public function getStateLabel()
     {
         return \Drip\Connect\Model\Source\SyncState::getLabel(
-            $this->_scopeConfig->getValue(
-                'dripconnect_general/actions/sync_orders_data_state',
-                \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-                $this->_request->getParam('store')
-            )
+            $this->connectHelper->getOrdersSyncStateForStore($this->_request->getParam('store'))
         );
     }
 }

@@ -6,5 +6,8 @@
         <job name="drip_connect_sync_customers" instance="Drip\Connect\Cron\Customers" method="syncCustomers">
             <schedule>*/5 * * * *</schedule>
         </job>
+        <job name="drip_connect_sync_orders" instance="Drip\Connect\Cron\Orders" method="syncOrders">
+            <schedule>*/5 * * * *</schedule>
+        </job>
     </group>
 </config>
