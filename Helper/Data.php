@@ -163,6 +163,19 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**
      * @param int $storeId
+     */
+    public function getCustomersSyncStateForStore($storeId)
+    {
+        if (empty($storeId)) {
+            $state = $this->scopeConfig->getValue('dripconnect_general/actions/sync_customers_data_state', 'default', 0);
+        } else {
+            $state = $this->scopeConfig->getValue('dripconnect_general/actions/sync_customers_data_state', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $storeId);
+        }
+        return $state;
+    }
+
+    /**
+     * @param int $storeId
      * @param int $state
      */
     public function setOrdersSyncStateToStore($storeId, $state)
@@ -180,5 +193,18 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                 $storeId
             );
         }
+    }
+
+    /**
+     * @param int $storeId
+     */
+    public function getOrdersSyncStateForStore($storeId)
+    {
+        if (empty($storeId)) {
+            $state = $this->scopeConfig->getValue('dripconnect_general/actions/sync_orders_data_state', 'default', 0);
+        } else {
+            $state = $this->scopeConfig->getValue('dripconnect_general/actions/sync_orders_data_state', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $storeId);
+        }
+        return $state;
     }
 }
