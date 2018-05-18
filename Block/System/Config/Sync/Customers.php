@@ -22,7 +22,9 @@ class Customers extends \Drip\Connect\Block\System\Config\Sync\Button
         if (!$this->isModuleActive()) {
             return false;
         }
-        if ($this->connectHelper->getCustomersSyncStateForStore($this->_request->getParam('store')) != \Drip\Connect\Model\Source\SyncState::READY) {
+        $syncState = $this->connectHelper->getCustomersSyncStateForStore($this->_request->getParam('store'));
+        if ($syncState != \Drip\Connect\Model\Source\SyncState::READY &&
+            $syncState != \Drip\Connect\Model\Source\SyncState::READYERRORS) {
             return false;
         }
         return true;
