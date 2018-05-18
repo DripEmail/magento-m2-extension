@@ -27,6 +27,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     /** @var \Magento\Framework\App\State */
     protected $state;
 
+    /** @var \Magento\Config\Model\ResourceModel\Config */
+    protected $resourceConfig;
+
     /**
      * @var \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory
      */
@@ -39,6 +42,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Customer\Model\GroupFactory $customerGroupFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\App\State $state,
+        \Magento\Config\Model\ResourceModel\Config $resourceConfig,
         \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory $catalogResourceModelCategoryCollectionFactory
     ) {
         $this->request = $request;
@@ -46,6 +50,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $this->customerGroupFactory = $customerGroupFactory;
         $this->storeManager = $storeManager;
         $this->state = $state;
+        $this->resourceConfig = $resourceConfig;
         $this->catalogResourceModelCategoryCollectionFactory = $catalogResourceModelCategoryCollectionFactory;
         parent::__construct($context);
     }
@@ -133,5 +138,89 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         }
 
         return false;
+    }
+
+    /**
+     * @param int $storeId
+     * @param int $state
+     */
+    public function setCustomersSyncStateToStore($storeId, $state)
+    {
+        if (empty($storeId)) {
+            $this->resourceConfig->saveConfig(
+                'dripconnect_general/actions/sync_customers_data_state',
+                $state,
+                \Magento\Framework\App\Config\ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
+                0
+            );
+        } else {
+            $this->resourceConfig->saveConfig(
+                'dripconnect_general/actions/sync_customers_data_state',
+                $state,
+                \Magento\Store\Model\ScopeInterface::SCOPE_STORES,
+                $storeId
+            );
+        }
+    }
+
+    /**
+     * @param int $storeId
+     */
+    public function getCustomersSyncStateForStore($storeId)
+    {
+        if (empty($storeId)) {
+            $state = $this->scopeConfig->getValue(
+                'dripconnect_general/actions/sync_customers_data_state',
+                \Magento\Framework\App\Config\ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
+                0);
+        } else {
+            $state = $this->scopeConfig->getValue(
+                'dripconnect_general/actions/sync_customers_data_state',
+                \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+                $storeId);
+        }
+        return $state;
+    }
+
+    /**
+     * @param int $storeId
+     * @param int $state
+     */
+    public function setOrdersSyncStateToStore($storeId, $state)
+    {
+        if (empty($storeId)) {
+            $this->resourceConfig->saveConfig(
+                'dripconnect_general/actions/sync_orders_data_state',
+                $state,
+                \Magento\Framework\App\Config\ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
+                0
+            );
+        } else {
+            $this->resourceConfig->saveConfig(
+                'dripconnect_general/actions/sync_orders_data_state',
+                $state,
+                \Magento\Store\Model\ScopeInterface::SCOPE_STORES,
+                $storeId
+            );
+        }
+    }
+
+    /**
+     * @param int $storeId
+     */
+    public function getOrdersSyncStateForStore($storeId)
+    {
+        if (empty($storeId)) {
+            $state = $this->scopeConfig->getValue(
+                'dripconnect_general/actions/sync_orders_data_state',
+                \Magento\Framework\App\Config\ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
+                0);
+        } else {
+            $state = $this->scopeConfig->getValue(
+                'dripconnect_general/actions/sync_orders_data_state',
+                \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+                $storeId);
+        }
+        return $state;
     }
 }

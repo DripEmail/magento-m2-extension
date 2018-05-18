@@ -10,6 +10,10 @@
                 <timeout>15000</timeout>
                 <behavior>call_api</behavior>
             </api_settings>
+            <actions>
+                <sync_customers_data_state>0</sync_customers_data_state>
+                <sync_orders_data_state>0</sync_orders_data_state>
+            </actions>
         </dripconnect_general>
     </default>
 </config>
