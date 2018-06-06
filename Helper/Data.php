@@ -151,8 +151,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                 'dripconnect_general/actions/sync_customers_data_state',
                 $state,
                 \Magento\Framework\App\Config\ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
-                0
-            );
+                0);
+            $storeId = null;
         } else {
             $this->resourceConfig->saveConfig(
                 'dripconnect_general/actions/sync_customers_data_state',
@@ -161,6 +161,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                 $storeId
             );
         }
+        $this->storeManager->getStore($storeId)->resetConfig();
     }
 
     /**
@@ -193,8 +194,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                 'dripconnect_general/actions/sync_orders_data_state',
                 $state,
                 \Magento\Framework\App\Config\ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
-                0
-            );
+                0);
+            $storeId = null;
         } else {
             $this->resourceConfig->saveConfig(
                 'dripconnect_general/actions/sync_orders_data_state',
@@ -203,6 +204,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                 $storeId
             );
         }
+        $this->storeManager->getStore($storeId)->resetConfig();
     }
 
     /**

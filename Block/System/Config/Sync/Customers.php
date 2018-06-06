@@ -36,11 +36,7 @@ class Customers extends \Drip\Connect\Block\System\Config\Sync\Button
     public function getStateLabel()
     {
         return \Drip\Connect\Model\Source\SyncState::getLabel(
-            $this->_scopeConfig->getValue(
-                'dripconnect_general/actions/sync_customers_data_state',
-                \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-                $this->_request->getParam('store')
-            )
+            $this->connectHelper->getCustomersSyncStateForStore($this->_request->getParam('store'))
         );
     }
 }
