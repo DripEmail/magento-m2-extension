@@ -28,21 +28,19 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Customer\Model\GroupFactory $customerGroupFactory,
-        \Magento\Framework\HTTP\PhpEnvironment\RemoteAddress $remoteAddress,
         \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateSubscriberFactory $connectApiCallsHelperCreateUpdateSubscriberFactory,
         \Drip\Connect\Model\ApiCalls\Helper\RecordAnEventFactory $connectApiCallsHelperRecordAnEventFactory,
         \Drip\Connect\Model\ApiCalls\Helper\Batches\SubscribersFactory $connectApiCallsHelperBatchesSubscribersFactory,
-        \Magento\Framework\HTTP\Header $header,
         \Drip\Connect\Helper\Quote $quoteHelper,
         \Drip\Connect\Helper\Data $connectHelper
     ) {
         parent::__construct($context);
         $this->customerGroupFactory = $customerGroupFactory;
-        $this->remoteAddress = $remoteAddress;
+        $this->remoteAddress = $context->getRemoteAddress();
         $this->connectApiCallsHelperCreateUpdateSubscriberFactory = $connectApiCallsHelperCreateUpdateSubscriberFactory;
         $this->connectApiCallsHelperRecordAnEventFactory = $connectApiCallsHelperRecordAnEventFactory;
         $this->connectApiCallsHelperBatchesSubscribersFactory = $connectApiCallsHelperBatchesSubscribersFactory;
-        $this->header = $header;
+        $this->header = $context->getHttpHeader();
         $this->quoteHelper = $quoteHelper;
         $this->connectHelper = $connectHelper;
     }
