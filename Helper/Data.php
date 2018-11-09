@@ -35,6 +35,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     protected $catalogResourceModelCategoryCollectionFactory;
 
+    /** @var \Magento\Eav\Api\AttributeRepositoryInterface */
+    protected $attributeRepository;
+
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Framework\App\Request\Http $request,
@@ -42,6 +45,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\App\State $state,
         \Magento\Config\Model\ResourceModel\Config $resourceConfig,
+        \Magento\Eav\Api\AttributeRepositoryInterface $attributeRepository,
         \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory $catalogResourceModelCategoryCollectionFactory
     ) {
         $this->request = $request;
@@ -51,8 +55,30 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $this->state = $state;
         $this->resourceConfig = $resourceConfig;
         $this->catalogResourceModelCategoryCollectionFactory = $catalogResourceModelCategoryCollectionFactory;
+        $this->attributeRepository = $attributeRepository;
         parent::__construct($context);
     }
+
+    /**
+     * return brand name for the given product
+     *
+     * @param \Magento\Catalog\Model\Product $product
+     *
+     * @return string
+     */
+    public function getBrandName($product)
+    {
+        try {
+            $attribute = $this->attributeRepository->get(\Magento\Catalog\Api\Data\ProductAttributeInterface::ENTITY_TYPE_CODE, 'manufacturer');
+            $brandName = $product->getAttributeText('manufacturer');
+        } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
+            // attribute does not exist
+            $brandName = '';
+        }
+
+        return $brandName;
+    }
+
 
     /**
      * check if module active

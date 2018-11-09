@@ -106,4 +106,14 @@ class Template extends \Magento\Framework\View\Element\Template
     {
         return $this->coreRegistry->registry('product');
     }
+
+    /**
+     * return name of the product's brand
+     *
+     * @return string
+     */
+    public function getBrandName()
+    {
+        return $this->helper->getBrandName($this->getProduct());
+    }
 }
