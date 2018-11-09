@@ -60,7 +60,7 @@ class Wishlist extends \Magento\Framework\App\Helper\AbstractHelper
                 'properties' => [
                     'product_id' => $product->getId(),
                     'categories' => $this->connectHelper->getProductCategoryNames($product),
-                    'brand' => $product->getAttributeText('manufacturer'),
+                    'brand' => $this->connectHelper->getBrandName($product),
                     'name' => $product->getName(),
                     'price' => $this->connectHelper->priceAsCents($product->getFinalPrice()),
                     'currency' => $this->storeManager->getStore()->getCurrentCurrencyCode(),
