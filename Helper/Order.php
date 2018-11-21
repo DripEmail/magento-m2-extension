@@ -258,7 +258,6 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $data = array();
         foreach ($order->getAllItems() as $item) {
-            $product = $this->catalogProductFactory->create()->load($item->getProduct()->getId());
             $group = array(
                 'product_id' => $item->getProductId(),
                 'sku' => $item->getSku(),
@@ -269,11 +268,14 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
                 'tax' => $this->connectHelper->priceAsCents($item->getTaxAmount()),
                 'taxable' => (preg_match('/[123456789]/', $item->getTaxAmount()) ? 'true' : 'false'),
                 'discount' => $this->connectHelper->priceAsCents($item->getDiscountAmount()),
-                'properties' => array(
-                    'product_url' => $item->getProduct()->getProductUrl(),
-                    'product_image_url' => $this->catalogProductMediaConfigFactory->create() ->getMediaUrl($product->getThumbnail()),
-                ),
             );
+            if (!is_null($item->getProduct())) {
+                $product = $this->catalogProductFactory->create()->load($item->getProductId());
+                $group['properties'] = array(
+                    'product_url' => $item->getProduct()->getProductUrl(),
+                    'product_image_url' => $this->catalogProductMediaConfigFactory->create()->getMediaUrl($product->getThumbnail()),
+                );
+            }
             if ($isRefund) {
                 $group['refund_amount'] = $this->connectHelper->priceAsCents($item->getAmountRefunded());
                 $group['refund_quantity'] = $item->getQtyRefunded();
