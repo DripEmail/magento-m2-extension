@@ -4,6 +4,12 @@ namespace Drip\Connect\Observer\Order;
 
 class AfterSave extends \Drip\Connect\Observer\Base
 {
+    /** @var \Drip\Connect\Helper\Order */
+    protected $orderHelper;
+
+    /** @var \Drip\Connect\Helper\Customer */
+    protected $customerHelper;
+
     /**
      * constructor
      */
@@ -45,16 +51,17 @@ class AfterSave extends \Drip\Connect\Observer\Base
             return;
         }
 
-        switch ($order->getState()) {
-            case \Magento\Sales\Model\Order::STATE_NEW :
-                //if guest checkout, create subscriber record
-                if($order->getCustomerIsGuest()) {
-                    $this->customerHelper->accountActionsForGuestCheckout($order);
-                }
-                // new order
-                $this->orderHelper->proceedOrderNew($order);
-                break;
+        if ($this->isOrderNew($order)) {
+            //if guest checkout, create subscriber record
+            if($order->getCustomerIsGuest()) {
+                $this->customerHelper->accountActionsForGuestCheckout($order);
+            }
+            // new order
+            $this->orderHelper->proceedOrderNew($order);
 
+            return;
+        }
+        switch ($order->getState()) {
             case \Magento\Sales\Model\Order::STATE_COMPLETE :
                 // full completed order get treated in order items observer
                 // as well as partly completed order
@@ -73,6 +80,27 @@ class AfterSave extends \Drip\Connect\Observer\Base
                 // other states
                 $this->orderHelper->proceedOrderOther($order);
         }
+    }
+
+    /**
+     * check if current order is new
+     *
+     * @param \Magento\Sales\Model\Order $order
+     *
+     * @return bool
+     */
+    protected function isOrderNew($order)
+    {
+        if ($order->getState() == \Magento\Sales\Model\Order::STATE_NEW) {
+            return true;
+        }
+
+        $oldData = $this->registry->registry(self::REGISTRY_KEY_ORDER_OLD_DATA);
+        if (empty($oldData['state'])) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
