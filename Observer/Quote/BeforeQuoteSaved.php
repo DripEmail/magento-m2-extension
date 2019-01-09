@@ -52,10 +52,12 @@ class BeforeQuoteSaved implements \Magento\Framework\Event\ObserverInterface
         if (!$quote->isObjectNew()) {
             $orig = $this->quoteQuoteFactory->create()->load($quote->getId());
             $data = $this->connectQuoteHelper->prepareQuoteData($orig);
+            $this->registry->unregister(\Drip\Connect\Helper\Quote::REGISTRY_KEY_OLD_DATA);
             $this->registry->register(\Drip\Connect\Helper\Quote::REGISTRY_KEY_OLD_DATA, $data);
         }
 
         if (!$this->registry->registry(\Drip\Connect\Helper\Quote::REGISTRY_KEY_CUSTOMER_REGISTERED_OR_LOGGED_IN_WITH_EMTPY_QUOTE)) {
+            $this->registry->unregister(\Drip\Connect\Helper\Quote::REGISTRY_KEY_IS_NEW);
             if (!$quote->getDrip()) {
                 $this->registry->register(\Drip\Connect\Helper\Quote::REGISTRY_KEY_IS_NEW, true);
                 $quote->setDrip(true);

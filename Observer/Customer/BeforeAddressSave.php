@@ -46,10 +46,8 @@ class BeforeAddressSave extends \Drip\Connect\Observer\Base
             if ($customer->getDefaultShippingAddress()) {
                $oldAddr = $this->customerHelper->getAddressFields($customer->getDefaultShippingAddress());
             }
-            $this->registry->register(
-                self::REGISTRY_KEY_CUSTOMER_OLD_ADDR,
-                $oldAddr
-            );
+            $this->registry->unregister(self::REGISTRY_KEY_CUSTOMER_OLD_ADDR);
+            $this->registry->register(self::REGISTRY_KEY_CUSTOMER_OLD_ADDR, $oldAddr);
         }
     }
 }

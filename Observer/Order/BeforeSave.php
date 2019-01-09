@@ -30,6 +30,7 @@ class BeforeSave extends \Drip\Connect\Observer\Base
             'total_refunded' => $order->getOrigData('total_refunded'),
             'state' => $order->getOrigData('state'),
         );
+        $this->registry->unregister(self::REGISTRY_KEY_ORDER_OLD_DATA);
         $this->registry->register(self::REGISTRY_KEY_ORDER_OLD_DATA, $data);
     }
 }

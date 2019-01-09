@@ -45,11 +45,13 @@ class BeforeSave extends \Drip\Connect\Observer\Base
 
         $customer = $observer->getCustomer();
 
+        $this->registry->unregister(self::REGISTRY_KEY_CUSTOMER_IS_NEW);
         $this->registry->register(self::REGISTRY_KEY_CUSTOMER_IS_NEW, (bool)$customer->isObjectNew());
 
         if (!$customer->isObjectNew()) {
             $orig = $this->customerCustomerFactory->create()->load($customer->getId());
             $data = $this->customerHelper->prepareCustomerData($orig);
+            $this->registry->unregister(self::REGISTRY_KEY_CUSTOMER_OLD_DATA);
             $this->registry->register(self::REGISTRY_KEY_CUSTOMER_OLD_DATA, $data);
         } else {
             $customer->setDrip(1);
