@@ -1,5 +1,5 @@
 <button onclick="return false;" type="button" id="<?=$block->getHtmlId()?>"
-<?php if (!$block->isSyncAvailable()) { ?> class="disabled" <?php } ?>
+<?php if (!$block->isSyncAvailable()) : ?> class="disabled" <?php endif; ?>
 >
     <?php echo $block->escapeHtml($block->getButtonLabel()) ?>
 </button>

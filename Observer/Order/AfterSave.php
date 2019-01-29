@@ -53,7 +53,7 @@ class AfterSave extends \Drip\Connect\Observer\Base
 
         if ($this->isOrderNew($order)) {
             //if guest checkout, create subscriber record
-            if($order->getCustomerIsGuest()) {
+            if ($order->getCustomerIsGuest()) {
                 $this->customerHelper->accountActionsForGuestCheckout($order);
             }
             // new order
@@ -62,21 +62,21 @@ class AfterSave extends \Drip\Connect\Observer\Base
             return;
         }
         switch ($order->getState()) {
-            case \Magento\Sales\Model\Order::STATE_COMPLETE :
+            case \Magento\Sales\Model\Order::STATE_COMPLETE:
                 // full completed order get treated in order items observer
                 // as well as partly completed order
                 break;
 
-            case \Magento\Sales\Model\Order::STATE_CANCELED :
+            case \Magento\Sales\Model\Order::STATE_CANCELED:
                 // cancel order
                 $this->orderHelper->proceedOrderCancel($order);
                 break;
 
-            case \Magento\Sales\Model\Order::STATE_CLOSED :
+            case \Magento\Sales\Model\Order::STATE_CLOSED:
                 // all refunds get processed in creditmemo observer
                 break;
 
-            default :
+            default:
                 // other states
                 $this->orderHelper->proceedOrderOther($order);
         }

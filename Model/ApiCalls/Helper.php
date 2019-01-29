@@ -34,7 +34,7 @@ abstract class Helper
     {
         $response = $this->apiClient->callApi($this->request);
         if (!empty($response->getResponseData()['errors'])) {
-           $response->_setError($response->getResponseData()['errors'][0]['message']);
+            $response->_setError($response->getResponseData()['errors'][0]['message']);
         }
 
         return $response;

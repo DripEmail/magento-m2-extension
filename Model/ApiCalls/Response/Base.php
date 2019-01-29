@@ -1,10 +1,11 @@
 <?php
+
+use Drip\Connect\Model\Restapi\Response\ResponseAbstract;
+use Drip\Connect\Model\Restapi\Response\ResponseInterface;
+
 namespace Drip\Connect\Model\ApiCalls\Response;
 
-
-class Base
-    extends \Drip\Connect\Model\Restapi\Response\ResponseAbstract
-    implements \Drip\Connect\Model\Restapi\Response\ResponseInterface
+class Base extends ResponseAbstract implements ResponseInterface
 {
     /** @var array */
     protected $responseData;
@@ -12,8 +13,10 @@ class Base
     /**
      * constructor
      */
-    public function __construct($response = null, $errorMessage = null)
-    {
+    public function __construct(
+        $response = null,
+        $errorMessage = null
+    ) {
         parent::__construct($response, $errorMessage);
 
         if (!$this->_isError) {
@@ -47,4 +50,3 @@ class Base
         return $this->getResponse()->getStatus();
     }
 }
-

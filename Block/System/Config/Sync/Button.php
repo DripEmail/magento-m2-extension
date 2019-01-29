@@ -59,7 +59,7 @@ abstract class Button extends \Magento\Config\Block\System\Config\Form\Field
      *
      * @return string
      */
-    abstract function getAjaxUrl();
+    abstract public function getAjaxUrl();
 
     /**
      * Get the button and scripts contents
@@ -75,7 +75,10 @@ abstract class Button extends \Magento\Config\Block\System\Config\Form\Field
                 'html_id' => $element->getHtmlId(),
                 'button_label' => __($originalData['button_label']),
                 'store_id' => (int) $this->_request->getParam('store'),
-                'account_id' => $this->_scopeConfig->getValue('dripconnect_general/api_settings/account_id', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $this->_request->getParam('store')),
+                'account_id' => $this->_scopeConfig->getValue(
+                    'dripconnect_general/api_settings/account_id',
+                    \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $this->_request->getParam('store')
+                ),
             ]
         );
         return $this->_toHtml();

@@ -38,7 +38,8 @@ class Customers
      * constructor
      */
     public function __construct(
-        \Magento\Customer\Model\ResourceModel\Customer\CollectionFactory $customerResourceModelCustomerCollectionFactory,
+        \Magento\Customer\Model\ResourceModel\Customer\CollectionFactory
+        $customerResourceModelCustomerCollectionFactory,
         \Drip\Connect\Helper\Customer $customerHelper,
         \Drip\Connect\Model\ApiCalls\Helper\Batches\EventsFactory $connectApiCallsHelperBatchesEventsFactory,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
@@ -82,14 +83,15 @@ class Customers
             $defAccount = $this->scopeConfig->getValue(
                 'dripconnect_general/api_settings/account_id',
                 ScopeInterface::SCOPE_STORE,
-                0);
+                0
+            );
             $this->accounts[$defAccount][] = 0;
         }
 
         $stores = $this->storeRepository->getList();
         foreach ($stores as $store) {
             $storeId = $store->getStoreId();
-            if ($storeId == 0 ) {
+            if ($storeId == 0) {
                 continue;
             }
 
@@ -97,10 +99,27 @@ class Customers
                 $account = $this->scopeConfig->getValue(
                     'dripconnect_general/api_settings/account_id',
                     ScopeInterface::SCOPE_STORE,
-                    $storeId);
+                    $storeId
+                );
                 $this->accounts[$account][] = $storeId;
             }
         }
+    }
+
+    /**
+     * @param int $page
+     *
+     * @return \Magento\Customer\Model\ResourceModel\Customer\Collection
+     */
+    protected function getCollectionPage($page)
+    {
+        $collection = $this->customerResourceModelCustomerCollectionFactory->create()
+            ->addAttributeToSelect('*')
+            ->setPageSize(\Drip\Connect\Model\ApiCalls\Helper::MAX_BATCH_SIZE)
+            ->setCurPage($page)
+            ->load();
+
+        return $collection;
     }
 
     /**
@@ -118,25 +137,21 @@ class Customers
         $result = true;
         $page = 1;
         do {
-            $collection = $this->customerResourceModelCustomerCollectionFactory->create()
-                ->addAttributeToSelect('*')
-                ->setPageSize(\Drip\Connect\Model\ApiCalls\Helper::MAX_BATCH_SIZE)
-                ->setCurPage($page++)
-                ->load();
+            $collection = $this->getCollectionPage($page++);
 
-            $batchCustomer = array();
-            $batchEvents = array();
+            $batchCustomer = [];
+            $batchEvents = [];
             foreach ($collection as $customer) {
                 $dataCustomer = $this->customerHelper->prepareCustomerData($customer);
-                $dataCustomer['tags'] = array('Synced from Magento');
+                $dataCustomer['tags'] = ['Synced from Magento'];
                 $batchCustomer[] = $dataCustomer;
 
-                $dataEvents = array(
+                $dataEvents = [
                     'email' => $customer->getEmail(),
                     'action' => ($customer->getDrip()
                         ? \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_UPDATED
                         : \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_NEW),
-                );
+                ];
                 $batchEvents[] = $dataEvents;
 
                 if (!$customer->getDrip()) {

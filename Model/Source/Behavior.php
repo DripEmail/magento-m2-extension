@@ -17,14 +17,14 @@ class Behavior
      */
     public function toOptionArray()
     {
-        return array(
-            array('value' => self::CALL_API,            'label' => __('Call API')),
-            array('value' => self::FORCE_VALID,         'label' => __('Force Valid Result')),
-            array('value' => self::FORCE_INVALID,       'label' => __('Force Invalid Result')),
-            array('value' => self::FORCE_TIMEOUT,       'label' => __('Force Timeout')),
-            array('value' => self::FORCE_ERROR,         'label' => __('Force Error')),
-            array('value' => self::FORCE_UNKNOWN_ERROR, 'label' => __('Force Unkown Error')),
-        );
+        return [
+            ['value' => self::CALL_API,            'label' => __('Call API')],
+            ['value' => self::FORCE_VALID,         'label' => __('Force Valid Result')],
+            ['value' => self::FORCE_INVALID,       'label' => __('Force Invalid Result')],
+            ['value' => self::FORCE_TIMEOUT,       'label' => __('Force Timeout')],
+            ['value' => self::FORCE_ERROR,         'label' => __('Force Error')],
+            ['value' => self::FORCE_UNKNOWN_ERROR, 'label' => __('Force Unkown Error')],
+        ];
     }
 
     /**

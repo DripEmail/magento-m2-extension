@@ -77,14 +77,15 @@ class Orders
             $defAccount = $this->scopeConfig->getValue(
                 'dripconnect_general/api_settings/account_id',
                 ScopeInterface::SCOPE_STORE,
-                0);
+                0
+            );
             $this->accounts[$defAccount][] = 0;
         }
 
         $stores = $this->storeRepository->getList();
         foreach ($stores as $store) {
             $storeId = $store->getStoreId();
-            if ($storeId == 0 ) {
+            if ($storeId == 0) {
                 continue;
             }
 
@@ -92,10 +93,31 @@ class Orders
                 $account = $this->scopeConfig->getValue(
                     'dripconnect_general/api_settings/account_id',
                     ScopeInterface::SCOPE_STORE,
-                    $storeId);
+                    $storeId
+                );
                 $this->accounts[$account][] = $storeId;
             }
         }
+    }
+
+    /**
+     * @param int $page
+     *
+     * @return \Magento\Sales\Model\ResourceModel\Order\Collection
+     */
+    protected function getCollectionPage($page)
+    {
+        $collection = $this->salesResourceModelOrderCollectionFactory->create()
+            ->addAttributeToSelect('*')
+            ->addFieldToFilter('state', ['nin' => [
+                \Magento\Sales\Model\Order::STATE_CANCELED,
+                \Magento\Sales\Model\Order::STATE_CLOSED
+                ]])
+            ->setPageSize(\Drip\Connect\Model\ApiCalls\Helper::MAX_BATCH_SIZE)
+            ->setCurPage($page)
+            ->load();
+
+        return $collection;
     }
 
     /**
@@ -113,17 +135,9 @@ class Orders
         $result = true;
         $page = 1;
         do {
-            $collection = $this->salesResourceModelOrderCollectionFactory->create()
-                ->addAttributeToSelect('*')
-                ->addFieldToFilter('state', array('nin' => array(
-                    \Magento\Sales\Model\Order::STATE_CANCELED,
-                    \Magento\Sales\Model\Order::STATE_CLOSED
-                    )))
-                ->setPageSize(\Drip\Connect\Model\ApiCalls\Helper::MAX_BATCH_SIZE)
-                ->setCurPage($page++)
-                ->load();
+            $collection = $this->getCollectionPage($page++);
 
-            $batch = array();
+            $batch = [];
             foreach ($collection as $order) {
                 $data = $this->orderHelper->getOrderDataNew($order);
                 $data['occurred_at'] = $order->getCreatedAt();

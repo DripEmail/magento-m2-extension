@@ -58,7 +58,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getOrderDataNew($order)
     {
-        $data = array(
+        $data = [
             'email' => $order->getCustomerEmail(),
             'provider' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::PROVIDER_NAME,
             'upstream_id' => $order->getIncrementId(),
@@ -71,10 +71,10 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
             'items' => $this->getOrderItemsData($order),
             'billing_address' => $this->getOrderBillingData($order),
             'shipping_address' => $this->getOrderShippingData($order),
-            'properties' => array(
+            'properties' => [
                 'magento_source' => $this->connectHelper->getArea(),
-            ),
-        );
+            ],
+        ];
 
         return $data;
     }
@@ -88,7 +88,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getOrderDataCompleted($order)
     {
-        $data = array(
+        $data = [
             'email' => $order->getCustomerEmail(),
             'provider' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::PROVIDER_NAME,
             'upstream_id' => $order->getIncrementId(),
@@ -96,7 +96,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
             'fulfillment_state' => $this->getOrderFulfillment($order),
             'billing_address' => $this->getOrderBillingData($order),
             'shipping_address' => $this->getOrderShippingData($order),
-        );
+        ];
 
         return $data;
     }
@@ -110,12 +110,12 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getOrderDataCanceled($order)
     {
-        $data = array(
+        $data = [
             'email' => $order->getCustomerEmail(),
             'provider' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::PROVIDER_NAME,
             'upstream_id' => $order->getIncrementId(),
             'cancelled_at' => $order->getUpdatedAt(),
-        );
+        ];
 
         return $data;
     }
@@ -134,12 +134,12 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
         $refund = $refunds->getLastItem();
         $refundId = $refund->getIncrementId();
 
-        $data = array(
+        $data = [
             'provider' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateRefund::PROVIDER_NAME,
             'order_upstream_id' => $order->getIncrementId(),
             'upstream_id' => $refundId,
             'amount' => $refundValue,
-        );
+        ];
 
         return $data;
     }
@@ -153,18 +153,18 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getOrderDataOther($order)
     {
-        $data = array(
+        $data = [
             'email' => $order->getCustomerEmail(),
             'provider' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::PROVIDER_NAME,
             'upstream_id' => $order->getIncrementId(),
             'identifier' => $order->getIncrementId(),
-            'properties' => array(
+            'properties' => [
                 'order_state' => $order->getState(),
                 'order_status' => $order->getStatus(),
                 'provider' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateRefund::PROVIDER_NAME,
                 'magento_source' => $this->connectHelper->getArea(),
-            ),
-        );
+            ],
+        ];
 
         return $data;
     }
@@ -230,7 +230,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $address = $this->salesOrderAddressFactory->create()->load($addressId);
 
-        return array(
+        return [
             'name' => $address->getName(),
             'first_name' => $address->getFirstname(),
             'last_name' => $address->getLastname(),
@@ -243,7 +243,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
             'country' => $address->getCountryId(),
             'phone' => $address->getTelephone(),
             'email' => $address->getEmail(),
-        );
+        ];
     }
 
     /**
@@ -256,9 +256,9 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
      */
     protected function getOrderItemsData($order, $isRefund = false)
     {
-        $data = array();
+        $data = [];
         foreach ($order->getAllItems() as $item) {
-            $group = array(
+            $group = [
                 'product_id' => $item->getProductId(),
                 'sku' => $item->getSku(),
                 'name' => $item->getName(),
@@ -268,13 +268,15 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
                 'tax' => $this->connectHelper->priceAsCents($item->getTaxAmount()),
                 'taxable' => (preg_match('/[123456789]/', $item->getTaxAmount()) ? 'true' : 'false'),
                 'discount' => $this->connectHelper->priceAsCents($item->getDiscountAmount()),
-            );
-            if (!is_null($item->getProduct())) {
-                $product = $this->catalogProductFactory->create()->load($item->getProductId());
-                $group['properties'] = array(
+            ];
+            if ($item->getProduct() !== null) {
+                $product = $this->loadProduct($item->getProductId());
+                $group['properties'] = [
                     'product_url' => $item->getProduct()->getProductUrl(),
-                    'product_image_url' => $this->catalogProductMediaConfigFactory->create()->getMediaUrl($product->getThumbnail()),
-                );
+                    'product_image_url' => $this->catalogProductMediaConfigFactory->create()->getMediaUrl(
+                        $product->getThumbnail()
+                    ),
+                ];
             }
             if ($isRefund) {
                 $group['refund_amount'] = $this->connectHelper->priceAsCents($item->getAmountRefunded());
@@ -284,6 +286,16 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
         }
 
         return $data;
+    }
+
+    /**
+     * @param int $productId
+     *
+     * @return \Magento\Catalog\Model\Product
+     */
+    protected function loadProduct($productId)
+    {
+        return $this->catalogProductFactory->create()->load($productId);
     }
 
     /**

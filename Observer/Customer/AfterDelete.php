@@ -28,4 +28,3 @@ class AfterDelete extends \Drip\Connect\Observer\Base
         $this->connectCustomerHelper->proceedAccountDelete($customer);
     }
 }
-

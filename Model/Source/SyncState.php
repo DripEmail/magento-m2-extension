@@ -15,12 +15,12 @@ class SyncState
      */
     public function toOptionArray()
     {
-        return array(
-            array('value' => self::READY, 'label' => __('Ready')),
-            array('value' => self::QUEUED, 'label' => __('Queued')),
-            array('value' => self::PROGRESS, 'label' => __('In Progress')),
-            array('value' => self::READYERRORS, 'label' => __('Ready (finished with errors)')),
-        );
+        return [
+            ['value' => self::READY, 'label' => __('Ready')],
+            ['value' => self::QUEUED, 'label' => __('Queued')],
+            ['value' => self::PROGRESS, 'label' => __('In Progress')],
+            ['value' => self::READYERRORS, 'label' => __('Ready (finished with errors)')],
+        ];
     }
 
     /**
@@ -41,23 +41,18 @@ class SyncState
     /**
      * @return string
      */
-    static function getLabel($key)
+    static public function getLabel($key)
     {
         switch ($key) {
-            case self::READY :
+            case self::READY:
                 return __('Ready');
-                break;
-            case self::QUEUED :
+            case self::QUEUED:
                 return __('Queued');
-                break;
-            case self::PROGRESS :
+            case self::PROGRESS:
                 return __('In Progress');
-                break;
-            case self::READYERRORS :
+            case self::READYERRORS:
                 return __('Ready (finished with errors)');
-                break;
         }
         return '';
     }
 }
-

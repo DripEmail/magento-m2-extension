@@ -25,7 +25,6 @@ class AddProduct implements \Magento\Framework\Event\ObserverInterface
      */
     protected $wishlistHelper;
 
-
     public function __construct(
         \Drip\Connect\Helper\Data $connectHelper,
         \Magento\Customer\Model\Session $customerSession,
@@ -44,7 +43,7 @@ class AddProduct implements \Magento\Framework\Event\ObserverInterface
      */
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
-        if(!$this->connectHelper->isModuleActive()) {
+        if (!$this->connectHelper->isModuleActive()) {
             return;
         }
 
@@ -57,5 +56,4 @@ class AddProduct implements \Magento\Framework\Event\ObserverInterface
             $product
         );
     }
-
 }

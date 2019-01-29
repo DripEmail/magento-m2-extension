@@ -1,8 +1,7 @@
 <?php
 namespace Drip\Connect\Model\ApiCalls\Helper;
 
-class RecordAnEvent
-    extends \Drip\Connect\Model\ApiCalls\Helper
+class RecordAnEvent extends \Drip\Connect\Model\ApiCalls\Helper
 {
     const EVENT_CUSTOMER_NEW = 'Customer created';
     const EVENT_CUSTOMER_UPDATED = 'Customer updated';
@@ -35,8 +34,7 @@ class RecordAnEvent
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Drip\Connect\Helper\Data $connectHelper,
         $data = []
-    )
-    {
+    ) {
         $this->connectApiCallsBaseFactory = $connectApiCallsBaseFactory;
         $this->connectApiCallsRequestBaseFactory = $connectApiCallsRequestBaseFactory;
         $this->scopeConfig = $scopeConfig;
@@ -44,7 +42,10 @@ class RecordAnEvent
 
         $this->apiClient = $this->connectApiCallsBaseFactory->create([
             'options' => [
-                'endpoint' => $this->scopeConfig->getValue('dripconnect_general/api_settings/account_id', \Magento\Store\Model\ScopeInterface::SCOPE_STORE).'/'.self::ENDPOINT_EVENTS
+                'endpoint' => $this->scopeConfig->getValue(
+                    'dripconnect_general/api_settings/account_id',
+                    \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+                ).'/'.self::ENDPOINT_EVENTS,
             ]
         ]);
 

@@ -37,4 +37,3 @@ class BeforeSave extends \Drip\Connect\Observer\Base
         $this->registry->register(self::REGISTRY_KEY_ORDER_ITEMS_OLD_DATA, $items);
     }
 }
-

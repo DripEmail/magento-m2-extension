@@ -1,6 +1,6 @@
 <?php
-namespace Drip\Connect\Helper;
 
+namespace Drip\Connect\Helper;
 
 class Quote extends \Magento\Framework\App\Helper\AbstractHelper
 {
@@ -46,7 +46,9 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
      */
     protected $registry;
 
-
+    /**
+     * constructor
+     */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Quote\Model\QuoteFactory $quoteQuoteFactory,
@@ -69,7 +71,6 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
         );
     }
 
-
     /**
      * If customer registers during checkout, they will login, but quote has not been updated with customer info yet
      * so we can't fire "checkout created" on the quote b/c it's not yet assigned to the customer.  Doesn't matter
@@ -85,10 +86,9 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
         //gets active quote for customer, but troube is quote hasn't been updated with this customer info yet
         $quote = $this->quoteQuoteFactory->create()->loadByCustomer($customer);
 
-        if($this->connectHelper->priceAsCents($quote->getGrandTotal()) == 0) {
+        if ($this->connectHelper->priceAsCents($quote->getGrandTotal()) == 0) {
             $this->registry->register(self::REGISTRY_KEY_CUSTOMER_REGISTERED_OR_LOGGED_IN_WITH_EMTPY_QUOTE, 1);
         }
-
     }
 
     /**
@@ -103,8 +103,8 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
                 'email' => $this->email,
                 'action' => \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_QUOTE_NEW,
                 'properties' => $this->prepareQuoteData($quote),
-                ]
-       ])->call();
+            ],
+        ])->call();
     }
 
     /**
@@ -119,8 +119,8 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
                 'email' => $this->email,
                 'action' => \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_QUOTE_CHANGED,
                 'properties' => $this->prepareQuoteData($quote),
-                ]
-       ])->call();
+            ],
+        ])->call();
     }
 
     /**
@@ -130,16 +130,18 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function prepareQuoteData($quote)
     {
-        $data = array (
+        $data = [
             'amount' => $this->connectHelper->priceAsCents($quote->getGrandTotal()),
             'tax' => $this->connectHelper->priceAsCents($quote->getShippingAddress()->getTaxAmount()),
             'fees' => $this->connectHelper->priceAsCents($quote->getShippingAddress()->getShippingAmount()),
-            'discounts' => $this->connectHelper->priceAsCents((100*$quote->getSubtotal() - 100*$quote->getSubtotalWithDiscount())/100),
+            'discounts' => $this->connectHelper->priceAsCents(
+                (100*$quote->getSubtotal() - 100*$quote->getSubtotalWithDiscount())/100
+            ),
             'currency' => $quote->getQuoteCurrencyCode(),
             'items_count' => floatval($quote->getItemsQty()),
             'abandoned_cart_url' => $this->checkoutCartHelper->getCartUrl(),
             'line_items' => $this->prepareQuoteItemsData($quote),
-        );
+        ];
         return $data;
     }
     /**
@@ -149,11 +151,11 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
      */
     protected function prepareQuoteItemsData($quote)
     {
-        $data = array ();
+        $data = [];
         foreach ($quote->getAllItems() as $item) {
-            $product = $this->catalogProductFactory->create()->load($item->getProduct()->getId());
+            $product = $this->loadProduct($item->getProduct()->getId());
 
-            $group = array(
+            $group = [
                 'product_id' => $item->getProductId(),
                 'sku' => $item->getSku(),
                 'name' => $item->getName(),
@@ -166,14 +168,25 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
                 'discount' => $this->connectHelper->priceAsCents($item->getDiscountAmount()),
                 'currency' => $quote->getQuoteCurrencyCode(),
                 'product_url' => $product->getProductUrl(),
-                'image_url' => $this->catalogProductMediaConfigFactory->create() ->getMediaUrl($product->getThumbnail()),
-            );
+                'image_url' => $this->catalogProductMediaConfigFactory->create()->getMediaUrl(
+                    $product->getThumbnail()
+                ),
+            ];
             $data[] = $group;
         }
 
         return $data;
     }
 
+    /**
+     * @param int $productId
+     *
+     * @return \Magento\Catalog\Model\Product
+     */
+    protected function loadProduct($productId)
+    {
+        return $this->catalogProductFactory->create()->load($productId);
+    }
 
     /**
      * compare orig and new data
@@ -208,5 +221,4 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
 
         return ! (bool) $this->email;
     }
-
 }

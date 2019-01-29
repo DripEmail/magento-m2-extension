@@ -1,9 +1,9 @@
 <?php if ($block->isModuleActive()) : ?>
-<?php
+    <?php
     $product = $block->getProduct();
     $currentPrice = $block->getHelper()->priceAsCents($product->getFinalPrice());
     $initialPrice = $block->getHelper()->priceAsCents($product->getPrice());
-?>
+    ?>
     <!-- Drip track -->
     <script type="text/javascript">
     _dcq.push(["track", "Viewed a product", {

@@ -4,7 +4,6 @@ namespace Drip\Connect\Observer\Quote;
 
 class BeforeQuoteSaved implements \Magento\Framework\Event\ObserverInterface
 {
-
     /**
      * @var \Drip\Connect\Helper\Data
      */
@@ -39,7 +38,7 @@ class BeforeQuoteSaved implements \Magento\Framework\Event\ObserverInterface
 
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
-        if(!$this->connectHelper->isModuleActive()) {
+        if (!$this->connectHelper->isModuleActive()) {
             return;
         }
 
@@ -56,7 +55,9 @@ class BeforeQuoteSaved implements \Magento\Framework\Event\ObserverInterface
             $this->registry->register(\Drip\Connect\Helper\Quote::REGISTRY_KEY_OLD_DATA, $data);
         }
 
-        if (!$this->registry->registry(\Drip\Connect\Helper\Quote::REGISTRY_KEY_CUSTOMER_REGISTERED_OR_LOGGED_IN_WITH_EMTPY_QUOTE)) {
+        if (!$this->registry->registry(
+            \Drip\Connect\Helper\Quote::REGISTRY_KEY_CUSTOMER_REGISTERED_OR_LOGGED_IN_WITH_EMTPY_QUOTE
+        )) {
             $this->registry->unregister(\Drip\Connect\Helper\Quote::REGISTRY_KEY_IS_NEW);
             if (!$quote->getDrip()) {
                 $this->registry->register(\Drip\Connect\Helper\Quote::REGISTRY_KEY_IS_NEW, true);
@@ -65,7 +66,5 @@ class BeforeQuoteSaved implements \Magento\Framework\Event\ObserverInterface
                 $this->registry->register(\Drip\Connect\Helper\Quote::REGISTRY_KEY_IS_NEW, false);
             }
         }
-
     }
-
 }

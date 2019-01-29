@@ -199,7 +199,7 @@ abstract class RestapiAbstract
      */
     protected function _forceTimeout($request)
     {
-        $this->_httpClient->setConfig(array('timeout' => .0001));
+        $this->_httpClient->setConfig(['timeout' => .0001]);
         $this->_httpClient->request();
     }
 
@@ -214,7 +214,7 @@ abstract class RestapiAbstract
     protected function _forceUnknownResponse($request)
     {
         $httpStatusCode = 200;
-        $headers = array();
+        $headers = [];
         $responseBody = "This is an unknown response.";
         return new \Zend_Http_Response($httpStatusCode, $headers, $responseBody);
     }
@@ -222,7 +222,9 @@ abstract class RestapiAbstract
     public function getLogSettings()
     {
         $settings = $this->dataObjectFactory->create();
-        $settings->setData($this->scopeConfig->getValue($this->_logSettingsXpath, \Magento\Store\Model\ScopeInterface::SCOPE_STORE));
+        $settings->setData(
+            $this->scopeConfig->getValue($this->_logSettingsXpath, \Magento\Store\Model\ScopeInterface::SCOPE_STORE)
+        );
         return $settings;
     }
 
@@ -268,5 +270,4 @@ abstract class RestapiAbstract
         }
         return $logFile;
     }
-
 }

@@ -1,9 +1,8 @@
 <?php
+
 namespace Drip\Connect\Model\ApiCalls\Helper;
 
-
-class CreateUpdateRefund
-    extends \Drip\Connect\Model\ApiCalls\Helper
+class CreateUpdateRefund extends \Drip\Connect\Model\ApiCalls\Helper
 {
     const PROVIDER_NAME = 'magento';
 
@@ -28,7 +27,10 @@ class CreateUpdateRefund
 
         $this->apiClient = $this->connectApiCallsBaseFactory->create([
             'options' => [
-                'endpoint' => $this->scopeConfig->getValue('dripconnect_general/api_settings/account_id', \Magento\Store\Model\ScopeInterface::SCOPE_STORE).'/'.self::ENDPOINT_REFUNDS
+                'endpoint' => $this->scopeConfig->getValue(
+                    'dripconnect_general/api_settings/account_id',
+                    \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+                ).'/'.self::ENDPOINT_REFUNDS,
             ]
         ]);
 

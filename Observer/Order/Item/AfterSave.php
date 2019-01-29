@@ -4,7 +4,7 @@ namespace Drip\Connect\Observer\Order\Item;
 
 class AfterSave extends \Drip\Connect\Observer\Base
 {
-    static $counter = 0;
+    static public $counter = 0;
 
     /**
      * constructor
@@ -62,7 +62,6 @@ class AfterSave extends \Drip\Connect\Observer\Base
         $oldItems = $this->registry->registry(self::REGISTRY_KEY_ORDER_ITEMS_OLD_DATA);
 
         foreach ($order->getAllItems() as $item) {
-
             $itemDataCurrent = $this->orderHelper->getOrderItemStatusData($item);
             $itemDataOld = $oldItems[$item->getId()];
 
@@ -100,4 +99,3 @@ class AfterSave extends \Drip\Connect\Observer\Base
         return false;
     }
 }
-

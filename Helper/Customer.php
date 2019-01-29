@@ -28,7 +28,8 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Customer\Model\GroupFactory $customerGroupFactory,
-        \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateSubscriberFactory $connectApiCallsHelperCreateUpdateSubscriberFactory,
+        \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateSubscriberFactory
+        $connectApiCallsHelperCreateUpdateSubscriberFactory,
         \Drip\Connect\Model\ApiCalls\Helper\RecordAnEventFactory $connectApiCallsHelperRecordAnEventFactory,
         \Drip\Connect\Model\ApiCalls\Helper\Batches\SubscribersFactory $connectApiCallsHelperBatchesSubscribersFactory,
         \Drip\Connect\Helper\Quote $quoteHelper,
@@ -58,27 +59,24 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         } else {
             $newEmail = '';
         }
-        $data = array (
+        $data = [
             'email' => $customer->getEmail(),
             'new_email' => ($newEmail ? $newEmail : ''),
             'ip_address' => $this->remoteAddress->getRemoteAddress(),
             'user_agent' => $this->header->getHttpUserAgent(),
-            'custom_fields' => array(
+            'custom_fields' => [
                 'first_name' => $customer->getFirstname(),
                 'last_name' => $customer->getLastname(),
                 'birthday' => $customer->getDob(),
                 'gender' => $this->getGenderText($customer->getGender()),
                 'magento_source' => $this->connectHelper->getArea(),
                 'magento_account_created' => $customer->getCreatedAt(),
-                'magento_customer_group' => $this->customerGroupFactory->create()->load($customer->getGroupId())->getCustomerGroupCode(),
+                'magento_customer_group' =>
+                $this->customerGroupFactory->create()->load($customer->getGroupId())->getCustomerGroupCode(),
                 'magento_store' => (int) $customer->getStoreId(),
                 'accepts_marketing' => ($customer->getIsSubscribed() ? 'yes' : 'no'),
-            ),
-        );
-
-        /*if ($customer->getDefaultShippingAddress()) {
-            $data = array_merge_recursive($data, array('custom_fields'=>$this->getAddressFields($customer->getDefaultShippingAddress())));
-        }*/
+            ],
+        ];
 
         if ($updatableOnly) {
             unset($data['custom_fields']['magento_account_created']);
@@ -94,11 +92,11 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function prepareCustomerDataForGuestCheckout($order)
     {
-        return array (
+        return [
             'email' => $order->getCustomerEmail(),
             'ip_address' => $this->remoteAddress->getRemoteAddress(),
             'user_agent' => $this->header->getHttpUserAgent(),
-            'custom_fields' => array(
+            'custom_fields' => [
                 'first_name' => $order->getCustomerFirstname(),
                 'last_name' => $order->getCustomerLastname(),
                 'birthday' => $order->getCustomerDob(),
@@ -108,8 +106,8 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
                 'magento_customer_group' => 'Guest',
                 'magento_store' => $order->getStoreId(),
                 'accepts_marketing' => 'no',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -121,9 +119,9 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $customerData = $this->prepareCustomerDataForGuestCheckout($order);
 
-        $this->connectApiCallsHelperCreateUpdateSubscriberFactory->create([
-            'data' => $customerData
-        ])->call();
+        $this->connectApiCallsHelperCreateUpdateSubscriberFactory->create(
+            ['data' => $customerData]
+        )->call();
     }
 
     /**
@@ -133,13 +131,13 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getAddressFields($address)
     {
-        return array (
+        return [
             'city' => (string) $address->getCity(),
             'state' => (string) $address->getRegion(),
             'zip_code' => (string) $address->getPostcode(),
             'country' => (string) $address->getCountry(),
             'phone_number' => (string) $address->getTelephone(),
-        );
+        ];
     }
 
     /**
@@ -147,10 +145,11 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      *
      * @return string
      */
-    public function getGenderText($genderCode) {
+    public function getGenderText($genderCode)
+    {
         if ($genderCode == 1) {
             $gender = 'Male';
-        } else if ($genderCode == 2) {
+        } elseif ($genderCode == 2) {
             $gender = 'Female';
         } else {
             $gender = '';
