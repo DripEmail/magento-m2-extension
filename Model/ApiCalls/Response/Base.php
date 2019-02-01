@@ -1,9 +1,9 @@
 <?php
 
+namespace Drip\Connect\Model\ApiCalls\Response;
+
 use Drip\Connect\Model\Restapi\Response\ResponseAbstract;
 use Drip\Connect\Model\Restapi\Response\ResponseInterface;
-
-namespace Drip\Connect\Model\ApiCalls\Response;
 
 class Base extends ResponseAbstract implements ResponseInterface
 {
