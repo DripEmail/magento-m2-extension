@@ -64,6 +64,10 @@ class Base
                 $endpoint = '';
             }
             $url = $this->scopeConfig->getValue('dripconnect_general/api_settings/url', \Magento\Store\Model\ScopeInterface::SCOPE_STORE).$endpoint;
+            if (!empty($options['v3'])) {
+                $url = str_replace('/v2/', '/v3/', $url);
+            }
+
             $config = array(
                 'useragent' => self::USERAGENT,
                 'timeout' => $this->scopeConfig->getValue('dripconnect_general/api_settings/timeout', \Magento\Store\Model\ScopeInterface::SCOPE_STORE) / 1000,
@@ -80,7 +84,7 @@ class Base
 
             $this->_httpClient->setHeaders(array(
                 'Accept' => 'application/json',
-                'Content-Type' => 'application/vnd.api+json'
+                'Content-Type' => 'application/json'
             ));
 
             $this->_httpClient->setAuth(

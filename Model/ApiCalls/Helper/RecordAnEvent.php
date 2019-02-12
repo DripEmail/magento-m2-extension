@@ -12,8 +12,6 @@ class RecordAnEvent
     const EVENT_ORDER_COMPLETED = 'Order fulfilled';
     const EVENT_ORDER_REFUNDED = 'Order refunded';
     const EVENT_ORDER_CANCELED = 'Order canceled';
-    const EVENT_QUOTE_NEW = 'Checkout created';
-    const EVENT_QUOTE_CHANGED = 'Checkout updated';
     const EVENT_WISHLIST_ADD_PRODUCT = 'Added item to wishlist';
     const EVENT_WISHLIST_REMOVE_PRODUCT = 'Removed item from wishlist';
 

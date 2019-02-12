@@ -17,9 +17,9 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
     protected $quoteQuoteFactory;
 
     /**
-     * @var \Drip\Connect\Model\ApiCalls\Helper\RecordAnEventFactory
+     * @var \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateQuote
      */
-    protected $connectApiCallsHelperRecordAnEventFactory;
+    protected $connectApiCallsHelperCreateUpdateQuote;
 
     /**
      * @var \Drip\Connect\Helper\Data
@@ -50,7 +50,7 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Quote\Model\QuoteFactory $quoteQuoteFactory,
-        \Drip\Connect\Model\ApiCalls\Helper\RecordAnEventFactory $connectApiCallsHelperRecordAnEventFactory,
+        \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateQuoteFactory $connectApiCallsHelperCreateUpdateQuoteFactory,
         \Drip\Connect\Helper\Data $connectHelper,
         \Magento\Checkout\Helper\Cart $checkoutCartHelper,
         \Magento\Catalog\Model\ProductFactory $catalogProductFactory,
@@ -58,7 +58,7 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Framework\Registry $registry
     ) {
         $this->quoteQuoteFactory = $quoteQuoteFactory;
-        $this->connectApiCallsHelperRecordAnEventFactory = $connectApiCallsHelperRecordAnEventFactory;
+        $this->connectApiCallsHelperCreateUpdateQuoteFactory = $connectApiCallsHelperCreateUpdateQuoteFactory;
         $this->connectHelper = $connectHelper;
         $this->checkoutCartHelper = $checkoutCartHelper;
         $this->catalogProductFactory = $catalogProductFactory;
@@ -98,13 +98,9 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function proceedQuoteNew($quote)
     {
-        $this->connectApiCallsHelperRecordAnEventFactory->create([
-            'data' => [
-                'email' => $this->email,
-                'action' => \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_QUOTE_NEW,
-                'properties' => $this->prepareQuoteData($quote),
-                ]
-       ])->call();
+        $data = $this->prepareQuoteData($quote);
+        $data['action'] = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateQuote::QUOTE_NEW;
+        $this->connectApiCallsHelperCreateUpdateQuoteFactory->create(['data' => $data])->call();
     }
 
     /**
@@ -114,13 +110,9 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function proceedQuote($quote)
     {
-        $this->connectApiCallsHelperRecordAnEventFactory->create([
-            'data' => [
-                'email' => $this->email,
-                'action' => \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_QUOTE_CHANGED,
-                'properties' => $this->prepareQuoteData($quote),
-                ]
-       ])->call();
+        $data = $this->prepareQuoteData($quote);
+        $data['action'] = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateQuote::QUOTE_CHANGED;
+        $this->connectApiCallsHelperCreateUpdateQuoteFactory->create(['data' => $data])->call();
     }
 
     /**
@@ -131,14 +123,14 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
     public function prepareQuoteData($quote)
     {
         $data = array (
-            'amount' => $this->connectHelper->priceAsCents($quote->getGrandTotal()),
-            'tax' => $this->connectHelper->priceAsCents($quote->getShippingAddress()->getTaxAmount()),
-            'fees' => $this->connectHelper->priceAsCents($quote->getShippingAddress()->getShippingAmount()),
-            'discounts' => $this->connectHelper->priceAsCents((100*$quote->getSubtotal() - 100*$quote->getSubtotalWithDiscount())/100),
+            'provider' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateQuote::PROVIDER_NAME,
+            'email' => $this->email,
+            'cart_id' => $quote->getId(),
+            'grand_total' => $this->connectHelper->priceAsCents($quote->getGrandTotal())/100,
+            'total_discounts' => $this->connectHelper->priceAsCents($quote->getSubtotal() - $quote->getSubtotalWithDiscount())/100,
             'currency' => $quote->getQuoteCurrencyCode(),
-            'items_count' => floatval($quote->getItemsQty()),
-            'abandoned_cart_url' => $this->checkoutCartHelper->getCartUrl(),
-            'line_items' => $this->prepareQuoteItemsData($quote),
+            'cart_url' => $this->checkoutCartHelper->getCartUrl(),
+            'items' => $this->prepareQuoteItemsData($quote),
         );
         return $data;
     }
@@ -152,19 +144,20 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
         $data = array ();
         foreach ($quote->getAllItems() as $item) {
             $product = $this->catalogProductFactory->create()->load($item->getProduct()->getId());
+            $categories = explode(',', $this->connectHelper->getProductCategoryNames($product));
+            if (empty($categories)) {
+                $categories = [];
+            }
 
             $group = array(
                 'product_id' => $item->getProductId(),
                 'sku' => $item->getSku(),
                 'name' => $item->getName(),
-                'categories' => $this->connectHelper->getProductCategoryNames($product),
+                'categories' => $categories,
                 'quantity' => $item->getQty(),
-                'price' => $this->connectHelper->priceAsCents($item->getPrice()),
-                'amount' => $this->connectHelper->priceAsCents(($item->getQty() * $item->getPrice())),
-                'tax' => $this->connectHelper->priceAsCents($item->getTaxAmount()),
-                'taxable' => (preg_match('/[123456789]/', $item->getTaxAmount()) ? 'true' : 'false'),
-                'discount' => $this->connectHelper->priceAsCents($item->getDiscountAmount()),
-                'currency' => $quote->getQuoteCurrencyCode(),
+                'price' => $this->connectHelper->priceAsCents($item->getPrice())/100,
+                'discount' => $this->connectHelper->priceAsCents($item->getDiscountAmount())/100,
+                'total' => $item->getQty() * $this->connectHelper->priceAsCents($item->getPrice())/100,
                 'product_url' => $product->getProductUrl(),
                 'image_url' => $this->catalogProductMediaConfigFactory->create() ->getMediaUrl($product->getThumbnail()),
             );
