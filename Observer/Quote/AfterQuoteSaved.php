@@ -51,7 +51,7 @@ class AfterQuoteSaved implements \Magento\Framework\Event\ObserverInterface
             $this->connectQuoteHelper->proceedQuoteNew($quote);
         } else {
             $oldData = $this->registry->registry(\Drip\Connect\Helper\Quote::REGISTRY_KEY_OLD_DATA);
-            if($oldData['items_count'] == 0) {
+            if(empty($oldData['items']) || count($oldData['items']) == 0) {
                 //customer logged in previously with empty cart and then adds a product
                 $this->connectQuoteHelper->proceedQuoteNew($quote);
             } else {
