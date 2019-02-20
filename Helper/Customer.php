@@ -46,6 +46,37 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * prepare array of guest subscriber data
+     *
+     * @param \Magento\Newsletter\Model\Subscriber $subscriber
+     * @param bool $updatableOnly leave only those fields which are used in update action
+     *
+     * @return array
+     */
+    public function prepareGuestSubscriberData($subscriber, $updatableOnly = true)
+    {
+        if ($subscriber->getSubscriberStatus() == \Magento\Newsletter\Model\Subscriber::STATUS_SUBSCRIBED) {
+            $acceptsMarketing = 'yes';
+        } else {
+            $acceptsMarketing = 'no';
+        }
+
+        $data = array (
+            'email' => $subscriber->getSubscriberEmail(),
+            'ip_address' => $this->remoteAddress->getRemoteAddress(),
+            'custom_fields' => array(
+                'accepts_marketing' => $acceptsMarketing,
+            ),
+        );
+
+        if ($updatableOnly) {
+            unset($data['ip_address']);
+        }
+
+        return $data;
+    }
+
+    /**
      * prepare array of customer data we use to send in drip
      *
      * @param Mage_Customer_Model_Customer $customer
