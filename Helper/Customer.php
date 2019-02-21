@@ -237,6 +237,25 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * @param \Magento\Newsletter\Model\Subscriber $subscriber
+     */
+    public function proceedGuestSubscriberNew($subscriber)
+    {
+        $data = $this->prepareGuestSubscriberData($subscriber, false);
+
+        $this->connectApiCallsHelperCreateUpdateSubscriberFactory->create([
+            'data' => $data
+        ])->call();
+
+        $this->connectApiCallsHelperRecordAnEventFactory->create([
+            'data' => [
+                'email' => $subscriber->getSubscriberEmail(),
+                'action' => \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_NEW,
+            ]
+        ])->call();
+    }
+
+    /**
      * drip unsubscribe action
      *
      * @param \Magento\Customer\Model\Customer $customer

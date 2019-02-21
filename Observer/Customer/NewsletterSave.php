@@ -16,6 +16,9 @@ class NewsletterSave extends \Drip\Connect\Observer\Base
     /** @var \Magento\Store\Model\StoreManagerInterface */
     protected $storeManager;
 
+    /** @var \Magento\Framework\App\Request\Http */
+    protected $request;
+
     /**
      * constructor
      */
