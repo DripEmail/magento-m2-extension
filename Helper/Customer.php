@@ -16,6 +16,9 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     /** @var \Drip\Connect\Model\ApiCalls\Helper\RecordAnEventFactory */
     protected $connectApiCallsHelperRecordAnEventFactory;
 
+    /** @var \Drip\Connect\Model\ApiCalls\Helper\UnsubscribeSubscriberFactory */
+    protected $connectApiCallsHelperUnsubscribeSubscriberFactory;
+
     /** @var \Magento\Framework\HTTP\Header */
     protected $header;
 
@@ -31,6 +34,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateSubscriberFactory $connectApiCallsHelperCreateUpdateSubscriberFactory,
         \Drip\Connect\Model\ApiCalls\Helper\RecordAnEventFactory $connectApiCallsHelperRecordAnEventFactory,
         \Drip\Connect\Model\ApiCalls\Helper\Batches\SubscribersFactory $connectApiCallsHelperBatchesSubscribersFactory,
+        \Drip\Connect\Model\ApiCalls\Helper\UnsubscribeSubscriberFactory $connectApiCallsHelperUnsubscribeSubscriberFactory,
         \Drip\Connect\Helper\Quote $quoteHelper,
         \Drip\Connect\Helper\Data $connectHelper
     ) {
@@ -40,6 +44,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         $this->connectApiCallsHelperCreateUpdateSubscriberFactory = $connectApiCallsHelperCreateUpdateSubscriberFactory;
         $this->connectApiCallsHelperRecordAnEventFactory = $connectApiCallsHelperRecordAnEventFactory;
         $this->connectApiCallsHelperBatchesSubscribersFactory = $connectApiCallsHelperBatchesSubscribersFactory;
+        $this->connectApiCallsHelperUnsubscribeSubscriberFactory = $connectApiCallsHelperUnsubscribeSubscriberFactory;
         $this->header = $context->getHttpHeader();
         $this->quoteHelper = $quoteHelper;
         $this->connectHelper = $connectHelper;
@@ -230,6 +235,22 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
             ]
         ])->call();
     }
+
+    /**
+     * drip unsubscribe action
+     *
+     * @param \Magento\Customer\Model\Customer $customer
+     */
+    public function unsubscribeCustomer($customer)
+    {
+        $this->connectApiCallsHelperUnsubscribeSubscriberFactory->create([
+            'data' => [
+                'email' => $customer->getEmail(),
+            ]
+        ])->call();
+    }
+
+
 
     /**
      * drip actions for customer log in
