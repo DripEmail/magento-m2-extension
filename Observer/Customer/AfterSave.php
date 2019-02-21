@@ -42,6 +42,9 @@ class AfterSave extends \Drip\Connect\Observer\Base
         if ($this->registry->registry(self::REGISTRY_KEY_CUSTOMER_IS_NEW)) {
             $this->customerHelper->proceedAccountNew($customer);
         } else {
+            if ($this->registry->registry(self::REGISTRY_KEY_SUBSCRIBER_SUBSCRIBE_INTENT)) {
+                $customer->setIsSubscribed(1);
+            }
             if ($this->isCustomerChanged($customer)) {
                 $this->customerHelper->proceedAccount($customer);
             }

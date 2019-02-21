@@ -1,5 +1,11 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="controller_action_predispatch_newsletter_manage_save">
+        <observer
+            name="drip_connect_controller_action_predispatch_newsletter_manage_save"
+            instance="Drip\Connect\Observer\Customer\NewsletterSave"
+            disabled="false" />
+    </event>
     <event name="customer_save_before">
         <observer
             name="drip_connect_customer_save_before"
