@@ -58,10 +58,14 @@ class NewsletterSave extends \Drip\Connect\Observer\Base
 
         $subscriber = $this->subscriberFactory->create()->loadByEmail($customerEmail);
 
-        if ($subscriber->getSubscriberStatus() == \Magento\Newsletter\Model\Subscriber::STATUS_SUBSCRIBED) {
-            $acceptsMarketing = 'yes';
-        } else {
+        if (! $subscriber->getId()) {
             $acceptsMarketing = 'no';
+        } else {
+            if ($subscriber->getSubscriberStatus() == \Magento\Newsletter\Model\Subscriber::STATUS_SUBSCRIBED) {
+                $acceptsMarketing = 'yes';
+            } else {
+                $acceptsMarketing = 'no';
+            }
         }
 
         $this->registry->unregister(self::REGISTRY_KEY_SUBSCRIBER_PREV_STATE);
