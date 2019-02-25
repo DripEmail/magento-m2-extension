@@ -22,6 +22,12 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     /** @var \Drip\Connect\Helper\Data */
     protected $connectHelper;
 
+    /** @var \Magento\Customer\Model\CustomerFactory */
+    protected $customerCustomerFactory;
+
+    /** @var \Magento\Store\Model\StoreManagerInterface */
+    protected $storeManager;
+
     /**
      * constructor
      */
@@ -32,6 +38,8 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         \Drip\Connect\Model\ApiCalls\Helper\RecordAnEventFactory $connectApiCallsHelperRecordAnEventFactory,
         \Drip\Connect\Model\ApiCalls\Helper\Batches\SubscribersFactory $connectApiCallsHelperBatchesSubscribersFactory,
         \Drip\Connect\Helper\Quote $quoteHelper,
+        \Magento\Customer\Model\CustomerFactory $customerCustomerFactory,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Drip\Connect\Helper\Data $connectHelper
     ) {
         parent::__construct($context);
@@ -42,6 +50,8 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         $this->connectApiCallsHelperBatchesSubscribersFactory = $connectApiCallsHelperBatchesSubscribersFactory;
         $this->header = $context->getHttpHeader();
         $this->quoteHelper = $quoteHelper;
+        $this->customerCustomerFactory = $customerCustomerFactory;
+        $this->storeManager = $storeManager;
         $this->connectHelper = $connectHelper;
     }
 
@@ -157,6 +167,24 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         }
         return $gender;
     }
+
+    /**
+     * @param string $email
+     * @param int $websiteId
+     *
+     * @return bool
+     */
+    public function isCustomerExists($email, $websiteId = null)
+    {
+        if ($websiteId == null) {
+            $websiteId = $this->storeManager->getStore()->getWebsiteId();
+        }
+
+        $customer = $this->customerCustomerFactory->create()->setWebsiteId($websiteId)->loadByEmail($email);
+
+        return (bool) $customer->getId();
+    }
+
 
     /**
      * drip actions for customer account create
