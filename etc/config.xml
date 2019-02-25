@@ -8,6 +8,7 @@
             <api_settings>
                 <url>https://api.getdrip.com/v2/</url>
                 <timeout>15000</timeout>
+                <batch_delay>72</batch_delay>
                 <behavior>call_api</behavior>
             </api_settings>
             <actions>
