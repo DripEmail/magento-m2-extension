@@ -132,11 +132,11 @@ class Orders
 
             $response = $this->orderHelper->proceedOrderBatch($batch, $accountId);
 
-            if ($response->getResponseCode() != 202) { // drip success code for this action
-                $result['success'] = 0;
-                $result['message'] = $response->getErrorMessage();
+            if (empty($response) || $response->getResponseCode() != 202) { // drip success code for this action
+                $result = false;
                 break;
             }
+
         } while ($page <= $collection->getLastPageNumber());
 
         return $result;

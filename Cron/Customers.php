@@ -125,44 +125,21 @@ class Customers
                 ->load();
 
             $batchCustomer = array();
-            $batchEvents = array();
             foreach ($collection as $customer) {
                 $dataCustomer = $this->customerHelper->prepareCustomerData($customer);
                 $dataCustomer['tags'] = array('Synced from Magento');
                 $batchCustomer[] = $dataCustomer;
 
-                $dataEvents = array(
-                    'email' => $customer->getEmail(),
-                    'action' => ($customer->getDrip()
-                        ? \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_UPDATED
-                        : \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_NEW),
-                );
-                $batchEvents[] = $dataEvents;
-
                 if (!$customer->getDrip()) {
                     $customer->setNeedToUpdateAttribute(1);
-                    $customer->setDrip(1);
+                    $customer->setDrip(1);  // 'drip' flag on customer means it was sent to drip sometime
                 }
             }
 
             $response = $this->customerHelper->proceedAccountBatch($batchCustomer, $accountId);
 
-            if ($response->getResponseCode() != 201) { // drip success code for this action
+            if (empty($response) || $response->getResponseCode() != 201) { // drip success code for this action
                 $result = false;
-                $errors['message'][] = $response->getErrorMessage();
-                break;
-            }
-
-            $response = $this->connectApiCallsHelperBatchesEventsFactory->create([
-                'data' => [
-                    'batch' => $batchEvents,
-                    'account' => $accountId,
-                ]
-            ])->call();
-
-            if ($response->getResponseCode() != 201) { // drip success code for this action
-                $result = false;
-                $errors['message'][] = $response->getErrorMessage();
                 break;
             }
 
