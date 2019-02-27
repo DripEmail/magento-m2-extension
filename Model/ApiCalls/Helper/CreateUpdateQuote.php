@@ -33,7 +33,6 @@ class CreateUpdateQuote extends \Drip\Connect\Model\ApiCalls\Helper
                 'v3' => true,
             ]
         ]);
-file_put_contents('/var/www/dripm2_test/public_html/var/log/aaa.log', print_r($data, true)."\n", FILE_APPEND);
 
         $this->request = $this->connectApiCallsRequestBaseFactory->create()
             ->setMethod(\Zend_Http_Client::POST)
