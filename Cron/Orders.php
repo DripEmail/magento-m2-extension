@@ -110,6 +110,8 @@ class Orders
             $this->connectHelper->setOrdersSyncStateToStore($storeId, SyncState::PROGRESS);
         }
 
+        $delay = (int) $this->scopeConfig->getValue('dripconnect_general/api_settings/batch_delay');
+
         $result = true;
         $page = 1;
         do {
@@ -132,11 +134,13 @@ class Orders
 
             $response = $this->orderHelper->proceedOrderBatch($batch, $accountId);
 
-            if ($response->getResponseCode() != 202) { // drip success code for this action
-                $result['success'] = 0;
-                $result['message'] = $response->getErrorMessage();
+            if (empty($response) || $response->getResponseCode() != 202) { // drip success code for this action
+                $result = false;
                 break;
             }
+
+            sleep($delay);
+
         } while ($page <= $collection->getLastPageNumber());
 
         return $result;
