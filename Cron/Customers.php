@@ -9,6 +9,9 @@ class Customers
     /** @var \Magento\Customer\Model\ResourceModel\Customer\CollectionFactory */
     protected $customerResourceModelCustomerCollectionFactory;
 
+    /** @var \Magento\Newsletter\Model\ResourceModel\Subscriber\CollectionFactory */
+    protected $newsletterSubscriberCollectionFactory;
+
     /** @var \Drip\Connect\Helper\Customer */
     protected $customerHelper;
 
@@ -39,6 +42,7 @@ class Customers
      */
     public function __construct(
         \Magento\Customer\Model\ResourceModel\Customer\CollectionFactory $customerResourceModelCustomerCollectionFactory,
+        \Magento\Newsletter\Model\ResourceModel\Subscriber\CollectionFactory $newsletterSubscriberCollectionFactory,
         \Drip\Connect\Helper\Customer $customerHelper,
         \Drip\Connect\Model\ApiCalls\Helper\Batches\EventsFactory $connectApiCallsHelperBatchesEventsFactory,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
@@ -46,6 +50,7 @@ class Customers
         \Drip\Connect\Helper\Data $connectHelper
     ) {
         $this->customerResourceModelCustomerCollectionFactory = $customerResourceModelCustomerCollectionFactory;
+        $this->newsletterSubscriberCollectionFactory = $newsletterSubscriberCollectionFactory;
         $this->customerHelper = $customerHelper;
         $this->connectApiCallsHelperBatchesEventsFactory = $connectApiCallsHelperBatchesEventsFactory;
         $this->scopeConfig = $scopeConfig;
@@ -62,11 +67,21 @@ class Customers
         $this->getAccountsToSyncCustomers();
 
         foreach ($this->accounts as $accountId => $stores) {
-            if ($this->syncCustomersWithAccount($accountId)) {
+            try {
+                $result = $this->syncCustomersWithAccount($accountId);
+                if ($result) {
+                    $result = $this->syncGuestSubscribersWithAccount($accountId);
+                }
+            } catch (\Exception $e) {
+                $result = false;
+            }
+
+            if ($result) {
                 $status = \Drip\Connect\Model\Source\SyncState::READY;
             } else {
                 $status = \Drip\Connect\Model\Source\SyncState::READYERRORS;
             }
+
             foreach ($stores as $storeId) {
                 $this->connectHelper->setCustomersSyncStateToStore($storeId, $status);
             }
@@ -101,6 +116,78 @@ class Customers
                 $this->accounts[$account][] = $storeId;
             }
         }
+    }
+
+    /**
+     * @param int $accountId
+     *
+     * @return bool
+     */
+    protected function syncGuestSubscribersWithAccount($accountId)
+    {
+        $stores = $this->accounts[$accountId];
+        foreach ($stores as $storeId) {
+            $this->connectHelper->setCustomersSyncStateToStore($storeId, SyncState::PROGRESS);
+        }
+
+        $result = true;
+        $page = 1;
+        do {
+            $collection = $this->newsletterSubscriberCollectionFactory->create()
+                ->addFieldToSelect('*')
+                ->addFieldToFilter('customer_id', 0) // need only guests b/c customers have already been processed
+                ->setPageSize(\Drip\Connect\Model\ApiCalls\Helper::MAX_BATCH_SIZE)
+                ->setCurPage($page++)
+                ->load();
+
+            $batchCustomer = array();
+            $batchEvents = array();
+            foreach ($collection as $subscriber) {
+                $dataCustomer = $this->customerHelper->prepareGuestSubscriberData($subscriber);
+                $dataCustomer['tags'] = array('Synced from Magento');
+                $batchCustomer[] = $dataCustomer;
+
+                $dataEvents = array(
+                    'email' => $subscriber->getSubscriberEmail(),
+                    'action' => ($subscriber->getDrip()
+                        ? \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_UPDATED
+                        : \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_NEW),
+                );
+                $batchEvents[] = $dataEvents;
+
+                if (!$subscriber->getDrip()) {
+                    $subscriber->setNeedToUpdate(1);
+                    $subscriber->setDrip(1);
+                }
+            }
+
+            $response = $this->customerHelper->proceedAccountBatch($batchCustomer, $accountId);
+
+            if (empty($response) || $response->getResponseCode() != 201) { // drip success code for this action
+                $result = false;
+                break;
+            }
+
+            $response = $this->connectApiCallsHelperBatchesEventsFactory->create([
+                'data' => [
+                    'batch' => $batchEvents,
+                    'account' => $accountId,
+                ]
+            ])->call();
+
+            if (empty($response) || $response->getResponseCode() != 201) { // drip success code for this action
+                $result = false;
+                break;
+            }
+
+            foreach ($collection as $subscriber) {
+                if ($subscriber->getNeedToUpdate()) {
+                    $subscriber->save();
+                }
+            }
+        } while ($page <= $collection->getLastPageNumber());
+
+        return $result;
     }
 
     /**
