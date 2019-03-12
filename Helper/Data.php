@@ -103,10 +103,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      * @return string
      */
     public function priceAsCents($price) {
-        if (empty($price)) {
-            return;
-        }
-        return (int) (preg_replace("/[^0-9.]/", "", $price) * 100);
+        return ((int)preg_replace("/[^0-9.]/", "", $price) * 100);
     }
 
     /**
