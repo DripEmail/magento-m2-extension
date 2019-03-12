@@ -31,6 +31,9 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     /** @var \Magento\Store\Model\StoreManagerInterface */
     protected $storeManager;
 
+    /** @var \Magento\Newsletter\Model\SubscriberFactory */
+    protected $subscriberFactory;
+
     /**
      * constructor
      */
@@ -44,6 +47,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         \Drip\Connect\Helper\Quote $quoteHelper,
         \Magento\Customer\Model\CustomerFactory $customerCustomerFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Magento\Newsletter\Model\SubscriberFactory $subscriberFactory,
         \Drip\Connect\Helper\Data $connectHelper
     ) {
         parent::__construct($context);
@@ -57,6 +61,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         $this->quoteHelper = $quoteHelper;
         $this->customerCustomerFactory = $customerCustomerFactory;
         $this->storeManager = $storeManager;
+        $this->subscriberFactory = $subscriberFactory;
         $this->connectHelper = $connectHelper;
     }
 
@@ -206,6 +211,25 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**
      * @param string $email
+     * @param int $storeId
+     *
+     * @return bool
+     */
+    public function isSubscriberExists($email, $storeId = null)
+    {
+        if ($storeId == null) {
+            $storeId = $this->storeManager->getStore()->getId();
+        }
+
+        $collection = $this->subscriberFactory->create()->getCollection()
+            ->addFieldToFilter('subscriber_email', $email)
+            ->addFieldToFilter('store_id', $storeId);
+
+        return (bool) $collection->getSize();
+    }
+
+    /**
+     * @param string $email
      * @param int $websiteId
      *
      * @return bool
@@ -220,7 +244,6 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
 
         return (bool) $customer->getId();
     }
-
 
     /**
      * drip actions for customer account create
