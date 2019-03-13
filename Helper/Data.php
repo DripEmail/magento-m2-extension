@@ -100,11 +100,11 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      *
      * @param $price
      *
-     * @return string
+     * @return int
      */
     public function priceAsCents($price) {
         if (empty($price)) {
-            return '';
+            return 0;
         }
 
         return (int) (preg_replace("/[^0-9.]/", "", $price) * 100);
