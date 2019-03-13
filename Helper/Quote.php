@@ -127,7 +127,7 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
             'email' => $this->email,
             'cart_id' => $quote->getId(),
             'grand_total' => $this->connectHelper->priceAsCents($quote->getGrandTotal())/100,
-            'total_discounts' => $this->connectHelper->priceAsCents($quote->getSubtotal() - $quote->getSubtotalWithDiscount())/100,
+            'total_discounts' => $this->connectHelper->priceAsCents((float)$quote->getSubtotal() - (float)$quote->getSubtotalWithDiscount()) / 100,
             'currency' => $quote->getQuoteCurrencyCode(),
             'cart_url' => $this->checkoutCartHelper->getCartUrl(),
             'items' => $this->prepareQuoteItemsData($quote),
@@ -157,7 +157,7 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
                 'quantity' => $item->getQty(),
                 'price' => $this->connectHelper->priceAsCents($item->getPrice())/100,
                 'discount' => $this->connectHelper->priceAsCents($item->getDiscountAmount())/100,
-                'total' => $item->getQty() * $this->connectHelper->priceAsCents($item->getPrice())/100,
+                'total' => $this->connectHelper->priceAsCents((float)$item->getQty() * (float)$item->getPrice()) / 100,
                 'product_url' => $product->getProductUrl(),
                 'image_url' => $this->catalogProductMediaConfigFactory->create() ->getMediaUrl($product->getThumbnail()),
             );

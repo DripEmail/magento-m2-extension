@@ -264,7 +264,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
                 'name' => $item->getName(),
                 'quantity' => $item->getQtyOrdered(),
                 'price' => $this->connectHelper->priceAsCents($item->getPrice()),
-                'amount' => $this->connectHelper->priceAsCents($item->getQtyOrdered() * $item->getPrice()),
+                'amount' => $this->connectHelper->priceAsCents((float)$item->getQtyOrdered() * (float)$item->getPrice()),
                 'tax' => $this->connectHelper->priceAsCents($item->getTaxAmount()),
                 'taxable' => (preg_match('/[123456789]/', $item->getTaxAmount()) ? 'true' : 'false'),
                 'discount' => $this->connectHelper->priceAsCents($item->getDiscountAmount()),
