@@ -88,7 +88,7 @@ abstract class RestapiAbstract
             /** @var \Drip\Connect\Model\Restapi\Response\Abstract $response */
             $response = new $className($rawResponse);
             return $response;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->log(\Monolog\Logger::ERROR, $e->__toString());
             $className = $this->_responseModel;
             /** @var \Drip\Connect\Model\Restapi\Response\Abstract $response */
