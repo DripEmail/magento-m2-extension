@@ -18,15 +18,15 @@
                 </field>
             </group>
             <group id="api_settings" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" translate="label">
-                <label>Api Settings</label>
+                <label>API Settings</label>
                 <field id="account_id" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>DRIP Account ID</label>
+                    <label>Drip Account ID</label>
                 </field>
                 <field id="api_key" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>DRIP Api Key</label>
+                    <label>Drip API Key</label>
                 </field>
                 <field id="url" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>API endpoint URL</label>
+                    <label>API Endpoint URL</label>
                 </field>
                 <field id="timeout" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Timeout</label>
