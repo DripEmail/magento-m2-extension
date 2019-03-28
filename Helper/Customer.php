@@ -339,7 +339,25 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
-     * drip actions for customer account delete
+     * drip actions for subscriber save
+     *
+     * @param \Magento\Newsletter\Model\Subscriber $subscriber
+     */
+    public function proceedSubscriberSave($subscriber)
+    {
+        $data = $this->prepareGuestSubscriberData($subscriber);
+
+        $this->connectApiCallsHelperCreateUpdateSubscriberFactory->create([
+            'data' => $data
+        ])->call();
+
+        if ($subscriber->getSubscriberStatus() != \Magento\Newsletter\Model\Subscriber::STATUS_SUBSCRIBED) {
+            $this->unsubscribe($subscriber->getEmail());
+        }
+    }
+
+    /**
+     * drip actions for subscriber delete
      *
      * @param \Magento\Newsletter\Model\Subscriber $subscriber
      */
