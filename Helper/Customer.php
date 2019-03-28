@@ -311,11 +311,11 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      *
      * @param \Magento\Customer\Model\Customer $customer
      */
-    public function unsubscribeCustomer($customer)
+    public function unsubscribe($email)
     {
         $this->connectApiCallsHelperUnsubscribeSubscriberFactory->create([
             'data' => [
-                'email' => $customer->getEmail(),
+                'email' => $email,
             ]
         ])->call();
     }
@@ -336,6 +336,23 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
                 'action' => \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_LOGIN,
             ]
         ])->call();
+    }
+
+    /**
+     * drip actions for customer account delete
+     *
+     * @param \Magento\Newsletter\Model\Subscriber $subscriber
+     */
+    public function proceedSubscriberDelete($subscriber)
+    {
+        $data = $this->prepareGuestSubscriberData($subscriber);
+        $data['custom_fields']['accepts_marketing'] = 'no';
+
+        $this->connectApiCallsHelperCreateUpdateSubscriberFactory->create([
+            'data' => $data
+        ])->call();
+
+        $this->unsubscribe($subscriber->getEmail());
     }
 
     /**
