@@ -12,7 +12,7 @@ abstract class Helper
     const ENDPOINT_SUBSCRIBERS = 'subscribers';
     const ENDPOINT_SUBSCRIBERS_UNSUBSCRIBE_ALL = 'unsubscribe_all';
     const ENDPOINT_EVENTS = 'events';
-    const ENDPOINT_ORDERS = 'orders';
+    const ENDPOINT_ORDERS = 'shopper_activity/order';
     const ENDPOINT_REFUNDS = 'refunds';
     const ENDPOINT_CART = 'shopper_activity/cart';
     const ENDPOINT_BATCH_SUBSCRIBERS = 'subscribers/batches';
