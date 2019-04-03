@@ -32,20 +32,16 @@ class Orders
         $this->apiClient = $this->connectApiCallsBaseFactory->create([
             'options' => [
                 'endpoint' => $accountId.'/'.self::ENDPOINT_BATCH_ORDERS,
+                'v3' => true,
             ]
         ]);
 
         $ordersInfo = [
             'orders' => $data['batch']
         ];
-        $batchesInfo = [
-            'batches' => [
-                $ordersInfo
-            ]
-        ];
 
         $this->request = $this->connectApiCallsRequestBaseFactory->create()
             ->setMethod(\Zend_Http_Client::POST)
-            ->setRawData(json_encode($batchesInfo));
+            ->setRawData(json_encode($ordersInfo));
     }
 }

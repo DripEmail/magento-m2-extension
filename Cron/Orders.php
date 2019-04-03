@@ -128,7 +128,7 @@ class Orders
             $batch = array();
             foreach ($collection as $order) {
                 $data = $this->orderHelper->getOrderDataNew($order);
-                $data['occurred_at'] = $order->getCreatedAt();
+                $data['occurred_at'] = $this->connectHelper->formatDate($order->getCreatedAt());
                 $batch[] = $data;
             }
 
