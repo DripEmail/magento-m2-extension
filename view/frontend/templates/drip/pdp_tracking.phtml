@@ -19,7 +19,8 @@
         currency: "<?= $block->getStore()->getCurrentCurrencyCode() ?>",
         product_url: "<?= $product->getProductUrl() ?>",
         image_url: "<?= $block->getMediaUrl($product) ?>",
-        source: "magento"
+        source: "magento",
+        version: "Magento <?=$block->getMagentoVersion()?>, Drip Extension <?=$block->getDripVersion()?>"
     }]);
     </script>
     <!-- end Drip track -->
