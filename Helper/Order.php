@@ -56,12 +56,11 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
      *
      * @return array
      */
-    public function getOrderDataNew($order)
+    public function getCommonOrderData($order)
     {
         $data = array(
             'provider' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::PROVIDER_NAME,
             'email' => $order->getCustomerEmail(),
-            'action' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_NEW,
             'order_id' => $order->getIncrementId(),
             'order_public_id' => $order->getIncrementId(),
             'grand_total' => $this->connectHelper->priceAsCents($order->getGrandTotal()) / 100,
@@ -70,16 +69,25 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
             'total_shipping' => $this->connectHelper->priceAsCents($order->getShippingAmount()) / 100,
             'currency' => $order->getOrderCurrencyCode(),
             'occurred_at' => $this->connectHelper->formatDate($order->getUpdatedAt()),
-
             'items' => $this->getOrderItemsData($order),
-
             'billing_address' => $this->getOrderBillingData($order),
             'shipping_address' => $this->getOrderShippingData($order),
-
-            'properties' => array(
-                'magento_source' => $this->connectHelper->getArea(),
-            ),
         );
+
+        return $data;
+    }
+
+    /**
+     * prepare array of order data we use to send in drip for new orders
+     *
+     * @param \Magento\Sales\Model\Order $order
+     *
+     * @return array
+     */
+    public function getOrderDataNew($order)
+    {
+        $data = $this->getCommonOrderData($order);
+        $data['action'] = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_NEW;
 
         return $data;
     }
@@ -93,22 +101,8 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getOrderDataCompleted($order)
     {
-        $data = array(
-            'provider' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::PROVIDER_NAME,
-            'email' => $order->getCustomerEmail(),
-            'action' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_FULFILL,
-            'order_id' => $order->getIncrementId(),
-            'order_public_id' => $order->getIncrementId(),
-            'grand_total' => $this->connectHelper->priceAsCents($order->getGrandTotal()) / 100,
-            'occurred_at' => $this->connectHelper->formatDate($order->getUpdatedAt()),
-
-            'billing_address' => $this->getOrderBillingData($order),
-            'shipping_address' => $this->getOrderShippingData($order),
-
-            'properties' => array(
-                'fulfillment_state' => $this->getOrderFulfillment($order),
-            ),
-        );
+        $data = $this->getCommonOrderData($order);
+        $data['action'] = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_FULFILL;
 
         return $data;
     }
@@ -122,14 +116,8 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getOrderDataCanceled($order)
     {
-        $data = array(
-            'provider' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::PROVIDER_NAME,
-            'email' => $order->getCustomerEmail(),
-            'action' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_CANCEL,
-            'order_id' => $order->getIncrementId(),
-            'order_public_id' => $order->getIncrementId(),
-            'occurred_at' => $this->connectHelper->formatDate($order->getUpdatedAt()),
-        );
+        $data = $this->getCommonOrderData($order);
+        $data['action'] = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_CANCEL;
 
         return $data;
     }
@@ -170,20 +158,8 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getOrderDataOther($order)
     {
-        $data = array(
-            'provider' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::PROVIDER_NAME,
-            'email' => $order->getCustomerEmail(),
-            'action' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_CHANGE,
-            'order_id' => $order->getIncrementId(),
-            'order_public_id' => $order->getIncrementId(),
-            'grand_total' => $this->connectHelper->priceAsCents($order->getGrandTotal()) / 100,
-            'occurred_at' => $this->connectHelper->formatDate($order->getUpdatedAt()),
-            'properties' => array(
-                'order_state' => $order->getState(),
-                'order_status' => $order->getStatus(),
-                'magento_source' => $this->connectHelper->getArea(),
-            ),
-        );
+        $data = $this->getCommonOrderData($order);
+        $data['action'] = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_CHANGE;
 
         return $data;
     }
