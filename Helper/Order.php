@@ -59,18 +59,23 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     public function getOrderDataNew($order)
     {
         $data = array(
-            'email' => $order->getCustomerEmail(),
             'provider' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::PROVIDER_NAME,
-            'upstream_id' => $order->getIncrementId(),
-            'identifier' => $order->getIncrementId(),
-            'amount' => $this->connectHelper->priceAsCents($order->getGrandTotal()),
-            'tax' => $this->connectHelper->priceAsCents($order->getTaxAmount()),
-            'fees' => $this->connectHelper->priceAsCents($order->getShippingAmount()),
-            'discount' => $this->connectHelper->priceAsCents($order->getDiscountAmount()),
-            'currency_code' => $order->getOrderCurrencyCode(),
+            'email' => $order->getCustomerEmail(),
+            'action' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_NEW,
+            'order_id' => $order->getIncrementId(),
+            'order_public_id' => $order->getIncrementId(),
+            'grand_total' => $this->connectHelper->priceAsCents($order->getGrandTotal()) / 100,
+            'total_discounts' => $this->connectHelper->priceAsCents($order->getDiscountAmount()) / 100,
+            'total_taxes' => $this->connectHelper->priceAsCents($order->getTaxAmount()) / 100,
+            'total_shipping' => $this->connectHelper->priceAsCents($order->getShippingAmount()) / 100,
+            'currency' => $order->getOrderCurrencyCode(),
+            'occurred_at' => $this->connectHelper->formatDate($order->getUpdatedAt()),
+
             'items' => $this->getOrderItemsData($order),
+
             'billing_address' => $this->getOrderBillingData($order),
             'shipping_address' => $this->getOrderShippingData($order),
+
             'properties' => array(
                 'magento_source' => $this->connectHelper->getArea(),
             ),
@@ -89,13 +94,20 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     public function getOrderDataCompleted($order)
     {
         $data = array(
-            'email' => $order->getCustomerEmail(),
             'provider' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::PROVIDER_NAME,
-            'upstream_id' => $order->getIncrementId(),
-            'amount' => $this->connectHelper->priceAsCents($order->getGrandTotal()),
-            'fulfillment_state' => $this->getOrderFulfillment($order),
+            'email' => $order->getCustomerEmail(),
+            'action' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_FULFILL,
+            'order_id' => $order->getIncrementId(),
+            'order_public_id' => $order->getIncrementId(),
+            'grand_total' => $this->connectHelper->priceAsCents($order->getGrandTotal()) / 100,
+            'occurred_at' => $this->connectHelper->formatDate($order->getUpdatedAt()),
+
             'billing_address' => $this->getOrderBillingData($order),
             'shipping_address' => $this->getOrderShippingData($order),
+
+            'properties' => array(
+                'fulfillment_state' => $this->getOrderFulfillment($order),
+            ),
         );
 
         return $data;
@@ -111,10 +123,12 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     public function getOrderDataCanceled($order)
     {
         $data = array(
-            'email' => $order->getCustomerEmail(),
             'provider' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::PROVIDER_NAME,
-            'upstream_id' => $order->getIncrementId(),
-            'cancelled_at' => $order->getUpdatedAt(),
+            'email' => $order->getCustomerEmail(),
+            'action' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_CANCEL,
+            'order_id' => $order->getIncrementId(),
+            'order_public_id' => $order->getIncrementId(),
+            'occurred_at' => $this->connectHelper->formatDate($order->getUpdatedAt()),
         );
 
         return $data;
@@ -136,9 +150,12 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
 
         $data = array(
             'provider' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateRefund::PROVIDER_NAME,
-            'order_upstream_id' => $order->getIncrementId(),
-            'upstream_id' => $refundId,
-            'amount' => $refundValue,
+            'email' => $order->getCustomerEmail(),
+            'action' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_REFUND,
+            'order_id' => $order->getIncrementId(),
+            'order_public_id' => $order->getIncrementId(),
+            'occurred_at' => $this->connectHelper->formatDate($order->getUpdatedAt()),
+            'refund_amount' => $refundValue / 100,
         );
 
         return $data;
@@ -154,14 +171,16 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     public function getOrderDataOther($order)
     {
         $data = array(
-            'email' => $order->getCustomerEmail(),
             'provider' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::PROVIDER_NAME,
-            'upstream_id' => $order->getIncrementId(),
-            'identifier' => $order->getIncrementId(),
+            'email' => $order->getCustomerEmail(),
+            'action' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_CHANGE,
+            'order_id' => $order->getIncrementId(),
+            'order_public_id' => $order->getIncrementId(),
+            'grand_total' => $this->connectHelper->priceAsCents($order->getGrandTotal()) / 100,
+            'occurred_at' => $this->connectHelper->formatDate($order->getUpdatedAt()),
             'properties' => array(
                 'order_state' => $order->getState(),
                 'order_status' => $order->getStatus(),
-                'provider' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateRefund::PROVIDER_NAME,
                 'magento_source' => $this->connectHelper->getArea(),
             ),
         );
@@ -231,18 +250,17 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
         $address = $this->salesOrderAddressFactory->create()->load($addressId);
 
         return array(
-            'name' => $address->getName(),
-            'first_name' => $address->getFirstname(),
-            'last_name' => $address->getLastname(),
-            'company' => $address->getCompany(),
-            'address_1' => $address->getStreet1(),
-            'address_2' => $address->getStreet2(),
-            'city' => $address->getCity(),
-            'state' => $address->getRegion(),
-            'zip' => $address->getPostcode(),
-            'country' => $address->getCountryId(),
-            'phone' => $address->getTelephone(),
-            'email' => $address->getEmail(),
+            'first_name' => (string) $address->getFirstname(),
+            'last_name' => (string) $address->getLastname(),
+            'company' => (string) $address->getCompany(),
+            'address_1' => (string) $address->getStreet1(),
+            'address_2' => (string) $address->getStreet2(),
+            'city' => (string) $address->getCity(),
+            'state' => (string) $address->getRegion(),
+            'zip' => (string) $address->getPostcode(),
+            'country' => (string) $address->getCountryId(),
+            'phone' => (string) $address->getTelephone(),
+            'email' => (string) $address->getEmail(),
         );
     }
 
@@ -262,19 +280,21 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
                 'product_id' => $item->getProductId(),
                 'sku' => $item->getSku(),
                 'name' => $item->getName(),
-                'quantity' => $item->getQtyOrdered(),
-                'price' => $this->connectHelper->priceAsCents($item->getPrice()),
-                'amount' => $this->connectHelper->priceAsCents((float)$item->getQtyOrdered() * (float)$item->getPrice()),
-                'tax' => $this->connectHelper->priceAsCents($item->getTaxAmount()),
-                'taxable' => (preg_match('/[123456789]/', $item->getTaxAmount()) ? 'true' : 'false'),
-                'discount' => $this->connectHelper->priceAsCents($item->getDiscountAmount()),
+                'quantity' => (float) $item->getQtyOrdered(),
+                'price' => $this->connectHelper->priceAsCents($item->getPrice()) / 100,
+                'discounts' => $this->connectHelper->priceAsCents($item->getDiscountAmount()) / 100,
+                'total' => $this->connectHelper->priceAsCents((float)$item->getQtyOrdered() * (float)$item->getPrice()) / 100,
+                'taxes' => $this->connectHelper->priceAsCents($item->getTaxAmount()) / 100,
             );
             if (!is_null($item->getProduct())) {
                 $product = $this->catalogProductFactory->create()->load($item->getProductId());
-                $group['properties'] = array(
-                    'product_url' => $item->getProduct()->getProductUrl(),
-                    'product_image_url' => $this->catalogProductMediaConfigFactory->create()->getMediaUrl($product->getThumbnail()),
-                );
+                $categories = explode(',', $this->connectHelper->getProductCategoryNames($product));
+                if (empty($categories)) {
+                    $categories = [];
+                }
+                $group['categories'] = $categories;
+                $group['product_url'] = $item->getProduct()->getProductUrl();
+                $group['image_url'] = $this->catalogProductMediaConfigFactory->create()->getMediaUrl($product->getThumbnail());
             }
             if ($isRefund) {
                 $group['refund_amount'] = $this->connectHelper->priceAsCents($item->getAmountRefunded());
@@ -345,7 +365,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     public function proceedOrderRefund($order, $refundValue)
     {
         $orderData = $this->getOrderDataRefund($order, $refundValue);
-        $this->connectApiCallsHelperCreateUpdateRefundFactory->create([
+        $this->connectApiCallsHelperCreateUpdateOrderFactory->create([
             'data' => $orderData
         ])->call();
     }

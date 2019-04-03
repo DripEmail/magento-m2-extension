@@ -7,6 +7,13 @@ class CreateUpdateOrder
 {
     const PROVIDER_NAME = 'magento';
 
+    const ACTION_NEW = 'placed';
+    const ACTION_CHANGE = 'updated';
+    const ACTION_PAID = 'paid';
+    const ACTION_FULFILL = 'fulfilled';
+    const ACTION_REFUND = 'refunded';
+    const ACTION_CANCEL = 'canceled';
+
     /** @var \Drip\Connect\Model\ApiCalls\BaseFactory */
     protected $connectApiCallsBaseFactory;
 
@@ -28,18 +35,13 @@ class CreateUpdateOrder
 
         $this->apiClient = $this->connectApiCallsBaseFactory->create([
             'options' => [
-                'endpoint' => $this->scopeConfig->getValue('dripconnect_general/api_settings/account_id', \Magento\Store\Model\ScopeInterface::SCOPE_STORE).'/'.self::ENDPOINT_ORDERS
+                'endpoint' => $this->scopeConfig->getValue('dripconnect_general/api_settings/account_id', \Magento\Store\Model\ScopeInterface::SCOPE_STORE).'/'.self::ENDPOINT_ORDERS,
+                'v3' => true,
             ]
         ]);
 
-        $ordersInfo = [
-            'orders' => [
-                $data
-            ]
-        ];
-
         $this->request = $this->connectApiCallsRequestBaseFactory->create()
             ->setMethod(\Zend_Http_Client::POST)
-            ->setRawData(json_encode($ordersInfo));
+            ->setRawData(json_encode($data));
     }
 }

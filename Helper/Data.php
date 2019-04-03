@@ -254,4 +254,13 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         }
         return $state;
     }
+
+    /**
+     * @param string $date
+     */
+    public function formatDate($date)
+    {
+        $time = new \DateTime($date);
+        return $time->format("Y-m-d\TH:i:s\Z");
+    }
 }
