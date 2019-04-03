@@ -49,7 +49,7 @@ class AfterSave extends \Drip\Connect\Observer\Base
                 $this->customerHelper->proceedAccount($customer);
             }
             if ($this->isUnsubscribeCallRequired($customer)) {
-                $this->customerHelper->unsubscribeCustomer($customer);
+                $this->customerHelper->unsubscribe($customer->getEmail());
             }
         }
         $this->registry->unregister(self::REGISTRY_KEY_CUSTOMER_IS_NEW);
