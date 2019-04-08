@@ -131,6 +131,8 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
             'currency' => $quote->getQuoteCurrencyCode(),
             'cart_url' => $this->checkoutCartHelper->getCartUrl(),
             'items' => $this->prepareQuoteItemsData($quote),
+            'items_count' => floatval($quote->getItemsQty()),
+            'magento_source' => $this->connectHelper->getArea(),
         );
         return $data;
     }
