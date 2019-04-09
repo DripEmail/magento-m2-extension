@@ -12,4 +12,16 @@
             instance="Drip\Connect\Observer\Customer\Admin\SaveAfter"
             disabled="false" />
     </event>
+    <event name="newsletter_subscriber_delete_commit_after">
+        <observer
+            name="drip_connect_newsletter_subscriber_delete_commit_after"
+            instance="Drip\Connect\Observer\Customer\SubscriberAfterDelete"
+            disabled="false" />
+    </event>
+    <event name="newsletter_subscriber_save_commit_after">
+        <observer
+            name="drip_connect_newsletter_subscriber_save_commit_after"
+            instance="Drip\Connect\Observer\Customer\SubscriberAfterSave"
+            disabled="false" />
+    </event>
 </config>
