@@ -40,7 +40,13 @@ class CheckoutSendCart extends \Magento\Framework\App\Action\Action
             if (!$quote->getId()) {
                 $errorMessage = __("Can't find cart in session");
             } else {
-                $result = $this->connectQuoteHelper->proceedQuoteGuestCheckout($quote, $email);
+
+                if ($email != $this->checkoutSession->getGuestEmail()) {
+                    $result = $this->connectQuoteHelper->proceedQuoteGuestCheckout($quote, $email);
+                    $this->checkoutSession->setGuestEmail($email);
+                } else {
+                    $result = 1; // do not need to send call
+                }
 
                 if ($result) {
                     $error = 0;

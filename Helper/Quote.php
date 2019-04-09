@@ -42,6 +42,9 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
      */
     protected $catalogProductMediaConfigFactory;
 
+    /** @var \Magento\Checkout\Model\Session */
+    protected $checkoutSession;
+
     /**
      * @var \Magento\Framework\Registry
      */
@@ -56,6 +59,7 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Checkout\Helper\Cart $checkoutCartHelper,
         \Magento\Catalog\Model\ProductFactory $catalogProductFactory,
         \Magento\Catalog\Model\Product\Media\ConfigFactory $catalogProductMediaConfigFactory,
+        \Magento\Checkout\Model\Session $checkoutSession,
         \Magento\Framework\Registry $registry
     ) {
         $this->quoteQuoteFactory = $quoteQuoteFactory;
@@ -64,6 +68,7 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
         $this->checkoutCartHelper = $checkoutCartHelper;
         $this->catalogProductFactory = $catalogProductFactory;
         $this->catalogProductMediaConfigFactory = $catalogProductMediaConfigFactory;
+        $this->checkoutSession = $checkoutSession;
         $this->registry = $registry;
         parent::__construct(
             $context
@@ -216,6 +221,8 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
 
         if ($quote->getCustomerEmail()) {
             $this->email = $quote->getCustomerEmail();
+        } elseif ($email = $this->checkoutSession->getGuestEmail()) {
+            $this->email = $email;
         }
 
         return ! (bool) $this->email;
