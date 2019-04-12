@@ -27,6 +27,9 @@ class Customers
     /** @var \Magento\Store\Api\StoreRepositoryInterface */
     protected $storeRepository;
 
+    /** @var \Psr\Log\LoggerInterface */
+    protected $logger;
+
     /**
      * array [
      *     account_id => [
@@ -47,6 +50,7 @@ class Customers
         \Drip\Connect\Model\ApiCalls\Helper\Batches\EventsFactory $connectApiCallsHelperBatchesEventsFactory,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Store\Api\StoreRepositoryInterface $storeRepository,
+        \Psr\Log\LoggerInterface $logger,
         \Drip\Connect\Helper\Data $connectHelper
     ) {
         $this->customerResourceModelCustomerCollectionFactory = $customerResourceModelCustomerCollectionFactory;
@@ -55,6 +59,7 @@ class Customers
         $this->connectApiCallsHelperBatchesEventsFactory = $connectApiCallsHelperBatchesEventsFactory;
         $this->scopeConfig = $scopeConfig;
         $this->storeRepository = $storeRepository;
+        $this->logger = $logger;
         $this->connectHelper = $connectHelper;
     }
 
@@ -74,6 +79,7 @@ class Customers
                 }
             } catch (\Exception $e) {
                 $result = false;
+                $this->logger->critical($e);
             }
 
             if ($result) {
