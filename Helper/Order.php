@@ -72,6 +72,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
             'items' => $this->getOrderItemsData($order),
             'billing_address' => $this->getOrderBillingData($order),
             'shipping_address' => $this->getOrderShippingData($order),
+            'items_count' => floatval($order->getTotalQtyOrdered()),
             'magento_source' => $this->connectHelper->getArea(),
         );
 
