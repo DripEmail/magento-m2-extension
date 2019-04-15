@@ -27,18 +27,27 @@ class RecordAnEvent
     /** @var \Magento\Framework\App\Config\ScopeConfigInterface */
     protected $scopeConfig;
 
+    /** @var \Magento\Framework\App\ProductMetadataInterface */
+    protected $productMetadata;
+
+    /** @var \Magento\Framework\Module\ResourceInterface */
+    protected $moduleResource;
+
     public function __construct(
         \Drip\Connect\Model\ApiCalls\BaseFactory $connectApiCallsBaseFactory,
         \Drip\Connect\Model\ApiCalls\Request\BaseFactory $connectApiCallsRequestBaseFactory,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Drip\Connect\Helper\Data $connectHelper,
+        \Magento\Framework\Module\ResourceInterface $moduleResource,
+        \Magento\Framework\App\ProductMetadataInterface $productMetadata,
         $data = []
-    )
-    {
+    ) {
         $this->connectApiCallsBaseFactory = $connectApiCallsBaseFactory;
         $this->connectApiCallsRequestBaseFactory = $connectApiCallsRequestBaseFactory;
         $this->scopeConfig = $scopeConfig;
         $this->connectHelper = $connectHelper;
+        $this->moduleResource = $moduleResource;
+        $this->productMetadata = $productMetadata;
 
         $this->apiClient = $this->connectApiCallsBaseFactory->create([
             'options' => [
@@ -49,6 +58,8 @@ class RecordAnEvent
         if (!empty($data) && is_array($data)) {
             $data['properties']['source'] = 'magento';
             $data['properties']['magento_source'] = $this->connectHelper->getArea();
+            $data['properties']['version'] = 'Magento ' . $this->productMetadata->getVersion() . ', '
+                                           . 'Drip Extension ' . $this->moduleResource->getDbVersion('Drip_Connect');
         }
 
         $eventsInfo = [
