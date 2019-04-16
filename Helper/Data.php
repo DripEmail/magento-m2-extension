@@ -30,6 +30,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     /** @var \Magento\Config\Model\ResourceModel\Config */
     protected $resourceConfig;
 
+    /** @var \Magento\Framework\App\Response\RedirectInterface */
+    protected $redirect;
+
     /**
      * @var \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory
      */
@@ -46,6 +49,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Framework\App\State $state,
         \Magento\Config\Model\ResourceModel\Config $resourceConfig,
         \Magento\Eav\Api\AttributeRepositoryInterface $attributeRepository,
+        \Magento\Framework\App\Response\RedirectInterface $redirect,
         \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory $catalogResourceModelCategoryCollectionFactory
     ) {
         $this->request = $request;
@@ -56,6 +60,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $this->resourceConfig = $resourceConfig;
         $this->catalogResourceModelCategoryCollectionFactory = $catalogResourceModelCategoryCollectionFactory;
         $this->attributeRepository = $attributeRepository;
+        $this->redirect = $redirect;
         parent::__construct($context);
     }
 
@@ -161,8 +166,12 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     protected function isApiCall()
     {
         $regexp = '/^(?:\/index.php)?\/(?:rest|soap)\/(?:\w+)(?:\/|\?wsdl)/i';
-
         if (preg_match($regexp, $this->request->getRequestUri())) {
+            if (!empty($this->redirect->getRefererUrl()) &&
+                !empty($this->storeManager->getStore()->getBaseUrl()) &&
+                strpos($this->redirect->getRefererUrl(), $this->storeManager->getStore()->getBaseUrl()) === 0) {
+                return false;
+            }
             return true;
         }
 
