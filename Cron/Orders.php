@@ -21,6 +21,9 @@ class Orders
     /** @var \Magento\Store\Api\StoreRepositoryInterface */
     protected $storeRepository;
 
+    /** @var \Psr\Log\LoggerInterface */
+    protected $logger;
+
     /**
      * array [
      *     account_id => [
@@ -39,12 +42,14 @@ class Orders
         \Drip\Connect\Helper\Order $orderHelper,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Store\Api\StoreRepositoryInterface $storeRepository,
+        \Psr\Log\LoggerInterface $logger,
         \Drip\Connect\Helper\Data $connectHelper
     ) {
         $this->salesResourceModelOrderCollectionFactory = $salesResourceModelOrderCollectionFactory;
         $this->orderHelper = $orderHelper;
         $this->scopeConfig = $scopeConfig;
         $this->storeRepository = $storeRepository;
+        $this->logger = $logger;
         $this->connectHelper = $connectHelper;
     }
 
@@ -57,7 +62,14 @@ class Orders
         $this->getAccountsToSyncOrders();
 
         foreach ($this->accounts as $accountId => $stores) {
-            if ($this->syncOrdersWithAccount($accountId)) {
+            try {
+                $result = $this->syncOrdersWithAccount($accountId);
+            } catch (\Exception $e) {
+                $result = false;
+                $this->logger->critical($e);
+            }
+
+            if ($result) {
                 $status = \Drip\Connect\Model\Source\SyncState::READY;
             } else {
                 $status = \Drip\Connect\Model\Source\SyncState::READYERRORS;
