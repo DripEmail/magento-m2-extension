@@ -34,6 +34,9 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     /** @var \Magento\Newsletter\Model\SubscriberFactory */
     protected $subscriberFactory;
 
+    /** @var \Magento\Framework\Registry */
+    protected $registry;
+
     /**
      * constructor
      */
@@ -48,6 +51,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Customer\Model\CustomerFactory $customerCustomerFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Newsletter\Model\SubscriberFactory $subscriberFactory,
+        \Magento\Framework\Registry $registry,
         \Drip\Connect\Helper\Data $connectHelper
     ) {
         parent::__construct($context);
@@ -62,6 +66,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         $this->customerCustomerFactory = $customerCustomerFactory;
         $this->storeManager = $storeManager;
         $this->subscriberFactory = $subscriberFactory;
+        $this->registry = $registry;
         $this->connectHelper = $connectHelper;
     }
 
@@ -253,6 +258,9 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     public function proceedAccountNew($customer)
     {
         $customerData = $this->prepareCustomerData($customer, false);
+        $customerData['custom_fields']['accepts_marketing'] = $this->registry->registry(
+            \Drip\Connect\Observer\Customer\CreateAccount::REGISTRY_KEY_NEW_USER_SUBSCRIBE_STATE
+        );
 
         $this->connectApiCallsHelperCreateUpdateSubscriberFactory->create([
             'data' => $customerData
