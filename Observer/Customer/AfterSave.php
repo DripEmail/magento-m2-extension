@@ -41,6 +41,11 @@ class AfterSave extends \Drip\Connect\Observer\Base
 
         if ($this->registry->registry(self::REGISTRY_KEY_CUSTOMER_IS_NEW)) {
             $this->customerHelper->proceedAccountNew($customer);
+            if (! in_array($this->registry->registry(
+                \Drip\Connect\Observer\Customer\CreateAccount::REGISTRY_KEY_NEW_USER_SUBSCRIBE_STATE
+            ), ['yes', 1])) {
+                $this->customerHelper->unsubscribe($customer->getEmail());
+            }
         } else {
             if ($this->registry->registry(self::REGISTRY_KEY_SUBSCRIBER_SUBSCRIBE_INTENT)) {
                 $customer->setIsSubscribed(1);
@@ -49,7 +54,7 @@ class AfterSave extends \Drip\Connect\Observer\Base
                 $this->customerHelper->proceedAccount($customer);
             }
             if ($this->isUnsubscribeCallRequired($customer)) {
-                $this->customerHelper->unsubscribeCustomer($customer);
+                $this->customerHelper->unsubscribe($customer->getEmail());
             }
         }
         $this->registry->unregister(self::REGISTRY_KEY_CUSTOMER_IS_NEW);

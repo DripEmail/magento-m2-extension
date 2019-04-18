@@ -1,5 +1,11 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="controller_action_predispatch_customer_account_createpost">
+        <observer
+            name="drip_connect_controller_action_predispatch_customer_account_createpost"
+            instance="Drip\Connect\Observer\Customer\CreateAccount"
+            disabled="false" />
+    </event>
     <event name="controller_action_predispatch_newsletter_subscriber_new">
         <observer
             name="drip_connect_controller_action_predispatch_newsletter_subscriber_new"
