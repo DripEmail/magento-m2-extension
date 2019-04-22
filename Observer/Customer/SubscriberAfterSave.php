@@ -4,12 +4,6 @@ namespace Drip\Connect\Observer\Customer;
 
 class SubscriberAfterSave extends \Drip\Connect\Observer\Base
 {
-    const ALLOWED_ACTIONS = [
-        'customer_index_massSubscribe',
-        'customer_index_massUnsubscribe',
-        'newsletter_subscriber_massUnsubscribe'
-    ];
-
     /** @var \Drip\Connect\Helper\Customer */
     protected $connectCustomerHelper;
 
@@ -35,10 +29,15 @@ class SubscriberAfterSave extends \Drip\Connect\Observer\Base
         $route = $this->request->getRouteName();
         $controller = $this->request->getControllerName();
         $action = $this->request->getActionName();
+        $allowedActions = [
+            'customer_index_massSubscribe',
+            'customer_index_massUnsubscribe',
+            'newsletter_subscriber_massUnsubscribe'
+        ];
 
         // unlike to M1 treate all massactions here (from the both newsletters and customers grids)
         // but still avoid to run it on other customer changes
-        if (in_array($route . '_' . $controller . '_' . $action, self::ALLOWED_ACTIONS)) {
+        if (in_array($route . '_' . $controller . '_' . $action, $allowedActions)) {
             $subscriber = $observer->getSubscriber();
             $this->connectCustomerHelper->proceedSubscriberSave($subscriber);
         }
