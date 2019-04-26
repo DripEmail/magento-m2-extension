@@ -14,10 +14,15 @@ class UpgradeData implements \Magento\Framework\Setup\UpgradeDataInterface
     /** @var \Magento\Framework\Setup\ModuleContextInterface */
     protected $context;
 
+    /** @var \Magento\Config\Model\ResourceModel\Config */
+    protected $resourceConfig;
+
     public function __construct(
+         \Magento\Config\Model\ResourceModel\Config $resourceConfig,
         \Magento\Customer\Setup\CustomerSetupFactory $customerSetupFactory,
         \Magento\Eav\Model\Entity\Attribute\SetFactory $attributeSetFactory
     ) {
+        $this->resourceConfig = $resourceConfig;
         $this->customerSetupFactory = $customerSetupFactory;
         $this->attributeSetFactory = $attributeSetFactory;
     }
@@ -79,6 +84,10 @@ class UpgradeData implements \Magento\Framework\Setup\UpgradeDataInterface
             $this->updateCustomerDripAttribute();
         }
 
+        if (version_compare($context->getVersion(), '1.5.2') < 0) {
+            $this->changeTimeout();
+        }
+
         $setup->endSetup();
     }
 
@@ -101,5 +110,18 @@ class UpgradeData implements \Magento\Framework\Setup\UpgradeDataInterface
                 );
             $attribute->save();
         }
+    }
+
+    /**
+     * change api call timeout value
+     */
+    protected function changeTimeout()
+    {
+        $this->resourceConfig->saveConfig(
+            'dripconnect_general/api_settings/timeout',
+            30000,
+            'default',
+            0
+        );
     }
 }
