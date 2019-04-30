@@ -106,7 +106,9 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $data = $this->prepareQuoteData($quote);
         $data['action'] = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateQuote::QUOTE_NEW;
-        $this->connectApiCallsHelperCreateUpdateQuoteFactory->create(['data' => $data])->call();
+        if (count($data['items'])) {
+            $this->connectApiCallsHelperCreateUpdateQuoteFactory->create(['data' => $data])->call();
+        }
     }
 
     /**
@@ -153,7 +155,7 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
             'grand_total' => $this->connectHelper->priceAsCents($quote->getGrandTotal())/100,
             'total_discounts' => $this->connectHelper->priceAsCents((float)$quote->getSubtotal() - (float)$quote->getSubtotalWithDiscount()) / 100,
             'currency' => $quote->getQuoteCurrencyCode(),
-            'cart_url' => $this->checkoutCartHelper->getCartUrl(),
+            'cart_url' => $this->connectHelper->getAbandonedCartUrl($quote),
             'items' => $this->prepareQuoteItemsData($quote),
             'items_count' => floatval($quote->getItemsQty()),
             'magento_source' => $this->connectHelper->getArea(),
@@ -230,4 +232,15 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
         return ! (bool) $this->email;
     }
 
+    /**
+     * @param \Magento\Quote\Api\Data\CartInterface $oldQuote
+     */
+    public function recreateCartFromQuote($oldQuote)
+    {
+        $quote = $this->checkoutSession->getQuote();
+        $quote->removeAllItems();
+        $quote->merge($oldQuote);
+        $quote->collectTotals()->save();
+        $this->checkoutSession->setQuoteId($quote->getId());
+    }
 }
