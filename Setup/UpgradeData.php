@@ -8,6 +8,12 @@ use Magento\Customer\Model\Customer;
 
 class UpgradeData implements \Magento\Framework\Setup\UpgradeDataInterface
 {
+    /** @var \Magento\Framework\Setup\ModuleDataSetupInterface */
+    protected $setup;
+
+    /** @var \Magento\Framework\Setup\ModuleContextInterface */
+    protected $context;
+
     public function __construct(
         \Magento\Customer\Setup\CustomerSetupFactory $customerSetupFactory,
         \Magento\Eav\Model\Entity\Attribute\SetFactory $attributeSetFactory
@@ -19,6 +25,9 @@ class UpgradeData implements \Magento\Framework\Setup\UpgradeDataInterface
     public function upgrade(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
     {
         $setup->startSetup();
+
+        $this->setup = $setup;
+        $this->context = $context;
 
         if (version_compare($context->getVersion(), '0.2.0') < 0) {
             $customerSetup = $this->customerSetupFactory->create(['setup' => $setup]);
@@ -66,6 +75,31 @@ class UpgradeData implements \Magento\Framework\Setup\UpgradeDataInterface
             $attribute->save();
         }
 
+        if (version_compare($context->getVersion(), '1.5.1') < 0) {
+            $this->updateCustomerDripAttribute();
+        }
+
         $setup->endSetup();
+    }
+
+    /**
+     * hide Drip attribute on customer create form
+     */
+    protected function updateCustomerDripAttribute()
+    {
+        $attributeCode = 'drip';
+
+        $customerSetup = $this->customerSetupFactory->create(['setup' => $this->setup]);
+
+        $attribute = $customerSetup->getEavConfig()->getAttribute(Customer::ENTITY, $attributeCode);
+        if (! empty($attribute->getId())) {
+            $attribute
+                ->addData(
+                    [
+                        'used_in_forms' => ['adminhtml_customer'],
+                    ]
+                );
+            $attribute->save();
+        }
     }
 }
