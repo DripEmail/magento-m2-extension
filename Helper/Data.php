@@ -100,6 +100,18 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * get store id which is currently being edited
+     *
+     * @return int
+     */
+    public function getAdminEditStoreId()
+    {
+        $storeId = (int) $this->request->getParam('store');
+
+        return $storeId;
+    }
+
+    /**
      * consistently format prices as cents
      * strip all except numbers and periods
      *

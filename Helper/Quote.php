@@ -18,9 +18,9 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
     protected $quoteQuoteFactory;
 
     /**
-     * @var \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateQuote
+     * @var \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateQuoteFactory
      */
-    protected $connectApiCallsHelperCreateUpdateQuote;
+    protected $connectApiCallsHelperCreateUpdateQuoteFactory;
 
     /**
      * @var \Drip\Connect\Helper\Data
