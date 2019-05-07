@@ -8,6 +8,7 @@ namespace Drip\Connect\Model\ApiCalls;
  */
 abstract class Helper
 {
+    const PROVIDER_NAME = 'magento';
     const ENDPOINT_ACCOUNTS = 'accounts';
     const ENDPOINT_SUBSCRIBERS = 'subscribers';
     const ENDPOINT_SUBSCRIBERS_UNSUBSCRIBE_ALL = 'unsubscribe_all';

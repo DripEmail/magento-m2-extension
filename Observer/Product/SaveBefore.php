@@ -35,10 +35,6 @@ class SaveBefore extends \Drip\Connect\Observer\Base
 
         $product = $observer->getProduct();
 
-        if (! $product->getId()) {
-            return;
-        }
-
         $this->registry->unregister(\Drip\Connect\Helper\Product::REGISTRY_KEY_IS_NEW);
         $this->registry->register(\Drip\Connect\Helper\Product::REGISTRY_KEY_IS_NEW, (bool) $product->isObjectNew());
 

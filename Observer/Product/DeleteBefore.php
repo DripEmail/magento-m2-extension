@@ -2,10 +2,13 @@
 
 namespace Drip\Connect\Observer\Product;
 
-class DeleteAfter extends \Drip\Connect\Observer\Base
+class DeleteBefore extends \Drip\Connect\Observer\Base
 {
     /** @var \Drip\Connect\Helper\Product */
     protected $productHelper;
+
+    /** @var \Magento\Catalog\Model\ProductRepository */
+    protected $productRepository;
 
     /**
      * constructor
@@ -13,9 +16,11 @@ class DeleteAfter extends \Drip\Connect\Observer\Base
     public function __construct(
         \Drip\Connect\Helper\Product $productHelper,
         \Drip\Connect\Helper\Data $connectHelper,
+        \Magento\Catalog\Model\ProductRepository $productRepository,
         \Magento\Framework\Registry $registry
     ) {
         $this->productHelper = $productHelper;
+        $this->productRepository = $productRepository;
         parent::__construct($connectHelper, $registry);
     }
 
@@ -34,17 +39,10 @@ class DeleteAfter extends \Drip\Connect\Observer\Base
             return;
         }
 
-        $this->proceedProductDelete($product);
-    }
-
-    /**
-     * drip actions for product create
-     *
-     * @param \Magento\Catalog\Model\Product $product
-     */
-    protected function proceedProductDelete($product)
-    {
-        $this->productHelper->proceedProductDelete($product);
+        $orig = $this->productRepository->getById($product->getId(), false, $this->connectHelper->getAdminEditStoreId(), true);
+        $data = $this->productHelper->prepareData($orig);
+        $this->registry->unregister(\Drip\Connect\Helper\Product::REGISTRY_KEY_OLD_DATA);
+        $this->registry->register(\Drip\Connect\Helper\Product::REGISTRY_KEY_OLD_DATA, $data);
     }
 }
 
