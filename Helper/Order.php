@@ -145,6 +145,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
             'order_id' => $order->getIncrementId(),
             'order_public_id' => $order->getIncrementId(),
             'occurred_at' => $this->connectHelper->formatDate($order->getUpdatedAt()),
+            'grand_total' => $this->connectHelper->priceAsCents($order->getGrandTotal()) / 100,
             'refund_amount' => $refundValue / 100,
         );
 
