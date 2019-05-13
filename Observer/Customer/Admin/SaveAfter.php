@@ -35,12 +35,7 @@ class SaveAfter extends \Drip\Connect\Observer\Base
     }
 
     /**
-     * - check if customer new
-     * - store old customer data (which is used in drip) to compare with later
-     *
      * @param \Magento\Framework\Event\Observer $observer
-     *
-     * @return $this
      */
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
