@@ -20,6 +20,10 @@
                     <label>Is Module Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+                <field id="salt" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Security Hash</label>
+                    <comment>Put any random string here. If value is 'some default string' replace it with something else. This is used to create abandoned cart links.</comment>
+                </field>
             </group>
             <group id="api_settings" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" translate="label">
                 <label>API Settings</label>
@@ -72,7 +76,7 @@
                 <label>Log Settings</label>
                 <field id="is_enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Is Debug Mode Enabled</label>
-                    <comment>log all requests and responses to a drip.log file</comment>
+                    <comment>Logs all requests and responses to var/log/drip/apiclient/drip.log</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
                 <field id="log_rotation_period" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
