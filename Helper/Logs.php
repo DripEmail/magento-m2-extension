@@ -164,6 +164,9 @@ class Logs extends \Magento\Framework\App\Helper\AbstractHelper
         $this->inlineTranslation->resume();
     }
 
+    /**
+     * @return string
+     */
     protected function getServerName()
     {
         return $this->storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_WEB);
