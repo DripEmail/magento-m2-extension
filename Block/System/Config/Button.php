@@ -1,5 +1,5 @@
 <?php
-namespace Drip\Connect\Block\System\Config\Sync;
+namespace Drip\Connect\Block\System\Config;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
 

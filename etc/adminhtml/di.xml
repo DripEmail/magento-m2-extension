@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Drip\Connect\Helper\Logs">
+         <arguments>
+             <argument name="logFiles" xsi:type="array">
+                 <item name="0" xsi:type="string">drip/apiclient/drip.log</item>
+                 <item name="1" xsi:type="string">exception.log</item>
+                <item name="2" xsi:type="string">system.log</item>
+            </argument>
+         </arguments>
+    </type>
+</config>
+

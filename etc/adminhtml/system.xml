@@ -81,6 +81,19 @@
                         <field id="dripconnect_general/log_settings/is_enabled">1</field>
                     </depends>
                 </field>
+                <field id="support_email" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Email logs to support</label>
+                    <depends>
+                        <field id="dripconnect_general/log_settings/is_enabled">1</field>
+                    </depends>
+                </field>
+                <field id="support_email_send" translate="label" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <button_label>Send Logs</button_label>
+                    <frontend_model>Drip\Connect\Block\System\Config\Sendlogs</frontend_model>
+                    <depends>
+                        <field id="dripconnect_general/log_settings/is_enabled">1</field>
+                    </depends>
+                </field>
                 <field id="last_log_archive" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Last Log Archive Timestamp</label>
                     <depends>

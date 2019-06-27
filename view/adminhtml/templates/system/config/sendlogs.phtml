@@ -1,0 +1,60 @@
+<button onclick="return false;" type="button" id="<?=$block->getHtmlId()?>">
+    <?php echo $block->escapeHtml($block->getButtonLabel()) ?>
+</button>
+ &nbsp; <img id="<?=$block->getHtmlId()?>_loader" src="<?=$block->getViewFileUrl('Drip_Connect::images/loader.gif')?>" width="15" style="display:none;" />
+ &nbsp; <b id="send_logs_result"></b>
+
+<script>
+require(
+    ["jquery"],
+    function ($) {
+        var options = {
+            loader: $('#<?=$block->getHtmlId()?>_loader'),
+            elem: $('#<?=$block->getHtmlId()?>'),
+            res: $('#send_logs_result'),
+            message: '',
+        };
+
+        options.elem.click(function(){
+            sendLogs();
+        });
+
+        var _ajaxBeforeSend = function () {
+            options.elem.addClass('disabled');
+            options.loader.show();
+        };
+
+        var _ajaxComplete = function () {
+            options.loader.hide();
+            options.elem.removeClass('disabled');
+        };
+
+        var sendLogs = function () {
+            $.ajax({
+                url: '<?=$block->getAjaxUrl()?>',
+                type: 'post',
+                context: this,
+                data: {
+                    form_key: window.FORM_KEY,
+                    store_id: <?=$block->getStoreId()?>,
+                },
+                dataType: 'json',
+                beforeSend: _ajaxBeforeSend,
+                complete: _ajaxComplete,
+
+                success: function (response) {
+                    if (response.status == <?= \Drip\Connect\Helper\Logs::SENDLOGS_RESPONSE_OK ?>) {
+                        options.res.html(response.message);
+                    } else {
+                        options.res.html('<?=__('Error')?>: '+response.message);
+                    }
+                },
+
+                error: function () {
+                    options.res.html('<?=__('Data send error')?>');
+                }
+            });
+        }
+    }
+);
+</script>

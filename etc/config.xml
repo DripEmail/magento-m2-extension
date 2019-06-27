@@ -15,6 +15,9 @@
                 <sync_customers_data_state>0</sync_customers_data_state>
                 <sync_orders_data_state>0</sync_orders_data_state>
             </actions>
+            <log_settings>
+                <support_email>magento@drip.com</support_email>
+            </log_settings>
         </dripconnect_general>
     </default>
 </config>
