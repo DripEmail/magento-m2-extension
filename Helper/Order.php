@@ -59,21 +59,21 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     public function getCommonOrderData($order)
     {
         $data = array(
-            'provider' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::PROVIDER_NAME,
-            'email' => $order->getCustomerEmail(),
-            'order_id' => $order->getIncrementId(),
-            'order_public_id' => $order->getIncrementId(),
+            'provider' => (string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::PROVIDER_NAME,
+            'email' => (string) $order->getCustomerEmail(),
+            'order_id' => (string) $order->getIncrementId(),
+            'order_public_id' => (string) $order->getIncrementId(),
             'grand_total' => $this->connectHelper->priceAsCents($order->getGrandTotal()) / 100,
             'total_discounts' => $this->connectHelper->priceAsCents($order->getDiscountAmount()) / 100,
             'total_taxes' => $this->connectHelper->priceAsCents($order->getTaxAmount()) / 100,
             'total_shipping' => $this->connectHelper->priceAsCents($order->getShippingAmount()) / 100,
-            'currency' => $order->getOrderCurrencyCode(),
-            'occurred_at' => $this->connectHelper->formatDate($order->getUpdatedAt()),
+            'currency' => (string) $order->getOrderCurrencyCode(),
+            'occurred_at' => (string) $this->connectHelper->formatDate($order->getUpdatedAt()),
             'items' => $this->getOrderItemsData($order),
             'billing_address' => $this->getOrderBillingData($order),
             'shipping_address' => $this->getOrderShippingData($order),
             'items_count' => floatval($order->getTotalQtyOrdered()),
-            'magento_source' => $this->connectHelper->getArea(),
+            'magento_source' => (string) $this->connectHelper->getArea(),
         );
 
         return $data;
@@ -89,7 +89,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     public function getOrderDataNew($order)
     {
         $data = $this->getCommonOrderData($order);
-        $data['action'] = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_NEW;
+        $data['action'] = (string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_NEW;
 
         return $data;
     }
@@ -104,7 +104,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     public function getOrderDataCompleted($order)
     {
         $data = $this->getCommonOrderData($order);
-        $data['action'] = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_FULFILL;
+        $data['action'] = (string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_FULFILL;
 
         return $data;
     }
@@ -119,7 +119,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     public function getOrderDataCanceled($order)
     {
         $data = $this->getCommonOrderData($order);
-        $data['action'] = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_CANCEL;
+        $data['action'] = (string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_CANCEL;
 
         return $data;
     }
@@ -139,12 +139,12 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
         $refundId = $refund->getIncrementId();
 
         $data = array(
-            'provider' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateRefund::PROVIDER_NAME,
-            'email' => $order->getCustomerEmail(),
-            'action' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_REFUND,
-            'order_id' => $order->getIncrementId(),
-            'order_public_id' => $order->getIncrementId(),
-            'occurred_at' => $this->connectHelper->formatDate($order->getUpdatedAt()),
+            'provider' => (string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateRefund::PROVIDER_NAME,
+            'email' => (string) $order->getCustomerEmail(),
+            'action' => (string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_REFUND,
+            'order_id' => (string) $order->getIncrementId(),
+            'order_public_id' => (string) $order->getIncrementId(),
+            'occurred_at' => (string) $this->connectHelper->formatDate($order->getUpdatedAt()),
             'grand_total' => $this->connectHelper->priceAsCents($order->getGrandTotal()) / 100,
             'refund_amount' => $refundValue / 100,
         );
@@ -162,7 +162,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     public function getOrderDataOther($order)
     {
         $data = $this->getCommonOrderData($order);
-        $data['action'] = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_CHANGE;
+        $data['action'] = (string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_CHANGE;
 
         return $data;
     }
@@ -256,9 +256,9 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
         $data = array();
         foreach ($order->getAllItems() as $item) {
             $group = array(
-                'product_id' => $item->getProductId(),
-                'sku' => $item->getSku(),
-                'name' => $item->getName(),
+                'product_id' => (string) $item->getProductId(),
+                'sku' => (string) $item->getSku(),
+                'name' => (string) $item->getName(),
                 'quantity' => (float) $item->getQtyOrdered(),
                 'price' => $this->connectHelper->priceAsCents($item->getPrice()) / 100,
                 'discounts' => $this->connectHelper->priceAsCents($item->getDiscountAmount()) / 100,
@@ -272,8 +272,8 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
                     $categories = [];
                 }
                 $group['categories'] = $categories;
-                $group['product_url'] = $item->getProduct()->getProductUrl();
-                $group['image_url'] = $this->catalogProductMediaConfigFactory->create()->getMediaUrl($product->getThumbnail());
+                $group['product_url'] = (string) $item->getProduct()->getProductUrl();
+                $group['image_url'] = (string) $this->catalogProductMediaConfigFactory->create()->getMediaUrl($product->getThumbnail());
             }
             if ($isRefund) {
                 $group['refund_amount'] = $this->connectHelper->priceAsCents($item->getAmountRefunded());
