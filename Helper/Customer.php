@@ -87,8 +87,8 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         }
 
         $data = array (
-            'email' => $subscriber->getSubscriberEmail(),
-            'ip_address' => $this->remoteAddress->getRemoteAddress(),
+            'email' => (string) $subscriber->getSubscriberEmail(),
+            'ip_address' => (string) $this->remoteAddress->getRemoteAddress(),
             'custom_fields' => array(
                 'accepts_marketing' => $acceptsMarketing,
             ),
@@ -115,10 +115,10 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
             $newEmail = '';
         }
         $data = array (
-            'email' => $customer->getEmail(),
+            'email' => (string) $customer->getEmail(),
             'new_email' => ($newEmail ? $newEmail : ''),
-            'ip_address' => $this->remoteAddress->getRemoteAddress(),
-            'user_agent' => $this->header->getHttpUserAgent(),
+            'ip_address' => (string) $this->remoteAddress->getRemoteAddress(),
+            'user_agent' => (string) $this->header->getHttpUserAgent(),
             'custom_fields' => array(
                 'first_name' => $customer->getFirstname(),
                 'last_name' => $customer->getLastname(),
