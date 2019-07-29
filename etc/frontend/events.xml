@@ -67,4 +67,7 @@
     <event name="sales_quote_save_commit_after">
         <observer name="drip_connect_sales_quote_save_commit_after" instance="Drip\Connect\Observer\Quote\AfterQuoteSaved"/>
     </event>
+    <event name="sales_quote_merge_before">
+        <observer name="drip_connect_sales_quote_merge_before" instance="Drip\Connect\Observer\Quote\ClearCartOnLogin"/>
+    </event>
 </config>

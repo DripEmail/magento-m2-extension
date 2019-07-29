@@ -4,10 +4,11 @@
         <dripconnect_general>
             <module_settings>
                 <is_enabled>0</is_enabled>
+                <salt>some default string</salt>
             </module_settings>
             <api_settings>
                 <url>https://api.getdrip.com/v2/</url>
-                <timeout>15000</timeout>
+                <timeout>30000</timeout>
                 <batch_delay>72</batch_delay>
                 <behavior>call_api</behavior>
             </api_settings>

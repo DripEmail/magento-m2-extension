@@ -4,6 +4,11 @@ namespace Drip\Connect\Helper;
 
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
+    const QUOTE_KEY = 'q';
+    const STORE_KEY = 's';
+    const SECURE_KEY = 'k';
+    const SALT = 'somedefaultsaltstring';
+
     /**
      * @var \Magento\Framework\App\Request\Http
      */
@@ -97,6 +102,18 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         }
 
         return (bool)$this->scopeConfig->getValue('dripconnect_general/module_settings/is_enabled', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
+     * get store id which is currently being edited
+     *
+     * @return int
+     */
+    public function getAdminEditStoreId()
+    {
+        $storeId = (int) $this->request->getParam('store');
+
+        return $storeId;
     }
 
     /**
@@ -271,5 +288,45 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $time = new \DateTime($date);
         return $time->format("Y-m-d\TH:i:s\Z");
+    }
+
+    /**
+     * return salt value
+     *
+     * @return string
+     */
+    protected function getSalt()
+    {
+        $salt = $this->scopeConfig->getValue('dripconnect_general/module_settings/salt');
+        if (empty(trim($salt))) {
+            $salt = self::SALT;
+        }
+
+        return $salt;
+    }
+
+    /**
+     * @param int $quoteId
+     * @param int $storeId
+     *
+     * @return string
+     */
+    public function getSecureKey($quoteId, $storeId)
+    {
+        return (md5($this->getSalt().$quoteId.$storeId));
+    }
+
+    /**
+     * @param \Magento\Quote\Api\Data\CartInterface $quote
+     *
+     * @return string
+     */
+    public function getAbandonedCartUrl($quote)
+    {
+        return $this->_urlBuilder->getUrl('drip/cart/index', [
+            self::QUOTE_KEY => $quote->getId(),
+            self::STORE_KEY => $quote->getStoreId(),
+            self::SECURE_KEY => $this->getSecureKey($quote->getId(), $quote->getStoreId()),
+        ]);
     }
 }
