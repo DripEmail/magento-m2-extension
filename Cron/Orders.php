@@ -146,14 +146,16 @@ class Orders
                 $batch[] = $data;
             }
 
-            $response = $this->orderHelper->proceedOrderBatch($batch, $accountId);
+            if (count($batch)) {
+                $response = $this->orderHelper->proceedOrderBatch($batch, $accountId);
 
-            if (empty($response) || $response->getResponseCode() != 202) { // drip success code for this action
-                $result = false;
-                break;
+                if (empty($response) || $response->getResponseCode() != 202) { // drip success code for this action
+                    $result = false;
+                    break;
+                }
+
+                sleep($delay);
             }
-
-            sleep($delay);
 
         } while ($page <= $collection->getLastPageNumber());
 

@@ -169,29 +169,33 @@ class Customers
                 }
             }
 
-            $response = $this->customerHelper->proceedAccountBatch($batchCustomer, $accountId);
+            if (count($batchCustomer)) {
+                $response = $this->customerHelper->proceedAccountBatch($batchCustomer, $accountId);
 
-            if (empty($response) || $response->getResponseCode() != 201) { // drip success code for this action
-                $result = false;
-                break;
-            }
-
-            $response = $this->connectApiCallsHelperBatchesEventsFactory->create([
-                'data' => [
-                    'batch' => $batchEvents,
-                    'account' => $accountId,
-                ]
-            ])->call();
-
-            if (empty($response) || $response->getResponseCode() != 201) { // drip success code for this action
-                $result = false;
-                break;
-            }
-
-            foreach ($collection as $subscriber) {
-                if ($subscriber->getNeedToUpdate()) {
-                    $subscriber->save();
+                if (empty($response) || $response->getResponseCode() != 201) { // drip success code for this action
+                    $result = false;
+                    break;
                 }
+
+                $response = $this->connectApiCallsHelperBatchesEventsFactory->create([
+                    'data' => [
+                        'batch' => $batchEvents,
+                        'account' => $accountId,
+                    ]
+                ])->call();
+
+                if (empty($response) || $response->getResponseCode() != 201) { // drip success code for this action
+                    $result = false;
+                    break;
+                }
+
+                foreach ($collection as $subscriber) {
+                    if ($subscriber->getNeedToUpdate()) {
+                        $subscriber->save();
+                    }
+                }
+
+                sleep($delay);
             }
         } while ($page <= $collection->getLastPageNumber());
 
@@ -233,20 +237,22 @@ class Customers
                 }
             }
 
-            $response = $this->customerHelper->proceedAccountBatch($batchCustomer, $accountId);
+            if (count($batchCustomer)) {
+                $response = $this->customerHelper->proceedAccountBatch($batchCustomer, $accountId);
 
-            if (empty($response) || $response->getResponseCode() != 201) { // drip success code for this action
-                $result = false;
-                break;
-            }
-
-            foreach ($collection as $customer) {
-                if ($customer->getNeedToUpdateAttribute()) {
-                    $customer->getResource()->saveAttribute($customer, 'drip');
+                if (empty($response) || $response->getResponseCode() != 201) { // drip success code for this action
+                    $result = false;
+                    break;
                 }
-            }
 
-            sleep($delay);
+                foreach ($collection as $customer) {
+                    if ($customer->getNeedToUpdateAttribute()) {
+                        $customer->getResource()->saveAttribute($customer, 'drip');
+                    }
+                }
+
+                sleep($delay);
+            }
 
         } while ($page <= $collection->getLastPageNumber());
 
