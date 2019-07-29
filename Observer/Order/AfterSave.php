@@ -51,6 +51,10 @@ class AfterSave extends \Drip\Connect\Observer\Base
             return;
         }
 
+        if (! $this->orderHelper->isCanBeSent($order)) {
+            return;
+        }
+
         if ($this->isOrderNew($order)) {
             //if guest checkout, create subscriber record
             if ($order->getCustomerIsGuest()

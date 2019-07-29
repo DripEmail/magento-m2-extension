@@ -139,9 +139,18 @@ class Orders
 
             $batch = array();
             foreach ($collection as $order) {
-                $data = $this->orderHelper->getOrderDataNew($order);
-                $data['occurred_at'] = $this->connectHelper->formatDate($order->getCreatedAt());
-                $batch[] = $data;
+                if ($this->orderHelper->isCanBeSent($order)) {
+                    $data = $this->orderHelper->getOrderDataNew($order);
+                    $data['occurred_at'] = $this->connectHelper->formatDate($order->getCreatedAt());
+                    $batch[] = $data;
+                } else {
+                    $this->logger->warning(                                         
+                        sprintf(                                                    
+                            "order with id %s can't be sent to Drip",
+                            $order->getId()
+                        )                                                           
+                    );
+                }
             }
 
             if (count($batch)) {
