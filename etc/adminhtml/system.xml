@@ -44,10 +44,15 @@
                     <label>Batch Delay</label>
                     <comment>Delay in seconds between batch api calls (not recommended to have it lower than 72)</comment>
                 </field>
+                <field id="memory_limit" translate="label comment" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Memory Limit</label>
+                    <comment>Memory Limit in Mb</comment>
+                </field>
             </group>
             <group id="actions" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" translate="label">
                 <label>Drip Actions</label>
                 <field id="sync_customers_data" translate="label" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="1">
+                    <label>Sync Customers</label>
                     <button_label>Sync All Customers To Drip</button_label>
                     <comment>This will sync all your current Magento customer data into Drip. No automations will be triggered off of this import (e.g. welcome series, order confirmations).</comment>
                     <frontend_model>Drip\Connect\Block\System\Config\Sync\Customers</frontend_model>
@@ -59,7 +64,13 @@
                         <field id="dripconnect_general/log_settings/is_enabled">hideThisField</field>
                     </depends>
                 </field>
+                <field id="sync_customers_data_state_reset" translate="label" sortOrder="12" showInDefault="1" showInWebsite="0" showInStore="1">
+                    <button_label>Reset Status</button_label>
+                    <comment>This will reset the sync status to "Ready". Sync process takes a time so please use the reset only if it stuck.</comment>
+                    <frontend_model>Drip\Connect\Block\System\Config\Sync\Customers\Reset</frontend_model>
+                </field>
                 <field id="sync_orders_data" translate="label" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="1">
+                    <label>Sync Orders</label>
                     <button_label>Sync All Orders To Drip</button_label>
                     <comment>This will sync all your current Magento orders into Drip. No automations will be triggered off of this import (e.g. welcome series, order confirmations). We will not sync any orders that have been cancelled or refunded.</comment>
                     <frontend_model>Drip\Connect\Block\System\Config\Sync\Orders</frontend_model>
@@ -70,6 +81,12 @@
                     <depends>
                         <field id="dripconnect_general/log_settings/is_enabled">hideThisField</field>
                     </depends>
+                </field>
+                <field id="sync_orders_data_state_reset" translate="label" sortOrder="22" showInDefault="1" showInWebsite="0" showInStore="1">
+                    <label></label>
+                    <button_label>Reset Status</button_label>
+                    <comment>This will reset the sync status to "Ready". Sync process takes a time so please use the reset only if it stuck.</comment>
+                    <frontend_model>Drip\Connect\Block\System\Config\Sync\Orders\Reset</frontend_model>
                 </field>
             </group>
             <group id="log_settings" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1" translate="label">

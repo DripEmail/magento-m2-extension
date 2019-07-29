@@ -59,6 +59,8 @@ class Orders
      */
     public function syncOrders()
     {
+        ini_set('memory_limit', $this->scopeConfig->getValue('dripconnect_general/api_settings/memory_limit'));
+        
         $this->getAccountsToSyncOrders();
 
         foreach ($this->accounts as $accountId => $stores) {
