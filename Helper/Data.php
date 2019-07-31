@@ -313,7 +313,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getSecureKey($quoteId, $storeId)
     {
-        return (md5($this->getSalt().$quoteId.$storeId));
+        return (substr(hash('sha256', $this->getSalt().$quoteId.$storeId), 0, 32 ));
     }
 
     /**
