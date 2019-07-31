@@ -245,18 +245,18 @@ abstract class RestapiAbstract
         $period = $period * 60 * 60 * 24;
         $logDir = $this->directory->getPath('log') . DIRECTORY_SEPARATOR . 'drip';
         if (!is_dir($logDir)) {
-            @mkdir($logDir);
-            @chmod($logDir, 0777);
+            mkdir($logDir);
+            chmod($logDir, 0777);
         }
         $logDir .= DIRECTORY_SEPARATOR . $this->_apiName;
         if (!is_dir($logDir)) {
-            @mkdir($logDir);
-            @chmod($logDir, 0777);
+            mkdir($logDir);
+            chmod($logDir, 0777);
         }
         $archiveDir = $logDir . DIRECTORY_SEPARATOR . 'archive' . DIRECTORY_SEPARATOR;
         if (!is_dir($archiveDir)) {
-            @mkdir($archiveDir);
-            @chmod($archiveDir, 0777);
+            mkdir($archiveDir);
+            chmod($archiveDir, 0777);
         }
         $logFile = $logDir . DIRECTORY_SEPARATOR . $this->_logFilename;
         $lastCreation = $this->getLogSettings()->getLastLogArchive();
