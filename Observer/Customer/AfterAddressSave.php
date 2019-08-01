@@ -10,6 +10,9 @@ class AfterAddressSave extends \Drip\Connect\Observer\Base
     /** @var \Magento\Customer\Model\CustomerFactory */
     protected $customerCustomerFactory;
 
+    /** @var \Magento\Framework\Serialize\Serializer\Json */
+    protected $json;
+
     /**
      * constructor
      */
@@ -17,11 +20,13 @@ class AfterAddressSave extends \Drip\Connect\Observer\Base
         \Drip\Connect\Helper\Data $connectHelper,
         \Magento\Framework\Registry $registry,
         \Drip\Connect\Helper\Customer $customerHelper,
+        \Magento\Framework\Serialize\Serializer\Json $json,
         \Magento\Customer\Model\CustomerFactory $customerCustomerFactory
     ) {
         parent::__construct($connectHelper, $registry);
         $this->customerHelper = $customerHelper;
         $this->customerCustomerFactory = $customerCustomerFactory;
+        $this->json = $json;
     }
 
     /**
@@ -59,6 +64,6 @@ class AfterAddressSave extends \Drip\Connect\Observer\Base
         $oldData = $this->registry->registry(self::REGISTRY_KEY_CUSTOMER_OLD_ADDR);
         $newData = $this->customerHelper->getAddressFields($address);
 
-        return (serialize($oldData) != serialize($newData));
+        return ($this->json->serialize($oldData) != $this->json->serialize($newData));
     }
 }
