@@ -200,8 +200,6 @@ class Customers
                 sleep($delay);
             }
             
-            sleep($delay);
-            
         } while ($page <= $collection->getLastPageNumber());
 
         return $result;
