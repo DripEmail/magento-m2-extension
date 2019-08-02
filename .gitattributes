@@ -1,0 +1,5 @@
+/release.sh export-ignore
+.gitattributes export-ignore
+.gitignore export-ignore
+/bitbucket-pipelines.yml export-ignore
+/.bitbucket-pipelines export-ignore
