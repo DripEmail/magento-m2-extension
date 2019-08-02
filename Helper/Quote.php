@@ -50,6 +50,8 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
      */
     protected $registry;
 
+    /** @var \Magento\Framework\Serialize\Serializer\Json */
+    protected $json;
 
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
@@ -60,6 +62,7 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Catalog\Model\ProductFactory $catalogProductFactory,
         \Magento\Catalog\Model\Product\Media\ConfigFactory $catalogProductMediaConfigFactory,
         \Magento\Checkout\Model\Session $checkoutSession,
+        \Magento\Framework\Serialize\Serializer\Json $json,
         \Magento\Framework\Registry $registry
     ) {
         $this->quoteQuoteFactory = $quoteQuoteFactory;
@@ -70,6 +73,7 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
         $this->catalogProductMediaConfigFactory = $catalogProductMediaConfigFactory;
         $this->checkoutSession = $checkoutSession;
         $this->registry = $registry;
+        $this->json = $json;
         parent::__construct(
             $context
         );
@@ -209,7 +213,7 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
         $oldData = $this->registry->registry(self::REGISTRY_KEY_OLD_DATA);
         $newData = $this->prepareQuoteData($quote);
 
-        return (serialize($oldData) != serialize($newData));
+        return ($this->json->serialize($oldData) != $this->json->serialize($newData));
     }
 
     /**
