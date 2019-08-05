@@ -305,6 +305,22 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * check if given order can be sent to drip                                 
+     *                                                                          
+     * @param \Magento\Sales\Model\Order $order                                     
+     *                                                                          
+     * @return bool                                                             
+     */
+    public function isCanBeSent($order)
+    {
+        if (empty($order->getCustomerEmail())) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * @param \Magento\Sales\Model\Order $order
      */
     public function proceedOrderNew($order)
