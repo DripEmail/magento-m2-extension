@@ -16,6 +16,9 @@ class SaveAfter extends \Drip\Connect\Observer\Base
     /** @var \Magento\Framework\Session\SessionManagerInterface */
     protected $coreSession;
 
+    /** @var \Magento\Framework\Serialize\Serializer\Json */
+    protected $json;
+
     /**
      * constructor
      */
@@ -25,6 +28,7 @@ class SaveAfter extends \Drip\Connect\Observer\Base
         \Drip\Connect\Helper\Customer $customerHelper,
         \Magento\Newsletter\Model\SubscriberFactory $subscriberFactory,
         \Magento\Framework\Session\SessionManagerInterface $coreSession,
+        \Magento\Framework\Serialize\Serializer\Json $json,
         \Magento\Customer\Model\CustomerFactory $customerCustomerFactory
     ) {
         parent::__construct($connectHelper, $registry);
@@ -32,6 +36,7 @@ class SaveAfter extends \Drip\Connect\Observer\Base
         $this->subscriberFactory = $subscriberFactory;
         $this->coreSession = $coreSession;
         $this->customerCustomerFactory = $customerCustomerFactory;
+        $this->json = $json;
     }
 
     /**
@@ -93,6 +98,6 @@ class SaveAfter extends \Drip\Connect\Observer\Base
         $oldData = $this->registry->registry(self::REGISTRY_KEY_CUSTOMER_OLD_DATA);
         $newData = $this->customerHelper->prepareCustomerData($customer);
 
-        return (serialize($oldData) != serialize($newData));
+        return ($this->json->serialize($oldData) != $this->json->serialize($newData));
     }
 }

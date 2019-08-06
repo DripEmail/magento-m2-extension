@@ -10,6 +10,9 @@ class SaveAfter extends \Drip\Connect\Observer\Base
     /** @var \Drip\Connect\Helper\Product */
     protected $productHelper;
 
+    /** @var \Magento\Framework\Serialize\Serializer\Json */
+    protected $json;
+
     /**
      * constructor
      */
@@ -17,10 +20,12 @@ class SaveAfter extends \Drip\Connect\Observer\Base
         \Magento\Catalog\Model\ProductRepository $productRepository,
         \Drip\Connect\Helper\Product $productHelper,
         \Drip\Connect\Helper\Data $connectHelper,
+        \Magento\Framework\Serialize\Serializer\Json $json,
         \Magento\Framework\Registry $registry
     ) {
         $this->productRepository = $productRepository;
         $this->productHelper = $productHelper;
+        $this->json = $json;
         parent::__construct($connectHelper, $registry);
     }
 
@@ -66,7 +71,7 @@ class SaveAfter extends \Drip\Connect\Observer\Base
         $newData = $this->productHelper->prepareData($product);
         unset($newData['occurred_at']);
 
-        return (serialize($oldData) != serialize($newData));
+        return ($this->json->serialize($oldData) != $this->json->serialize($newData));
     }
 
     /**
