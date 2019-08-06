@@ -53,6 +53,9 @@ abstract class RestapiAbstract
     /** @var \Magento\Framework\App\Config\Storage\WriterInterface */
     protected $configWriter;
 
+    /** @var int */
+    protected $storeId = 0;
+
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
@@ -160,6 +163,14 @@ abstract class RestapiAbstract
     }
 
     /**
+     * @param int $storeId
+     */
+    protected function setStoreId(int $storeId)
+    {
+        $this->storeId = $storeId;
+    }
+
+    /**
      * Call the API
      *
      * @param $request
@@ -222,7 +233,7 @@ abstract class RestapiAbstract
     public function getLogSettings()
     {
         $settings = $this->dataObjectFactory->create();
-        $settings->setData($this->scopeConfig->getValue($this->_logSettingsXpath, \Magento\Store\Model\ScopeInterface::SCOPE_STORE));
+        $settings->setData($this->scopeConfig->getValue($this->_logSettingsXpath, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $this->storeId));
         return $settings;
     }
 
@@ -261,6 +272,7 @@ abstract class RestapiAbstract
         $logFile = $logDir . DIRECTORY_SEPARATOR . $this->_logFilename;
         $lastCreation = $this->getLogSettings()->getLastLogArchive();
         if (is_file($logFile) && $period && $lastCreation + $period < time()) {
+            //leave default scope for this setting b/c we use one log file for all stores
             $this->configWriter->save($this->_logSettingsXpath.'/last_log_archive', time());
             $archive = $this->archiveFactory->create();
             $archive->pack($logFile, $archiveDir.'archive'.date('Y-m-d-H-i-s').'.tgz');

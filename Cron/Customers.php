@@ -3,6 +3,7 @@ namespace Drip\Connect\Cron;
 
 use \Magento\Store\Model\ScopeInterface;
 use \Drip\Connect\Model\Source\SyncState;
+use \Magento\Store\Model\Store;
 
 class Customers
 {
@@ -24,21 +25,11 @@ class Customers
     /** @var \Drip\Connect\Model\ApiCalls\Helper\Batches\EventsFactory */
     protected $connectApiCallsHelperBatchesEventsFactory;
 
-    /** @var \Magento\Store\Api\StoreRepositoryInterface */
-    protected $storeRepository;
+    /** @var \Magento\Store\Model\StoreManagerInterface */
+    protected $storeManager;
 
     /** @var \Psr\Log\LoggerInterface */
     protected $logger;
-
-    /**
-     * array [
-     *     account_id => [
-     *         store_id,    // == 0 for default config
-     *         store_id,
-     *     ],
-     * ]
-     */
-    protected $accounts = [];
 
     /**
      * constructor
@@ -49,7 +40,7 @@ class Customers
         \Drip\Connect\Helper\Customer $customerHelper,
         \Drip\Connect\Model\ApiCalls\Helper\Batches\EventsFactory $connectApiCallsHelperBatchesEventsFactory,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Magento\Store\Api\StoreRepositoryInterface $storeRepository,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Psr\Log\LoggerInterface $logger,
         \Drip\Connect\Helper\Data $connectHelper
     ) {
@@ -58,24 +49,55 @@ class Customers
         $this->customerHelper = $customerHelper;
         $this->connectApiCallsHelperBatchesEventsFactory = $connectApiCallsHelperBatchesEventsFactory;
         $this->scopeConfig = $scopeConfig;
-        $this->storeRepository = $storeRepository;
+        $this->storeManager = $storeManager;
         $this->logger = $logger;
         $this->connectHelper = $connectHelper;
     }
 
     /**
-     * get all queued account ids
-     * run customers sync for them
+     * run customers sync for stores
+     *
+     * if default sync queued, get all store ids
+     * else walk through stores grab storeIds queued for sync
+     * loop through storeids and sync every of them with drip
+     * using their own configs and sending only storerelated data
      */
     public function syncCustomers()
     {
-        $this->getAccountsToSyncCustomers();
+        $storeIds = [];
+        $stores = $this->storeManager->getStores(false, false);
 
-        foreach ($this->accounts as $accountId => $stores) {
+        $trackDefaultStatus = false;
+
+        if ($this->connectHelper->getCustomersSyncStateForStore(Store::DEFAULT_STORE_ID) == SyncState::QUEUED) {
+            $trackDefaultStatus = true;
+            $storeIds = array_keys($stores);
+            $this->connectHelper->setCustomersSyncStateToStore(
+                Store::DEFAULT_STORE_ID,
+                SyncState::PROGRESS
+            );
+        } else {
+            foreach ($stores as $storeId => $store) {
+                if ($this->connectHelper->getCustomersSyncStateForStore($storeId) == SyncState::QUEUED) {
+                    $storeIds[] = $storeId;
+                }
+            }
+        }
+
+        $statuses = [];
+        foreach ($storeIds as $storeId) {
+            if (! $this->scopeConfig->getValue(
+                    'dripconnect_general/module_settings/is_enabled',
+                    ScopeInterface::SCOPE_STORE,
+                    $storeId)
+            ) {
+                continue;
+            }
+
             try {
-                $result = $this->syncCustomersWithAccount($accountId);
+                $result = $this->syncCustomersForStore($storeId);
                 if ($result) {
-                    $result = $this->syncGuestSubscribersWithAccount($accountId);
+                    $result = $this->syncGuestSubscribersForStore($storeId);
                 }
             } catch (\Exception $e) {
                 $result = false;
@@ -83,58 +105,37 @@ class Customers
             }
 
             if ($result) {
-                $status = \Drip\Connect\Model\Source\SyncState::READY;
+                $status = SyncState::READY;
             } else {
-                $status = \Drip\Connect\Model\Source\SyncState::READYERRORS;
+                $status = SyncState::READYERRORS;
             }
 
-            foreach ($stores as $storeId) {
-                $this->connectHelper->setCustomersSyncStateToStore($storeId, $status);
+            $statuses[$storeId] = $status;
+
+            $this->connectHelper->setCustomersSyncStateToStore($storeId, $status);
+        }
+
+        if ($trackDefaultStatus) {
+            if (count($statuses) === 0 || (
+                count(array_unique($statuses)) === 1 &&
+                $stauses[0] === SyncState::READY
+            )) {
+                $status = SyncState::READY;
+            } else {
+                $status = SyncState::READYERRORS;
             }
+            $this->connectHelper->setCustomersSyncStateToStore(Store::DEFAULT_STORE_ID, $status);
         }
     }
 
     /**
-     * populate accounts array
-     */
-    protected function getAccountsToSyncCustomers()
-    {
-        if ($this->connectHelper->getCustomersSyncStateForStore(0) == SyncState::QUEUED) {
-            $defAccount = $this->scopeConfig->getValue(
-                'dripconnect_general/api_settings/account_id',
-                ScopeInterface::SCOPE_STORE,
-                0);
-            $this->accounts[$defAccount][] = 0;
-        }
-
-        $stores = $this->storeRepository->getList();
-        foreach ($stores as $store) {
-            $storeId = $store->getStoreId();
-            if ($storeId == 0 ) {
-                continue;
-            }
-
-            if ($this->connectHelper->getCustomersSyncStateForStore($storeId) == SyncState::QUEUED) {
-                $account = $this->scopeConfig->getValue(
-                    'dripconnect_general/api_settings/account_id',
-                    ScopeInterface::SCOPE_STORE,
-                    $storeId);
-                $this->accounts[$account][] = $storeId;
-            }
-        }
-    }
-
-    /**
-     * @param int $accountId
+     * @param int $storeId
      *
      * @return bool
      */
-    protected function syncGuestSubscribersWithAccount($accountId)
+    protected function syncGuestSubscribersForStore($storeId)
     {
-        $stores = $this->accounts[$accountId];
-        foreach ($stores as $storeId) {
-            $this->connectHelper->setCustomersSyncStateToStore($storeId, SyncState::PROGRESS);
-        }
+        $this->connectHelper->setCustomersSyncStateToStore($storeId, SyncState::PROGRESS);
 
         $result = true;
         $page = 1;
@@ -142,6 +143,7 @@ class Customers
             $collection = $this->newsletterSubscriberCollectionFactory->create()
                 ->addFieldToSelect('*')
                 ->addFieldToFilter('customer_id', 0) // need only guests b/c customers have already been processed
+                ->addFieldToFilter('store_id', $storeId)
                 ->setPageSize(\Drip\Connect\Model\ApiCalls\Helper::MAX_BATCH_SIZE)
                 ->setCurPage($page++)
                 ->load();
@@ -168,7 +170,7 @@ class Customers
             }
 
             if (count($batchCustomer)) {
-                $response = $this->customerHelper->proceedAccountBatch($batchCustomer, $accountId);
+                $response = $this->customerHelper->proceedAccountBatch($batchCustomer, $storeId);
 
                 if (empty($response) || $response->getResponseCode() != 201) { // drip success code for this action
                     $result = false;
@@ -178,7 +180,7 @@ class Customers
                 $response = $this->connectApiCallsHelperBatchesEventsFactory->create([
                     'data' => [
                         'batch' => $batchEvents,
-                        'account' => $accountId,
+                        'store_id' => $storeId,
                     ]
                 ])->call();
 
@@ -201,24 +203,24 @@ class Customers
     }
 
     /**
-     * @param int $accountId
+     * @param int $storeId
      *
      * @return bool
      */
-    protected function syncCustomersWithAccount($accountId)
+    protected function syncCustomersForStore($storeId)
     {
-        $stores = $this->accounts[$accountId];
-        foreach ($stores as $storeId) {
-            $this->connectHelper->setCustomersSyncStateToStore($storeId, SyncState::PROGRESS);
-        }
+        $this->connectHelper->setCustomersSyncStateToStore($storeId, SyncState::PROGRESS);
 
         $delay = (int) $this->scopeConfig->getValue('dripconnect_general/api_settings/batch_delay');
+
+        $websiteId = $this->storeManager->getStore($storeId)->getWebsiteId();
 
         $result = true;
         $page = 1;
         do {
             $collection = $this->customerResourceModelCustomerCollectionFactory->create()
                 ->addAttributeToSelect('*')
+                ->addFieldToFilter('website_id', ['in' => [0, $websiteId]])
                 ->setPageSize(\Drip\Connect\Model\ApiCalls\Helper::MAX_BATCH_SIZE)
                 ->setCurPage($page++)
                 ->load();
@@ -236,7 +238,7 @@ class Customers
             }
 
             if (count($batchCustomer)) {
-                $response = $this->customerHelper->proceedAccountBatch($batchCustomer, $accountId);
+                $response = $this->customerHelper->proceedAccountBatch($batchCustomer, $storeId);
 
                 if (empty($response) || $response->getResponseCode() != 201) { // drip success code for this action
                     $result = false;
