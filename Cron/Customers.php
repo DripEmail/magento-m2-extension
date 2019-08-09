@@ -156,12 +156,17 @@ class Customers
             $batchCustomer = array();
             $batchEvents = array();
             foreach ($collection as $subscriber) {
+                $email = $subscriber->getSubscriberEmail();
+                if (empty($email)) {
+                    $this->logger->notice("Skipping newsletter subscriber event during sync due to blank email");
+                    continue;
+                }
                 $dataCustomer = $this->customerHelper->prepareGuestSubscriberData($subscriber);
                 $dataCustomer['tags'] = array('Synced from Magento');
                 $batchCustomer[] = $dataCustomer;
 
                 $dataEvents = array(
-                    'email' => $subscriber->getSubscriberEmail(),
+                    'email' => $email,
                     'action' => ($subscriber->getDrip()
                         ? \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_UPDATED
                         : \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_NEW),
