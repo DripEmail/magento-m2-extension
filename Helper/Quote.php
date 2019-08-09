@@ -188,7 +188,7 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
                 'categories' => $categories,
                 'quantity' => $item->getQty(),
                 'price' => $this->connectHelper->priceAsCents($item->getPrice())/100,
-                'discount' => $this->connectHelper->priceAsCents($item->getDiscountAmount())/100,
+                'discounts' => $this->connectHelper->priceAsCents($item->getDiscountAmount())/100,
                 'total' => $this->connectHelper->priceAsCents((float)$item->getQty() * (float)$item->getPrice()) / 100,
                 'product_url' => $product->getProductUrl(),
                 'image_url' => $this->catalogProductMediaConfigFactory->create() ->getMediaUrl($product->getThumbnail()),
