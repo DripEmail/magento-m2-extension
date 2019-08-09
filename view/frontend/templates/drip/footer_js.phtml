@@ -1,28 +1,32 @@
 <?php if ($block->isModuleActive()) : ?>
     <?php $accountId = $block->getConfig()->getValue('dripconnect_general/api_settings/account_id'); ?>
-    <!-- Drip -->
-    <script type="text/javascript">
-        var _dcq = _dcq || [];
-        var _dcs = _dcs || {};
-        _dcs.account = '<?=$accountId?>';
-
-        (function() {
-            var dc = document.createElement('script');
-            dc.type = 'text/javascript'; dc.async = true;
-            dc.src = '//tag.getdrip.com/<?=$accountId?>.js';
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(dc, s);
-        })();
-    </script>
-    <!-- end Drip -->
-
-    <?php if ($block->isCustomerLoggedIn()) : ?>
-        <!-- identify Drip customer -->
+    <?php if (!empty($accountId)) : ?>
+        <!-- Drip -->
         <script type="text/javascript">
-        _dcq.push(["identify", {
-            email: "<?= $block->getCustomerEmail()?>"
-        }]);
+            var _dcq = _dcq || [];
+            var _dcs = _dcs || {};
+            _dcs.account = '<?=$accountId?>';
+
+            (function() {
+                var dc = document.createElement('script');
+                dc.type = 'text/javascript'; dc.async = true;
+                dc.src = '//tag.getdrip.com/<?=$accountId?>.js';
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(dc, s);
+            })();
         </script>
-        <!-- end identify -->
+        <!-- end Drip -->
+
+        <?php if ($block->isCustomerLoggedIn()) : ?>
+            <!-- identify Drip customer -->
+            <script type="text/javascript">
+            _dcq.push(["identify", {
+                email: "<?= $block->getCustomerEmail()?>"
+            }]);
+            </script>
+            <!-- end identify -->
+        <?php endif; ?>
+    <?php else : ?>
+        <!-- Skipping Drip JS inclusion due to lack of account id -->
     <?php endif; ?>
 <?php endif; ?>
