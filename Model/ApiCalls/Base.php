@@ -54,10 +54,6 @@ class Base
             $this->_responseModel = \Drip\Connect\Model\ApiCalls\Response\Base::class;
         }
 
-        if (isset($options['log_filename'])) {
-            $this->_logFilename = $options['log_filename'];
-        }
-
         if (isset($options['behavior'])) {
             $this->_behavior = $options['behavior'];
         } else {

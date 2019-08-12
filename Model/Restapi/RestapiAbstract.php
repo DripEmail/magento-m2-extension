@@ -8,9 +8,6 @@ abstract class RestapiAbstract
     /** @var string */
     protected $_responseModel;
 
-    /** @var string */
-    protected $_logFilename = 'drip.log';
-
     /**  @var string */
     protected $_behavior;
 
@@ -25,12 +22,6 @@ abstract class RestapiAbstract
 
     /** @var \Zend_Http_Response */
     protected $_lastResponse;
-
-    /** @var string */
-    protected $_apiName = 'apiclient';
-
-    /** @var string */
-    protected $_logSettingsXpath = 'dripconnect_general/log_settings';
 
     /** @var \Drip\Connect\Logger\Logger */
     protected $logger;
@@ -89,7 +80,7 @@ abstract class RestapiAbstract
             $response = new $className($rawResponse);
             return $response;
         } catch (\Exception $e) {
-            $this->logger->log(\Monolog\Logger::ERROR, $e->__toString());
+            $this->logger->error($e->__toString());
             $className = $this->_responseModel;
             /** @var \Drip\Connect\Model\Restapi\Response\Abstract $response */
             $response = new $className(null, $e->getMessage());
