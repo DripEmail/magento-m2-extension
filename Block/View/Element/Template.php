@@ -82,6 +82,15 @@ class Template extends \Magento\Framework\View\Element\Template
         return $this->_storeManager->getStore();
     }
 
+    public function getAccountId()
+    {
+        return $this->getConfig()->getValue(
+            'dripconnect_general/api_settings/account_id',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $this->getStore()->getId()
+        );
+    }
+
     /**
      * @return bool
      */
