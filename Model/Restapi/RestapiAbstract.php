@@ -252,8 +252,7 @@ abstract class RestapiAbstract
 
     protected function getLogFile()
     {
-        $period = $this->getLogSettings()->getLogRotationPeriod();
-        $period = $period * 60 * 60 * 24;
+        $period = 1 * 60 * 60 * 24;
         $logDir = $this->directory->getPath('log') . DIRECTORY_SEPARATOR . 'drip';
         if (!is_dir($logDir)) {
             mkdir($logDir);

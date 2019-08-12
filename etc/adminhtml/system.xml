@@ -96,12 +96,6 @@
                     <comment>Logs all requests and responses to var/log/drip/apiclient/drip.log</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="log_rotation_period" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Log Rotation Period (days)</label>
-                    <depends>
-                        <field id="dripconnect_general/log_settings/is_enabled">1</field>
-                    </depends>
-                </field>
                 <field id="last_log_archive" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Last Log Archive Timestamp</label>
                     <depends>
