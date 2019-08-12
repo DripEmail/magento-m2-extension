@@ -29,13 +29,10 @@ abstract class RestapiAbstract
     /** @var string */
     protected $_apiName = 'apiclient';
 
-    /** @var \Zend_Log */
-    protected $_logger;
-
     /** @var string */
     protected $_logSettingsXpath = 'dripconnect_general/log_settings';
 
-    /** @var \Psr\Log\LoggerInterface */
+    /** @var \Drip\Connect\Logger\Logger */
     protected $logger;
 
     /** @var \Magento\Framework\App\Config\ScopeConfigInterface */
@@ -57,7 +54,7 @@ abstract class RestapiAbstract
     protected $storeId = 0;
 
     public function __construct(
-        \Psr\Log\LoggerInterface $logger,
+        \Drip\Connect\Logger\Logger $logger,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Framework\App\Config\Storage\WriterInterface $configWriter,
         \Magento\Framework\DataObjectFactory $dataObjectFactory,
@@ -235,19 +232,6 @@ abstract class RestapiAbstract
         $settings = $this->dataObjectFactory->create();
         $settings->setData($this->scopeConfig->getValue($this->_logSettingsXpath, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $this->storeId));
         return $settings;
-    }
-
-    public function getLogger()
-    {
-        if (!$this->_logger) {
-            if ($this->getLogSettings()->getIsEnabled()) {
-                $logger = new \Zend_Log();
-                $writer = new \Zend_Log_Writer_Stream($this->getLogFile());
-                $logger->addWriter($writer);
-                $this->_logger = $logger;
-            }
-        }
-        return $this->_logger;
     }
 
     protected function getLogFile()

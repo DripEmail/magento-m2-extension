@@ -28,7 +28,7 @@ class Customers
     /** @var \Magento\Store\Model\StoreManagerInterface */
     protected $storeManager;
 
-    /** @var \Psr\Log\LoggerInterface */
+    /** @var \Drip\Connect\Logger\Logger */
     protected $logger;
 
     /**
@@ -41,7 +41,7 @@ class Customers
         \Drip\Connect\Model\ApiCalls\Helper\Batches\EventsFactory $connectApiCallsHelperBatchesEventsFactory,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Psr\Log\LoggerInterface $logger,
+        \Drip\Connect\Logger\Logger $logger,
         \Drip\Connect\Helper\Data $connectHelper
     ) {
         $this->customerResourceModelCustomerCollectionFactory = $customerResourceModelCustomerCollectionFactory;

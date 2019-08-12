@@ -23,7 +23,7 @@ class Base
      * constructor
      */
     public function __construct(
-        \Psr\Log\LoggerInterface $logger,
+        \Drip\Connect\Logger\Logger $logger,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Framework\App\Config\Storage\WriterInterface $configWriter,
         \Magento\Framework\DataObjectFactory $dataObjectFactory,
@@ -88,7 +88,7 @@ class Base
             $this->_httpClient = $this->connectHttpClientFactory->create(['args' => [
                 'uri' => $url,
                 'config' => $config,
-                'logger' => $this->getLogger(),
+                'logger' => $this->logger,
             ]]);
 
             $this->_httpClient->setHeaders(array(

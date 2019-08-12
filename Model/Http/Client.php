@@ -3,20 +3,15 @@ namespace Drip\Connect\Model\Http;
 
 class Client extends \Zend_Http_Client
 {
-    /** @var \Zend_Log */
-    protected $_logger;
+    /** @var \Drip\Connect\Logger\Logger */
+    protected $logger;
 
     public function __construct(array $args = [])
     {
         $uri = isset($args['uri']) ? $args['uri'] : null;
         $config = isset($args['config']) ? $args['config'] : null;
-        $this->_logger = isset($args['logger']) ? $args['logger'] : null;
+        $this->logger = $args['logger'];
         parent::__construct($uri, $config);
-    }
-
-    public function getLogger()
-    {
-        return $this->_logger;
     }
 
     /**
@@ -33,11 +28,9 @@ class Client extends \Zend_Http_Client
         $response = parent::request($method);
         $responseData = $response->getBody();
 
-        if (!is_null($this->getLogger())) {
-            $this->getLogger()->info('Request Url: '.$requestUrl);
-            $this->getLogger()->info('Request Body: '.$requestBody);
-            $this->getLogger()->info('Response: '.$responseData);
-        }
+        $this->logger->info('Request Url: '.$requestUrl);
+        $this->logger->info('Request Body: '.$requestBody);
+        $this->logger->info('Response: '.$responseData);
 
         return $response;
     }
