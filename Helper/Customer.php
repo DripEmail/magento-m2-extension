@@ -400,16 +400,16 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      * batch customer update
      *
      * @param array $batch
-     * @param int $accountId
+     * @param int $storeId
      *
      * @return \Drip\Connect\Model\Restapi\Response\ResponseAbstract
      */
-    public function proceedAccountBatch($batch, $accountId = 0)
+    public function proceedAccountBatch($batch, $storeId)
     {
         return $this->connectApiCallsHelperBatchesSubscribersFactory->create([
             'data' => [
                 'batch' => $batch,
-                'account' => $accountId,
+                'store_id' => $storeId,
             ]
         ])->call();
     }
