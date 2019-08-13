@@ -118,9 +118,10 @@ class Customers
         }
 
         if ($trackDefaultStatus) {
-            if (count($statuses) === 0 || (
-                count(array_unique($statuses)) === 1 &&
-                $statuses[0] === SyncState::READY
+            $status_values = array_unique(array_values($statuses));
+            if (count($status_values) === 0 || (
+                count($status_values) === 1 &&
+                $status_values[0] === SyncState::READY
             )) {
                 $status = SyncState::READY;
             } else {
