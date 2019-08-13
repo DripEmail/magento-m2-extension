@@ -120,7 +120,7 @@ class Customers
         if ($trackDefaultStatus) {
             if (count($statuses) === 0 || (
                 count(array_unique($statuses)) === 1 &&
-                $stauses[0] === SyncState::READY
+                $statuses[0] === SyncState::READY
             )) {
                 $status = SyncState::READY;
             } else {
@@ -201,7 +201,7 @@ class Customers
 
                 sleep($delay);
             }
-            
+
         } while ($page <= $collection->getLastPageNumber());
 
         return $result;
