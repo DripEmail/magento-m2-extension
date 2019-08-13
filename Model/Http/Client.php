@@ -23,14 +23,16 @@ class Client extends \Zend_Http_Client
      */
     public function request($method = null)
     {
+        $requestId = uniqid();
+        $this->setHeaders('X-Drip-Connect-Request-Id', $requestId);
         $requestBody = $this->_prepareBody();
         $requestUrl = $this->getUri(true);
         $response = parent::request($method);
         $responseData = $response->getBody();
 
-        $this->logger->info('Request Url: '.$requestUrl);
-        $this->logger->info('Request Body: '.$requestBody);
-        $this->logger->info('Response: '.$responseData);
+        $this->logger->info('['.$requestId.'] Request Url: '.$requestUrl);
+        $this->logger->info('['.$requestId.'] Request Body: '.$requestBody);
+        $this->logger->info('['.$requestId.'] Response: '.$responseData);
 
         return $response;
     }
