@@ -127,8 +127,6 @@ class Orders
     {
         $this->connectHelper->setOrdersSyncStateToStore($storeId, SyncState::PROGRESS);
 
-        $delay = (int) $this->scopeConfig->getValue('dripconnect_general/api_settings/batch_delay');
-
         $result = true;
         $page = 1;
         do {
@@ -166,8 +164,6 @@ class Orders
                     $result = false;
                     break;
                 }
-
-                sleep($delay);
             }
 
         } while ($page <= $collection->getLastPageNumber());
