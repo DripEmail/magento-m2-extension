@@ -91,16 +91,10 @@
             </group>
             <group id="log_settings" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1" translate="label">
                 <label>Log Settings</label>
-                <field id="is_enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="is_enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Is Debug Mode Enabled</label>
                     <comment>Logs all requests and responses to var/log/drip.log</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                </field>
-                <field id="last_log_archive" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Last Log Archive Timestamp</label>
-                    <depends>
-                        <field id="dripconnect_general/log_settings/is_enabled">hideThisField</field>
-                    </depends>
                 </field>
             </group>
         </section>
