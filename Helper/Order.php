@@ -380,16 +380,16 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
      * batch orders update
      *
      * @param array $batch
-     * @param int $accountId
+     * @param int $storeId
      *
      * @return \Drip\Connect\Model\Restapi\Response\ResponseAbstract
      */
-    public function proceedOrderBatch($batch, $accountId = 0)
+    public function proceedOrderBatch($batch, $storeId)
     {
         return $this->connectApiCallsHelperBatchesOrdersFactory->create([
             'data' => [
                 'batch' => $batch,
-                'account' => $accountId,
+                'store_id' => $storeId,
             ]
         ])->call();
     }

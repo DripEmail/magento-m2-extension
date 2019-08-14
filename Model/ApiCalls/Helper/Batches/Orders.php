@@ -24,14 +24,13 @@ class Orders
         $this->connectApiCallsBaseFactory = $connectApiCallsBaseFactory;
         $this->connectApiCallsRequestBaseFactory = $connectApiCallsRequestBaseFactory;
 
-        if (empty($data['account'])) {
-            $accountId = $this->scopeConfig->getValue('dripconnect_general/api_settings/account_id', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-        } else {
-            $accountId = (int)$data['account'];
-        }
+        $storeId = (int) $data['store_id'];
+        $accountId = $this->scopeConfig->getValue('dripconnect_general/api_settings/account_id', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $storeId);
+
         $this->apiClient = $this->connectApiCallsBaseFactory->create([
             'options' => [
                 'endpoint' => $accountId.'/'.self::ENDPOINT_BATCH_ORDERS,
+                'store_id' => $storeId,
                 'v3' => true,
             ]
         ]);
