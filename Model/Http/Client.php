@@ -30,9 +30,9 @@ class Client extends \Zend_Http_Client
         $response = parent::request($method);
         $responseData = $response->getBody();
 
-        $this->logger->info('['.$requestId.'] Request Url: '.$requestUrl);
-        $this->logger->info('['.$requestId.'] Request Body: '.$requestBody);
-        $this->logger->info('['.$requestId.'] Response: '.$responseData);
+        $this->logger->info("[{$requestId}] Request Url: {$requestUrl}");
+        $this->logger->info("[{$requestId}] Request Body: {$requestBody}");
+        $this->logger->info("[{$requestId}] Response: {$responseData}");
 
         return $response;
     }
