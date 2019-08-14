@@ -61,7 +61,7 @@
                     <label>sync state</label>
                     <source_model>Drip\Connect\Model\Source\SyncState</source_model>
                     <depends>
-                        <field id="dripconnect_general/log_settings/is_enabled">hideThisField</field>
+                        <field id="dripconnect_general/module_settings/is_enabled">hideThisField</field>
                     </depends>
                 </field>
                 <field id="sync_customers_data_state_reset" translate="label" sortOrder="12" showInDefault="1" showInWebsite="0" showInStore="1">
@@ -79,7 +79,7 @@
                     <label>sync state</label>
                     <source_model>Drip\Connect\Model\Source\SyncState</source_model>
                     <depends>
-                        <field id="dripconnect_general/log_settings/is_enabled">hideThisField</field>
+                        <field id="dripconnect_general/module_settings/is_enabled">hideThisField</field>
                     </depends>
                 </field>
                 <field id="sync_orders_data_state_reset" translate="label" sortOrder="22" showInDefault="1" showInWebsite="0" showInStore="1">
