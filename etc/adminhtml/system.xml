@@ -89,7 +89,7 @@
                     <frontend_model>Drip\Connect\Block\System\Config\Sync\Orders\Reset</frontend_model>
                 </field>
             </group>
-            <group id="log_settings" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1" translate="label">
+            <group id="log_settings" type="text" sortOrder="100" showInDefault="1" showInWebsite="0" showInStore="0" translate="label">
                 <label>Log Settings</label>
                 <field id="is_enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Is Debug Mode Enabled</label>
