@@ -11,12 +11,10 @@ ENV APACHE_RUN_DIR   /var/run/apache2
 ENV APACHE_LOCK_DIR  /var/lock/apache2
 RUN mkdir -p $APACHE_RUN_DIR $APACHE_LOCK_DIR $APACHE_LOG_DIR
 
-RUN apt-get update
-RUN apt-get install -y software-properties-common
+RUN apt-get update && apt-get install -y software-properties-common git wget
 RUN add-apt-repository ppa:ondrej/php
 RUN add-apt-repository ppa:ondrej/apache2
-RUN apt-get update
-RUN apt-get install -y git wget apache2 unzip php7.2 php7.2-bcmath php7.2-gd php7.2-intl php7.2-pdo-mysql php7.2-soap php7.2-xsl php7.2-zip php7.2-curl php7.2-mbstring
+RUN apt-get update && apt-get install -y apache2 unzip php7.2 php7.2-bcmath php7.2-gd php7.2-intl php7.2-pdo-mysql php7.2-soap php7.2-xsl php7.2-zip php7.2-curl php7.2-mbstring
 RUN wget -O /usr/bin/composer https://getcomposer.org/download/1.9.0/composer.phar && chmod +x /usr/bin/composer
 RUN a2enmod rewrite
 
