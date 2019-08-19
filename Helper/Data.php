@@ -329,4 +329,14 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             self::SECURE_KEY => $this->getSecureKey($quote->getId(), $quote->getStoreId()),
         ]);
     }
+
+    /**
+     * @param string $email
+     *
+     * @return bool
+     */
+    public function isEmailValid($email)
+    {
+        return !empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL);
+    }
 }
