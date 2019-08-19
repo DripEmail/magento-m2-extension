@@ -27,7 +27,6 @@ MAGE_MODE=developer ./bin/magento setup:install \
 --admin-firstname=FIRST_NAME \
 --admin-lastname=LAST_NAME && \
 ./bin/magento setup:config:set --backend-frontname='admin_123' && \
-rm -rf generated/metadata/* generated/code/* && \
 ./bin/magento deploy:mode:set developer
 SCRIPT
 )
