@@ -157,7 +157,7 @@ class Customers
             $batchEvents = array();
             foreach ($collection as $subscriber) {
                 $email = $subscriber->getSubscriberEmail();
-                if (empty($email)) {
+                if (!$this->connectHelper->isEmailValid($email)) {
                     $this->logger->notice("Skipping newsletter subscriber event during sync due to blank email");
                     continue;
                 }

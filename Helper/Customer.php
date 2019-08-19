@@ -258,7 +258,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     public function proceedAccountNew($customer)
     {
         $email = $customer->getEmail();
-        if (empty($email)) {
+        if (!$this->connectHelper->isEmailValid($email)) {
             // TODO: Log this.
             // $this->logger->notice("Skipping customer account create due to blank email");
             return;
@@ -308,7 +308,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     public function proceedGuestSubscriberNew($subscriber)
     {
         $email = $subscriber->getSubscriberEmail();
-        if (empty($email)) {
+        if (!$this->connectHelper->isEmailValid($email)) {
             // TODO: Log this.
             // $this->logger->notice("Skipping guest subscriber create due to blank email");
             return;
