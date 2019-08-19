@@ -1,0 +1,25 @@
+version: '3.7'
+services:
+  web:
+    build: .
+    ports:
+    - 3005:80
+    links:
+    - db
+    environment:
+      - MYSQL_DATABASE=magento
+      - MYSQL_USER=magento
+      - MYSQL_PASSWORD=magento
+    volumes:
+      - type: bind
+        source: './..'
+        target: /var/www/html/magento/app/code/Drip/Connect
+  db:
+    image: mysql:5.7.27
+    environment:
+      - MYSQL_DATABASE=magento
+      - MYSQL_USER=magento
+      - MYSQL_PASSWORD=magento
+      - MYSQL_RANDOM_ROOT_PASSWORD=true
+    volumes:
+      - ./db_data:/var/lib/mysql
