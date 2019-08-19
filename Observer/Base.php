@@ -9,7 +9,7 @@ abstract class Base implements \Magento\Framework\Event\ObserverInterface
     const REGISTRY_KEY_CUSTOMER_OLD_ADDR = 'oldcustomeraddress';
     const REGISTRY_KEY_ORDER_OLD_DATA = 'oldorderdata';
     const REGISTRY_KEY_ORDER_ITEMS_OLD_DATA = 'oldorderitemsdata';
-    const REGISTRY_KEY_SUBSCRIBER_PREV_STATE = 'oldsubscribtionstatus';
+    const REGISTRY_KEY_SUBSCRIBER_PREV_STATE = 'oldsubscriptionstatus';
     const REGISTRY_KEY_SUBSCRIBER_SUBSCRIBE_INTENT = 'userwantstosubscribe';
     const REGISTRY_KEY_NEW_GUEST_SUBSCRIBER = 'newguestsubscriber';
 

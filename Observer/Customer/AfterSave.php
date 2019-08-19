@@ -67,7 +67,7 @@ class AfterSave extends \Drip\Connect\Observer\Base
     }
 
     /**
-     * check if we need to send additional api call to cancel all subscribtions
+     * check if we need to send additional api call to cancel all subscriptions
      * (true if status change from yes to no)
      *
      * @param \Magento\Customer\Model\Customer $customer

@@ -40,7 +40,7 @@ class NewsletterSave extends \Drip\Connect\Observer\Base
     }
 
     /**
-     * save old customer subscribtion state
+     * save old customer subscription state
      *
      * @param \Magento\Framework\Event\Observer $observer
      *
