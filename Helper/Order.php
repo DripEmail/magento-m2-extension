@@ -305,19 +305,15 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
-     * check if given order can be sent to drip                                 
-     *                                                                          
-     * @param \Magento\Sales\Model\Order $order                                     
-     *                                                                          
-     * @return bool                                                             
+     * check if given order can be sent to drip
+     *
+     * @param \Magento\Sales\Model\Order $order
+     *
+     * @return bool
      */
     public function isCanBeSent($order)
     {
-        if (empty($order->getCustomerEmail())) {
-            return false;
-        }
-
-        return true;
+        return $this->connectHelper->isEmailValid($order->getCustomerEmail());
     }
 
     /**
