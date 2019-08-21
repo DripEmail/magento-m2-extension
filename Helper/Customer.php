@@ -4,6 +4,9 @@ namespace Drip\Connect\Helper;
 
 class Customer extends \Magento\Framework\App\Helper\AbstractHelper
 {
+    /** @var \Drip\Connect\Logger\Logger */
+    protected $logger;
+
     /** @var \Magento\Customer\Model\GroupFactory */
     protected $customerGroupFactory;
 
@@ -41,6 +44,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      * constructor
      */
     public function __construct(
+        \Drip\Connect\Logger\Logger $logger,
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Customer\Model\GroupFactory $customerGroupFactory,
         \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateSubscriberFactory $connectApiCallsHelperCreateUpdateSubscriberFactory,
@@ -55,6 +59,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         \Drip\Connect\Helper\Data $connectHelper
     ) {
         parent::__construct($context);
+        $this->logger = $logger;
         $this->customerGroupFactory = $customerGroupFactory;
         $this->remoteAddress = $context->getRemoteAddress();
         $this->connectApiCallsHelperCreateUpdateSubscriberFactory = $connectApiCallsHelperCreateUpdateSubscriberFactory;
@@ -259,8 +264,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $email = $customer->getEmail();
         if (!$this->connectHelper->isEmailValid($email)) {
-            // TODO: Log this.
-            // $this->logger->notice("Skipping customer account create due to blank email");
+            $this->logger->notice("Skipping customer account create due to invalid email ({$email})");
             return;
         }
 
@@ -309,8 +313,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $email = $subscriber->getSubscriberEmail();
         if (!$this->connectHelper->isEmailValid($email)) {
-            // TODO: Log this.
-            // $this->logger->notice("Skipping guest subscriber create due to blank email");
+            $this->logger->notice("Skipping guest subscriber create due to invalid email ({$email})");
             return;
         }
         $data = $this->prepareGuestSubscriberData($subscriber, false);
