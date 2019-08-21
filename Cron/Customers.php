@@ -238,6 +238,11 @@ class Customers
 
             $batchCustomer = array();
             foreach ($collection as $customer) {
+                $email = $customer->getData('email');
+                if (!$this->connectHelper->isEmailValid($email)) {
+                    $this->logger->notice("Skipping subscriber during sync due to unusable email ({$email})");
+                    continue;
+                }
                 $dataCustomer = $this->customerHelper->prepareCustomerData($customer);
                 $dataCustomer['tags'] = array('Synced from Magento');
                 $batchCustomer[] = $dataCustomer;
