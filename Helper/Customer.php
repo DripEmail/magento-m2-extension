@@ -257,6 +257,13 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function proceedAccountNew($customer)
     {
+        $email = $customer->getEmail();
+        if (!$this->connectHelper->isEmailValid($email)) {
+            // TODO: Log this.
+            // $this->logger->notice("Skipping customer account create due to blank email");
+            return;
+        }
+
         $customerData = $this->prepareCustomerData($customer, false);
         $customerData['custom_fields']['accepts_marketing'] = $this->registry->registry(
             \Drip\Connect\Observer\Customer\CreateAccount::REGISTRY_KEY_NEW_USER_SUBSCRIBE_STATE
@@ -268,7 +275,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
 
         $this->connectApiCallsHelperRecordAnEventFactory->create([
             'data' => [
-                'email' => $customer->getEmail(),
+                'email' => $email,
                 'action' => \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_NEW,
             ]
         ])->call();
@@ -300,6 +307,12 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function proceedGuestSubscriberNew($subscriber)
     {
+        $email = $subscriber->getSubscriberEmail();
+        if (!$this->connectHelper->isEmailValid($email)) {
+            // TODO: Log this.
+            // $this->logger->notice("Skipping guest subscriber create due to blank email");
+            return;
+        }
         $data = $this->prepareGuestSubscriberData($subscriber, false);
 
         $this->connectApiCallsHelperCreateUpdateSubscriberFactory->create([
@@ -308,7 +321,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
 
         $this->connectApiCallsHelperRecordAnEventFactory->create([
             'data' => [
-                'email' => $subscriber->getSubscriberEmail(),
+                'email' => $email,
                 'action' => \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_NEW,
             ]
         ])->call();
