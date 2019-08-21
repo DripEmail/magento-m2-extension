@@ -150,7 +150,7 @@ class Orders
                 } else {
                     $this->logger->warning(
                         sprintf(
-                            "order with id %s can't be sent to Drip",
+                            "order with id %s can't be sent to Drip (email likely invalid)",
                             $order->getId()
                         )
                     );
