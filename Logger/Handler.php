@@ -39,7 +39,7 @@ class Handler extends \Magento\Framework\Logger\Handler\Base
     ) {
         // Set whether this is enabled by the customer from their settings.
         $logSettings = $dataObjectFactory->create();
-        $logSettings = $scopeConfig->getValue($this->_logSettingsXpath, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $logSettings->setData($scopeConfig->getValue($this->_logSettingsXpath, \Magento\Store\Model\ScopeInterface::SCOPE_STORE));
 
         $this->isEnabled = $logSettings->getIsEnabled();
 
