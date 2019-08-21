@@ -8,9 +8,6 @@ abstract class RestapiAbstract
     /** @var string */
     protected $_responseModel;
 
-    /** @var string */
-    protected $_logFilename = 'drip.log';
-
     /**  @var string */
     protected $_behavior;
 
@@ -26,16 +23,7 @@ abstract class RestapiAbstract
     /** @var \Zend_Http_Response */
     protected $_lastResponse;
 
-    /** @var string */
-    protected $_apiName = 'apiclient';
-
-    /** @var \Zend_Log */
-    protected $_logger;
-
-    /** @var string */
-    protected $_logSettingsXpath = 'dripconnect_general/log_settings';
-
-    /** @var \Psr\Log\LoggerInterface */
+    /** @var \Drip\Connect\Logger\Logger */
     protected $logger;
 
     /** @var \Magento\Framework\App\Config\ScopeConfigInterface */
@@ -47,9 +35,6 @@ abstract class RestapiAbstract
     /** @var \Magento\Framework\ArchiveFactory */
     protected $archiveFactory;
 
-    /** @var \Magento\Framework\DataObjectFactory */
-    protected $dataObjectFactory;
-
     /** @var \Magento\Framework\App\Config\Storage\WriterInterface */
     protected $configWriter;
 
@@ -57,14 +42,12 @@ abstract class RestapiAbstract
     protected $storeId = 0;
 
     public function __construct(
-        \Psr\Log\LoggerInterface $logger,
+        \Drip\Connect\Logger\Logger $logger,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Framework\App\Config\Storage\WriterInterface $configWriter,
-        \Magento\Framework\DataObjectFactory $dataObjectFactory,
         \Magento\Framework\ArchiveFactory $archiveFactory,
         \Magento\Framework\Filesystem\DirectoryList $directory
     ) {
-        $this->dataObjectFactory = $dataObjectFactory;
         $this->archiveFactory = $archiveFactory;
         $this->logger = $logger;
         $this->scopeConfig = $scopeConfig;
@@ -92,7 +75,7 @@ abstract class RestapiAbstract
             $response = new $className($rawResponse);
             return $response;
         } catch (\Exception $e) {
-            $this->logger->log(\Monolog\Logger::ERROR, $e->__toString());
+            $this->logger->error($e->__toString());
             $className = $this->_responseModel;
             /** @var \Drip\Connect\Model\Restapi\Response\Abstract $response */
             $response = new $className(null, $e->getMessage());
@@ -229,56 +212,4 @@ abstract class RestapiAbstract
         $responseBody = "This is an unknown response.";
         return new \Zend_Http_Response($httpStatusCode, $headers, $responseBody);
     }
-
-    public function getLogSettings()
-    {
-        $settings = $this->dataObjectFactory->create();
-        $settings->setData($this->scopeConfig->getValue($this->_logSettingsXpath, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $this->storeId));
-        return $settings;
-    }
-
-    public function getLogger()
-    {
-        if (!$this->_logger) {
-            if ($this->getLogSettings()->getIsEnabled()) {
-                $logger = new \Zend_Log();
-                $writer = new \Zend_Log_Writer_Stream($this->getLogFile());
-                $logger->addWriter($writer);
-                $this->_logger = $logger;
-            }
-        }
-        return $this->_logger;
-    }
-
-    protected function getLogFile()
-    {
-        $period = $this->getLogSettings()->getLogRotationPeriod();
-        $period = $period * 60 * 60 * 24;
-        $logDir = $this->directory->getPath('log') . DIRECTORY_SEPARATOR . 'drip';
-        if (!is_dir($logDir)) {
-            mkdir($logDir);
-            chmod($logDir, 0777);
-        }
-        $logDir .= DIRECTORY_SEPARATOR . $this->_apiName;
-        if (!is_dir($logDir)) {
-            mkdir($logDir);
-            chmod($logDir, 0777);
-        }
-        $archiveDir = $logDir . DIRECTORY_SEPARATOR . 'archive' . DIRECTORY_SEPARATOR;
-        if (!is_dir($archiveDir)) {
-            mkdir($archiveDir);
-            chmod($archiveDir, 0777);
-        }
-        $logFile = $logDir . DIRECTORY_SEPARATOR . $this->_logFilename;
-        $lastCreation = $this->getLogSettings()->getLastLogArchive();
-        if (is_file($logFile) && $period && $lastCreation + $period < time()) {
-            //leave default scope for this setting b/c we use one log file for all stores
-            $this->configWriter->save($this->_logSettingsXpath.'/last_log_archive', time());
-            $archive = $this->archiveFactory->create();
-            $archive->pack($logFile, $archiveDir.'archive'.date('Y-m-d-H-i-s').'.tgz');
-            unlink($logFile);
-        }
-        return $logFile;
-    }
-
 }

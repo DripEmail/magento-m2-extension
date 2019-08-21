@@ -28,7 +28,7 @@ class Customers
     /** @var \Magento\Store\Model\StoreManagerInterface */
     protected $storeManager;
 
-    /** @var \Psr\Log\LoggerInterface */
+    /** @var \Drip\Connect\Logger\Logger */
     protected $logger;
 
     /**
@@ -41,7 +41,7 @@ class Customers
         \Drip\Connect\Model\ApiCalls\Helper\Batches\EventsFactory $connectApiCallsHelperBatchesEventsFactory,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Psr\Log\LoggerInterface $logger,
+        \Drip\Connect\Logger\Logger $logger,
         \Drip\Connect\Helper\Data $connectHelper
     ) {
         $this->customerResourceModelCustomerCollectionFactory = $customerResourceModelCustomerCollectionFactory;
@@ -238,6 +238,11 @@ class Customers
 
             $batchCustomer = array();
             foreach ($collection as $customer) {
+                $email = $customer->getData('email');
+                if (!$this->connectHelper->isEmailValid($email)) {
+                    $this->logger->notice("Skipping subscriber during sync due to unusable email ({$email})");
+                    continue;
+                }
                 $dataCustomer = $this->customerHelper->prepareCustomerData($customer);
                 $dataCustomer['tags'] = array('Synced from Magento');
                 $batchCustomer[] = $dataCustomer;

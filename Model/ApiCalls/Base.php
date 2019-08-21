@@ -23,10 +23,9 @@ class Base
      * constructor
      */
     public function __construct(
-        \Psr\Log\LoggerInterface $logger,
+        \Drip\Connect\Logger\Logger $logger,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Framework\App\Config\Storage\WriterInterface $configWriter,
-        \Magento\Framework\DataObjectFactory $dataObjectFactory,
         \Magento\Framework\ArchiveFactory $archiveFactory,
         \Magento\Framework\Filesystem\DirectoryList $directory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
@@ -37,7 +36,6 @@ class Base
             $logger,
             $scopeConfig,
             $configWriter,
-            $dataObjectFactory,
             $archiveFactory,
             $directory
         );
@@ -52,10 +50,6 @@ class Base
             $this->_responseModel = $options['response_model'];
         } else {
             $this->_responseModel = \Drip\Connect\Model\ApiCalls\Response\Base::class;
-        }
-
-        if (isset($options['log_filename'])) {
-            $this->_logFilename = $options['log_filename'];
         }
 
         if (isset($options['behavior'])) {
@@ -88,7 +82,7 @@ class Base
             $this->_httpClient = $this->connectHttpClientFactory->create(['args' => [
                 'uri' => $url,
                 'config' => $config,
-                'logger' => $this->getLogger(),
+                'logger' => $this->logger,
             ]]);
 
             $this->_httpClient->setHeaders(array(

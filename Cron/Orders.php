@@ -22,7 +22,7 @@ class Orders
     /** @var \Magento\Store\Model\StoreManagerInterface */
     protected $storeManager;
 
-    /** @var \Psr\Log\LoggerInterface */
+    /** @var \Drip\Connect\Logger\Logger */
     protected $logger;
 
     /**
@@ -33,7 +33,7 @@ class Orders
         \Drip\Connect\Helper\Order $orderHelper,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Psr\Log\LoggerInterface $logger,
+        \Drip\Connect\Logger\Logger $logger,
         \Drip\Connect\Helper\Data $connectHelper
     ) {
         $this->salesResourceModelOrderCollectionFactory = $salesResourceModelOrderCollectionFactory;
@@ -150,7 +150,7 @@ class Orders
                 } else {
                     $this->logger->warning(
                         sprintf(
-                            "order with id %s can't be sent to Drip",
+                            "order with id %s can't be sent to Drip (email likely invalid)",
                             $order->getId()
                         )
                     );

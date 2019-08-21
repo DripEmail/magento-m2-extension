@@ -61,7 +61,7 @@
                     <label>sync state</label>
                     <source_model>Drip\Connect\Model\Source\SyncState</source_model>
                     <depends>
-                        <field id="dripconnect_general/log_settings/is_enabled">hideThisField</field>
+                        <field id="dripconnect_general/module_settings/is_enabled">hideThisField</field>
                     </depends>
                 </field>
                 <field id="sync_customers_data_state_reset" translate="label" sortOrder="12" showInDefault="1" showInWebsite="0" showInStore="1">
@@ -79,7 +79,7 @@
                     <label>sync state</label>
                     <source_model>Drip\Connect\Model\Source\SyncState</source_model>
                     <depends>
-                        <field id="dripconnect_general/log_settings/is_enabled">hideThisField</field>
+                        <field id="dripconnect_general/module_settings/is_enabled">hideThisField</field>
                     </depends>
                 </field>
                 <field id="sync_orders_data_state_reset" translate="label" sortOrder="22" showInDefault="1" showInWebsite="0" showInStore="1">
@@ -89,24 +89,12 @@
                     <frontend_model>Drip\Connect\Block\System\Config\Sync\Orders\Reset</frontend_model>
                 </field>
             </group>
-            <group id="log_settings" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1" translate="label">
+            <group id="log_settings" type="text" sortOrder="100" showInDefault="1" showInWebsite="0" showInStore="0" translate="label">
                 <label>Log Settings</label>
-                <field id="is_enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="is_enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Is Debug Mode Enabled</label>
-                    <comment>Logs all requests and responses to var/log/drip/apiclient/drip.log</comment>
+                    <comment>Logs all requests and responses to var/log/drip.log</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                </field>
-                <field id="log_rotation_period" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Log Rotation Period (days)</label>
-                    <depends>
-                        <field id="dripconnect_general/log_settings/is_enabled">1</field>
-                    </depends>
-                </field>
-                <field id="last_log_archive" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Last Log Archive Timestamp</label>
-                    <depends>
-                        <field id="dripconnect_general/log_settings/is_enabled">hideThisField</field>
-                    </depends>
                 </field>
             </group>
         </section>
