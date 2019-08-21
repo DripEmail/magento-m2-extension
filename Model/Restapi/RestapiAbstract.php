@@ -35,9 +35,6 @@ abstract class RestapiAbstract
     /** @var \Magento\Framework\ArchiveFactory */
     protected $archiveFactory;
 
-    /** @var \Magento\Framework\DataObjectFactory */
-    protected $dataObjectFactory;
-
     /** @var \Magento\Framework\App\Config\Storage\WriterInterface */
     protected $configWriter;
 
@@ -48,11 +45,9 @@ abstract class RestapiAbstract
         \Drip\Connect\Logger\Logger $logger,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Framework\App\Config\Storage\WriterInterface $configWriter,
-        \Magento\Framework\DataObjectFactory $dataObjectFactory,
         \Magento\Framework\ArchiveFactory $archiveFactory,
         \Magento\Framework\Filesystem\DirectoryList $directory
     ) {
-        $this->dataObjectFactory = $dataObjectFactory;
         $this->archiveFactory = $archiveFactory;
         $this->logger = $logger;
         $this->scopeConfig = $scopeConfig;

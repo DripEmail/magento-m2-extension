@@ -26,7 +26,6 @@ class Base
         \Drip\Connect\Logger\Logger $logger,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Framework\App\Config\Storage\WriterInterface $configWriter,
-        \Magento\Framework\DataObjectFactory $dataObjectFactory,
         \Magento\Framework\ArchiveFactory $archiveFactory,
         \Magento\Framework\Filesystem\DirectoryList $directory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
@@ -37,7 +36,6 @@ class Base
             $logger,
             $scopeConfig,
             $configWriter,
-            $dataObjectFactory,
             $archiveFactory,
             $directory
         );
