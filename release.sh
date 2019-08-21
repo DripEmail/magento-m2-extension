@@ -10,28 +10,23 @@ if (! git diff-index --quiet HEAD --); then
   exit
 fi
 
-# Get release branch version.
-current_branch=$(git branch --show-current)
-if [[ "$current_branch" = 'master' ]]; then
-  echo "You should release from a release branch, not master. Exiting..."
-  exit
-fi
-branch_version=$(echo -n "$current_branch" | cut -d'-' -f2)
-echo "Detected branch version is $branch_version"
+# Get expected version.
+echo "What version are you releasing?"
+read release_version
 
 # Check for XML versions
-if (! grep "setup_version=\"$branch_version\"" $MODULE_XML_PATH > /dev/null); then
+if (! grep "setup_version=\"$release_version\"" $MODULE_XML_PATH > /dev/null); then
   echo "$MODULE_XML_PATH does not contain the right version. Exiting..."
   exit
 fi
 
-if (! grep "\"version\": \"$branch_version\"" $COMPOSER_JSON_PATH > /dev/null); then
+if (! grep "\"version\": \"$release_version\"" $COMPOSER_JSON_PATH > /dev/null); then
   echo "$COMPOSER_JSON_PATH does not contain the right version. Exiting..."
   exit
 fi
 
 echo "All versions check out. Generating tarball..."
 
-git archive --format=zip HEAD > drip_m2connect-$(echo -n $branch_version | tr '.' '_')-$(date "+%Y-%m-%d").zip
+git archive --format=zip HEAD > drip_m2connect-$(echo -n $release_version | tr '.' '_')-$(date "+%Y-%m-%d").zip
 
 echo "Tarball generated. Don't forget to tag a release and push the tag."
