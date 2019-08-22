@@ -19,9 +19,6 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     /** @var \Drip\Connect\Model\ApiCalls\Helper\RecordAnEventFactory */
     protected $connectApiCallsHelperRecordAnEventFactory;
 
-    /** @var \Drip\Connect\Model\ApiCalls\Helper\UnsubscribeSubscriberFactory */
-    protected $connectApiCallsHelperUnsubscribeSubscriberFactory;
-
     /** @var \Magento\Framework\HTTP\Header */
     protected $header;
 
@@ -50,7 +47,6 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateSubscriberFactory $connectApiCallsHelperCreateUpdateSubscriberFactory,
         \Drip\Connect\Model\ApiCalls\Helper\RecordAnEventFactory $connectApiCallsHelperRecordAnEventFactory,
         \Drip\Connect\Model\ApiCalls\Helper\Batches\SubscribersFactory $connectApiCallsHelperBatchesSubscribersFactory,
-        \Drip\Connect\Model\ApiCalls\Helper\UnsubscribeSubscriberFactory $connectApiCallsHelperUnsubscribeSubscriberFactory,
         \Drip\Connect\Helper\Quote $quoteHelper,
         \Magento\Customer\Model\CustomerFactory $customerCustomerFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
@@ -65,7 +61,6 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         $this->connectApiCallsHelperCreateUpdateSubscriberFactory = $connectApiCallsHelperCreateUpdateSubscriberFactory;
         $this->connectApiCallsHelperRecordAnEventFactory = $connectApiCallsHelperRecordAnEventFactory;
         $this->connectApiCallsHelperBatchesSubscribersFactory = $connectApiCallsHelperBatchesSubscribersFactory;
-        $this->connectApiCallsHelperUnsubscribeSubscriberFactory = $connectApiCallsHelperUnsubscribeSubscriberFactory;
         $this->header = $context->getHttpHeader();
         $this->quoteHelper = $quoteHelper;
         $this->customerCustomerFactory = $customerCustomerFactory;
@@ -85,17 +80,14 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function prepareGuestSubscriberData($subscriber, $updatableOnly = true)
     {
-        if ($subscriber->getSubscriberStatus() == \Magento\Newsletter\Model\Subscriber::STATUS_SUBSCRIBED) {
-            $acceptsMarketing = 'yes';
-        } else {
-            $acceptsMarketing = 'no';
-        }
+        $acceptsMarketing = $subscriber->getSubscriberStatus() == \Magento\Newsletter\Model\Subscriber::STATUS_SUBSCRIBED;
 
         $data = array (
             'email' => (string) $subscriber->getSubscriberEmail(),
             'ip_address' => (string) $this->remoteAddress->getRemoteAddress(),
+            'status' => $acceptsMarketing ? 'active' : 'unsubscribed',
             'custom_fields' => array(
-                'accepts_marketing' => $acceptsMarketing,
+                'accepts_marketing' => $acceptsMarketing ? 'yes' : 'no',
             ),
         );
 
@@ -124,6 +116,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
             'new_email' => ($newEmail ? $newEmail : ''),
             'ip_address' => (string) $this->remoteAddress->getRemoteAddress(),
             'user_agent' => (string) $this->header->getHttpUserAgent(),
+            'status' => $customer->getIsSubscribed() ? 'active' : 'unsubscribed',
             'custom_fields' => array(
                 'first_name' => $customer->getFirstname(),
                 'last_name' => $customer->getLastname(),
@@ -159,6 +152,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
             'email' => $order->getCustomerEmail(),
             'ip_address' => $this->remoteAddress->getRemoteAddress(),
             'user_agent' => $this->header->getHttpUserAgent(),
+            'status' => 'unsubscribed',
             'custom_fields' => array(
                 'first_name' => $order->getCustomerFirstname(),
                 'last_name' => $order->getCustomerLastname(),
@@ -331,22 +325,6 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
-     * drip unsubscribe action
-     *
-     * @param \Magento\Customer\Model\Customer $customer
-     */
-    public function unsubscribe($email)
-    {
-        $this->connectApiCallsHelperUnsubscribeSubscriberFactory->create([
-            'data' => [
-                'email' => $email,
-            ]
-        ])->call();
-    }
-
-
-
-    /**
      * drip actions for customer log in
      *
      * @param \Magento\Customer\Model\Customer $customer
@@ -374,10 +352,6 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         $this->connectApiCallsHelperCreateUpdateSubscriberFactory->create([
             'data' => $data
         ])->call();
-
-        if ($subscriber->getSubscriberStatus() != \Magento\Newsletter\Model\Subscriber::STATUS_SUBSCRIBED) {
-            $this->unsubscribe($subscriber->getEmail());
-        }
     }
 
     /**
@@ -389,12 +363,11 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $data = $this->prepareGuestSubscriberData($subscriber);
         $data['custom_fields']['accepts_marketing'] = 'no';
+        $data['status'] = 'unsubscribed';
 
         $this->connectApiCallsHelperCreateUpdateSubscriberFactory->create([
             'data' => $data
         ])->call();
-
-        $this->unsubscribe($subscriber->getEmail());
     }
 
     /**

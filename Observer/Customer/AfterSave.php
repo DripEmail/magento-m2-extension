@@ -48,11 +48,6 @@ class AfterSave extends \Drip\Connect\Observer\Base
 
         if ($this->registry->registry(self::REGISTRY_KEY_CUSTOMER_IS_NEW)) {
             $this->customerHelper->proceedAccountNew($customer);
-            if (! in_array($this->registry->registry(
-                \Drip\Connect\Observer\Customer\CreateAccount::REGISTRY_KEY_NEW_USER_SUBSCRIBE_STATE
-            ), ['yes', 1])) {
-                $this->customerHelper->unsubscribe($customer->getEmail());
-            }
         } else {
             if ($this->registry->registry(self::REGISTRY_KEY_SUBSCRIBER_SUBSCRIBE_INTENT)) {
                 $customer->setIsSubscribed(1);
@@ -60,29 +55,9 @@ class AfterSave extends \Drip\Connect\Observer\Base
             if ($this->isCustomerChanged($customer)) {
                 $this->customerHelper->proceedAccount($customer);
             }
-            if ($this->isUnsubscribeCallRequired($customer)) {
-                $this->customerHelper->unsubscribe($customer->getEmail());
-            }
         }
         $this->registry->unregister(self::REGISTRY_KEY_CUSTOMER_IS_NEW);
         $this->registry->unregister(self::REGISTRY_KEY_CUSTOMER_OLD_DATA);
-    }
-
-    /**
-     * check if we need to send additional api call to cancel all subscriptions
-     * (true if status change from yes to no)
-     *
-     * @param \Magento\Customer\Model\Customer $customer
-     *
-     * @return bool
-     */
-    protected function isUnsubscribeCallRequired($customer)
-    {
-        $oldData = $this->registry->registry(self::REGISTRY_KEY_CUSTOMER_OLD_DATA);
-        $newData = $this->customerHelper->prepareCustomerData($customer);
-
-        return ($newData['custom_fields']['accepts_marketing'] == 'no'
-            && $oldData['custom_fields']['accepts_marketing'] != 'no');
     }
 
     /**

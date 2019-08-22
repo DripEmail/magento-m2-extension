@@ -5,6 +5,8 @@
 * Skip sending order items on after_save with invalid emails.
 * Prevent observer exceptions from causing customer site errors.
 * Improve observer logging.
+* Previously, if syncing customers failed, we wouldn't finish the job and attempt to sync guest subscribers. This was dumb. We now try both of them.
+* We now sync subscription status with every call, and successfully switch from unsubscribed to active when a user subscribes.
 
 ## 1.7.3
 

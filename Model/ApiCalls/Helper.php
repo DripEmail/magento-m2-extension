@@ -11,7 +11,6 @@ abstract class Helper
     const PROVIDER_NAME = 'magento';
     const ENDPOINT_ACCOUNTS = 'accounts';
     const ENDPOINT_SUBSCRIBERS = 'subscribers';
-    const ENDPOINT_SUBSCRIBERS_UNSUBSCRIBE_ALL = 'unsubscribe_all';
     const ENDPOINT_EVENTS = 'events';
     const ENDPOINT_ORDERS = 'shopper_activity/order';
     const ENDPOINT_REFUNDS = 'refunds';
