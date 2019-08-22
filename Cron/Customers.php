@@ -97,16 +97,20 @@ class Customers
             }
 
             try {
-                $result = $this->syncCustomersForStore($storeId);
-                if ($result) {
-                    $result = $this->syncGuestSubscribersForStore($storeId);
-                }
+                $customerResult = $this->syncCustomersForStore($storeId);
             } catch (\Exception $e) {
-                $result = false;
+                $customerResult = false;
                 $this->logger->critical($e);
             }
 
-            if ($result) {
+            try {
+                $subscriberResult = $this->syncGuestSubscribersForStore($storeId);
+            } catch (\Exception $e) {
+                $subscriberResult = false;
+                $this->logger->critical($e);
+            }
+
+            if ($subscriberResult && $customerResult) {
                 $status = SyncState::READY;
             } else {
                 $status = SyncState::READYERRORS;
