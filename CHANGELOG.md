@@ -5,6 +5,7 @@
 * Improved logger so that all output from the extension is in one place. This enables us to identify and solve customer issues more quickly.
 * Skip sending events with invalid emails.
 * Extend the meaning of "invalid emails" from just blank to also include things like extended character sets.
+* Skip sending order items on after_save with invalid emails.
 
 ## 1.7.2
 
