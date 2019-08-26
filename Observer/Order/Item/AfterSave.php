@@ -39,6 +39,11 @@ class AfterSave extends \Drip\Connect\Observer\Base
         $items = $this->registry->registry(self::REGISTRY_KEY_ORDER_ITEMS_OLD_DATA);
 
         $order = $this->order->load($orderItem->getOrderId());
+
+        if (!$this->orderHelper->isCanBeSent($order)) {
+            return;
+        }
+
         $itemsCount = count($order->getAllItems());
 
         // after save last item of all order items
