@@ -32,12 +32,8 @@ class AfterAddressSave extends \Drip\Connect\Observer\Base
     /**
      * @param \Magento\Framework\Event\Observer $observer
      */
-    public function execute(\Magento\Framework\Event\Observer $observer)
+    public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)
     {
-        if (!$this->connectHelper->isModuleActive()) {
-            return;
-        }
-
         // change was not done in address we use in drip
         if (empty($this->registry->registry(self::REGISTRY_KEY_CUSTOMER_OLD_ADDR))) {
             return;

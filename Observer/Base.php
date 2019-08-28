@@ -26,4 +26,15 @@ abstract class Base implements \Magento\Framework\Event\ObserverInterface
         $this->connectHelper = $connectHelper;
         $this->registry = $registry;
     }
+
+    abstract protected function executeWhenEnabled(\Magento\Framework\Event\Observer $observer);
+
+    public function execute(\Magento\Framework\Event\Observer $observer)
+    {
+        if (!$this->connectHelper->isModuleActive()) {
+            return;
+        }
+
+        $this->executeWhenEnabled($observer);
+    }
 }

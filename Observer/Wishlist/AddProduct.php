@@ -42,12 +42,8 @@ class AddProduct implements \Magento\Framework\Event\ObserverInterface
      * Call rest api endpoint with info about customer and product added
      * @param $observer
      */
-    public function execute(\Magento\Framework\Event\Observer $observer)
+    public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)
     {
-        if(!$this->connectHelper->isModuleActive()) {
-            return;
-        }
-
         $customer = $this->customerSession->getCustomer();
         $product = $observer->getProduct();
 

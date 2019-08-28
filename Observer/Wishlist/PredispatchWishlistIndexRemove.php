@@ -56,12 +56,8 @@ class PredispatchWishlistIndexRemove implements \Magento\Framework\Event\Observe
      * Call rest api endpoint with info about customer and product removed
      * @param $observer
      */
-    public function execute(\Magento\Framework\Event\Observer $observer)
+    public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)
     {
-        if(!$this->connectHelper->isModuleActive()) {
-            return;
-        }
-
         $wishlistItemId = filter_var($this->request->getParam('item'), FILTER_SANITIZE_NUMBER_INT);
         if($wishlistItemId){
 

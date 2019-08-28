@@ -30,12 +30,8 @@ class AfterQuoteSaved implements \Magento\Framework\Event\ObserverInterface
         $this->registry = $registry;
     }
 
-    public function execute(\Magento\Framework\Event\Observer $observer)
+    public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)
     {
-        if(!$this->connectHelper->isModuleActive()) {
-            return;
-        }
-
         //do nothing
         if ($this->registry->registry(\Drip\Connect\Helper\Quote::REGISTRY_KEY_CUSTOMER_REGISTERED_OR_LOGGED_IN_WITH_EMTPY_QUOTE)) {
             return;

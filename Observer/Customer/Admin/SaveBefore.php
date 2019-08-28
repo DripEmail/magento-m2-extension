@@ -2,6 +2,11 @@
 
 namespace Drip\Connect\Observer\Customer\Admin;
 
+/**
+ * This observer exists to allow the SaveAfter observer to know what the data
+ * looked like before. This is accomplished with the Registry.
+ */
+
 class SaveBefore extends \Drip\Connect\Observer\Base
 {
     /** @var \Drip\Connect\Helper\Customer */
@@ -42,37 +47,33 @@ class SaveBefore extends \Drip\Connect\Observer\Base
      *
      * @return $this
      */
-    public function execute(\Magento\Framework\Event\Observer $observer)
+    public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)
     {
-        if (!$this->connectHelper->isModuleActive()) {
-            return;
-        }
-
         $customer = $observer->getCustomer();
 
-        $subscriber = $this->subscriberFactory->create()->loadByEmail($customer->getEmail());
-        $acceptsMarketing = 'no';
-        if ($subscriber->getId() &&
-            $subscriber->getSubscriberStatus() == \Magento\Newsletter\Model\Subscriber::STATUS_SUBSCRIBED) {
-            $acceptsMarketing = 'yes';
-        }
+        $acceptsMarketing = $this->acceptsMarketing($customer->getEmail());
 
         if (empty($this->coreSession->getCustomerIsNew())) {
             // need session here instead of registry
             // b/c of two 'before' events occurs on customer create
             // and one final adminhtml_customer_save_after
-            // (which is used to track custmer's newsletter state in admin)
+            // (which is used to track customer's newsletter state in admin)
             $this->coreSession->setCustomerIsNew((int)$customer->isObjectNew());
         }
 
         if (!$customer->isObjectNew()) {
             $orig = $this->customerCustomerFactory->create()->load($customer->getId());
             $data = $this->customerHelper->prepareCustomerData($orig);
-            $data['custom_fields']['accepts_marketing'] = $acceptsMarketing;
+            $data['custom_fields']['accepts_marketing'] = $acceptsMarketing ? 'yes' : 'no';
             $this->registry->unregister(self::REGISTRY_KEY_CUSTOMER_OLD_DATA);
             $this->registry->register(self::REGISTRY_KEY_CUSTOMER_OLD_DATA, $data);
         } else {
             $customer->setDrip(1);
         }
+    }
+
+    protected function acceptsMarketing($email) {
+        $subscriber = $this->subscriberFactory->create()->loadByEmail($email);
+        return $subscriber->getId() && $subscriber->getSubscriberStatus() == \Magento\Newsletter\Model\Subscriber::STATUS_SUBSCRIBED;
     }
 }

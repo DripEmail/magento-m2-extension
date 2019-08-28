@@ -26,12 +26,8 @@ class CreateAccount extends \Drip\Connect\Observer\Base
      *
      * @param \Magento\Framework\Event\Observer $observer
      */
-    public function execute(\Magento\Framework\Event\Observer $observer)
+    public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)
     {
-        if (!$this->connectHelper->isModuleActive()) {
-            return;
-        }
-
         $acceptsMarketing = $this->request->getParam('is_subscribed') ? 'yes' : 'no';
 
         $this->registry->unregister(self::REGISTRY_KEY_NEW_USER_SUBSCRIBE_STATE);
