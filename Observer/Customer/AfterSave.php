@@ -37,11 +37,8 @@ class AfterSave extends \Drip\Connect\Observer\Base
      *
      * @return $this
      */
-    public function execute(\Magento\Framework\Event\Observer $observer)
+    public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)
     {
-        if (!$this->connectHelper->isModuleActive()) {
-            return;
-        }
         $customer = $observer->getCustomer();
 
         if ($this->registry->registry(self::REGISTRY_KEY_CUSTOMER_IS_NEW)) {

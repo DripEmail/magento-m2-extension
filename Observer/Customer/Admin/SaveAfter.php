@@ -42,11 +42,8 @@ class SaveAfter extends \Drip\Connect\Observer\Base
     /**
      * @param \Magento\Framework\Event\Observer $observer
      */
-    public function execute(\Magento\Framework\Event\Observer $observer)
+    public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)
     {
-        if (!$this->connectHelper->isModuleActive()) {
-            return;
-        }
         $customerData = $observer->getCustomer();
         $customer = $this->customerCustomerFactory->create()->load($customerData->getId());
 

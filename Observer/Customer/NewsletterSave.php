@@ -46,12 +46,8 @@ class NewsletterSave extends \Drip\Connect\Observer\Base
      *
      * @return $this
      */
-    public function execute(\Magento\Framework\Event\Observer $observer)
+    public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)
     {
-        if (!$this->connectHelper->isModuleActive()) {
-            return;
-        }
-
         $customerEmail = $this->customerSession->getCustomer()
             ->setStoreId($this->storeManager->getStore()->getId())
             ->getEmail();
