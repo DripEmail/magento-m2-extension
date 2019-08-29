@@ -78,7 +78,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      *
      * @return array
      */
-    public function prepareGuestSubscriberData($subscriber, $updatableOnly = true)
+    public function prepareGuestSubscriberData($subscriber, $updatableOnly = true, $statusChanged = false)
     {
         $acceptsMarketing = $subscriber->getSubscriberStatus() == \Magento\Newsletter\Model\Subscriber::STATUS_SUBSCRIBED;
 
@@ -90,6 +90,10 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
                 'accepts_marketing' => $acceptsMarketing ? 'yes' : 'no',
             ),
         );
+
+        if ($statusChanged) {
+            $data['status'] = $customer->getIsSubscribed() ? 'active' : 'unsubscribed';
+        }
 
         if ($updatableOnly) {
             unset($data['ip_address']);
@@ -104,7 +108,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      * @param Mage_Customer_Model_Customer $customer
      * @param bool $updatableOnly leave only those fields which are used in update action
      */
-    public function prepareCustomerData($customer, $updatableOnly = true)
+    public function prepareCustomerData($customer, $updatableOnly = true, $statusChanged = false)
     {
         if ($customer->getOrigData() && $customer->getData('email') != $customer->getOrigData('email')) {
             $newEmail = $customer->getData('email');
@@ -129,6 +133,10 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
                 'accepts_marketing' => ($customer->getIsSubscribed() ? 'yes' : 'no'),
             ),
         );
+
+        if ($statusChanged) {
+            $data['status'] = $customer->getIsSubscribed() ? 'active' : 'unsubscribed';
+        }
 
         /*if ($customer->getDefaultShippingAddress()) {
             $data = array_merge_recursive($data, array('custom_fields'=>$this->getAddressFields($customer->getDefaultShippingAddress())));
