@@ -2,6 +2,13 @@
 
 namespace Drip\Connect\Observer\Customer;
 
+/**
+ * As best I can tell, the reason for this event is that the customer before
+ * save action happens after the newsletter status has saved. So in order to
+ * truly tell if the status has changed, we need to store it here, and pick it
+ * up in BeforeSave. ~wjohnston 2019-08-29
+ */
+
 class NewsletterSave extends \Drip\Connect\Observer\Base
 {
     /** @var \Drip\Connect\Helper\Customer */
@@ -60,12 +67,12 @@ class NewsletterSave extends \Drip\Connect\Observer\Base
         $subscriber = $this->subscriberFactory->create()->loadByEmail($customerEmail);
 
         if (! $subscriber->getId()) {
-            $acceptsMarketing = 'no';
+            $acceptsMarketing = false;
         } else {
             if ($subscriber->getSubscriberStatus() == \Magento\Newsletter\Model\Subscriber::STATUS_SUBSCRIBED) {
-                $acceptsMarketing = 'yes';
+                $acceptsMarketing = true;
             } else {
-                $acceptsMarketing = 'no';
+                $acceptsMarketing = false;
             }
         }
 
