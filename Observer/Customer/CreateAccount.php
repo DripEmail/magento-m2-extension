@@ -2,6 +2,12 @@
 
 namespace Drip\Connect\Observer\Customer;
 
+/**
+ * I think this exists only because we don't know whether the user is
+ * subscribed before in the admin/saveAfter and saveAfter customer observers.
+ * ~wjohnston 2019-08-29
+ */
+
 class CreateAccount extends \Drip\Connect\Observer\Base
 {
     const REGISTRY_KEY_NEW_USER_SUBSCRIBE_STATE = 'is_new_user_wants_to_subscribe';
