@@ -258,22 +258,23 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
-     * drip actions for customer account create
+     * drip actions for customer account change
      *
      * @param \Magento\Customer\Model\Customer $customer
      */
-    public function proceedAccountNew($customer)
+    public function proceedAccount($customer, $acceptsMarketing = null, $event = \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_UPDATED)
     {
         $email = $customer->getEmail();
         if (!$this->connectHelper->isEmailValid($email)) {
-            $this->logger->notice("Skipping customer account create due to invalid email ({$email})");
+            $this->logger->notice("Skipping customer account update due to invalid email ({$email})");
             return;
         }
 
-        $customerData = $this->prepareCustomerData($customer, false);
-        $customerData['custom_fields']['accepts_marketing'] = $this->registry->registry(
-            \Drip\Connect\Observer\Customer\CreateAccount::REGISTRY_KEY_NEW_USER_SUBSCRIBE_STATE
-        );
+        $customerData = $this->prepareCustomerData($customer);
+
+        if ($acceptsMarketing !== null) {
+            $customerData['custom_fields']['accepts_marketing'] = $acceptsMarketing;
+        }
 
         $this->connectApiCallsHelperCreateUpdateSubscriberFactory->create([
             'data' => $customerData
@@ -282,28 +283,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         $this->connectApiCallsHelperRecordAnEventFactory->create([
             'data' => [
                 'email' => $email,
-                'action' => \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_NEW,
-            ]
-        ])->call();
-    }
-
-    /**
-     * drip actions for customer account change
-     *
-     * @param \Magento\Customer\Model\Customer $customer
-     */
-    public function proceedAccount($customer)
-    {
-        $customerData = $this->prepareCustomerData($customer);
-
-        $this->connectApiCallsHelperCreateUpdateSubscriberFactory->create([
-            'data' => $customerData
-        ])->call();
-
-        $this->connectApiCallsHelperRecordAnEventFactory->create([
-            'data' => [
-                'email' => $customer->getEmail(),
-                'action' => \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_UPDATED,
+                'action' => $event,
             ]
         ])->call();
     }

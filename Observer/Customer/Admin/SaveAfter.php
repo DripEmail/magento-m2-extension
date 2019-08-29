@@ -60,7 +60,10 @@ class SaveAfter extends \Drip\Connect\Observer\Base
 
         if ($this->coreSession->getCustomerIsNew()) {
             $this->coreSession->unsCustomerIsNew();
-            $this->customerHelper->proceedAccountNew($customer);
+            $acceptsMarketing = $this->registry->registry(
+                \Drip\Connect\Observer\Customer\CreateAccount::REGISTRY_KEY_NEW_USER_SUBSCRIBE_STATE
+            );
+            $this->customerHelper->proceedAccount($customer, $acceptsMarketing, \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_NEW);
         } else {
             if ($this->isCustomerChanged($customer)) {
                 $this->customerHelper->proceedAccount($customer);
