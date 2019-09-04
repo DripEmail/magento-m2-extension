@@ -262,7 +262,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      *
      * @param \Magento\Customer\Model\Customer $customer
      */
-    public function proceedAccount($customer, $acceptsMarketing = null, $event = \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_UPDATED)
+    public function proceedAccount($customer, $acceptsMarketing = null, $event = \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_UPDATED, $force_status = false)
     {
         $email = $customer->getEmail();
         if (!$this->connectHelper->isEmailValid($email)) {
@@ -274,6 +274,9 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
 
         if ($acceptsMarketing !== null) {
             $customerData['custom_fields']['accepts_marketing'] = $acceptsMarketing ? 'yes' : 'no';
+            if ($force_status) {
+                $customerData['status'] = $acceptsMarketing ? 'active' : 'unsubscribed';
+            }
         }
 
         $this->connectApiCallsHelperCreateUpdateSubscriberFactory->create([
