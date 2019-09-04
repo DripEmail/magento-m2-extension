@@ -102,6 +102,8 @@ class SaveAfter extends \Drip\Connect\Observer\Base
 
     /**
      * Determine whether the status has changed between the old and new data
+     *
+     * @param \Magento\Customer\Model\Customer $customer
      */
     protected function isCustomerStatusChanged($customer)
     {

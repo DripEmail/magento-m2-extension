@@ -48,13 +48,18 @@ class AfterSave extends \Drip\Connect\Observer\Base
 
         if ($this->registry->registry(self::REGISTRY_KEY_CUSTOMER_IS_NEW)) {
             $acceptsMarketing = $this->registry->registry(self::REGISTRY_KEY_NEW_USER_SUBSCRIBE_STATE);
-            $this->customerHelper->proceedAccount($customer, $acceptsMarketing, \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_NEW);
+            $this->customerHelper->proceedAccount($customer, $acceptsMarketing, \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_NEW, $acceptsMarketing);
         } else {
             if ($this->registry->registry(self::REGISTRY_KEY_SUBSCRIBER_SUBSCRIBE_INTENT)) {
                 $customer->setIsSubscribed(1);
             }
             if ($this->isCustomerChanged($customer)) {
-                $this->customerHelper->proceedAccount($customer);
+                $this->customerHelper->proceedAccount(
+                    $customer,
+                    null,
+                    \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_UPDATED,
+                    $this->isCustomerStatusChanged($customer)
+                );
             }
         }
         $this->registry->unregister(self::REGISTRY_KEY_CUSTOMER_IS_NEW);
@@ -72,5 +77,20 @@ class AfterSave extends \Drip\Connect\Observer\Base
         $newData = $this->customerHelper->prepareCustomerData($customer);
 
         return ($this->json->serialize($oldData) != $this->json->serialize($newData));
+    }
+
+    // DUP: of SaveAfter
+    /**
+     * Determine whether the status has changed between the old and new data
+     *
+     * @param \Magento\Customer\Model\Customer $customer
+     */
+    protected function isCustomerStatusChanged($customer)
+    {
+        $oldData = $this->registry->registry(self::REGISTRY_KEY_CUSTOMER_OLD_DATA);
+        // TODO: Refactor away stringly typed boolean.
+        $oldStatus = $oldData['custom_fields']['accepts_marketing'] == 'yes';
+        $newStatus = (bool) $customer->getIsSubscribed();
+        return $oldStatus !== $newStatus;
     }
 }
