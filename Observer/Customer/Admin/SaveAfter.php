@@ -61,9 +61,26 @@ class SaveAfter extends \Drip\Connect\Observer\Base
         if ($this->coreSession->getCustomerIsNew()) {
             $this->coreSession->unsCustomerIsNew();
             $acceptsMarketing = $this->registry->registry(self::REGISTRY_KEY_NEW_USER_SUBSCRIBE_STATE);
-            $this->customerHelper->proceedAccount($customer, $acceptsMarketing, \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_NEW);
+            // We force the subscriber to have a subscribed status when the
+            // subscriber is new and their status is already subscribed. This
+            // implies that they accepted marketing recently, so we should
+            // subscribe them in Drip if they aren't already.
+            $this->customerHelper->proceedAccount(
+                $customer,
+                $acceptsMarketing,
+                \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_NEW,
+                $acceptsMarketing
+            );
         } else if ($this->isCustomerChanged($customer)) {
-            $this->customerHelper->proceedAccount($customer);
+            // We change the Drip subscriber status if the status has changed.
+            // Presumably, this would happen because the subscriber requested
+            // that their status change.
+            $this->customerHelper->proceedAccount(
+                $customer,
+                null,
+                \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_UPDATED,
+                $this->isCustomerStatusChanged($customer)
+            );
         }
 
         $this->registry->unregister(self::REGISTRY_KEY_CUSTOMER_IS_NEW);
@@ -81,5 +98,17 @@ class SaveAfter extends \Drip\Connect\Observer\Base
         $newData = $this->customerHelper->prepareCustomerData($customer);
 
         return ($this->json->serialize($oldData) != $this->json->serialize($newData));
+    }
+
+    /**
+     * Determine whether the status has changed between the old and new data
+     */
+    protected function isCustomerStatusChanged($customer)
+    {
+        $oldData = $this->registry->registry(self::REGISTRY_KEY_CUSTOMER_OLD_DATA);
+        // TODO: Refactor away stringly typed boolean.
+        $oldStatus = $oldData['custom_fields']['accepts_marketing'] == 'yes';
+        $newStatus = (bool) $customer->getIsSubscribed();
+        return $oldStatus !== $newStatus;
     }
 }

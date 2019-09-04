@@ -107,20 +107,29 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      *
      * @param Mage_Customer_Model_Customer $customer
      * @param bool $updatableOnly leave only those fields which are used in update action
+     * @param bool $statusChanged whether the status has changed and should be synced
+     * @param bool $overriddenStatus whether the status should be something other than what is on the customer's is_subscribed field.
      */
-    public function prepareCustomerData($customer, $updatableOnly = true, $statusChanged = false)
+    public function prepareCustomerData($customer, $updatableOnly = true, $statusChanged = false, $overriddenStatus = null)
     {
         if ($customer->getOrigData() && $customer->getData('email') != $customer->getOrigData('email')) {
             $newEmail = $customer->getData('email');
         } else {
             $newEmail = '';
         }
+
+        if ($overriddenStatus !== null) {
+            $status = $overriddenStatus;
+        } else {
+            $status = $customer->getIsSubscribed();
+        }
+
         $data = array (
             'email' => (string) $customer->getEmail(),
             'new_email' => ($newEmail ? $newEmail : ''),
             'ip_address' => (string) $this->remoteAddress->getRemoteAddress(),
             'user_agent' => (string) $this->header->getHttpUserAgent(),
-            'new_subscriber_status' => $customer->getIsSubscribed() ? 'active' : 'unsubscribed',
+            'new_subscriber_status' => $status ? 'active' : 'unsubscribed',
             'custom_fields' => array(
                 'first_name' => $customer->getFirstname(),
                 'last_name' => $customer->getLastname(),
@@ -130,12 +139,12 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
                 'magento_account_created' => $customer->getCreatedAt(),
                 'magento_customer_group' => $this->customerGroupFactory->create()->load($customer->getGroupId())->getCustomerGroupCode(),
                 'magento_store' => (int) $customer->getStoreId(),
-                'accepts_marketing' => ($customer->getIsSubscribed() ? 'yes' : 'no'),
+                'accepts_marketing' => ($status ? 'yes' : 'no'),
             ),
         );
 
         if ($statusChanged) {
-            $data['status'] = $customer->getIsSubscribed() ? 'active' : 'unsubscribed';
+            $data['status'] = $status ? 'active' : 'unsubscribed';
         }
 
         /*if ($customer->getDefaultShippingAddress()) {
@@ -261,8 +270,11 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      * drip actions for customer account change
      *
      * @param \Magento\Customer\Model\Customer $customer
+     * @param bool $acceptsMarketing
+     * @param string $event
+     * @param bool $forceStatus
      */
-    public function proceedAccount($customer, $acceptsMarketing = null, $event = \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_UPDATED, $force_status = false)
+    public function proceedAccount($customer, $acceptsMarketing = null, $event = \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_UPDATED, $forceStatus = false)
     {
         $email = $customer->getEmail();
         if (!$this->connectHelper->isEmailValid($email)) {
@@ -270,14 +282,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
             return;
         }
 
-        $customerData = $this->prepareCustomerData($customer);
-
-        if ($acceptsMarketing !== null) {
-            $customerData['custom_fields']['accepts_marketing'] = $acceptsMarketing ? 'yes' : 'no';
-            if ($force_status) {
-                $customerData['status'] = $acceptsMarketing ? 'active' : 'unsubscribed';
-            }
-        }
+        $customerData = $this->prepareCustomerData($customer, true, $forceStatus, $acceptsMarketing);
 
         $this->connectApiCallsHelperCreateUpdateSubscriberFactory->create([
             'data' => $customerData
