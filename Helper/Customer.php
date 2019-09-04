@@ -85,7 +85,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         $data = array (
             'email' => (string) $subscriber->getSubscriberEmail(),
             'ip_address' => (string) $this->remoteAddress->getRemoteAddress(),
-            'new_subscriber_status' => $acceptsMarketing ? 'active' : 'unsubscribed',
+            'initial_status' => $acceptsMarketing ? 'active' : 'unsubscribed',
             'custom_fields' => array(
                 'accepts_marketing' => $acceptsMarketing ? 'yes' : 'no',
             ),
@@ -129,7 +129,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
             'new_email' => ($newEmail ? $newEmail : ''),
             'ip_address' => (string) $this->remoteAddress->getRemoteAddress(),
             'user_agent' => (string) $this->header->getHttpUserAgent(),
-            'new_subscriber_status' => $status ? 'active' : 'unsubscribed',
+            'initial_status' => $status ? 'active' : 'unsubscribed',
             'custom_fields' => array(
                 'first_name' => $customer->getFirstname(),
                 'last_name' => $customer->getLastname(),
@@ -169,7 +169,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
             'email' => $order->getCustomerEmail(),
             'ip_address' => $this->remoteAddress->getRemoteAddress(),
             'user_agent' => $this->header->getHttpUserAgent(),
-            'new_subscriber_status' => 'unsubscribed',
+            'initial_status' => 'unsubscribed',
             'custom_fields' => array(
                 'first_name' => $order->getCustomerFirstname(),
                 'last_name' => $order->getCustomerLastname(),
