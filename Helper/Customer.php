@@ -92,7 +92,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         );
 
         if ($statusChanged) {
-            $data['status'] = $customer->getIsSubscribed() ? 'active' : 'unsubscribed';
+            $data['status'] = $acceptsMarketing ? 'active' : 'unsubscribed';
         }
 
         if ($updatableOnly) {
@@ -298,15 +298,16 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**
      * @param \Magento\Newsletter\Model\Subscriber $subscriber
+     * @param bool $forceStatus
      */
-    public function proceedGuestSubscriberNew($subscriber)
+    public function proceedGuestSubscriberNew($subscriber, $forceStatus = false)
     {
         $email = $subscriber->getSubscriberEmail();
         if (!$this->connectHelper->isEmailValid($email)) {
             $this->logger->notice("Skipping guest subscriber create due to invalid email ({$email})");
             return;
         }
-        $data = $this->prepareGuestSubscriberData($subscriber, false);
+        $data = $this->prepareGuestSubscriberData($subscriber, false, $forceStatus);
 
         $this->connectApiCallsHelperCreateUpdateSubscriberFactory->create([
             'data' => $data
