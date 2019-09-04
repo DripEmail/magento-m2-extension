@@ -273,7 +273,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         $customerData = $this->prepareCustomerData($customer);
 
         if ($acceptsMarketing !== null) {
-            $customerData['custom_fields']['accepts_marketing'] = $acceptsMarketing;
+            $customerData['custom_fields']['accepts_marketing'] = $acceptsMarketing ? 'yes' : 'no';
         }
 
         $this->connectApiCallsHelperCreateUpdateSubscriberFactory->create([
