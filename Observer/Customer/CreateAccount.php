@@ -10,8 +10,6 @@ namespace Drip\Connect\Observer\Customer;
 
 class CreateAccount extends \Drip\Connect\Observer\Base
 {
-    const REGISTRY_KEY_NEW_USER_SUBSCRIBE_STATE = 'is_new_user_wants_to_subscribe';
-
     /** @var \Magento\Framework\App\Request\Http */
     protected $request;
 
