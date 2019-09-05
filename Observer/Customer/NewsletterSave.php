@@ -3,10 +3,13 @@
 namespace Drip\Connect\Observer\Customer;
 
 /**
- * As best I can tell, the reason for this event is that the customer before
- * save action happens after the newsletter status has saved. So in order to
- * truly tell if the status has changed, we need to store it here, and pick it
- * up in BeforeSave. ~wjohnston 2019-08-29
+ * This is bloody awful. What we're doing is being called right before the
+ * controller executes the action. Once the controller executes, the customer
+ * record will be saved, and after that the subscriber stuff will be saved.
+ * This means that we don't have access to the new values from the customer
+ * save events, but we have access to the raw params here. So we duplicate some
+ * core code to reverse engineer what we expect the newsletter status to be
+ * upon a successful save. :facepalm:
  */
 
 class NewsletterSave extends \Drip\Connect\Observer\Base
@@ -79,9 +82,7 @@ class NewsletterSave extends \Drip\Connect\Observer\Base
         $this->registry->unregister(self::REGISTRY_KEY_SUBSCRIBER_PREV_STATE);
         $this->registry->register(self::REGISTRY_KEY_SUBSCRIBER_PREV_STATE, $acceptsMarketing);
 
-        if ((int) $this->request->getparam('is_subscribed')) {
-            $this->registry->unregister(self::REGISTRY_KEY_SUBSCRIBER_SUBSCRIBE_INTENT);
-            $this->registry->register(self::REGISTRY_KEY_SUBSCRIBER_SUBSCRIBE_INTENT, 1);
-        }
+        $this->registry->unregister(self::REGISTRY_KEY_SUBSCRIBER_SUBSCRIBE_INTENT);
+        $this->registry->register(self::REGISTRY_KEY_SUBSCRIBER_SUBSCRIBE_INTENT, $this->request->getparam('is_subscribed', false));
     }
 }
