@@ -2,7 +2,7 @@
 
 namespace Drip\Connect\Observer\Quote;
 
-class ClearCartOnLogin implements \Drip\Connect\Observer\Base
+class ClearCartOnLogin extends \Drip\Connect\Observer\Base
 {
     /** @var \Drip\Connect\Helper\Data */
     protected $connectHelper;

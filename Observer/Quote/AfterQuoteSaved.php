@@ -2,7 +2,7 @@
 
 namespace Drip\Connect\Observer\Quote;
 
-class AfterQuoteSaved implements \Drip\Connect\Observer\Base
+class AfterQuoteSaved extends \Drip\Connect\Observer\Base
 {
 
     /**

@@ -2,7 +2,7 @@
 
 namespace Drip\Connect\Observer\Wishlist;
 
-class AddProduct implements \Drip\Connect\Observer\Base
+class AddProduct extends \Drip\Connect\Observer\Base
 {
 
     /**

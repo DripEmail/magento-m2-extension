@@ -2,7 +2,7 @@
 
 namespace Drip\Connect\Observer\Wishlist;
 
-class PredispatchWishlistIndexRemove implements \Drip\Connect\Observer\Base
+class PredispatchWishlistIndexRemove extends \Drip\Connect\Observer\Base
 {
 
     /**
