@@ -10,6 +10,9 @@ class BeforeAddressSave extends \Drip\Connect\Observer\Base
     /** @var \Magento\Customer\Model\CustomerFactory */
     protected $customerCustomerFactory;
 
+    /** @var \Magento\Framework\Registry */
+    protected $registry;
+
     /**
      * constructor
      */
@@ -19,7 +22,8 @@ class BeforeAddressSave extends \Drip\Connect\Observer\Base
         \Drip\Connect\Helper\Customer $customerHelper,
         \Magento\Customer\Model\CustomerFactory $customerCustomerFactory
     ) {
-        parent::__construct($connectHelper, $registry);
+        parent::__construct($connectHelper);
+        $this->registry = $registry;
         $this->customerHelper = $customerHelper;
         $this->customerCustomerFactory = $customerCustomerFactory;
     }

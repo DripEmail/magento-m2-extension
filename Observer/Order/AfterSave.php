@@ -10,6 +10,9 @@ class AfterSave extends \Drip\Connect\Observer\Base
     /** @var \Drip\Connect\Helper\Customer */
     protected $customerHelper;
 
+    /** @var \Magento\Framework\Registry */
+    protected $registry;
+
     /**
      * constructor
      */
@@ -19,7 +22,8 @@ class AfterSave extends \Drip\Connect\Observer\Base
         \Drip\Connect\Helper\Customer $customerHelper,
         \Magento\Framework\Registry $registry
     ) {
-        parent::__construct($connectHelper, $registry);
+        parent::__construct($connectHelper);
+        $this->registry = $registry;
         $this->orderHelper = $orderHelper;
         $this->customerHelper = $customerHelper;
     }

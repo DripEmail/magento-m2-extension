@@ -4,6 +4,9 @@ namespace Drip\Connect\Observer\Order\Item;
 
 class BeforeSave extends \Drip\Connect\Observer\Base
 {
+    /** @var \Magento\Framework\Registry */
+    protected $registry;
+
     /**
      * constructor
      */
@@ -12,7 +15,8 @@ class BeforeSave extends \Drip\Connect\Observer\Base
         \Drip\Connect\Helper\Order $orderHelper,
         \Magento\Framework\Registry $registry
     ) {
-        parent::__construct($connectHelper, $registry);
+        parent::__construct($connectHelper);
+        $this->registry = $registry;
         $this->orderHelper = $orderHelper;
     }
 

@@ -12,11 +12,10 @@ class DeleteAfter extends \Drip\Connect\Observer\Base
      */
     public function __construct(
         \Drip\Connect\Helper\Product $productHelper,
-        \Drip\Connect\Helper\Data $connectHelper,
-        \Magento\Framework\Registry $registry
+        \Drip\Connect\Helper\Data $connectHelper
     ) {
         $this->productHelper = $productHelper;
-        parent::__construct($connectHelper, $registry);
+        parent::__construct($connectHelper);
     }
 
     /**

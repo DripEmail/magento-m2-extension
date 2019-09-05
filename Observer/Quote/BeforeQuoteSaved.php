@@ -2,7 +2,7 @@
 
 namespace Drip\Connect\Observer\Quote;
 
-class BeforeQuoteSaved implements \Magento\Framework\Event\ObserverInterface
+class BeforeQuoteSaved implements \Drip\Connect\Observer\Base
 {
 
     /**
@@ -23,9 +23,7 @@ class BeforeQuoteSaved implements \Magento\Framework\Event\ObserverInterface
     /** @var \Magento\Checkout\Model\Session */
     protected $checkoutSession;
 
-    /**
-     * @var \Magento\Framework\Registry
-     */
+    /** @var \Magento\Framework\Registry */
     protected $registry;
 
     public function __construct(
@@ -35,11 +33,11 @@ class BeforeQuoteSaved implements \Magento\Framework\Event\ObserverInterface
         \Magento\Checkout\Model\Session $checkoutSession,
         \Magento\Framework\Registry $registry
     ) {
-        $this->connectHelper = $connectHelper;
         $this->connectQuoteHelper = $connectQuoteHelper;
         $this->quoteQuoteFactory = $quoteQuoteFactory;
         $this->checkoutSession = $checkoutSession;
         $this->registry = $registry;
+        parent::__construct($connectHelper);
     }
 
     public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)

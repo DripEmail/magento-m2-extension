@@ -9,10 +9,9 @@ class SubscriberAfterDelete extends \Drip\Connect\Observer\Base
 
     public function __construct(
         \Drip\Connect\Helper\Data $connectHelper,
-        \Magento\Framework\Registry $registry,
         \Drip\Connect\Helper\Customer $connectCustomerHelper
     ) {
-        parent::__construct($connectHelper, $registry);
+        parent::__construct($connectHelper);
         $this->connectCustomerHelper = $connectCustomerHelper;
     }
     /**

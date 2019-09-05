@@ -2,7 +2,7 @@
 
 namespace Drip\Connect\Observer\Quote;
 
-class ClearCartOnLogin implements \Magento\Framework\Event\ObserverInterface
+class ClearCartOnLogin implements \Drip\Connect\Observer\Base
 {
     /** @var \Drip\Connect\Helper\Data */
     protected $connectHelper;
@@ -24,6 +24,7 @@ class ClearCartOnLogin implements \Magento\Framework\Event\ObserverInterface
         $this->customerSession = $customerSession;
         $this->request = $request;
         $this->connectHelper = $connectHelper;
+        parent::__construct($connectHelper);
     }
 
     /**

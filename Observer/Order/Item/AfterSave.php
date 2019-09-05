@@ -6,6 +6,9 @@ class AfterSave extends \Drip\Connect\Observer\Base
 {
     static $counter = 0;
 
+    /** @var \Magento\Framework\Registry */
+    protected $registry;
+
     /**
      * constructor
      */
@@ -15,7 +18,8 @@ class AfterSave extends \Drip\Connect\Observer\Base
         \Magento\Sales\Api\Data\OrderInterface $order,
         \Magento\Framework\Registry $registry
     ) {
-        parent::__construct($connectHelper, $registry);
+        parent::__construct($connectHelper);
+        $this->registry = $registry;
         $this->orderHelper = $orderHelper;
         $this->order = $order;
     }
