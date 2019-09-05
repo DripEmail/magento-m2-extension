@@ -23,7 +23,6 @@ class ClearCartOnLogin implements \Drip\Connect\Observer\Base
     ) {
         $this->customerSession = $customerSession;
         $this->request = $request;
-        $this->connectHelper = $connectHelper;
         parent::__construct($connectHelper);
     }
 
