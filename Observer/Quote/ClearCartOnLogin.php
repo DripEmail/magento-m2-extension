@@ -19,11 +19,12 @@ class ClearCartOnLogin extends \Drip\Connect\Observer\Base
     public function __construct(
         \Magento\Customer\Model\Session $customerSession,
         \Magento\Framework\App\Request\Http $request,
+        \Drip\Connect\Logger\Logger $logger,
         \Drip\Connect\Helper\Data $connectHelper
     ) {
         $this->customerSession = $customerSession;
         $this->request = $request;
-        parent::__construct($connectHelper);
+        parent::__construct($connectHelper, $logger);
     }
 
     /**

@@ -21,6 +21,7 @@ class SaveAfter extends \Drip\Connect\Observer\Base
      */
     public function __construct(
         \Magento\Catalog\Model\ProductRepository $productRepository,
+        \Drip\Connect\Logger\Logger $logger,
         \Drip\Connect\Helper\Product $productHelper,
         \Drip\Connect\Helper\Data $connectHelper,
         \Magento\Framework\Serialize\Serializer\Json $json,
@@ -30,7 +31,7 @@ class SaveAfter extends \Drip\Connect\Observer\Base
         $this->productHelper = $productHelper;
         $this->registry = $registry;
         $this->json = $json;
-        parent::__construct($connectHelper);
+        parent::__construct($connectHelper, $logger);
     }
 
     /**

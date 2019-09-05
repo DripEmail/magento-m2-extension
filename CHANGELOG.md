@@ -1,7 +1,10 @@
 # Magento 2 Drip Connect Changelog
 
 ## NEXT
+
 * Skip sending order items on after_save with invalid emails.
+* Prevent observer exceptions from causing customer site errors.
+* Improve observer logging.
 
 ## 1.7.3
 

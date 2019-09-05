@@ -30,9 +30,10 @@ class AddProduct extends \Drip\Connect\Observer\Base
         \Drip\Connect\Helper\Data $connectHelper,
         \Magento\Customer\Model\Session $customerSession,
         \Magento\Framework\App\Request\Http $request,
+        \Drip\Connect\Logger\Logger $logger,
         \Drip\Connect\Helper\Wishlist $wishlistHelper
     ) {
-        parent::__construct($connectHelper);
+        parent::__construct($connectHelper, $logger);
         $this->customerSession = $customerSession;
         $this->request = $request;
         $this->wishlistHelper = $wishlistHelper;

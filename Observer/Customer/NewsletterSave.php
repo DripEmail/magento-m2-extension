@@ -28,13 +28,14 @@ class NewsletterSave extends \Drip\Connect\Observer\Base
     public function __construct(
         \Drip\Connect\Helper\Data $connectHelper,
         \Magento\Framework\Registry $registry,
+        \Drip\Connect\Logger\Logger $logger,
         \Drip\Connect\Helper\Customer $customerHelper,
         \Magento\Customer\Model\Session $customerSession,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\App\Request\Http $request,
         \Magento\Newsletter\Model\SubscriberFactory $subscriberFactory
     ) {
-        parent::__construct($connectHelper);
+        parent::__construct($connectHelper, $logger);
         $this->registry = $registry;
         $this->subscriberFactory = $subscriberFactory;
         $this->customerSession = $customerSession;

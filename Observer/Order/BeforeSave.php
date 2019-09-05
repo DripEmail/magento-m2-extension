@@ -12,9 +12,10 @@ class BeforeSave extends \Drip\Connect\Observer\Base
      */
     public function __construct(
         \Drip\Connect\Helper\Data $connectHelper,
+        \Drip\Connect\Logger\Logger $logger,
         \Magento\Framework\Registry $registry
     ) {
-        parent::__construct($connectHelper);
+        parent::__construct($connectHelper, $logger);
         $this->registry = $registry;
     }
 

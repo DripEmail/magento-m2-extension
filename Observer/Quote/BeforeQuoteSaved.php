@@ -31,13 +31,14 @@ class BeforeQuoteSaved extends \Drip\Connect\Observer\Base
         \Drip\Connect\Helper\Quote $connectQuoteHelper,
         \Magento\Quote\Model\QuoteFactory $quoteQuoteFactory,
         \Magento\Checkout\Model\Session $checkoutSession,
+        \Drip\Connect\Logger\Logger $logger,
         \Magento\Framework\Registry $registry
     ) {
         $this->connectQuoteHelper = $connectQuoteHelper;
         $this->quoteQuoteFactory = $quoteQuoteFactory;
         $this->checkoutSession = $checkoutSession;
         $this->registry = $registry;
-        parent::__construct($connectHelper);
+        parent::__construct($connectHelper, $logger);
     }
 
     public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)

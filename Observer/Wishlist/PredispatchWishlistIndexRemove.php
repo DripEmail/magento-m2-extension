@@ -41,10 +41,11 @@ class PredispatchWishlistIndexRemove extends \Drip\Connect\Observer\Base
         \Drip\Connect\Helper\Wishlist $wishlistHelper,
         \Magento\Customer\Model\Session $customerSession,
         \Magento\Framework\App\Request\Http $request,
+        \Drip\Connect\Logger\Logger $logger,
         \Magento\Wishlist\Model\ItemFactory $wishlistItemFactory,
         \Magento\Catalog\Model\ProductFactory $catalogProductFactory
     ) {
-        parent::__construct($connectHelper);
+        parent::__construct($connectHelper, $logger);
         $this->wishlistHelper = $wishlistHelper;
         $this->customerSession = $customerSession;
         $this->request = $request;

@@ -19,10 +19,11 @@ class GuestSubscriberAttempt extends \Drip\Connect\Observer\Base
     public function __construct(
         \Drip\Connect\Helper\Data $connectHelper,
         \Magento\Framework\Registry $registry,
+        \Drip\Connect\Logger\Logger $logger,
         \Magento\Framework\App\Request\Http $request,
         \Magento\Newsletter\Model\SubscriberFactory $subscriberFactory
     ) {
-        parent::__construct($connectHelper);
+        parent::__construct($connectHelper, $logger);
         $this->registry = $registry;
         $this->subscriberFactory = $subscriberFactory;
         $this->request = $request;
