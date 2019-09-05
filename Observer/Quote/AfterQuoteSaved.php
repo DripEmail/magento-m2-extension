@@ -23,11 +23,12 @@ class AfterQuoteSaved extends \Drip\Connect\Observer\Base
     public function __construct(
         \Drip\Connect\Helper\Data $connectHelper,
         \Drip\Connect\Helper\Quote $connectQuoteHelper,
+        \Drip\Connect\Logger\Logger $logger,
         \Magento\Framework\Registry $registry
     ) {
         $this->connectQuoteHelper = $connectQuoteHelper;
         $this->registry = $registry;
-        parent::__construct($connectHelper);
+        parent::__construct($connectHelper, $logger);
     }
 
     public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)

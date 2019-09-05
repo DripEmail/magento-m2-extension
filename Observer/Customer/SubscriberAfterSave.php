@@ -9,10 +9,11 @@ class SubscriberAfterSave extends \Drip\Connect\Observer\Base
 
     public function __construct(
         \Drip\Connect\Helper\Data $connectHelper,
+        \Drip\Connect\Logger\Logger $logger,
         \Magento\Framework\App\Request\Http $request,
         \Drip\Connect\Helper\Customer $connectCustomerHelper
     ) {
-        parent::__construct($connectHelper);
+        parent::__construct($connectHelper, $logger);
         $this->connectCustomerHelper = $connectCustomerHelper;
         $this->request = $request;
     }

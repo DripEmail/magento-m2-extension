@@ -16,10 +16,15 @@ abstract class Base implements \Magento\Framework\Event\ObserverInterface
     /** @var \Drip\Connect\Helper\Data */
     protected $connectHelper;
 
+    /** @var \Drip\Connect\Logger\Logger */
+    protected $logger;
+
     public function __construct(
-        \Drip\Connect\Helper\Data $connectHelper
+        \Drip\Connect\Helper\Data $connectHelper,
+        \Drip\Connect\Logger\Logger $logger
     ) {
         $this->connectHelper = $connectHelper;
+        $this->logger = $logger;
     }
 
     abstract protected function executeWhenEnabled(\Magento\Framework\Event\Observer $observer);
@@ -30,6 +35,14 @@ abstract class Base implements \Magento\Framework\Event\ObserverInterface
             return;
         }
 
-        $this->executeWhenEnabled($observer);
+        $myClass = get_class($this);
+        $this->logger->info("Observer triggered: {$myClass}");
+
+        try {
+            $this->executeWhenEnabled($observer);
+        } catch (\Exception $e) {
+            // We should never blow up a customer's site due to bugs in our code.
+            $this->logger->critical($e);
+        }
     }
 }

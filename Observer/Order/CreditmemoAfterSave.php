@@ -12,12 +12,13 @@ class CreditmemoAfterSave extends \Drip\Connect\Observer\Base
      */
     public function __construct(
         \Drip\Connect\Helper\Data $connectHelper,
+        \Drip\Connect\Logger\Logger $logger,
         \Drip\Connect\Helper\Order $orderHelper,
         \Magento\Sales\Api\Data\OrderInterface $order,
         \Drip\Connect\Helper\Customer $customerHelper,
         \Magento\Framework\Registry $registry
     ) {
-        parent::__construct($connectHelper);
+        parent::__construct($connectHelper, $logger);
         $this->registry = $registry;
         $this->orderHelper = $orderHelper;
         $this->order = $order;

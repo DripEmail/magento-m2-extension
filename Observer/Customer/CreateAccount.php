@@ -18,9 +18,10 @@ class CreateAccount extends \Drip\Connect\Observer\Base
     public function __construct(
         \Drip\Connect\Helper\Data $connectHelper,
         \Magento\Framework\Registry $registry,
+        \Drip\Connect\Logger\Logger $logger,
         \Magento\Framework\App\Request\Http $request
     ) {
-        parent::__construct($connectHelper);
+        parent::__construct($connectHelper, $logger);
         $this->registry = $registry;
         $this->request = $request;
     }

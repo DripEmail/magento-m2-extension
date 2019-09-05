@@ -12,10 +12,11 @@ class DeleteAfter extends \Drip\Connect\Observer\Base
      */
     public function __construct(
         \Drip\Connect\Helper\Product $productHelper,
+        \Drip\Connect\Logger\Logger $logger,
         \Drip\Connect\Helper\Data $connectHelper
     ) {
         $this->productHelper = $productHelper;
-        parent::__construct($connectHelper);
+        parent::__construct($connectHelper, $logger);
     }
 
     /**

@@ -29,12 +29,13 @@ class SaveAfter extends \Drip\Connect\Observer\Base
         \Drip\Connect\Helper\Data $connectHelper,
         \Magento\Framework\Registry $registry,
         \Drip\Connect\Helper\Customer $customerHelper,
+        \Drip\Connect\Logger\Logger $logger,
         \Magento\Newsletter\Model\SubscriberFactory $subscriberFactory,
         \Magento\Framework\Session\SessionManagerInterface $coreSession,
         \Magento\Framework\Serialize\Serializer\Json $json,
         \Magento\Customer\Model\CustomerFactory $customerCustomerFactory
     ) {
-        parent::__construct($connectHelper);
+        parent::__construct($connectHelper, $logger);
         $this->registry = $registry;
         $this->customerHelper = $customerHelper;
         $this->subscriberFactory = $subscriberFactory;
