@@ -2,7 +2,7 @@
 
 namespace Drip\Connect\Observer\Quote;
 
-class AfterQuoteSaved implements \Magento\Framework\Event\ObserverInterface
+class AfterQuoteSaved extends \Drip\Connect\Observer\Base
 {
 
     /**
@@ -25,9 +25,9 @@ class AfterQuoteSaved implements \Magento\Framework\Event\ObserverInterface
         \Drip\Connect\Helper\Quote $connectQuoteHelper,
         \Magento\Framework\Registry $registry
     ) {
-        $this->connectHelper = $connectHelper;
         $this->connectQuoteHelper = $connectQuoteHelper;
         $this->registry = $registry;
+        parent::__construct($connectHelper);
     }
 
     public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)

@@ -2,7 +2,7 @@
 
 namespace Drip\Connect\Observer\Wishlist;
 
-class PredispatchWishlistIndexRemove implements \Magento\Framework\Event\ObserverInterface
+class PredispatchWishlistIndexRemove extends \Drip\Connect\Observer\Base
 {
 
     /**
@@ -44,7 +44,7 @@ class PredispatchWishlistIndexRemove implements \Magento\Framework\Event\Observe
         \Magento\Wishlist\Model\ItemFactory $wishlistItemFactory,
         \Magento\Catalog\Model\ProductFactory $catalogProductFactory
     ) {
-        $this->connectHelper = $connectHelper;
+        parent::__construct($connectHelper);
         $this->wishlistHelper = $wishlistHelper;
         $this->customerSession = $customerSession;
         $this->request = $request;

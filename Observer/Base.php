@@ -16,15 +16,10 @@ abstract class Base implements \Magento\Framework\Event\ObserverInterface
     /** @var \Drip\Connect\Helper\Data */
     protected $connectHelper;
 
-    /** @var \Magento\Framework\Registry */
-    protected $registry;
-
     public function __construct(
-        \Drip\Connect\Helper\Data $connectHelper,
-        \Magento\Framework\Registry $registry
+        \Drip\Connect\Helper\Data $connectHelper
     ) {
         $this->connectHelper = $connectHelper;
-        $this->registry = $registry;
     }
 
     abstract protected function executeWhenEnabled(\Magento\Framework\Event\Observer $observer);

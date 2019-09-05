@@ -10,6 +10,9 @@ class GuestSubscriberAttempt extends \Drip\Connect\Observer\Base
     /** @var \Magento\Framework\App\Request\Http */
     protected $request;
 
+    /** @var \Magento\Framework\Registry */
+    protected $registry;
+
     /**
      * constructor
      */
@@ -19,7 +22,8 @@ class GuestSubscriberAttempt extends \Drip\Connect\Observer\Base
         \Magento\Framework\App\Request\Http $request,
         \Magento\Newsletter\Model\SubscriberFactory $subscriberFactory
     ) {
-        parent::__construct($connectHelper, $registry);
+        parent::__construct($connectHelper);
+        $this->registry = $registry;
         $this->subscriberFactory = $subscriberFactory;
         $this->request = $request;
     }

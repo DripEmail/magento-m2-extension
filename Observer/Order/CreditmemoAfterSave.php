@@ -4,6 +4,9 @@ namespace Drip\Connect\Observer\Order;
 
 class CreditmemoAfterSave extends \Drip\Connect\Observer\Base
 {
+    /** @var \Magento\Framework\Registry */
+    protected $registry;
+
     /**
      * constructor
      */
@@ -14,7 +17,8 @@ class CreditmemoAfterSave extends \Drip\Connect\Observer\Base
         \Drip\Connect\Helper\Customer $customerHelper,
         \Magento\Framework\Registry $registry
     ) {
-        parent::__construct($connectHelper, $registry);
+        parent::__construct($connectHelper);
+        $this->registry = $registry;
         $this->orderHelper = $orderHelper;
         $this->order = $order;
         $this->customerHelper = $customerHelper;

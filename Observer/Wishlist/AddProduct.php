@@ -2,7 +2,7 @@
 
 namespace Drip\Connect\Observer\Wishlist;
 
-class AddProduct implements \Magento\Framework\Event\ObserverInterface
+class AddProduct extends \Drip\Connect\Observer\Base
 {
 
     /**
@@ -32,7 +32,7 @@ class AddProduct implements \Magento\Framework\Event\ObserverInterface
         \Magento\Framework\App\Request\Http $request,
         \Drip\Connect\Helper\Wishlist $wishlistHelper
     ) {
-        $this->connectHelper = $connectHelper;
+        parent::__construct($connectHelper);
         $this->customerSession = $customerSession;
         $this->request = $request;
         $this->wishlistHelper = $wishlistHelper;

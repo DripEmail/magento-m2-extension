@@ -13,6 +13,9 @@ class BeforeSave extends \Drip\Connect\Observer\Base
     /** @var \Magento\Customer\Model\CustomerFactory */
     protected $customerCustomerFactory;
 
+    /** @var \Magento\Framework\Registry */
+    protected $registry;
+
     /**
      * constructor
      */
@@ -23,7 +26,8 @@ class BeforeSave extends \Drip\Connect\Observer\Base
         \Drip\Connect\Helper\Quote $quoteHelper,
         \Magento\Customer\Model\CustomerFactory $customerCustomerFactory
     ) {
-        parent::__construct($connectHelper, $registry);
+        parent::__construct($connectHelper);
+        $this->registry = $registry;
         $this->customerCustomerFactory = $customerCustomerFactory;
         $this->quoteHelper = $quoteHelper;
         $this->customerHelper = $customerHelper;
