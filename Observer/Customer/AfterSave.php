@@ -47,42 +47,23 @@ class AfterSave extends \Drip\Connect\Observer\Base
         $customer = $observer->getCustomer();
 
         if ($this->registry->registry(self::REGISTRY_KEY_CUSTOMER_IS_NEW)) {
-            $this->customerHelper->proceedAccountNew($customer);
-            if (! in_array($this->registry->registry(
-                \Drip\Connect\Observer\Customer\CreateAccount::REGISTRY_KEY_NEW_USER_SUBSCRIBE_STATE
-            ), ['yes', 1])) {
-                $this->customerHelper->unsubscribe($customer->getEmail());
-            }
+            $acceptsMarketing = $this->registry->registry(self::REGISTRY_KEY_NEW_USER_SUBSCRIBE_STATE);
+            $this->customerHelper->proceedAccount($customer, $acceptsMarketing, \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_NEW, $acceptsMarketing);
         } else {
-            if ($this->registry->registry(self::REGISTRY_KEY_SUBSCRIBER_SUBSCRIBE_INTENT)) {
-                $customer->setIsSubscribed(1);
+            if ($this->registry->registry(self::REGISTRY_KEY_SUBSCRIBER_SUBSCRIBE_INTENT) !== null) {
+                $customer->setIsSubscribed((int) $this->registry->registry(self::REGISTRY_KEY_SUBSCRIBER_SUBSCRIBE_INTENT));
             }
             if ($this->isCustomerChanged($customer)) {
-                $this->customerHelper->proceedAccount($customer);
-            }
-            if ($this->isUnsubscribeCallRequired($customer)) {
-                $this->customerHelper->unsubscribe($customer->getEmail());
+                $this->customerHelper->proceedAccount(
+                    $customer,
+                    null,
+                    \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_UPDATED,
+                    $this->isCustomerStatusChanged($customer)
+                );
             }
         }
         $this->registry->unregister(self::REGISTRY_KEY_CUSTOMER_IS_NEW);
         $this->registry->unregister(self::REGISTRY_KEY_CUSTOMER_OLD_DATA);
-    }
-
-    /**
-     * check if we need to send additional api call to cancel all subscriptions
-     * (true if status change from yes to no)
-     *
-     * @param \Magento\Customer\Model\Customer $customer
-     *
-     * @return bool
-     */
-    protected function isUnsubscribeCallRequired($customer)
-    {
-        $oldData = $this->registry->registry(self::REGISTRY_KEY_CUSTOMER_OLD_DATA);
-        $newData = $this->customerHelper->prepareCustomerData($customer);
-
-        return ($newData['custom_fields']['accepts_marketing'] == 'no'
-            && $oldData['custom_fields']['accepts_marketing'] != 'no');
     }
 
     /**
@@ -96,5 +77,20 @@ class AfterSave extends \Drip\Connect\Observer\Base
         $newData = $this->customerHelper->prepareCustomerData($customer);
 
         return ($this->json->serialize($oldData) != $this->json->serialize($newData));
+    }
+
+    // DUP: of SaveAfter
+    /**
+     * Determine whether the status has changed between the old and new data
+     *
+     * @param \Magento\Customer\Model\Customer $customer
+     */
+    protected function isCustomerStatusChanged($customer)
+    {
+        $oldData = $this->registry->registry(self::REGISTRY_KEY_CUSTOMER_OLD_DATA);
+        // TODO: Refactor away stringly typed boolean.
+        $oldStatus = $oldData['custom_fields']['accepts_marketing'] == 'yes';
+        $newStatus = (bool) $customer->getIsSubscribed();
+        return $oldStatus !== $newStatus;
     }
 }

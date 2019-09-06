@@ -2,6 +2,16 @@
 
 namespace Drip\Connect\Observer\Customer;
 
+/**
+ * This is bloody awful. What we're doing is being called right before the
+ * controller executes the action. Once the controller executes, the customer
+ * record will be saved, and after that the subscriber stuff will be saved.
+ * This means that we don't have access to the new values from the customer
+ * save events, but we have access to the raw params here. So we duplicate some
+ * core code to reverse engineer what we expect the newsletter status to be
+ * upon a successful save. :facepalm:
+ */
+
 class NewsletterSave extends \Drip\Connect\Observer\Base
 {
     /** @var \Drip\Connect\Helper\Customer */
@@ -59,22 +69,12 @@ class NewsletterSave extends \Drip\Connect\Observer\Base
 
         $subscriber = $this->subscriberFactory->create()->loadByEmail($customerEmail);
 
-        if (! $subscriber->getId()) {
-            $acceptsMarketing = 'no';
-        } else {
-            if ($subscriber->getSubscriberStatus() == \Magento\Newsletter\Model\Subscriber::STATUS_SUBSCRIBED) {
-                $acceptsMarketing = 'yes';
-            } else {
-                $acceptsMarketing = 'no';
-            }
-        }
+        $acceptsMarketing = $subscriber->getId() && ($subscriber->getSubscriberStatus() == \Magento\Newsletter\Model\Subscriber::STATUS_SUBSCRIBED);
 
         $this->registry->unregister(self::REGISTRY_KEY_SUBSCRIBER_PREV_STATE);
         $this->registry->register(self::REGISTRY_KEY_SUBSCRIBER_PREV_STATE, $acceptsMarketing);
 
-        if ((int) $this->request->getparam('is_subscribed')) {
-            $this->registry->unregister(self::REGISTRY_KEY_SUBSCRIBER_SUBSCRIBE_INTENT);
-            $this->registry->register(self::REGISTRY_KEY_SUBSCRIBER_SUBSCRIBE_INTENT, 1);
-        }
+        $this->registry->unregister(self::REGISTRY_KEY_SUBSCRIBER_SUBSCRIBE_INTENT);
+        $this->registry->register(self::REGISTRY_KEY_SUBSCRIBER_SUBSCRIBE_INTENT, $this->request->getparam('is_subscribed', false));
     }
 }

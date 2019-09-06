@@ -50,7 +50,12 @@ class GuestSubscriberCreated extends \Drip\Connect\Observer\Base
         $email = $this->request->getParam('email');
 
         $subscriber = $this->subscriberFactory->create()->loadByEmail($email);
+        $newSubscriberSubscribed = $subscriber->getSubscriberStatus() == \Magento\Newsletter\Model\Subscriber::STATUS_SUBSCRIBED;
 
-        $this->customerHelper->proceedGuestSubscriberNew($subscriber);
+        // We only force subscription status in Drip when subscribed because if
+        // the user already exists in Drip and is subscribed there, we don't
+        // want to unsubscribe them, because presumably they have opted in
+        // elsewhere.
+        $this->customerHelper->proceedGuestSubscriberNew($subscriber, $newSubscriberSubscribed);
     }
 }
