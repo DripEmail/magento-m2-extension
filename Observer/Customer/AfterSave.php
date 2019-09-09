@@ -50,9 +50,6 @@ class AfterSave extends \Drip\Connect\Observer\Base
             $acceptsMarketing = $this->registry->registry(self::REGISTRY_KEY_NEW_USER_SUBSCRIBE_STATE);
             $this->customerHelper->proceedAccount($customer, $acceptsMarketing, \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_NEW, $acceptsMarketing);
         } else {
-            if ($this->registry->registry(self::REGISTRY_KEY_SUBSCRIBER_SUBSCRIBE_INTENT) !== null) {
-                $customer->setIsSubscribed((int) $this->registry->registry(self::REGISTRY_KEY_SUBSCRIBER_SUBSCRIBE_INTENT));
-            }
             if ($this->isCustomerChanged($customer)) {
                 $this->customerHelper->proceedAccount(
                     $customer,
@@ -90,7 +87,7 @@ class AfterSave extends \Drip\Connect\Observer\Base
         $oldData = $this->registry->registry(self::REGISTRY_KEY_CUSTOMER_OLD_DATA);
         // TODO: Refactor away stringly typed boolean.
         $oldStatus = $oldData['custom_fields']['accepts_marketing'] == 'yes';
-        $newStatus = (bool) $customer->getIsSubscribed();
+        $newStatus = $this->registry->registry(self::REGISTRY_KEY_SUBSCRIBER_SUBSCRIBE_INTENT);
         return $oldStatus !== $newStatus;
     }
 }

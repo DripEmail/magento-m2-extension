@@ -52,11 +52,6 @@ class SaveAfter extends \Drip\Connect\Observer\Base
         $customerData = $observer->getCustomer();
         $customer = $this->customerCustomerFactory->create()->load($customerData->getId());
 
-        $subscriber = $this->subscriberFactory->create()->loadByEmail($customer->getEmail());
-        if ($subscriber->isSubscribed()) {
-            $customer->setIsSubscribed(1);
-        }
-
         if ($this->coreSession->getCustomerIsNew()) {
             $this->coreSession->unsCustomerIsNew();
             $acceptsMarketing = $this->registry->registry(self::REGISTRY_KEY_NEW_USER_SUBSCRIBE_STATE);
@@ -109,7 +104,8 @@ class SaveAfter extends \Drip\Connect\Observer\Base
         $oldData = $this->registry->registry(self::REGISTRY_KEY_CUSTOMER_OLD_DATA);
         // TODO: Refactor away stringly typed boolean.
         $oldStatus = $oldData['custom_fields']['accepts_marketing'] == 'yes';
-        $newStatus = (bool) $customer->getIsSubscribed();
+        $subscriber = $this->subscriberFactory->create()->loadByEmail($customer->getEmail());
+        $newStatus = $subscriber->isSubscribed();
         return $oldStatus !== $newStatus;
     }
 }
