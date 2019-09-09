@@ -122,7 +122,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
             $status = $overriddenStatus;
         } else {
             $subscriber = $this->subscriberFactory->create()->loadByCustomerId($customer->getId());
-            $status = $subscriber->getId() && $subscriber->isSubscribed();
+            $status = $subscriber->isSubscribed();
         }
 
         $data = array (

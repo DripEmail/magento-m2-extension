@@ -53,7 +53,7 @@ class SaveAfter extends \Drip\Connect\Observer\Base
         $customer = $this->customerCustomerFactory->create()->load($customerData->getId());
 
         $subscriber = $this->subscriberFactory->create()->loadByEmail($customer->getEmail());
-        if ($subscriber->getId() && $subscriber->isSubscribed()) {
+        if ($subscriber->isSubscribed()) {
             $customer->setIsSubscribed(1);
         }
 
