@@ -80,7 +80,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function prepareGuestSubscriberData($subscriber, $updatableOnly = true, $statusChanged = false)
     {
-        $acceptsMarketing = $subscriber->getSubscriberStatus() == \Magento\Newsletter\Model\Subscriber::STATUS_SUBSCRIBED;
+        $acceptsMarketing = $subscriber->isSubscribed();
 
         $data = array (
             'email' => (string) $subscriber->getSubscriberEmail(),

@@ -53,8 +53,7 @@ class SaveAfter extends \Drip\Connect\Observer\Base
         $customer = $this->customerCustomerFactory->create()->load($customerData->getId());
 
         $subscriber = $this->subscriberFactory->create()->loadByEmail($customer->getEmail());
-        if ($subscriber->getId() &&
-            $subscriber->getSubscriberStatus() == \Magento\Newsletter\Model\Subscriber::STATUS_SUBSCRIBED) {
+        if ($subscriber->getId() && $subscriber->isSubscribed()) {
             $customer->setIsSubscribed(1);
         }
 
