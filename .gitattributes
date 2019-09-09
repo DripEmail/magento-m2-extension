@@ -4,4 +4,4 @@
 .gitignore export-ignore
 /bitbucket-pipelines.yml export-ignore
 /.bitbucket-pipelines export-ignore
-/devtools export-ignore
+/devtools_m2 export-ignore
