@@ -53,7 +53,7 @@ class AfterSave extends \Drip\Connect\Observer\Base
             if ($this->isCustomerChanged($customer)) {
                 $this->customerHelper->proceedAccount(
                     $customer,
-                    null,
+                    $this->registry->registry(self::REGISTRY_KEY_SUBSCRIBER_SUBSCRIBE_INTENT),
                     \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_UPDATED,
                     $this->isCustomerStatusChanged($customer)
                 );
@@ -71,7 +71,7 @@ class AfterSave extends \Drip\Connect\Observer\Base
     protected function isCustomerChanged($customer)
     {
         $oldData = $this->registry->registry(self::REGISTRY_KEY_CUSTOMER_OLD_DATA);
-        $newData = $this->customerHelper->prepareCustomerData($customer);
+        $newData = $this->customerHelper->prepareCustomerData($customer, true, false, $this->registry->registry(self::REGISTRY_KEY_SUBSCRIBER_SUBSCRIBE_INTENT));
 
         return ($this->json->serialize($oldData) != $this->json->serialize($newData));
     }
