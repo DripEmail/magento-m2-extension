@@ -2,4 +2,4 @@
 
 set -e
 
-docker-compose exec web tail -f /var/www/html/magento/var/log/drip.log
+docker-compose exec web tail -f -n100 /var/www/html/magento/var/log/drip.log
