@@ -86,11 +86,18 @@ class Orders
                 continue;
             }
 
+            // Back up the current store ID and overwrite it for context.
+            $prevStoreId = $this->storeManager->getStore()->getId();
+            $this->storeManager->setCurrentStore($storeId);
+
             try {
                 $result = $this->syncOrdersForStore($storeId);
             } catch (\Exception $e) {
                 $result = false;
                 $this->logger->critical($e);
+            } finally {
+                // Restore whatever the previous store ID was.
+                $this->storeManager->setCurrentStore($prevStoreId);
             }
 
             if ($result) {
