@@ -38,6 +38,11 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
     protected $catalogProductFactory;
 
     /**
+     * @var \Magento\Newsletter\Model\SubscriberFactory
+     */
+    protected $subscriberFactory;
+
+    /**
      * @var \Magento\Catalog\Model\Product\Media\ConfigFactory
      */
     protected $catalogProductMediaConfigFactory;
@@ -60,6 +65,7 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
         \Drip\Connect\Helper\Data $connectHelper,
         \Magento\Checkout\Helper\Cart $checkoutCartHelper,
         \Magento\Catalog\Model\ProductFactory $catalogProductFactory,
+        \Magento\Newsletter\Model\SubscriberFactory $subscriberFactory,
         \Magento\Catalog\Model\Product\Media\ConfigFactory $catalogProductMediaConfigFactory,
         \Magento\Checkout\Model\Session $checkoutSession,
         \Magento\Framework\Serialize\Serializer\Json $json,
@@ -70,6 +76,7 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
         $this->connectHelper = $connectHelper;
         $this->checkoutCartHelper = $checkoutCartHelper;
         $this->catalogProductFactory = $catalogProductFactory;
+        $this->subscriberFactory = $subscriberFactory;
         $this->catalogProductMediaConfigFactory = $catalogProductMediaConfigFactory;
         $this->checkoutSession = $checkoutSession;
         $this->registry = $registry;
@@ -152,9 +159,12 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function prepareQuoteData($quote)
     {
+        $subscriber = $this->subscriberFactory->create()->loadByEmail($this->email);
+
         $data = array (
             'provider' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateQuote::PROVIDER_NAME,
             'email' => $this->email,
+            'initial_status' => ($subscriber->isSubscribed() ? 'active' : 'unsubscribed'),
             'cart_id' => $quote->getId(),
             'grand_total' => $this->connectHelper->priceAsCents($quote->getGrandTotal())/100,
             'total_discounts' => $this->connectHelper->priceAsCents((float)$quote->getSubtotal() - (float)$quote->getSubtotalWithDiscount()) / 100,
