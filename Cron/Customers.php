@@ -96,29 +96,38 @@ class Customers
                 continue;
             }
 
-            try {
-                $customerResult = $this->syncCustomersForStore($storeId);
-            } catch (\Exception $e) {
-                $customerResult = false;
-                $this->logger->critical($e);
-            }
+            // Back up the current store ID and overwrite it for context.
+            $prevStoreId = $this->storeManager->getStore()->getId();
+            $this->storeManager->setCurrentStore($storeId);
 
             try {
-                $subscriberResult = $this->syncGuestSubscribersForStore($storeId);
-            } catch (\Exception $e) {
-                $subscriberResult = false;
-                $this->logger->critical($e);
+                try {
+                    $customerResult = $this->syncCustomersForStore($storeId);
+                } catch (\Exception $e) {
+                    $customerResult = false;
+                    $this->logger->critical($e);
+                }
+
+                try {
+                    $subscriberResult = $this->syncGuestSubscribersForStore($storeId);
+                } catch (\Exception $e) {
+                    $subscriberResult = false;
+                    $this->logger->critical($e);
+                }
+
+                if ($subscriberResult && $customerResult) {
+                    $status = SyncState::READY;
+                } else {
+                    $status = SyncState::READYERRORS;
+                }
+
+                $statuses[$storeId] = $status;
+
+                $this->connectHelper->setCustomersSyncStateToStore($storeId, $status);
+            } finally {
+                // Restore whatever the previous store ID was.
+                $this->storeManager->setCurrentStore($prevStoreId);
             }
-
-            if ($subscriberResult && $customerResult) {
-                $status = SyncState::READY;
-            } else {
-                $status = SyncState::READYERRORS;
-            }
-
-            $statuses[$storeId] = $status;
-
-            $this->connectHelper->setCustomersSyncStateToStore($storeId, $status);
         }
 
         if ($trackDefaultStatus) {

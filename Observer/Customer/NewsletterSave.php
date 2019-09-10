@@ -69,10 +69,8 @@ class NewsletterSave extends \Drip\Connect\Observer\Base
 
         $subscriber = $this->subscriberFactory->create()->loadByEmail($customerEmail);
 
-        $acceptsMarketing = $subscriber->getId() && ($subscriber->getSubscriberStatus() == \Magento\Newsletter\Model\Subscriber::STATUS_SUBSCRIBED);
-
         $this->registry->unregister(self::REGISTRY_KEY_SUBSCRIBER_PREV_STATE);
-        $this->registry->register(self::REGISTRY_KEY_SUBSCRIBER_PREV_STATE, $acceptsMarketing);
+        $this->registry->register(self::REGISTRY_KEY_SUBSCRIBER_PREV_STATE, $subscriber->isSubscribed());
 
         $this->registry->unregister(self::REGISTRY_KEY_SUBSCRIBER_SUBSCRIBE_INTENT);
         $this->registry->register(self::REGISTRY_KEY_SUBSCRIBER_SUBSCRIBE_INTENT, $this->request->getparam('is_subscribed', false));
