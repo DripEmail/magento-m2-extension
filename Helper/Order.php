@@ -20,6 +20,9 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     /** @var \Magento\Catalog\Model\Product\Media\ConfigFactory */
     protected $catalogProductMediaConfigFactory;
 
+    /** @var \Magento\Newsletter\Model\SubscriberFactory */
+    protected $subscriberFactory;
+
     /** @var \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrderFactory */
     protected $connectApiCallsHelperCreateUpdateOrderFactory;
 
@@ -35,6 +38,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Sales\Model\Order\AddressFactory $salesOrderAddressFactory,
         \Magento\Catalog\Model\ProductFactory $catalogProductFactory,
         \Magento\Catalog\Model\Product\Media\ConfigFactory $catalogProductMediaConfigFactory,
+        \Magento\Newsletter\Model\SubscriberFactory $subscriberFactory,
         \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrderFactory $connectApiCallsHelperCreateUpdateOrderFactory,
         \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateRefundFactory $connectApiCallsHelperCreateUpdateRefundFactory,
         \Drip\Connect\Model\ApiCalls\Helper\Batches\OrdersFactory $connectApiCallsHelperBatchesOrdersFactory
@@ -43,6 +47,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
         $this->salesOrderAddressFactory = $salesOrderAddressFactory;
         $this->catalogProductFactory = $catalogProductFactory;
         $this->catalogProductMediaConfigFactory = $catalogProductMediaConfigFactory;
+        $this->subscriberFactory = $subscriberFactory;
         $this->connectApiCallsHelperCreateUpdateOrderFactory = $connectApiCallsHelperCreateUpdateOrderFactory;
         $this->connectApiCallsHelperCreateUpdateRefundFactory = $connectApiCallsHelperCreateUpdateRefundFactory;
         $this->connectApiCallsHelperBatchesOrdersFactory = $connectApiCallsHelperBatchesOrdersFactory;
@@ -58,9 +63,12 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getCommonOrderData($order)
     {
+        $subscriber = $this->subscriberFactory->create()->loadByEmail($order->getCustomerEmail());
+
         $data = array(
             'provider' => (string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::PROVIDER_NAME,
             'email' => (string) $order->getCustomerEmail(),
+            'initial_status' => ($subscriber->isSubscribed() ? 'active' : 'unsubscribed'),
             'order_id' => (string) $order->getIncrementId(),
             'order_public_id' => (string) $order->getIncrementId(),
             'grand_total' => $this->connectHelper->priceAsCents($order->getGrandTotal()) / 100,
