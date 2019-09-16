@@ -25,4 +25,3 @@ class SubscriberAfterDelete extends \Drip\Connect\Observer\Base
         $this->connectCustomerHelper->proceedSubscriberDelete($subscriber);
     }
 }
-

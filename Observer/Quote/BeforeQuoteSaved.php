@@ -56,7 +56,9 @@ class BeforeQuoteSaved extends \Drip\Connect\Observer\Base
             $this->registry->register(\Drip\Connect\Helper\Quote::REGISTRY_KEY_OLD_DATA, $data);
         }
 
-        if (!$this->registry->registry(\Drip\Connect\Helper\Quote::REGISTRY_KEY_CUSTOMER_REGISTERED_OR_LOGGED_IN_WITH_EMTPY_QUOTE)) {
+        if (!$this->registry->registry(
+            \Drip\Connect\Helper\Quote::REGISTRY_KEY_CUSTOMER_REGISTERED_OR_LOGGED_IN_WITH_EMTPY_QUOTE
+        )) {
             $this->registry->unregister(\Drip\Connect\Helper\Quote::REGISTRY_KEY_IS_NEW);
             if ($quote->getCustomerEmail()) {
                 if ($quote->getDrip() || $quote->getCustomerEmail() == $this->checkoutSession->getGuestEmail()) {
@@ -73,7 +75,5 @@ class BeforeQuoteSaved extends \Drip\Connect\Observer\Base
                 }
             }
         }
-
     }
-
 }

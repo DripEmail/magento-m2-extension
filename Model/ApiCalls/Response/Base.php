@@ -1,10 +1,9 @@
 <?php
 namespace Drip\Connect\Model\ApiCalls\Response;
 
+use \Drip\Connect\Model\Restapi\Response\ResponseInterface as RestapiResponseInterface;
 
-class Base
-    extends \Drip\Connect\Model\Restapi\Response\ResponseAbstract
-    implements \Drip\Connect\Model\Restapi\Response\ResponseInterface
+class Base extends \Drip\Connect\Model\Restapi\Response\ResponseAbstract implements RestapiResponseInterface
 {
     /** @var array */
     protected $responseData;
@@ -51,4 +50,3 @@ class Base
         return $this->getResponse()->getStatus();
     }
 }
-

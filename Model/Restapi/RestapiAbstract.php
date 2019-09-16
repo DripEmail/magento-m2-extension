@@ -193,7 +193,7 @@ abstract class RestapiAbstract
      */
     protected function _forceTimeout($request)
     {
-        $this->_httpClient->setConfig(array('timeout' => .0001));
+        $this->_httpClient->setConfig(['timeout' => .0001]);
         $this->_httpClient->request();
     }
 
@@ -208,7 +208,7 @@ abstract class RestapiAbstract
     protected function _forceUnknownResponse($request)
     {
         $httpStatusCode = 200;
-        $headers = array();
+        $headers = [];
         $responseBody = "This is an unknown response.";
         return new \Zend_Http_Response($httpStatusCode, $headers, $responseBody);
     }

@@ -39,7 +39,10 @@ class CreateUpdateQuote extends \Drip\Connect\Model\ApiCalls\Helper
 
         $this->apiClient = $this->connectApiCallsBaseFactory->create([
             'options' => [
-                'endpoint' => $this->scopeConfig->getValue('dripconnect_general/api_settings/account_id', \Magento\Store\Model\ScopeInterface::SCOPE_STORE).'/'.self::ENDPOINT_CART,
+                'endpoint' => $this->scopeConfig->getValue(
+                    'dripconnect_general/api_settings/account_id',
+                    \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+                ) . '/' . self::ENDPOINT_CART,
                 'v3' => true,
             ]
         ]);

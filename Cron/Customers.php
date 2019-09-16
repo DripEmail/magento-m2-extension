@@ -8,7 +8,7 @@ use \Magento\Store\Model\Store;
 class Customers
 {
     /** @var \Magento\Customer\Model\ResourceModel\Customer\CollectionFactory */
-    protected $customerResourceModelCustomerCollectionFactory;
+    protected $customerResourceModelCollectionFactory;
 
     /** @var \Magento\Newsletter\Model\ResourceModel\Subscriber\CollectionFactory */
     protected $newsletterSubscriberCollectionFactory;
@@ -35,7 +35,7 @@ class Customers
      * constructor
      */
     public function __construct(
-        \Magento\Customer\Model\ResourceModel\Customer\CollectionFactory $customerResourceModelCustomerCollectionFactory,
+        \Magento\Customer\Model\ResourceModel\Customer\CollectionFactory $customerResourceModelCollectionFactory,
         \Magento\Newsletter\Model\ResourceModel\Subscriber\CollectionFactory $newsletterSubscriberCollectionFactory,
         \Drip\Connect\Helper\Customer $customerHelper,
         \Drip\Connect\Model\ApiCalls\Helper\Batches\EventsFactory $connectApiCallsHelperBatchesEventsFactory,
@@ -44,7 +44,7 @@ class Customers
         \Drip\Connect\Logger\Logger $logger,
         \Drip\Connect\Helper\Data $connectHelper
     ) {
-        $this->customerResourceModelCustomerCollectionFactory = $customerResourceModelCustomerCollectionFactory;
+        $this->customerResourceModelCollectionFactory = $customerResourceModelCollectionFactory;
         $this->newsletterSubscriberCollectionFactory = $newsletterSubscriberCollectionFactory;
         $this->customerHelper = $customerHelper;
         $this->connectApiCallsHelperBatchesEventsFactory = $connectApiCallsHelperBatchesEventsFactory;
@@ -89,9 +89,10 @@ class Customers
         $statuses = [];
         foreach ($storeIds as $storeId) {
             if (! $this->scopeConfig->getValue(
-                    'dripconnect_general/module_settings/is_enabled',
-                    ScopeInterface::SCOPE_STORE,
-                    $storeId)
+                'dripconnect_general/module_settings/is_enabled',
+                ScopeInterface::SCOPE_STORE,
+                $storeId
+            )
             ) {
                 continue;
             }
@@ -166,8 +167,8 @@ class Customers
                 ->setCurPage($page++)
                 ->load();
 
-            $batchCustomer = array();
-            $batchEvents = array();
+            $batchCustomer = [];
+            $batchEvents = [];
             foreach ($collection as $subscriber) {
                 $email = $subscriber->getSubscriberEmail();
                 if (!$this->connectHelper->isEmailValid($email)) {
@@ -175,15 +176,15 @@ class Customers
                     continue;
                 }
                 $dataCustomer = $this->customerHelper->prepareGuestSubscriberData($subscriber);
-                $dataCustomer['tags'] = array('Synced from Magento');
+                $dataCustomer['tags'] = ['Synced from Magento'];
                 $batchCustomer[] = $dataCustomer;
 
-                $dataEvents = array(
+                $dataEvents = [
                     'email' => $email,
                     'action' => ($subscriber->getDrip()
                         ? \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_UPDATED
                         : \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_NEW),
-                );
+                ];
                 $batchEvents[] = $dataEvents;
 
                 if (!$subscriber->getDrip()) {
@@ -242,14 +243,14 @@ class Customers
         $result = true;
         $page = 1;
         do {
-            $collection = $this->customerResourceModelCustomerCollectionFactory->create()
+            $collection = $this->customerResourceModelCollectionFactory->create()
                 ->addAttributeToSelect('*')
                 ->addFieldToFilter('website_id', ['in' => [0, $websiteId]])
                 ->setPageSize(\Drip\Connect\Model\ApiCalls\Helper::MAX_BATCH_SIZE)
                 ->setCurPage($page++)
                 ->load();
 
-            $batchCustomer = array();
+            $batchCustomer = [];
             foreach ($collection as $customer) {
                 $email = $customer->getData('email');
                 if (!$this->connectHelper->isEmailValid($email)) {
@@ -257,7 +258,7 @@ class Customers
                     continue;
                 }
                 $dataCustomer = $this->customerHelper->prepareCustomerData($customer);
-                $dataCustomer['tags'] = array('Synced from Magento');
+                $dataCustomer['tags'] = ['Synced from Magento'];
                 $batchCustomer[] = $dataCustomer;
 
                 if (!$customer->getDrip()) {

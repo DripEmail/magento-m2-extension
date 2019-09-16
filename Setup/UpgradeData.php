@@ -18,7 +18,7 @@ class UpgradeData implements \Magento\Framework\Setup\UpgradeDataInterface
     protected $resourceConfig;
 
     public function __construct(
-         \Magento\Config\Model\ResourceModel\Config $resourceConfig,
+        \Magento\Config\Model\ResourceModel\Config $resourceConfig,
         \Magento\Customer\Setup\CustomerSetupFactory $customerSetupFactory,
         \Magento\Eav\Model\Entity\Attribute\SetFactory $attributeSetFactory
     ) {
@@ -56,7 +56,7 @@ class UpgradeData implements \Magento\Framework\Setup\UpgradeDataInterface
                 $attributeCode,
                 [
                     'label' => $attributeLabel,
-                    'source' => 'Magento\Eav\Model\Entity\Attribute\Source\Boolean',
+                    'source' => \Magento\Eav\Model\Entity\Attribute\Source\Boolean::class,
                     'input' => 'select',
                     'required' => false,
                     'visible' => false,

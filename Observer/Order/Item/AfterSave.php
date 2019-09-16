@@ -4,7 +4,7 @@ namespace Drip\Connect\Observer\Order\Item;
 
 class AfterSave extends \Drip\Connect\Observer\Base
 {
-    static $counter = 0;
+    protected static $counter = 0;
 
     /** @var \Magento\Framework\Registry */
     protected $registry;
@@ -107,4 +107,3 @@ class AfterSave extends \Drip\Connect\Observer\Base
         return false;
     }
 }
-

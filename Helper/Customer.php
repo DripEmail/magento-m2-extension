@@ -14,7 +14,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     protected $remoteAddress;
 
     /** @var \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateSubscriberFactory */
-    protected $connectApiCallsHelperCreateUpdateSubscriberFactory;
+    protected $apiCallsCreateUpdateSubscriberFactory;
 
     /** @var \Drip\Connect\Model\ApiCalls\Helper\RecordAnEventFactory */
     protected $connectApiCallsHelperRecordAnEventFactory;
@@ -44,7 +44,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         \Drip\Connect\Logger\Logger $logger,
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Customer\Model\GroupFactory $customerGroupFactory,
-        \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateSubscriberFactory $connectApiCallsHelperCreateUpdateSubscriberFactory,
+        \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateSubscriberFactory $apiCallsCreateUpdateSubscriberFactory,
         \Drip\Connect\Model\ApiCalls\Helper\RecordAnEventFactory $connectApiCallsHelperRecordAnEventFactory,
         \Drip\Connect\Model\ApiCalls\Helper\Batches\SubscribersFactory $connectApiCallsHelperBatchesSubscribersFactory,
         \Drip\Connect\Helper\Quote $quoteHelper,
@@ -58,7 +58,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         $this->logger = $logger;
         $this->customerGroupFactory = $customerGroupFactory;
         $this->remoteAddress = $context->getRemoteAddress();
-        $this->connectApiCallsHelperCreateUpdateSubscriberFactory = $connectApiCallsHelperCreateUpdateSubscriberFactory;
+        $this->apiCallsCreateUpdateSubscriberFactory = $apiCallsCreateUpdateSubscriberFactory;
         $this->connectApiCallsHelperRecordAnEventFactory = $connectApiCallsHelperRecordAnEventFactory;
         $this->connectApiCallsHelperBatchesSubscribersFactory = $connectApiCallsHelperBatchesSubscribersFactory;
         $this->header = $context->getHttpHeader();
@@ -82,14 +82,14 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $acceptsMarketing = $subscriber->isSubscribed();
 
-        $data = array (
+        $data =  [
             'email' => (string) $subscriber->getSubscriberEmail(),
             'ip_address' => (string) $this->remoteAddress->getRemoteAddress(),
             'initial_status' => $acceptsMarketing ? 'active' : 'unsubscribed',
-            'custom_fields' => array(
+            'custom_fields' => [
                 'accepts_marketing' => $acceptsMarketing ? 'yes' : 'no',
-            ),
-        );
+            ],
+        ];
 
         if ($statusChanged) {
             $data['status'] = $acceptsMarketing ? 'active' : 'unsubscribed';
@@ -108,10 +108,15 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      * @param Mage_Customer_Model_Customer $customer
      * @param bool $updatableOnly leave only those fields which are used in update action
      * @param bool $statusChanged whether the status has changed and should be synced
-     * @param bool $overriddenStatus whether the status should be something other than what is on the customer's is_subscribed field.
+     * @param bool $overriddenStatus whether the status should be something other than what is on the customer's
+     *                               is_subscribed field.
      */
-    public function prepareCustomerData($customer, $updatableOnly = true, $statusChanged = false, $overriddenStatus = null)
-    {
+    public function prepareCustomerData(
+        $customer,
+        $updatableOnly = true,
+        $statusChanged = false,
+        $overriddenStatus = null
+    ) {
         if ($customer->getOrigData() && $customer->getData('email') != $customer->getOrigData('email')) {
             $newEmail = $customer->getData('email');
         } else {
@@ -125,31 +130,35 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
             $status = $subscriber->isSubscribed();
         }
 
-        $data = array (
+        $data =  [
             'email' => (string) $customer->getEmail(),
             'new_email' => ($newEmail ? $newEmail : ''),
             'ip_address' => (string) $this->remoteAddress->getRemoteAddress(),
             'user_agent' => (string) $this->header->getHttpUserAgent(),
             'initial_status' => $status ? 'active' : 'unsubscribed',
-            'custom_fields' => array(
+            'custom_fields' => [
                 'first_name' => $customer->getFirstname(),
                 'last_name' => $customer->getLastname(),
                 'birthday' => $customer->getDob(),
                 'gender' => $this->getGenderText($customer->getGender()),
                 'magento_source' => $this->connectHelper->getArea(),
                 'magento_account_created' => $customer->getCreatedAt(),
-                'magento_customer_group' => $this->customerGroupFactory->create()->load($customer->getGroupId())->getCustomerGroupCode(),
+                'magento_customer_group' => $this->customerGroupFactory->create()
+                                                                       ->load($customer->getGroupId())
+                                                                       ->getCustomerGroupCode(),
                 'magento_store' => (int) $customer->getStoreId(),
                 'accepts_marketing' => ($status ? 'yes' : 'no'),
-            ),
-        );
+            ],
+        ];
 
         if ($statusChanged) {
             $data['status'] = $status ? 'active' : 'unsubscribed';
         }
 
         /*if ($customer->getDefaultShippingAddress()) {
-            $data = array_merge_recursive($data, array('custom_fields'=>$this->getAddressFields($customer->getDefaultShippingAddress())));
+            $data = array_merge_recursive($data, array(
+                'custom_fields'=>$this->getAddressFields($customer->getDefaultShippingAddress())
+            ));
         }*/
 
         if ($updatableOnly) {
@@ -166,12 +175,12 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function prepareCustomerDataForGuestCheckout($order)
     {
-        return array (
+        return  [
             'email' => $order->getCustomerEmail(),
             'ip_address' => $this->remoteAddress->getRemoteAddress(),
             'user_agent' => $this->header->getHttpUserAgent(),
             'initial_status' => 'unsubscribed',
-            'custom_fields' => array(
+            'custom_fields' => [
                 'first_name' => $order->getCustomerFirstname(),
                 'last_name' => $order->getCustomerLastname(),
                 'birthday' => $order->getCustomerDob(),
@@ -181,8 +190,8 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
                 'magento_customer_group' => 'Guest',
                 'magento_store' => $order->getStoreId(),
                 'accepts_marketing' => 'no',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -194,7 +203,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $customerData = $this->prepareCustomerDataForGuestCheckout($order);
 
-        $this->connectApiCallsHelperCreateUpdateSubscriberFactory->create([
+        $this->apiCallsCreateUpdateSubscriberFactory->create([
             'data' => $customerData
         ])->call();
     }
@@ -206,13 +215,13 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getAddressFields($address)
     {
-        return array (
+        return  [
             'city' => (string) $address->getCity(),
             'state' => (string) $address->getRegion(),
             'zip_code' => (string) $address->getPostcode(),
             'country' => (string) $address->getCountry(),
             'phone_number' => (string) $address->getTelephone(),
-        );
+        ];
     }
 
     /**
@@ -220,10 +229,11 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      *
      * @return string
      */
-    public function getGenderText($genderCode) {
+    public function getGenderText($genderCode)
+    {
         if ($genderCode == 1) {
             $gender = 'Male';
-        } else if ($genderCode == 2) {
+        } elseif ($genderCode == 2) {
             $gender = 'Female';
         } else {
             $gender = '';
@@ -271,12 +281,17 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      * drip actions for customer account change
      *
      * @param \Magento\Customer\Model\Customer $customer
-     * @param bool $acceptsMarketing whether the customer accepts marketing. Overrides the customer is_subscribed record.
+     * @param bool $acceptsMarketing whether the customer accepts marketing. Overrides the customer is_subscribed
+     *                               record.
      * @param string $event The updated/created/deleted event.
      * @param bool $forceStatus Whether the customer has changed marketing preferences which should be synced to Drip.
      */
-    public function proceedAccount($customer, $acceptsMarketing = null, $event = \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_UPDATED, $forceStatus = false)
-    {
+    public function proceedAccount(
+        $customer,
+        $acceptsMarketing = null,
+        $event = \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_UPDATED,
+        $forceStatus = false
+    ) {
         $email = $customer->getEmail();
         if (!$this->connectHelper->isEmailValid($email)) {
             $this->logger->notice("Skipping customer account update due to invalid email ({$email})");
@@ -285,7 +300,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
 
         $customerData = $this->prepareCustomerData($customer, true, $forceStatus, $acceptsMarketing);
 
-        $this->connectApiCallsHelperCreateUpdateSubscriberFactory->create([
+        $this->apiCallsCreateUpdateSubscriberFactory->create([
             'data' => $customerData
         ])->call();
 
@@ -310,7 +325,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         }
         $data = $this->prepareGuestSubscriberData($subscriber, false, $forceStatus);
 
-        $this->connectApiCallsHelperCreateUpdateSubscriberFactory->create([
+        $this->apiCallsCreateUpdateSubscriberFactory->create([
             'data' => $data
         ])->call();
 
@@ -347,7 +362,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $data = $this->prepareGuestSubscriberData($subscriber);
 
-        $this->connectApiCallsHelperCreateUpdateSubscriberFactory->create([
+        $this->apiCallsCreateUpdateSubscriberFactory->create([
             'data' => $data
         ])->call();
     }
@@ -363,7 +378,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         $data['custom_fields']['accepts_marketing'] = 'no';
         $data['status'] = 'unsubscribed';
 
-        $this->connectApiCallsHelperCreateUpdateSubscriberFactory->create([
+        $this->apiCallsCreateUpdateSubscriberFactory->create([
             'data' => $data
         ])->call();
     }

@@ -79,7 +79,10 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function getBrandName($product)
     {
         try {
-            $attribute = $this->attributeRepository->get(\Magento\Catalog\Api\Data\ProductAttributeInterface::ENTITY_TYPE_CODE, 'manufacturer');
+            $attribute = $this->attributeRepository->get(
+                \Magento\Catalog\Api\Data\ProductAttributeInterface::ENTITY_TYPE_CODE,
+                'manufacturer'
+            );
             $brandName = $product->getAttributeText('manufacturer');
         } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
             // attribute does not exist
@@ -89,7 +92,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $brandName;
     }
 
-
     /**
      * check if module active
      *
@@ -98,10 +100,17 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function isModuleActive()
     {
         if (!empty($this->request->getParam('store'))) {
-            return (bool)$this->scopeConfig->getValue('dripconnect_general/module_settings/is_enabled', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $this->request->getParam('store'));
+            return (bool) $this->scopeConfig->getValue(
+                'dripconnect_general/module_settings/is_enabled',
+                \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+                $this->request->getParam('store')
+            );
         }
 
-        return (bool)$this->scopeConfig->getValue('dripconnect_general/module_settings/is_enabled', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        return (bool) $this->scopeConfig->getValue(
+            'dripconnect_general/module_settings/is_enabled',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
     }
 
     /**
@@ -124,7 +133,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      *
      * @return int
      */
-    public function priceAsCents($price) {
+    public function priceAsCents($price)
+    {
         if (empty($price)) {
             return 0;
         }
@@ -139,16 +149,17 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      *
      * @return string
      */
-    public function getProductCategoryNames($product) {
+    public function getProductCategoryNames($product)
+    {
         $catIds = $product->getCategoryIds();
         $categoriesString = '';
         $numCategories = count($catIds);
-        if($numCategories) {
+        if ($numCategories) {
             $catCollection = $this->catalogResourceModelCategoryCollectionFactory->create()
                 ->addAttributeToSelect('name')
                 ->addAttributeToFilter('entity_id', $catIds);
 
-            foreach($catCollection as $category) {
+            foreach ($catCollection as $category) {
                 $categoriesString .= $category->getName() . ', ';
             }
             $categoriesString = substr($categoriesString, 0, -2);
@@ -206,7 +217,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                 'dripconnect_general/actions/sync_customers_data_state',
                 $state,
                 \Magento\Framework\App\Config\ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
-                0);
+                0
+            );
             $storeId = null;
         } else {
             $this->resourceConfig->saveConfig(
@@ -228,12 +240,14 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             $state = $this->scopeConfig->getValue(
                 'dripconnect_general/actions/sync_customers_data_state',
                 \Magento\Framework\App\Config\ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
-                0);
+                0
+            );
         } else {
             $state = $this->scopeConfig->getValue(
                 'dripconnect_general/actions/sync_customers_data_state',
                 \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-                $storeId);
+                $storeId
+            );
         }
         return $state;
     }
@@ -249,7 +263,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                 'dripconnect_general/actions/sync_orders_data_state',
                 $state,
                 \Magento\Framework\App\Config\ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
-                0);
+                0
+            );
             $storeId = null;
         } else {
             $this->resourceConfig->saveConfig(
@@ -271,12 +286,14 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             $state = $this->scopeConfig->getValue(
                 'dripconnect_general/actions/sync_orders_data_state',
                 \Magento\Framework\App\Config\ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
-                0);
+                0
+            );
         } else {
             $state = $this->scopeConfig->getValue(
                 'dripconnect_general/actions/sync_orders_data_state',
                 \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-                $storeId);
+                $storeId
+            );
         }
         return $state;
     }
@@ -313,7 +330,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getSecureKey($quoteId, $storeId)
     {
-        return (substr(hash('sha256', $this->getSalt().$quoteId.$storeId), 0, 32 ));
+        return (substr(hash('sha256', $this->getSalt().$quoteId.$storeId), 0, 32));
     }
 
     /**

@@ -77,7 +77,8 @@ class SaveBefore extends \Drip\Connect\Observer\Base
         }
     }
 
-    protected function acceptsMarketing($email) {
+    protected function acceptsMarketing($email)
+    {
         return $this->subscriberFactory->create()->loadByEmail($email)->isSubscribed();
     }
 }

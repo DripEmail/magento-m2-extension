@@ -48,7 +48,12 @@ class AfterSave extends \Drip\Connect\Observer\Base
 
         if ($this->registry->registry(self::REGISTRY_KEY_CUSTOMER_IS_NEW)) {
             $acceptsMarketing = $this->registry->registry(self::REGISTRY_KEY_NEW_USER_SUBSCRIBE_STATE);
-            $this->customerHelper->proceedAccount($customer, $acceptsMarketing, \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_NEW, $acceptsMarketing);
+            $this->customerHelper->proceedAccount(
+                $customer,
+                $acceptsMarketing,
+                \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_NEW,
+                $acceptsMarketing
+            );
         } else {
             if ($this->isCustomerChanged($customer)) {
                 $this->customerHelper->proceedAccount(
@@ -71,7 +76,12 @@ class AfterSave extends \Drip\Connect\Observer\Base
     protected function isCustomerChanged($customer)
     {
         $oldData = $this->registry->registry(self::REGISTRY_KEY_CUSTOMER_OLD_DATA);
-        $newData = $this->customerHelper->prepareCustomerData($customer, true, false, $this->registry->registry(self::REGISTRY_KEY_SUBSCRIBER_SUBSCRIBE_INTENT));
+        $newData = $this->customerHelper->prepareCustomerData(
+            $customer,
+            true,
+            false,
+            $this->registry->registry(self::REGISTRY_KEY_SUBSCRIBER_SUBSCRIBE_INTENT)
+        );
 
         return ($this->json->serialize($oldData) != $this->json->serialize($newData));
     }

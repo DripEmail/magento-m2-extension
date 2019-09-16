@@ -2,8 +2,7 @@
 
 namespace Drip\Connect\Model\ApiCalls\Helper\Batches;
 
-class Events
-    extends \Drip\Connect\Model\ApiCalls\Helper
+class Events extends \Drip\Connect\Model\ApiCalls\Helper
 {
     /** @var \Magento\Framework\App\Config\ScopeConfigInterface */
     protected $scopeConfig;
@@ -25,7 +24,11 @@ class Events
         $this->connectApiCallsRequestBaseFactory = $connectApiCallsRequestBaseFactory;
 
         $storeId = (int) $data['store_id'];
-        $accountId = $this->scopeConfig->getValue('dripconnect_general/api_settings/account_id', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $storeId);
+        $accountId = $this->scopeConfig->getValue(
+            'dripconnect_general/api_settings/account_id',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
 
         $this->apiClient = $this->connectApiCallsBaseFactory->create([
             'options' => [

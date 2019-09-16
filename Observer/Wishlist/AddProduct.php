@@ -4,7 +4,6 @@ namespace Drip\Connect\Observer\Wishlist;
 
 class AddProduct extends \Drip\Connect\Observer\Base
 {
-
     /**
      * @var \Drip\Connect\Helper\Data
      */
@@ -24,7 +23,6 @@ class AddProduct extends \Drip\Connect\Observer\Base
      * @var \Drip\Connect\Helper\Wishlist
      */
     protected $wishlistHelper;
-
 
     public function __construct(
         \Drip\Connect\Helper\Data $connectHelper,
@@ -54,5 +52,4 @@ class AddProduct extends \Drip\Connect\Observer\Base
             $product
         );
     }
-
 }

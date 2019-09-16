@@ -34,12 +34,10 @@ class CreditmemoAfterSave extends \Drip\Connect\Observer\Base
         $order = $this->order->load($creditMemo->getOrderId());
 
         $this->orderHelper->proceedOrderRefund($order, $this->refundDiff($order));
-
-
     }
 
     /**
-     *get refund value in cents
+     * get refund value in cents
      *
      * @param  \Magento\Sales\Model\Order $order
      *

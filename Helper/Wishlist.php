@@ -44,7 +44,6 @@ class Wishlist extends \Magento\Framework\App\Helper\AbstractHelper
         parent::__construct($context);
     }
 
-
     /**
      * @param $action
      * @param $customer
@@ -52,7 +51,8 @@ class Wishlist extends \Magento\Framework\App\Helper\AbstractHelper
      *
      * @return mixed
      */
-    public function doWishlistEvent($action, $customer, $product) {
+    public function doWishlistEvent($action, $customer, $product)
+    {
         return $this->connectApiCallsHelperRecordAnEventFactory->create([
             'data' => [
                 'email' => $customer->getEmail(),
@@ -70,5 +70,4 @@ class Wishlist extends \Magento\Framework\App\Helper\AbstractHelper
             ]
         ])->call();
     }
-
 }

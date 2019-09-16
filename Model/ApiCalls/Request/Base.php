@@ -1,12 +1,11 @@
 <?php
 namespace Drip\Connect\Model\ApiCalls\Request;
 
-class Base
-    implements \Drip\Connect\Model\Restapi\Request\RequestInterface
+class Base implements \Drip\Connect\Model\Restapi\Request\RequestInterface
 {
-    protected $parametersGet = array();
+    protected $parametersGet = [];
 
-    protected $parametersPost = array();
+    protected $parametersPost = [];
 
     protected $rawData = '';
 
