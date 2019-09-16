@@ -3,6 +3,7 @@
     "description": "Connects your M2 store to drip",
     "type": "magento2-module",
     "version": "1.7.4",
+    "homepage": "https://github.com/DripEmail/magento-m2-extension",
     "license": [
         "OSL-3.0"
     ],
