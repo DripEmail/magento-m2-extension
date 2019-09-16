@@ -5,3 +5,4 @@
 /bitbucket-pipelines.yml export-ignore
 /.bitbucket-pipelines export-ignore
 /devtools_m2 export-ignore
+/license.txt export-ignore
