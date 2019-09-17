@@ -1,9 +1,9 @@
-<?php if ($block->isModuleActive()) : ?>
-<?php
+<?php if ($block->isModuleActive()): ?>
+    <?php
     $product = $block->getProduct();
     $currentPrice = $block->getHelper()->priceAsCents($product->getFinalPrice());
     $initialPrice = $block->getHelper()->priceAsCents($product->getPrice());
-?>
+    ?>
     <!-- Drip track -->
     <script type="text/javascript">
     _dcq.push(["track", "Viewed a product", {
@@ -13,7 +13,7 @@
         brand: "<?= $block->getBrandName() ?>",
         categories: "<?= $block->getHelper()->getProductCategoryNames($product) ?>",
         price: "<?= $currentPrice ?>",
-        <?php if ($currentPrice != $initialPrice) : ?>
+        <?php if ($currentPrice != $initialPrice): ?>
         compared_at_price: "<?= $initialPrice ?>",
         <?php endif; ?>
         currency: "<?= $block->getStore()->getCurrentCurrencyCode() ?>",

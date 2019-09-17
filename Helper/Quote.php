@@ -1,7 +1,6 @@
 <?php
 namespace Drip\Connect\Helper;
 
-
 class Quote extends \Magento\Framework\App\Helper\AbstractHelper
 {
     const REGISTRY_KEY_IS_NEW = 'newquote';
@@ -86,7 +85,6 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
         );
     }
 
-
     /**
      * If customer registers during checkout, they will login, but quote has not been updated with customer info yet
      * so we can't fire "checkout created" on the quote b/c it's not yet assigned to the customer.  Doesn't matter
@@ -102,10 +100,9 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
         //gets active quote for customer, but troube is quote hasn't been updated with this customer info yet
         $quote = $this->quoteQuoteFactory->create()->loadByCustomer($customer);
 
-        if($this->connectHelper->priceAsCents($quote->getGrandTotal()) == 0) {
+        if ($this->connectHelper->priceAsCents($quote->getGrandTotal()) == 0) {
             $this->registry->register(self::REGISTRY_KEY_CUSTOMER_REGISTERED_OR_LOGGED_IN_WITH_EMTPY_QUOTE, 1);
         }
-
     }
 
     /**
@@ -161,19 +158,21 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $subscriber = $this->subscriberFactory->create()->loadByEmail($this->email);
 
-        $data = array (
+        $data =  [
             'provider' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateQuote::PROVIDER_NAME,
             'email' => $this->email,
             'initial_status' => ($subscriber->isSubscribed() ? 'active' : 'unsubscribed'),
             'cart_id' => $quote->getId(),
             'grand_total' => $this->connectHelper->priceAsCents($quote->getGrandTotal())/100,
-            'total_discounts' => $this->connectHelper->priceAsCents((float)$quote->getSubtotal() - (float)$quote->getSubtotalWithDiscount()) / 100,
+            'total_discounts' => $this->connectHelper->priceAsCents(
+                (float) $quote->getSubtotal() - (float) $quote->getSubtotalWithDiscount()
+            ) / 100,
             'currency' => $quote->getQuoteCurrencyCode(),
             'cart_url' => $this->connectHelper->getAbandonedCartUrl($quote),
             'items' => $this->prepareQuoteItemsData($quote),
             'items_count' => floatval($quote->getItemsQty()),
             'magento_source' => $this->connectHelper->getArea(),
-        );
+        ];
         return $data;
     }
     /**
@@ -183,7 +182,7 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
      */
     protected function prepareQuoteItemsData($quote)
     {
-        $data = array ();
+        $data =  [];
         foreach ($quote->getAllItems() as $item) {
             $product = $this->catalogProductFactory->create()->load($item->getProduct()->getId());
             $categories = explode(',', $this->connectHelper->getProductCategoryNames($product));
@@ -191,7 +190,7 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
                 $categories = [];
             }
 
-            $group = array(
+            $group = [
                 'product_id' => $item->getProductId(),
                 'sku' => $item->getSku(),
                 'name' => $item->getName(),
@@ -201,14 +200,13 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
                 'discounts' => $this->connectHelper->priceAsCents($item->getDiscountAmount())/100,
                 'total' => $this->connectHelper->priceAsCents((float)$item->getQty() * (float)$item->getPrice()) / 100,
                 'product_url' => $product->getProductUrl(),
-                'image_url' => $this->catalogProductMediaConfigFactory->create() ->getMediaUrl($product->getThumbnail()),
-            );
+                'image_url' => $this->catalogProductMediaConfigFactory->create()->getMediaUrl($product->getThumbnail()),
+            ];
             $data[] = $group;
         }
 
         return $data;
     }
-
 
     /**
      * compare orig and new data

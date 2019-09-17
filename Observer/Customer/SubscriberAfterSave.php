@@ -39,4 +39,3 @@ class SubscriberAfterSave extends \Drip\Connect\Observer\Base
         }
     }
 }
-

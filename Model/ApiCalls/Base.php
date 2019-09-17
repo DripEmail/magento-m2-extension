@@ -1,9 +1,7 @@
 <?php
 namespace Drip\Connect\Model\ApiCalls;
 
-
-class Base
-    extends \Drip\Connect\Model\Restapi\RestapiAbstract
+class Base extends \Drip\Connect\Model\Restapi\RestapiAbstract
 {
 
     /**
@@ -55,7 +53,11 @@ class Base
         if (isset($options['behavior'])) {
             $this->_behavior = $options['behavior'];
         } else {
-            $this->_behavior = $this->scopeConfig->getValue('dripconnect_general/api_settings/behavior', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $this->storeId);
+            $this->_behavior = $this->scopeConfig->getValue(
+                'dripconnect_general/api_settings/behavior',
+                \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+                $this->storeId
+            );
         }
 
         if (isset($options['http_client'])) {
@@ -66,15 +68,23 @@ class Base
             } else {
                 $endpoint = '';
             }
-            $url = $this->scopeConfig->getValue('dripconnect_general/api_settings/url', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $this->storeId).$endpoint;
+            $url = $this->scopeConfig->getValue(
+                'dripconnect_general/api_settings/url',
+                \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+                $this->storeId
+            ) . $endpoint;
             if (!empty($options['v3'])) {
                 $url = str_replace('/v2/', '/v3/', $url);
             }
 
-            $config = array(
+            $config = [
                 'useragent' => self::USERAGENT,
-                'timeout' => $this->scopeConfig->getValue('dripconnect_general/api_settings/timeout', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $this->storeId) / 1000,
-            );
+                'timeout' => $this->scopeConfig->getValue(
+                    'dripconnect_general/api_settings/timeout',
+                    \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+                    $this->storeId
+                ) / 1000,
+            ];
             if (!empty($options['config']) && is_array($options['config'])) {
                 $config = array_merge($config, $options['config']);
             }
@@ -85,13 +95,17 @@ class Base
                 'logger' => $this->logger,
             ]]);
 
-            $this->_httpClient->setHeaders(array(
+            $this->_httpClient->setHeaders([
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json'
-            ));
+            ]);
 
             $this->_httpClient->setAuth(
-                $this->scopeConfig->getValue('dripconnect_general/api_settings/api_key', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $this->storeId),
+                $this->scopeConfig->getValue(
+                    'dripconnect_general/api_settings/api_key',
+                    \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+                    $this->storeId
+                ),
                 '',
                 \Zend_Http_Client::AUTH_BASIC
             );
@@ -126,26 +140,26 @@ class Base
 
     protected function _forceValidResponse($request)
     {
-        return new \Zend_Http_Response(200, array("Content-type" => "application/json; charset=utf-8"), json_encode(array(
+        return new \Zend_Http_Response(200, ["Content-type" => "application/json; charset=utf-8"], json_encode([
             "Status" => "OK",
             "Message" => "Forced Valid Response"
-        )));
+        ]));
     }
 
     protected function _forceInvalidResponse($request)
     {
-        return new \Zend_Http_Response(200, array("Content-type" => "application/json; charset=utf-8"), json_encode(array(
+        return new \Zend_Http_Response(200, ["Content-type" => "application/json; charset=utf-8"], json_encode([
             "Status" => "OK",
             "Message" => "Forced Invalid Response"
-        )));
+        ]));
     }
 
     protected function _forceError($request)
     {
-        return new \Zend_Http_Response(500, array("Content-type" => "application/json; charset=utf-8"), json_encode(array(
+        return new \Zend_Http_Response(500, ["Content-type" => "application/json; charset=utf-8"], json_encode([
             "Status" => "Error",
             "Message" => "Forced Error Message"
-        )));
+        ]));
     }
 
     /**
@@ -155,7 +169,4 @@ class Base
     {
         $this->_responseModel = $response;
     }
-
 }
-
-

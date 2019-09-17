@@ -39,15 +39,15 @@ class SaveBefore extends \Drip\Connect\Observer\Base
         $this->registry->unregister(\Drip\Connect\Helper\Product::REGISTRY_KEY_IS_NEW);
         $this->registry->register(\Drip\Connect\Helper\Product::REGISTRY_KEY_IS_NEW, (bool) $product->isObjectNew());
 
-        if (! $product->isObjectNew()) {
-            $orig = $this->productRepository->getById($product->getId(), false, $this->connectHelper->getAdminEditStoreId());
+        if (!$product->isObjectNew()) {
+            $orig = $this->productRepository->getById(
+                $product->getId(),
+                false,
+                $this->connectHelper->getAdminEditStoreId()
+            );
             $data = $this->productHelper->prepareData($orig);
             $this->registry->unregister(\Drip\Connect\Helper\Product::REGISTRY_KEY_OLD_DATA);
             $this->registry->register(\Drip\Connect\Helper\Product::REGISTRY_KEY_OLD_DATA, $data);
-        } else {
-            //will be needed if we create historical sync for products
-            //$product->setDrip(1);
         }
     }
 }
-

@@ -22,7 +22,6 @@ class Uninstall implements UninstallInterface
 
         $setup->getConnection()->dropColumn($setup->getTable('quote'), 'drip');
 
-
         $eavSetup = $this->eavSetupFactory->create();
         $entityTypeId = 1; // customer
         $eavSetup->removeAttribute($entityTypeId, 'drip');

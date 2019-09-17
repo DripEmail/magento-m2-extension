@@ -1,6 +1,6 @@
-<?php if ($block->isModuleActive()) : ?>
+<?php if ($block->isModuleActive()): ?>
     <?php $accountId = $block->getAccountId(); ?>
-    <?php if (!empty($accountId)) : ?>
+    <?php if (!empty($accountId)): ?>
         <!-- Drip -->
         <script type="text/javascript">
             var _dcq = _dcq || [];
@@ -17,7 +17,7 @@
         </script>
         <!-- end Drip -->
 
-        <?php if ($block->isCustomerLoggedIn()) : ?>
+        <?php if ($block->isCustomerLoggedIn()): ?>
             <!-- identify Drip customer -->
             <script type="text/javascript">
             _dcq.push(["identify", {
@@ -26,7 +26,7 @@
             </script>
             <!-- end identify -->
         <?php endif; ?>
-    <?php else : ?>
+    <?php else: ?>
         <!-- Skipping Drip JS inclusion due to lack of account id -->
     <?php endif; ?>
 <?php endif; ?>

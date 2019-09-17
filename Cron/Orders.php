@@ -81,7 +81,8 @@ class Orders
             if (! $this->scopeConfig->getValue(
                 'dripconnect_general/module_settings/is_enabled',
                 ScopeInterface::SCOPE_STORE,
-                $storeId)
+                $storeId
+            )
             ) {
                 continue;
             }
@@ -139,10 +140,10 @@ class Orders
         do {
             $collection = $this->salesResourceModelOrderCollectionFactory->create()
                 ->addAttributeToSelect('*')
-                ->addFieldToFilter('state', array('nin' => array(
+                ->addFieldToFilter('state', ['nin' => [
                     \Magento\Sales\Model\Order::STATE_CANCELED,
                     \Magento\Sales\Model\Order::STATE_CLOSED
-                    )))
+                    ]])
                 ->addFieldToFilter('store_id', $storeId)
                 ->setPageSize(\Drip\Connect\Model\ApiCalls\Helper::MAX_BATCH_SIZE)
                 ->setCurPage($page++)

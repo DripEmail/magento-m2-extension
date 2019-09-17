@@ -43,4 +43,3 @@ class DeleteAfter extends \Drip\Connect\Observer\Base
         $this->productHelper->proceedProductDelete($product);
     }
 }
-

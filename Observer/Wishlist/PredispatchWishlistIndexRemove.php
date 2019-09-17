@@ -35,7 +35,6 @@ class PredispatchWishlistIndexRemove extends \Drip\Connect\Observer\Base
      */
     protected $catalogProductFactory;
 
-
     public function __construct(
         \Drip\Connect\Helper\Data $connectHelper,
         \Drip\Connect\Helper\Wishlist $wishlistHelper,
@@ -60,8 +59,7 @@ class PredispatchWishlistIndexRemove extends \Drip\Connect\Observer\Base
     public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)
     {
         $wishlistItemId = filter_var($this->request->getParam('item'), FILTER_SANITIZE_NUMBER_INT);
-        if($wishlistItemId){
-
+        if ($wishlistItemId) {
             $wishlistItem = $this->wishlistItemFactory->create()->load($wishlistItemId);
             $product = $this->catalogProductFactory->create()->load($wishlistItem->getProductId());
             $customer = $this->customerSession->getCustomer();
@@ -73,5 +71,4 @@ class PredispatchWishlistIndexRemove extends \Drip\Connect\Observer\Base
             );
         }
     }
-
 }

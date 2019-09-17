@@ -45,7 +45,12 @@ class SaveAfter extends \Drip\Connect\Observer\Base
             return;
         }
 
-        $product = $this->productRepository->getById($product->getId(), false, $this->connectHelper->getAdminEditStoreId(), true);
+        $product = $this->productRepository->getById(
+            $product->getId(),
+            false,
+            $this->connectHelper->getAdminEditStoreId(),
+            true
+        );
 
         if ($this->registry->registry(\Drip\Connect\Helper\Product::REGISTRY_KEY_IS_NEW)) {
             $this->proceedProductNew($product);
@@ -95,4 +100,3 @@ class SaveAfter extends \Drip\Connect\Observer\Base
         $this->productHelper->proceedProduct($product);
     }
 }
-

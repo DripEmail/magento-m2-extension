@@ -34,7 +34,10 @@ class AfterQuoteSaved extends \Drip\Connect\Observer\Base
     public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)
     {
         //do nothing
-        if ($this->registry->registry(\Drip\Connect\Helper\Quote::REGISTRY_KEY_CUSTOMER_REGISTERED_OR_LOGGED_IN_WITH_EMTPY_QUOTE)) {
+        if ($this->registry->registry(
+            \Drip\Connect\Helper\Quote::REGISTRY_KEY_CUSTOMER_REGISTERED_OR_LOGGED_IN_WITH_EMTPY_QUOTE
+        )
+            ) {
             return;
         }
 
@@ -48,7 +51,7 @@ class AfterQuoteSaved extends \Drip\Connect\Observer\Base
             $this->connectQuoteHelper->proceedQuoteNew($quote);
         } else {
             $oldData = $this->registry->registry(\Drip\Connect\Helper\Quote::REGISTRY_KEY_OLD_DATA);
-            if(empty($oldData['items']) || count($oldData['items']) == 0) {
+            if (empty($oldData['items']) || count($oldData['items']) == 0) {
                 //customer logged in previously with empty cart and then adds a product
                 $this->connectQuoteHelper->proceedQuoteNew($quote);
             } else {
@@ -59,7 +62,8 @@ class AfterQuoteSaved extends \Drip\Connect\Observer\Base
         }
         $this->registry->unregister(\Drip\Connect\Helper\Quote::REGISTRY_KEY_IS_NEW);
         $this->registry->unregister(\Drip\Connect\Helper\Quote::REGISTRY_KEY_OLD_DATA);
-        $this->registry->unregister(\Drip\Connect\Helper\Quote::REGISTRY_KEY_CUSTOMER_REGISTERED_OR_LOGGED_IN_WITH_EMTPY_QUOTE);
+        $this->registry->unregister(
+            \Drip\Connect\Helper\Quote::REGISTRY_KEY_CUSTOMER_REGISTERED_OR_LOGGED_IN_WITH_EMTPY_QUOTE
+        );
     }
-
 }

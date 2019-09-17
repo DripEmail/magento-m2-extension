@@ -65,7 +65,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $subscriber = $this->subscriberFactory->create()->loadByEmail($order->getCustomerEmail());
 
-        $data = array(
+        $data = [
             'provider' => (string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::PROVIDER_NAME,
             'email' => (string) $order->getCustomerEmail(),
             'initial_status' => ($subscriber->isSubscribed() ? 'active' : 'unsubscribed'),
@@ -82,7 +82,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
             'shipping_address' => $this->getOrderShippingData($order),
             'items_count' => floatval($order->getTotalQtyOrdered()),
             'magento_source' => (string) $this->connectHelper->getArea(),
-        );
+        ];
 
         return $data;
     }
@@ -146,7 +146,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
         $refund = $refunds->getLastItem();
         $refundId = $refund->getIncrementId();
 
-        $data = array(
+        $data = [
             'provider' => (string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateRefund::PROVIDER_NAME,
             'email' => (string) $order->getCustomerEmail(),
             'action' => (string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_REFUND,
@@ -155,7 +155,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
             'occurred_at' => (string) $this->connectHelper->formatDate($order->getUpdatedAt()),
             'grand_total' => $this->connectHelper->priceAsCents($order->getGrandTotal()) / 100,
             'refund_amount' => $refundValue / 100,
-        );
+        ];
 
         return $data;
     }
@@ -236,7 +236,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $address = $this->salesOrderAddressFactory->create()->load($addressId);
 
-        return array(
+        return [
             'first_name' => (string) $address->getFirstname(),
             'last_name' => (string) $address->getLastname(),
             'company' => (string) $address->getCompany(),
@@ -248,7 +248,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
             'country' => (string) $address->getCountryId(),
             'phone' => (string) $address->getTelephone(),
             'email' => (string) $address->getEmail(),
-        );
+        ];
     }
 
     /**
@@ -261,19 +261,21 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
      */
     protected function getOrderItemsData($order, $isRefund = false)
     {
-        $data = array();
+        $data = [];
         foreach ($order->getAllItems() as $item) {
-            $group = array(
+            $group = [
                 'product_id' => (string) $item->getProductId(),
                 'sku' => (string) $item->getSku(),
                 'name' => (string) $item->getName(),
                 'quantity' => (float) $item->getQtyOrdered(),
                 'price' => $this->connectHelper->priceAsCents($item->getPrice()) / 100,
                 'discounts' => $this->connectHelper->priceAsCents($item->getDiscountAmount()) / 100,
-                'total' => $this->connectHelper->priceAsCents((float)$item->getQtyOrdered() * (float)$item->getPrice()) / 100,
+                'total' => $this->connectHelper->priceAsCents(
+                    (float) $item->getQtyOrdered() * (float) $item->getPrice()
+                ) / 100,
                 'taxes' => $this->connectHelper->priceAsCents($item->getTaxAmount()) / 100,
-            );
-            if (!is_null($item->getProduct())) {
+            ];
+            if ($item->getProduct() !== null) {
                 $product = $this->catalogProductFactory->create()->load($item->getProductId());
                 $categories = explode(',', $this->connectHelper->getProductCategoryNames($product));
                 if (empty($categories)) {
@@ -281,7 +283,9 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
                 }
                 $group['categories'] = $categories;
                 $group['product_url'] = (string) $item->getProduct()->getProductUrl();
-                $group['image_url'] = (string) $this->catalogProductMediaConfigFactory->create()->getMediaUrl($product->getThumbnail());
+                $group['image_url'] = (string) $this->catalogProductMediaConfigFactory->create()->getMediaUrl(
+                    $product->getThumbnail()
+                );
             }
             if ($isRefund) {
                 $group['refund_amount'] = $this->connectHelper->priceAsCents($item->getAmountRefunded());

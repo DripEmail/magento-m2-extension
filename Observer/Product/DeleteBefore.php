@@ -40,10 +40,14 @@ class DeleteBefore extends \Drip\Connect\Observer\Base
             return;
         }
 
-        $orig = $this->productRepository->getById($product->getId(), false, $this->connectHelper->getAdminEditStoreId(), true);
+        $orig = $this->productRepository->getById(
+            $product->getId(),
+            false,
+            $this->connectHelper->getAdminEditStoreId(),
+            true
+        );
         $data = $this->productHelper->prepareData($orig);
         $this->registry->unregister(\Drip\Connect\Helper\Product::REGISTRY_KEY_OLD_DATA);
         $this->registry->register(\Drip\Connect\Helper\Product::REGISTRY_KEY_OLD_DATA, $data);
     }
 }
-

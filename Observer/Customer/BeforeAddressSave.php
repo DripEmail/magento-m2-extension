@@ -41,12 +41,15 @@ class BeforeAddressSave extends \Drip\Connect\Observer\Base
         // if editing address is already a default shipping one
         // or if editing address is going to be set as default
         // save old values
-        if (($customer->getDefaultShippingAddress() && $address->getId() == $customer->getDefaultShippingAddress()->getId())
-           || ($address->getDefaultShipping())
+        if ((
+                $customer->getDefaultShippingAddress() &&
+                $address->getId() == $customer->getDefaultShippingAddress()->getId()
+            ) ||
+            $address->getDefaultShipping()
         ) {
             $oldAddr = [];
             if ($customer->getDefaultShippingAddress()) {
-               $oldAddr = $this->customerHelper->getAddressFields($customer->getDefaultShippingAddress());
+                $oldAddr = $this->customerHelper->getAddressFields($customer->getDefaultShippingAddress());
             }
             $this->registry->unregister(self::REGISTRY_KEY_CUSTOMER_OLD_ADDR);
             $this->registry->register(self::REGISTRY_KEY_CUSTOMER_OLD_ADDR, $oldAddr);

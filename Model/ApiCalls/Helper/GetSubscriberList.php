@@ -1,9 +1,7 @@
 <?php
 namespace Drip\Connect\Model\ApiCalls\Helper;
 
-
-class GetSubscriberList
-    extends \Drip\Connect\Model\ApiCalls\Helper
+class GetSubscriberList extends \Drip\Connect\Model\ApiCalls\Helper
 {
 
     /** @var \Drip\Connect\Model\ApiCalls\BaseFactory */
@@ -20,36 +18,37 @@ class GetSubscriberList
         \Drip\Connect\Model\ApiCalls\Request\BaseFactory $connectApiCallsRequestBaseFactory,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         $data = []
-    )
-    {
+    ) {
         $this->connectApiCallsBaseFactory = $connectApiCallsBaseFactory;
         $this->connectApiCallsRequestBaseFactory = $connectApiCallsRequestBaseFactory;
         $this->scopeConfig = $scopeConfig;
-        $data = array_merge(array(
+        $data = array_merge([
             'status' => '',
             'tags' => '',
             'subscribed_before' => '',
             'subscribed_after' => '',
             'page' => '',
             'per_page' => '',
-        ), $data);
+        ], $data);
 
         $this->apiClient = $this->connectApiCallsBaseFactory->create([
             'options' => [
-                'endpoint' => $this->scopeConfig->getValue('dripconnect_general/api_settings/account_id', \Magento\Store\Model\ScopeInterface::SCOPE_STORE).'/'.self::ENDPOINT_SUBSCRIBERS
+                'endpoint' => $this->scopeConfig->getValue(
+                    'dripconnect_general/api_settings/account_id',
+                    \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+                ) . '/' . self::ENDPOINT_SUBSCRIBERS
             ]
         ]);
 
         $this->request = $this->connectApiCallsRequestBaseFactory->create()
             ->setMethod(\Zend_Http_Client::GET)
-            ->setParametersGet(array(
+            ->setParametersGet([
                 'status' => $data['status'],
                 'tags' => $data['tags'],
                 'subscribed_before' => $data['subscribed_before'],
                 'subscribed_after' => $data['subscribed_after'],
                 'page' => $data['page'],
                 'per_page' => $data['per_page'],
-            ));
+            ]);
     }
 }
-

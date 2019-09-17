@@ -73,6 +73,9 @@ class NewsletterSave extends \Drip\Connect\Observer\Base
         $this->registry->register(self::REGISTRY_KEY_SUBSCRIBER_PREV_STATE, $subscriber->isSubscribed());
 
         $this->registry->unregister(self::REGISTRY_KEY_SUBSCRIBER_SUBSCRIBE_INTENT);
-        $this->registry->register(self::REGISTRY_KEY_SUBSCRIBER_SUBSCRIBE_INTENT, $this->request->getparam('is_subscribed', false));
+        $this->registry->register(
+            self::REGISTRY_KEY_SUBSCRIBER_SUBSCRIBE_INTENT,
+            $this->request->getparam('is_subscribed', false)
+        );
     }
 }

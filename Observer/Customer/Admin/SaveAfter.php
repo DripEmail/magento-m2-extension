@@ -65,7 +65,7 @@ class SaveAfter extends \Drip\Connect\Observer\Base
                 \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_NEW,
                 $acceptsMarketing
             );
-        } else if ($this->isCustomerChanged($customer)) {
+        } elseif ($this->isCustomerChanged($customer)) {
             // We change the Drip subscriber status if the status has changed.
             // Presumably, this would happen because the subscriber requested
             // that their status change.
