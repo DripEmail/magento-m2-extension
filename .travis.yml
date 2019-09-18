@@ -5,9 +5,12 @@ php:
 env:
   - MAGENTO_VERSION="2.2.9" MAGENTO_PATH="/home/travis/magento"
   - MAGENTO_VERSION="2.3.2" MAGENTO_PATH="/home/travis/magento"
+matrix:
+  exclude:
+  - php: '7.2'
+    env: MAGENTO_VERSION="2.2.9" MAGENTO_PATH="/home/travis/magento"
 
 # Plan: check out a copy of Magento into another directory and symlink the repo into it.
-
 install:
   - 'echo $MAGENTO_PATH'
   - 'git clone --depth 1 --branch $MAGENTO_VERSION https://github.com/magento/magento2.git $MAGENTO_PATH'
