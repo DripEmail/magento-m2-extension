@@ -4,10 +4,16 @@ php:
   - '7.2'
 env:
   - MAGENTO_PATH="/home/travis/magento"
+  # TODO: Specify multiple versions and build a matrix to test against.
+  - MAGENTO_VERSION="2.3.2"
 
 # Plan: check out a copy of Magento into another directory and symlink the repo into it.
 
-script:
-  - 'git clone --depth 1 --branch 2.3.2 https://github.com/magento/magento2.git $MAGENTO_PATH'
+install:
+  - 'git clone --depth 1 --branch $MAGENTO_VERSION https://github.com/magento/magento2.git $MAGENTO_PATH'
+  - 'cd $MAGENTO_PATH && composer install'
   - 'mkdir -p $MAGENTO_PATH/app/code/Drip'
   - 'ln -s $TRAVIS_BUILD_DIR $MAGENTO_PATH/app/code/Drip/Connect'
+
+script:
+  - 'cd $MAGENTO_PATH/dev/test/unit && $MAGENTO_PATH/vendor/bin/phpunit'
