@@ -1,0 +1,10 @@
+language: php
+php:
+  - '7.0'
+  - '7.2'
+  - '7.3'
+
+# Plan: check out a copy of Magento into another directory and symlink the repo into it.
+
+script:
+  - 'true'
