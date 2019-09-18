@@ -10,6 +10,7 @@ env:
 # Plan: check out a copy of Magento into another directory and symlink the repo into it.
 
 install:
+  - 'echo $MAGENTO_PATH'
   - 'git clone --depth 1 --branch $MAGENTO_VERSION https://github.com/magento/magento2.git $MAGENTO_PATH'
   - 'cd $MAGENTO_PATH && composer install'
   - 'mkdir -p $MAGENTO_PATH/app/code/Drip'
