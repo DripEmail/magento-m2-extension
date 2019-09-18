@@ -7,4 +7,4 @@ php:
 # Plan: check out a copy of Magento into another directory and symlink the repo into it.
 
 script:
-  - 'true'
+  - 'git clone --depth 1 --branch 2.3.2 https://github.com/magento/magento2.git /magento'
