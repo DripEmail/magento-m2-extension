@@ -3,9 +3,8 @@ php:
   # - '7.1'
   - '7.2'
 env:
-  - MAGENTO_PATH="/home/travis/magento"
   # TODO: Specify multiple versions and build a matrix to test against.
-  - MAGENTO_VERSION="2.3.2"
+  - MAGENTO_PATH="/home/travis/magento" MAGENTO_VERSION="2.3.2"
 
 # Plan: check out a copy of Magento into another directory and symlink the repo into it.
 
