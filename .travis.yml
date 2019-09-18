@@ -16,4 +16,4 @@ install:
   - 'ln -s $TRAVIS_BUILD_DIR $MAGENTO_PATH/app/code/Drip/Connect'
 
 script:
-  - 'cd $MAGENTO_PATH/dev/test/unit && $MAGENTO_PATH/vendor/bin/phpunit'
+  - 'cd $MAGENTO_PATH/dev/tests/unit && $MAGENTO_PATH/vendor/bin/phpunit'
