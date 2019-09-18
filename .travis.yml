@@ -3,19 +3,22 @@ php:
   - '7.1'
   - '7.2'
 env:
-  - MAGENTO_VERSION="2.2.9" MAGENTO_PATH="/home/travis/magento"
-  - MAGENTO_VERSION="2.3.2" MAGENTO_PATH="/home/travis/magento"
+  global:
+    - MAGENTO_PATH="/home/travis/magento"
+  matrix:
+    - MAGENTO_VERSION="2.2.9"
+    - MAGENTO_VERSION="2.3.2"
 matrix:
   exclude:
   # Magento 2.2 doesn't support PHP 7.2
   - php: '7.2'
-    env: MAGENTO_VERSION="2.2.9" MAGENTO_PATH="/home/travis/magento"
+    env: MAGENTO_VERSION="2.2.9"
 
 # Plan: check out a copy of Magento into another directory and symlink the repo into it.
 install:
   - 'echo $MAGENTO_PATH'
   - 'git clone --depth 1 --branch $MAGENTO_VERSION https://github.com/magento/magento2.git $MAGENTO_PATH'
-  - 'cd $MAGENTO_PATH && composer require --dev magento/magento-coding-standard && composer install'
+  - 'cd $MAGENTO_PATH && composer config minimum-stability dev && composer require --dev magento/magento-coding-standard && composer install'
   - '$MAGENTO_PATH/vendor/bin/phpcs --config-set installed_paths ../../magento/magento-coding-standard/'
   - 'mkdir -p $MAGENTO_PATH/app/code/Drip'
   - 'ln -s $TRAVIS_BUILD_DIR $MAGENTO_PATH/app/code/Drip/Connect'
