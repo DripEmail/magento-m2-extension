@@ -22,7 +22,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     /**
      * @var \Magento\Customer\Model\GroupFactory
      */
-    protected $customerGroupFactory;
 
     /**
      * @var \Magento\Store\Model\StoreManagerInterface
@@ -49,7 +48,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Framework\App\Request\Http $request,
-        \Magento\Customer\Model\GroupFactory $customerGroupFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\App\State $state,
         \Magento\Config\Model\ResourceModel\Config $resourceConfig,
@@ -59,7 +57,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     ) {
         $this->request = $request;
         $this->scopeConfig = $context->getScopeConfig();
-        $this->customerGroupFactory = $customerGroupFactory;
         $this->storeManager = $storeManager;
         $this->state = $state;
         $this->resourceConfig = $resourceConfig;
