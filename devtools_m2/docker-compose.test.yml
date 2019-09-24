@@ -1,0 +1,4 @@
+version: '3.7'
+services:
+  db:
+    tmpfs: /var/lib/mysql

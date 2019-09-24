@@ -1,0 +1,5 @@
+{
+  "projectId": "35f86d",
+  "ignoreTestFiles": "*.js",
+  "baseUrl": "http://main.magento.localhost:3006"
+}
