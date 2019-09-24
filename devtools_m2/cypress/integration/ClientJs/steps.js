@@ -41,50 +41,52 @@ Given('I have set up a multi-store configuration', function() {
     cy.contains('site1_website').trigger('click', {force: true})
   })
   cy.contains('OK').click()
-  // There's a race condition of sorts here...
-  // cy.wait(2000) // Some JS has to run before we can successfully click this.
-  cy.contains('General').click()
-  cy.contains('Web').click()
+  cy.get('#system_config_tabs').within(function() {
+    cy.contains('Web').click()
+  })
   cy.contains('Base URLs').click()
-  cy.get('groups[unsecure][fields][base_url][inherit]"]').uncheck()
-  cy.get('groups[unsecure][fields][base_url][value]').clear().type(`http://site1.magento.localhost:3006/`)
-  cy.get('groups[unsecure][fields][base_link_url][inherit]"]').uncheck()
-  cy.get('groups[unsecure][fields][base_link_url][value]').clear().type(`http://site1.magento.localhost:3006/`)
+  cy.get('[name="groups[unsecure][fields][base_url][inherit]"]').uncheck()
+  cy.get('[name="groups[unsecure][fields][base_url][value]"]').clear().type(`http://site1.magento.localhost:3006/`)
+  cy.get('[name="groups[unsecure][fields][base_link_url][inherit]"]').uncheck()
+  cy.get('[name="groups[unsecure][fields][base_link_url][value]"]').clear().type(`http://site1.magento.localhost:3006/`)
   cy.contains('Save Config').click()
 })
 
-// Given('I have configured Drip to be enabled for site1', function() {
-//   cy.contains('System').trigger('mouseover')
-//   cy.contains('Configuration').click()
-//   cy.contains('Drip Connect Configuration').click()
-//   cy.get('select#store_switcher').select('site1_website')
-//   cy.contains('Module Settings').click()
-//   cy.contains('API Settings').click()
-//   cy.get('input[name="groups[module_settings][fields][is_enabled][inherit]"]').uncheck()
-//   cy.get('select[name="groups[module_settings][fields][is_enabled][value]"]').select('Yes')
-//   cy.get('input[name="groups[api_settings][fields][account_id][inherit]"]').uncheck()
-//   cy.get('input[name="groups[api_settings][fields][account_id][value]"]').type('123456')
-//   cy.get('input[name="groups[api_settings][fields][api_key][inherit]"]').uncheck()
-//   cy.get('input[name="groups[api_settings][fields][api_key][value]"]').type('abc123')
-//   cy.contains('Save Config').click()
-// })
+Given('I have configured Drip to be enabled for site1', function() {
+  // cy.contains('Stores').click()
+  // cy.get('[data-ui-id="menu-magento-backend-stores-settings"]').within(function() {
+  //   cy.contains('Configuration').click()
+  // })
+  // cy.contains('Drip').click()
+  cy.contains('Drip Connect').click({ force: true })
+  // cy.get('select#store_switcher').select('site1_website')
+  cy.contains('Module Settings').click()
+  cy.contains('API Settings').click()
+  cy.get('input[name="groups[module_settings][fields][is_enabled][inherit]"]').uncheck()
+  cy.get('select[name="groups[module_settings][fields][is_enabled][value]"]').select('Yes')
+  cy.get('input[name="groups[api_settings][fields][account_id][inherit]"]').uncheck()
+  cy.get('input[name="groups[api_settings][fields][account_id][value]"]').type('123456')
+  cy.get('input[name="groups[api_settings][fields][api_key][inherit]"]').uncheck()
+  cy.get('input[name="groups[api_settings][fields][api_key][value]"]').type('abc123')
+  cy.contains('Save Config').click()
+})
 
-// When('I open the site1 homepage', function() {
-//   cy.visit(`http://site1.magento.localhost:3006/`)
-// })
+When('I open the site1 homepage', function() {
+  cy.visit(`http://site1.magento.localhost:3006/`)
+})
 
-// When('I open the main homepage', function() {
-//   cy.visit(`http://main.magento.localhost:3006/`)
-// })
+When('I open the main homepage', function() {
+  cy.visit(`http://main.magento.localhost:3006/`)
+})
 
-// Then('clientjs is inserted', function() {
-//   cy.window().then(function(win) {
-//     expect(win._dcq).to.not.be.undefined
-//   })
-// })
+Then('clientjs is inserted', function() {
+  cy.window().then(function(win) {
+    expect(win._dcq).to.not.be.undefined
+  })
+})
 
-// Then('clientjs is not inserted', function() {
-//   cy.window().then(function(win) {
-//     expect(win._dcq).to.be.undefined
-//   })
-// })
+Then('clientjs is not inserted', function() {
+  cy.window().then(function(win) {
+    expect(win._dcq).to.be.undefined
+  })
+})
