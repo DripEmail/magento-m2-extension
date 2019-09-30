@@ -43,27 +43,11 @@ Then('A cart event should be sent to Drip', function() {
     }, 1, 1);
   })
   cy.log('Validating that the cart call has everything we need')
-  cy.then(function() {
-    let mockPromise = Mockclient.retrieveRecordedRequests({
-      'path': '/v3/123456/shopper_activity/cart'
-    })
-
-    return new Promise((resolve, reject) => {
-      mockPromise.then(function(recordedRequests) {
-        try {
-          const body = JSON.parse(recordedRequests[0].body.string)
-          if (
-            body.email == 'testuser@example.com' &&
-            body.product_variant_id == '1234'
-          ) {
-            resolve()
-          } else {
-            reject('missing a param')
-          }
-        } catch(err) {
-          reject(err)
-        }
-      }, reject);
-    })
+  cy.wrap(Mockclient.retrieveRecordedRequests({
+    'path': '/v3/123456/shopper_activity/cart'
+  })).then(function(recordedRequests) {
+    const body = JSON.parse(recordedRequests[0].body.string)
+    expect(body.email).to.eq('testuser@example.com')
+    // expect(body.product_variant_id).to.eq('1234')
   })
 })
