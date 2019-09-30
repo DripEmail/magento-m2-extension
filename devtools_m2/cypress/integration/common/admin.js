@@ -67,7 +67,7 @@ Given('I have configured Drip to be enabled for site1', function() {
   cy.get('input[name="groups[api_settings][fields][api_key][inherit]"]').uncheck()
   cy.get('input[name="groups[api_settings][fields][api_key][value]"]').type('abc123')
   cy.get('input[name="groups[api_settings][fields][url][inherit]"]').uncheck()
-  cy.get('input[name="groups[api_settings][fields][url][value]"]').clear().type('http://localhost:9001')
+  cy.get('input[name="groups[api_settings][fields][url][value]"]').clear().type('http://mock:1080/v2/')
   cy.contains('Save Config').click()
 })
 
@@ -90,7 +90,7 @@ Given('I have configured Drip to be enabled for main', function() {
   cy.get('input[name="groups[api_settings][fields][api_key][inherit]"]').uncheck()
   cy.get('input[name="groups[api_settings][fields][api_key][value]"]').type('abc123')
   cy.get('input[name="groups[api_settings][fields][url][inherit]"]').uncheck()
-  cy.get('input[name="groups[api_settings][fields][url][value]"]').clear().type('http://localhost:9001')
+  cy.get('input[name="groups[api_settings][fields][url][value]"]').clear().type('http://mock:1080/v2/')
   cy.contains('Save Config').click()
 })
 

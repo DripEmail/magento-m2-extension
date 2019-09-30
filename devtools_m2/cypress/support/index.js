@@ -16,6 +16,7 @@
 // Import commands.js using ES2015 syntax:
 import './commands'
 import './docker_helpers'
+import './mocking_helpers'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')

@@ -5,7 +5,8 @@
   "license": "MIT",
   "dependencies": {
     "cypress": "^3.4.1",
-    "cypress-cucumber-preprocessor": "^1.13.0"
+    "cypress-cucumber-preprocessor": "^1.13.0",
+    "mockserver-client": "^5.6.1"
   },
   "cypress-cucumber-preprocessor": {
     "nonGlobalStepDefinitions": true
