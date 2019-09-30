@@ -1,0 +1,11 @@
+version: '3.7'
+services:
+  web:
+    links:
+    - 'mock'
+  db:
+    tmpfs: /var/lib/mysql
+  mock:
+    image: jamesdbloom/mockserver
+    ports:
+    - 1080:1080
