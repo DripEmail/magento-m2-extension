@@ -52,33 +52,17 @@ Given('I have set up a multi-store configuration', function() {
   cy.contains('Save Config').click()
 })
 
-Given('I have configured Drip to be enabled for site1', function() {
-  // cy.get('[data-ui-id="menu-magento-backend-stores-settings"]').within(function() {
-  //   cy.contains('Configuration').click({ force: true })
-  // })
-  cy.contains('Drip Connect').click({ force: true })
-  // cy.get('select#store_switcher').select('site1_website')
-  cy.contains('Module Settings').click()
-  cy.contains('API Settings').click()
-  cy.get('input[name="groups[module_settings][fields][is_enabled][inherit]"]').uncheck()
-  cy.get('select[name="groups[module_settings][fields][is_enabled][value]"]').select('Yes')
-  cy.get('input[name="groups[api_settings][fields][account_id][inherit]"]').uncheck()
-  cy.get('input[name="groups[api_settings][fields][account_id][value]"]').type('123456')
-  cy.get('input[name="groups[api_settings][fields][api_key][inherit]"]').uncheck()
-  cy.get('input[name="groups[api_settings][fields][api_key][value]"]').type('abc123')
-  cy.get('input[name="groups[api_settings][fields][url][inherit]"]').uncheck()
-  cy.get('input[name="groups[api_settings][fields][url][value]"]').clear().type('http://mock:1080/v2/')
-  cy.contains('Save Config').click()
-})
-
-Given('I have configured Drip to be enabled for main', function() {
-  // cy.get('[data-ui-id="menu-magento-backend-stores-settings"]').within(function() {
-  //   cy.contains('Configuration').click({ force: true })
-  // })
-  cy.contains('Drip Connect').click({ force: true })
+Given('I have configured Drip to be enabled for {string}', function(site) {
+  cy.get('li[data-ui-id="menu-magento-config-system-config"] a').click({force: true})
+  cy.contains('Drip Connect', {timeout: 20000}).click({ force: true })
+  let websiteKey
+  if (site == 'main') {
+    websiteKey = 'Main Website'
+  } else {
+    websiteKey = `${site}_website`
+  }
   cy.get('div.store-switcher').within(function() {
-    // cy.get('button#store-change-button').click({force: true})
-    cy.contains('Main Website').trigger('click', {force: true})
+    cy.contains(websiteKey).trigger('click', {force: true})
   })
   cy.contains('OK').click()
   cy.contains('Module Settings').click()
