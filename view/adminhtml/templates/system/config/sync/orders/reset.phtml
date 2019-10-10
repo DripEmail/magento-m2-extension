@@ -38,8 +38,8 @@ require(
                 context: this,
                 data: {
                     form_key: window.FORM_KEY,
-                    store_id: <?=$block->getStoreId()?>,
-                    account_id: <?=$block->getAccountId()?>
+                    store_id: <?=json_encode($block->getStoreId())?>,
+                    account_id: <?=json_encode($block->getAccountId())?>
                 },
                 dataType: 'json',
                 beforeSend: _ajaxBeforeSend,
