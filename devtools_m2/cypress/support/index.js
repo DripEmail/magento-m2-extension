@@ -13,6 +13,8 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
+import chaiString from 'chai-string';
+
 // Import commands.js using ES2015 syntax:
 import './commands'
 import './docker_helpers'
