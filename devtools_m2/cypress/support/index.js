@@ -19,6 +19,9 @@ import chaiString from 'chai-string';
 import './commands'
 import './docker_helpers'
 import './mocking_helpers'
+import './product_management'
+
+chai.use(chaiString)
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')

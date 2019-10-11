@@ -3,6 +3,10 @@ services:
   web:
     links:
     - 'mock'
+    volumes:
+      - type: bind
+        source: './php_utils'
+        target: /var/www/html/magento/app/code/Drip/TestUtils
   db:
     tmpfs: /var/lib/mysql
   mock:

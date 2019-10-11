@@ -89,3 +89,102 @@ Given('I have configured a widget', function() {
   cy.get('input[name="product[quantity_and_stock_status][qty]"]').type('120')
   cy.contains('Save').click()
 })
+
+// Simple Product
+Given('I have configured a simple widget', function() {
+  cy.createProduct({
+    "sku": "widg-1",
+    "name": "Widget 1",
+    "description": "This is really a widget. There are many like it, but this one is mine.",
+    "shortDescription": "This is really a widget.",
+  })
+})
+
+// Configurable Product
+Given('I have configured a configurable widget', function() {
+  cy.createProduct({
+    "sku": "widg-1",
+    "name": "Widget 1",
+    "description": "This is really a widget. There are many like it, but this one is mine.",
+    "shortDescription": "This is really a widget.",
+    "typeId": "configurable",
+    "attributes": {
+      "widget_size": {
+        "XL": {
+          "sku": "widg-1-xl",
+          "name": "Widget 1 XL",
+          "description": "This is really an XL widget. There are many like it, but this one is mine.",
+          "shortDescription": "This is really an XL widget.",
+        },
+        "L": {
+          "sku": "widg-1-l",
+          "name": "Widget 1 L",
+          "description": "This is really an L widget. There are many like it, but this one is mine.",
+          "shortDescription": "This is really an L widget.",
+        }
+      }
+    }
+  })
+})
+
+// Grouped Product
+Given('I have configured a grouped widget', function() {
+  cy.createProduct({
+    "sku": "widg-1",
+    "name": "Widget 1",
+    "description": "This is really a widget. There are many like it, but this one is mine.",
+    "shortDescription": "This is really a widget.",
+    "typeId": "grouped",
+    "associated": [
+      {
+        "sku": "widg-1-sub1",
+        "name": "Widget 1 Sub 1",
+        "description": "This is really a sub1 widget. There are many like it, but this one is mine.",
+        "shortDescription": "This is really a sub1 widget.",
+      },
+      {
+        "sku": "widg-1-sub2",
+        "name": "Widget 1 Sub 2",
+        "description": "This is really a sub2 widget. There are many like it, but this one is mine.",
+        "shortDescription": "This is really a sub2 widget.",
+      }
+    ]
+  })
+})
+
+// Bundle Product
+Given('I have configured a bundle widget', function() {
+  // skuType of 1 is a fixed sku rather than generating a composite SKU.
+  cy.createProduct({
+    "sku": "widg-1",
+    "skuType": 1,
+    "name": "Widget 1",
+    "description": "This is really a widget. There are many like it, but this one is mine.",
+    "shortDescription": "This is really a widget.",
+    "typeId": "bundle",
+    "bundle_options": [
+      {
+        "title": "item01",
+        "product_options": [
+          {
+            "sku": "widg-1-sub1",
+            "name": "Widget 1 Sub 1",
+            "description": "This is really a sub1 widget. There are many like it, but this one is mine.",
+            "shortDescription": "This is really a sub1 widget.",
+          }
+        ]
+      },
+      {
+        "title": "item02",
+        "product_options": [
+          {
+            "sku": "widg-1-sub2",
+            "name": "Widget 1 Sub 2",
+            "description": "This is really a sub2 widget. There are many like it, but this one is mine.",
+            "shortDescription": "This is really a sub2 widget.",
+          }
+        ]
+      }
+    ]
+  })
+})

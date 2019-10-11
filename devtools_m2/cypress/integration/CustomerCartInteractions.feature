@@ -5,7 +5,7 @@ Feature: Customer Cart Interactions
   Scenario: A customer adds a simple product to their cart
     Given I am logged into the admin interface
       And I have configured Drip to be enabled for 'main'
-      And I have configured a simple widget
+    Given I have configured a simple widget
     When I open the 'main' homepage
       And I create an account
       And I add a 'simple' widget to my cart
@@ -13,6 +13,7 @@ Feature: Customer Cart Interactions
     When I check out
     Then A simple order event should be sent to Drip
 
+  @focus
   Scenario: A customer adds a configurable product to their cart and sees data about the sub-item
     Given I am logged into the admin interface
       And I have configured Drip to be enabled for 'main'

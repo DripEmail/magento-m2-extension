@@ -182,16 +182,29 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
      */
     protected function prepareQuoteItemsData($quote)
     {
-        $data =  [];
+        $childItems = array();
         foreach ($quote->getAllItems() as $item) {
+            if (!$item->getParentItemId()) { continue; }
+            $childItems[$item->getParentItemId()] = $item;
+        }
+
+        $data =  [];
+        foreach ($quote->getAllVisibleItems() as $item) {
             $product = $this->catalogProductFactory->create()->load($item->getProduct()->getId());
-            $categories = explode(',', $this->connectHelper->getProductCategoryNames($product));
-            if (empty($categories)) {
+
+            $productCategoryNames = explode(',', $this->connectHelper->getProductCategoryNames($product));
+            if ($productCategoryNames === '' || empty($categories)) {
                 $categories = [];
+            }
+
+            $productVariantItem = $item;
+            if ($item->getProductType() === 'configurable' && \array_key_exists($item->getId(), $childItems)) {
+                $productVariantItem = $childItems[$item->getId()];
             }
 
             $group = [
                 'product_id' => $item->getProductId(),
+                'product_variant_id' => $productVariantItem->getProductId(),
                 'sku' => $item->getSku(),
                 'name' => $item->getName(),
                 'categories' => $categories,
