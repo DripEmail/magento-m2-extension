@@ -32,3 +32,6 @@ RUN cd /var/www/html/magento && composer install
 
 USER root
 CMD [ "/usr/sbin/apache2", "-DFOREGROUND" ]
+
+# Make life a little nicer when we log into the container.
+WORKDIR /var/www/html/magento
