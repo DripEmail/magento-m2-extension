@@ -11,16 +11,41 @@ class CreateProductCommand extends Command
     /** @var \Magento\Catalog\Model\ProductFactory */
     protected $catalogProductFactory;
 
+    /** @var \Magento\Eav\Model\Config */
+    protected $eavConfig;
+
+    /** @var \Magento\Eav\Setup\EavSetupFactory */
+    protected $eavSetupFactory;
+
+    /** @var \Magento\ConfigurableProduct\Api\Data\OptionInterface */
+    // protected $productOption;
+
+    /** @var \Magento\Catalog\Api\ProductRepositoryInterface **/
+    protected $productRepository;
+
+    /** @var \Magento\Framework\Setup\ModuleDataSetupInterface **/
+    protected $setup;
+
     /** @var \Magento\Framework\App\State **/
-    private $state;
+    protected $state;
 
     public function __construct(
         \Magento\Catalog\Model\ProductFactory $catalogProductFactory,
+        \Magento\Eav\Model\Config $eavConfig,
+        \Magento\Eav\Setup\EavSetupFactory $eavSetupFactory,
+        // \Magento\ConfigurableProduct\Api\Data\OptionInterface $productOption,
+        \Magento\Catalog\Api\ProductRepositoryInterface $productRepository,
+        \Magento\Framework\Setup\ModuleDataSetupInterface $setup,
         \Magento\Framework\App\State $state
     ) {
         parent::__construct();
 
         $this->catalogProductFactory = $catalogProductFactory;
+        $this->eavConfig = $eavConfig;
+        // $this->productOption = $productOption;
+        $this->eavSetupFactory = $eavSetupFactory;
+        $this->productRepository = $productRepository;
+        $this->setup = $setup;
         $this->state = $state;
     }
 
@@ -53,7 +78,7 @@ class CreateProductCommand extends Command
             case 'simple':
             case '':
             case null:
-                $this->buildSimpleProduct($json)->save();
+                $this->productRepository->save($this->buildSimpleProduct($json));
                 break;
             case 'configurable':
                 $this->buildConfigurableProduct($json);
@@ -109,9 +134,12 @@ class CreateProductCommand extends Command
 
     protected function buildAttribute($title, $options)
     {
-        $installer = new Mage_Eav_Model_Entity_Setup('core_setup');
-        $installer->startSetup();
-        $installer->addAttribute('catalog_product', $title, array(
+        $this->setup->startSetup();
+
+        /** @var \Magento\Eav\Setup\EavSetup $eavSetup */
+        $eavSetup = $this->eavSetupFactory->create(['setup' => $this->setup]);
+
+        $eavSetup->addAttribute('catalog_product', $title, array(
             'group' => 'General',
             'label' => $title,
             'input' => 'select',
@@ -126,15 +154,15 @@ class CreateProductCommand extends Command
             'comparable' => 0,
             'user_defined' => 1,
             'is_configurable' => 0,
-            'global' => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_GLOBAL,
+            'global' => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_GLOBAL,
             'option' => array('values' => $options),
             'note' => '',
         ));
 
-        $installer->endSetup();
+        $this->setup->endSetup();
 
         // Obtain and return the attribute.
-        return Mage::getModel('eav/config')->getAttribute('catalog_product', $title);
+        return $this->eavConfig->getAttribute('catalog_product', $title);
     }
 
     protected function buildConfigurableProduct($data)
@@ -150,36 +178,54 @@ class CreateProductCommand extends Command
         ));
 
         $attributeIds = array();
-        $configurableProductsData = array();
+        $configurableAttributesData = array();
+        // $configurableProductsData = array();
+        $associatedProductIds = array();
 
         foreach ($attributes as $attrName => $attrValues) {
             $attribute = $this->buildAttribute($attrName, array_keys($attrValues));
             $attributeIds[] = $attribute->getId();
 
+            $attributeValues = array();
+
             foreach ($attrValues as $option => $simpleProductData) {
                 $simpleProduct = $this->buildSimpleProduct($simpleProductData);
+                $simpleProduct->setVisibility(\Magento\Catalog\Model\Product\Visibility::VISIBILITY_NOT_VISIBLE);
                 $optionId = $attribute->setStoreId(0)->getSource()->getOptionId($option);
                 $simpleProduct->setData($attrName, $optionId);
-                $simpleProduct->save();
+                $simpleProduct = $this->productRepository->save($simpleProduct);
+                $associatedProductIds[] = $simpleProduct->getId();
 
-                $configurableProductsData[$simpleProduct->getId()][] = array(
+                $attributeValues[] = [
                     'label' => $option,
                     'attribute_id' => $attribute->getId(),
                     'value_index' => $optionId,
-                    'is_percent' => '0', //fixed/percent price for this option
-                    'pricing_value' => $simpleProduct->getPrice()
-                );
+                ];
             }
+
+            $configurableAttributesData[] = array(
+                'attribute_id' => $attribute->getId(),
+                'code' => $attribute->getAttributeCode(),
+                'label' => $attribute->getStoreLabel(),
+                'position' => '0',
+                'values' => $attributeValues,
+            );
         }
 
-        // Set attribute data
-        $configProduct->getTypeInstance()->setUsedProductAttributeIds($attributeIds);
-        $configurableAttributesData = $configProduct->getTypeInstance()->getConfigurableAttributesAsArray();
-        $configProduct->setCanSaveConfigurableAttributes(true);
-        $configProduct->setConfigurableAttributesData($configurableAttributesData);
-        $configProduct->setConfigurableProductsData($configurableProductsData);
 
-        $configProduct->save();
+        // All the documentation says not to use object manager. But not using object manager breaks in weird ways.
+        // This is test harness code. I don't care.
+        $ob = \Magento\Framework\App\ObjectManager::getInstance();
+        $optionsFactory = $ob->create(\Magento\ConfigurableProduct\Helper\Product\Options\Factory::class);
+
+        $configurableOptions = $optionsFactory->create($configurableAttributesData);
+
+        $extensionConfigurableAttributes = $configProduct->getExtensionAttributes();
+        $extensionConfigurableAttributes->setConfigurableProductOptions($configurableOptions);
+        $extensionConfigurableAttributes->setConfigurableProductLinks($associatedProductIds);
+        $configProduct->setExtensionAttributes($extensionConfigurableAttributes);
+
+        $this->productRepository->save($configProduct);
     }
 
     protected function buildGroupedProduct($data)
@@ -193,13 +239,13 @@ class CreateProductCommand extends Command
             'manage_stock' => 1, //manage stock
             'is_in_stock' => 1, //Stock Availability
         ));
-        $groupedProduct->save();
+        $this->productRepository->save($groupedProduct);
 
         $products_links = Mage::getModel('catalog/product_link_api');
 
         foreach ($associated as $simpleProductData) {
             $simpleProduct = $this->buildSimpleProduct($simpleProductData);
-            $simpleProduct->save();
+            $this->productRepository->save($simpleProduct);
             $products_links->assign("grouped", $groupedProduct->getId(), $simpleProduct->getId());
         }
     }
@@ -234,7 +280,7 @@ class CreateProductCommand extends Command
             $selections = array();
             foreach ($productOptions as $productData) {
                 $simpleProduct = $this->buildSimpleProduct($productData);
-                $simpleProduct->save();
+                $this->productRepository->save($simpleProduct);
                 $selections[] = array(
                     'product_id' => $simpleProduct->getId(),
                     'delete' => '',
@@ -264,6 +310,6 @@ class CreateProductCommand extends Command
         $bundleProduct->setBundleOptionsData($bundleOptions);
         $bundleProduct->setBundleSelectionsData($bundleSelections);
 
-        $bundleProduct->save();
+        $this->productRepository->save($bundleProduct);
     }
 }
