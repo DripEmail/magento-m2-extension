@@ -39,11 +39,11 @@ abstract class Base implements \Magento\Framework\Event\ObserverInterface
         $myClass = get_class($this);
         $this->logger->info("Observer triggered: {$myClass}");
 
-        // try {
+        try {
             $this->executeWhenEnabled($observer);
-        // } catch (\Exception $e) {
+        } catch (\Exception $e) {
             // We should never blow up a customer's site due to bugs in our code.
-            // $this->logger->critical($e);
-        // }
+            $this->logger->critical($e);
+        }
     }
 }

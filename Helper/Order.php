@@ -263,7 +263,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $childItems = array();
         foreach ($order->getAllItems() as $item) {
-            if (!$item->getParentItemId()) { continue; }
+            if ($item->getParentItemId() === null) { continue; }
             $childItems[$item->getParentItemId()] = $item;
         }
 

@@ -184,11 +184,11 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $childItems = array();
         foreach ($quote->getAllItems() as $item) {
-            if (!$item->getParentItemId()) { continue; }
+            if ($item->getParentItemId() === null) { continue; }
             $childItems[$item->getParentItemId()] = $item;
         }
 
-        $data =  [];
+        $data = [];
         foreach ($quote->getAllVisibleItems() as $item) {
             $product = $this->catalogProductFactory->create()->load($item->getProduct()->getId());
 
