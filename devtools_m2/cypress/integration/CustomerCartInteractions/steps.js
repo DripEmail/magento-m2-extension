@@ -251,7 +251,7 @@ When('I check out', function() {
 
   cy.route('POST', 'rest/default/V1/carts/**').as('cartBuilder')
   cy.visit('/checkout/cart')
-  cy.wait('@cartBuilder')
+  cy.wait('@cartBuilder', { requestTimeout: 10000 })
   cy.get('button[data-role="proceed-to-checkout"]').click()
 
   cy.contains('Shipping Address', {timeout: 20000})
