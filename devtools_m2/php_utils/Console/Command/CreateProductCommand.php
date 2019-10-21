@@ -8,6 +8,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CreateProductCommand extends Command
 {
+    /** @var \Magento\Bundle\Api\Data\LinkInterfaceFactory */
+    protected $bundleLinkFactory;
+
+    /** @var \Magento\Bundle\Api\Data\OptionInterfaceFactory */
+    protected $bundleOptionFactory;
+
     /** @var \Magento\Catalog\Model\ProductFactory */
     protected $catalogProductFactory;
 
@@ -16,6 +22,9 @@ class CreateProductCommand extends Command
 
     /** @var \Magento\Eav\Setup\EavSetupFactory */
     protected $eavSetupFactory;
+
+    /** @var \Magento\Catalog\Api\Data\ProductExtensionInterfaceFactory */
+    // protected $productExtensionFactory;
 
     /** @var \Magento\Catalog\Api\Data\ProductLinkInterface */
     protected $productLinkFactory;
@@ -32,26 +41,37 @@ class CreateProductCommand extends Command
     /** @var \Magento\Framework\App\State **/
     protected $state;
 
+    /** @var \Magento\CatalogInventory\Api\Data\StockItemInterface **/
+    // protected $stockItemFactory;
+
     public function __construct(
+        \Magento\Bundle\Api\Data\LinkInterfaceFactory $bundleLinkFactory,
+        \Magento\Bundle\Api\Data\OptionInterfaceFactory $bundleOptionFactory,
         \Magento\Catalog\Model\ProductFactory $catalogProductFactory,
         \Magento\Eav\Model\Config $eavConfig,
         \Magento\Eav\Setup\EavSetupFactory $eavSetupFactory,
+        // \Magento\Catalog\Api\Data\ProductExtensionInterfaceFactory $productExtensionFactory,
         \Magento\Catalog\Api\Data\ProductLinkInterfaceFactory $productLinkFactory,
         // \Magento\ConfigurableProduct\Api\Data\OptionInterface $productOption,
         \Magento\Catalog\Api\ProductRepositoryInterface $productRepository,
         \Magento\Framework\Setup\ModuleDataSetupInterface $setup,
         \Magento\Framework\App\State $state
+        // \Magento\CatalogInventory\Api\Data\StockItemInterfaceFactory $stockItemFactory
     ) {
         parent::__construct();
 
+        $this->bundleLinkFactory = $bundleLinkFactory;
+        $this->bundleOptionFactory = $bundleOptionFactory;
         $this->catalogProductFactory = $catalogProductFactory;
         $this->eavConfig = $eavConfig;
         // $this->productOption = $productOption;
         $this->eavSetupFactory = $eavSetupFactory;
+        // $this->productExtensionFactory = $productExtensionFactory;
         $this->productLinkFactory = $productLinkFactory;
         $this->productRepository = $productRepository;
         $this->setup = $setup;
         $this->state = $state;
+        // $this->stockItemFactory = $stockItemFactory;
     }
 
     /**
@@ -286,51 +306,54 @@ class CreateProductCommand extends Command
 
         // Requires title
         $defaultOptions = array(
-            'option_id' => '',
             'delete' => '',
             'type' => 'select',
-            'required' => '1',
-            'position' => '1'
+            'required' => '1'
         );
 
-        $bundleOptions = array();
-        $bundleSelections = array();
+        $extOptions = [];
         foreach ($configuredBundleOptions as $option) {
             $productOptions = $option['product_options'];
             unset($option['product_options']);
 
-            $selections = array();
+            $links = array();
             foreach ($productOptions as $productData) {
                 $simpleProduct = $this->buildSimpleProduct($productData);
                 $this->productRepository->save($simpleProduct);
-                $selections[] = array(
+                $bundleSelection = array(
                     'product_id' => $simpleProduct->getId(),
                     'delete' => '',
                     'selection_price_value' => $simpleProduct->getPrice(),
-                    'selection_price_type' => 0,
                     'selection_qty' => 1,
-                    'selection_can_change_qty' => 0,
-                    'position' => 0,
-                    'is_default' => 1
+                    'selection_can_change_qty' => 0
                 );
+
+                /** @var \Magento\Bundle\Api\Data\LinkInterface $link */
+                $link = $this->bundleLinkFactory->create(['data' => $bundleSelection]);
+                $link->setSku($simpleProduct->getSku());
+                $link->setQty($bundleSelection['selection_qty']);
+                $link->setPrice($bundleSelection['selection_price_value']);
+                if (isset($bundleSelection['selection_can_change_qty'])) {
+                    $link->setCanChangeQuantity($bundleSelection['selection_can_change_qty']);
+                }
+                $links[] = $link;
             }
 
-            // $bundleOptions and $bundleSelections need to have parallel indicies.
-            $bundleOptions[] = array_replace_recursive($defaultOptions, $option);
-            $bundleSelections[] = $selections;
+            $optionData = array_replace_recursive($defaultOptions, $option);
+
+            $extOption = $this->bundleOptionFactory->create(['data' => $optionData]);
+            $extOption->setSku($bundleProduct->getSku());
+            $extOption->setOptionId(null);
+            $extOption->setProductLinks($links);
+
+            $extOptions[] = $extOption;
         }
 
-        //flags for saving custom options/selections
-        $bundleProduct->setCanSaveCustomOptions(true);
-        $bundleProduct->setCanSaveBundleSelections(true);
-        $bundleProduct->setAffectBundleProductSelections(true);
+        $extension = $bundleProduct->getExtensionAttributes();
+        $extension->setBundleProductOptions($extOptions);
+        $bundleProduct->setExtensionAttributes($extension);
 
-        //registering a product because of Mage_Bundle_Model_Selection::_beforeSave
-        Mage::register('product', $bundleProduct);
-
-        //setting the bundle options and selection data
-        $bundleProduct->setBundleOptionsData($bundleOptions);
-        $bundleProduct->setBundleSelectionsData($bundleSelections);
+        $bundleProduct->setPriceView(1);
 
         $this->productRepository->save($bundleProduct);
     }

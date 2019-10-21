@@ -165,6 +165,7 @@ Given('I have configured a bundle widget', function() {
     "bundle_options": [
       {
         "title": "item01",
+        "default_title": "item01",
         "product_options": [
           {
             "sku": "widg-1-sub1",
@@ -176,6 +177,7 @@ Given('I have configured a bundle widget', function() {
       },
       {
         "title": "item02",
+        "default_title": "item02",
         "product_options": [
           {
             "sku": "widg-1-sub2",

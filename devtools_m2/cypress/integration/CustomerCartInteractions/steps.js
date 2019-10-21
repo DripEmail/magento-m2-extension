@@ -27,14 +27,16 @@ When('I add a {string} widget to my cart', function(type) {
       cy.get('#product_addtocart_form input[name="super_group[2]"]').clear().type('1')
       cy.get('#product_addtocart_form input[name="super_group[3]"]').clear().type('1')
       break;
+    case 'bundle':
+      cy.contains('Customize and Add to Cart').click()
+      break;
     case 'simple':
-    case 'bundle': // For now, we only have one option for each bundle option, so we don't have to do anything.
       // Do nothing
       break;
     default:
       throw 'Methinks thou hast forgotten something…'
   }
-  cy.contains('Add to Cart').click()
+  cy.get('#product-addtocart-button').click()
   cy.wait('@addToCartRequest') // Make sure that the cart addition has finished before continuing.
 })
 
@@ -51,14 +53,16 @@ When('I add a different {string} widget to my cart', function(type) {
       cy.get('#product_addtocart_form input[name="super_group[2]"]').clear().type('1')
       cy.get('#product_addtocart_form input[name="super_group[3]"]').clear().type('1')
       break;
+    case 'bundle':
+      cy.contains('Customize and Add to Cart').click()
+      break;
     case 'simple':
-    case 'bundle': // For now, we only have one option for each bundle option, so we don't have to do anything.
       // Do nothing
       break;
     default:
       throw 'Methinks thou hast forgotten something…'
   }
-  cy.contains('Add to Cart').click()
+  cy.get('#product-addtocart-button').click()
   cy.wait('@addToCartRequest') // Make sure that the cart addition has finished before continuing.
 })
 
