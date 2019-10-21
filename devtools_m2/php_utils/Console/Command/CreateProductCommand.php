@@ -17,6 +17,9 @@ class CreateProductCommand extends Command
     /** @var \Magento\Eav\Setup\EavSetupFactory */
     protected $eavSetupFactory;
 
+    /** @var \Magento\Catalog\Api\Data\ProductLinkInterface */
+    protected $productLinkFactory;
+
     /** @var \Magento\ConfigurableProduct\Api\Data\OptionInterface */
     // protected $productOption;
 
@@ -33,6 +36,7 @@ class CreateProductCommand extends Command
         \Magento\Catalog\Model\ProductFactory $catalogProductFactory,
         \Magento\Eav\Model\Config $eavConfig,
         \Magento\Eav\Setup\EavSetupFactory $eavSetupFactory,
+        \Magento\Catalog\Api\Data\ProductLinkInterfaceFactory $productLinkFactory,
         // \Magento\ConfigurableProduct\Api\Data\OptionInterface $productOption,
         \Magento\Catalog\Api\ProductRepositoryInterface $productRepository,
         \Magento\Framework\Setup\ModuleDataSetupInterface $setup,
@@ -44,6 +48,7 @@ class CreateProductCommand extends Command
         $this->eavConfig = $eavConfig;
         // $this->productOption = $productOption;
         $this->eavSetupFactory = $eavSetupFactory;
+        $this->productLinkFactory = $productLinkFactory;
         $this->productRepository = $productRepository;
         $this->setup = $setup;
         $this->state = $state;
@@ -239,15 +244,32 @@ class CreateProductCommand extends Command
             'manage_stock' => 1, //manage stock
             'is_in_stock' => 1, //Stock Availability
         ));
+        // This save mostly happens in order to keep the product creation in
+        // the same order as the M1 test suite. This makes things more
+        // consistent.
         $this->productRepository->save($groupedProduct);
 
-        $products_links = Mage::getModel('catalog/product_link_api');
+        $productLinks = array();
 
         foreach ($associated as $simpleProductData) {
             $simpleProduct = $this->buildSimpleProduct($simpleProductData);
             $this->productRepository->save($simpleProduct);
-            $products_links->assign("grouped", $groupedProduct->getId(), $simpleProduct->getId());
+
+            $productLink = $this->productLinkFactory->create();
+
+            $productLink->setSku($groupedProduct->getSku())
+                ->setLinkType('associated')
+                ->setLinkedProductSku($simpleProduct->getSku())
+                ->setLinkedProductType($simpleProduct->getTypeId())
+                ->getExtensionAttributes()
+                ->setQty(0);
+
+            $productLinks[] = $productLink;
         }
+
+        $groupedProduct->setProductLinks($productLinks);
+
+        $this->productRepository->save($groupedProduct);
     }
 
     protected function buildBundleProduct($data)

@@ -13,7 +13,6 @@ Feature: Customer Cart Interactions
     When I check out
     Then A simple order event should be sent to Drip
 
-  @focus
   Scenario: A customer adds a configurable product to their cart and sees data about the sub-item
     Given I am logged into the admin interface
       And I have configured Drip to be enabled for 'main'
@@ -49,6 +48,7 @@ Feature: Customer Cart Interactions
   # Note that we skip a test for virtual and downloadable products since they
   # are essentially the same as simple products, as far as we are concerned.
 
+  @focus
   Scenario: A customer adds a bundle product to their cart and sees the parent item
     Given I am logged into the admin interface
       And I have configured Drip to be enabled for 'main'
