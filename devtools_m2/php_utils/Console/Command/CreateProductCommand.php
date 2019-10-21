@@ -23,14 +23,8 @@ class CreateProductCommand extends Command
     /** @var \Magento\Eav\Setup\EavSetupFactory */
     protected $eavSetupFactory;
 
-    /** @var \Magento\Catalog\Api\Data\ProductExtensionInterfaceFactory */
-    // protected $productExtensionFactory;
-
     /** @var \Magento\Catalog\Api\Data\ProductLinkInterface */
     protected $productLinkFactory;
-
-    /** @var \Magento\ConfigurableProduct\Api\Data\OptionInterface */
-    // protected $productOption;
 
     /** @var \Magento\Catalog\Api\ProductRepositoryInterface **/
     protected $productRepository;
@@ -41,22 +35,16 @@ class CreateProductCommand extends Command
     /** @var \Magento\Framework\App\State **/
     protected $state;
 
-    /** @var \Magento\CatalogInventory\Api\Data\StockItemInterface **/
-    // protected $stockItemFactory;
-
     public function __construct(
         \Magento\Bundle\Api\Data\LinkInterfaceFactory $bundleLinkFactory,
         \Magento\Bundle\Api\Data\OptionInterfaceFactory $bundleOptionFactory,
         \Magento\Catalog\Model\ProductFactory $catalogProductFactory,
         \Magento\Eav\Model\Config $eavConfig,
         \Magento\Eav\Setup\EavSetupFactory $eavSetupFactory,
-        // \Magento\Catalog\Api\Data\ProductExtensionInterfaceFactory $productExtensionFactory,
         \Magento\Catalog\Api\Data\ProductLinkInterfaceFactory $productLinkFactory,
-        // \Magento\ConfigurableProduct\Api\Data\OptionInterface $productOption,
         \Magento\Catalog\Api\ProductRepositoryInterface $productRepository,
         \Magento\Framework\Setup\ModuleDataSetupInterface $setup,
         \Magento\Framework\App\State $state
-        // \Magento\CatalogInventory\Api\Data\StockItemInterfaceFactory $stockItemFactory
     ) {
         parent::__construct();
 
@@ -64,14 +52,11 @@ class CreateProductCommand extends Command
         $this->bundleOptionFactory = $bundleOptionFactory;
         $this->catalogProductFactory = $catalogProductFactory;
         $this->eavConfig = $eavConfig;
-        // $this->productOption = $productOption;
         $this->eavSetupFactory = $eavSetupFactory;
-        // $this->productExtensionFactory = $productExtensionFactory;
         $this->productLinkFactory = $productLinkFactory;
         $this->productRepository = $productRepository;
         $this->setup = $setup;
         $this->state = $state;
-        // $this->stockItemFactory = $stockItemFactory;
     }
 
     /**
