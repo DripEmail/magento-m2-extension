@@ -18,12 +18,4 @@ module.exports = (on, config) => {
   // `config` is the resolved Cypress config
 
   on('file:preprocessor', cucumber())
-
-  // Magento is slow. We're going to generally bump up timeouts
-  config.defaultCommandTimeout = 10000 // Default: 4000
-  // config.execTimeout = 60000 // Default: 60000
-  // config.taskTimeout = 60000 // Default: 60000
-  config.pageLoadTimeout = 100000 // Default: 60000
-  config.requestTimeout = 10000 // Default: 5000
-  config.responseTimeout = 10000 // Default: 3000
 }

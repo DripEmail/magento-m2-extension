@@ -1,5 +1,10 @@
 {
   "projectId": "35f86d",
   "ignoreTestFiles": "*.js",
-  "baseUrl": "http://main.magento.localhost:3006"
+  "baseUrl": "http://main.magento.localhost:3006",
+
+  "defaultCommandTimeout": 10000,
+  "pageLoadTimeout": 100000,
+  "requestTimeout": 10000,
+  "responseTimeout": 10000
 }
