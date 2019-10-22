@@ -18,6 +18,7 @@ When('I create an account', function() {
 When('I add a {string} widget to my cart', function(type) {
   cy.server()
   cy.route('POST', 'checkout/cart/add/**').as('addToCartRequest')
+  cy.route('GET', '/customer/section/load/**').as('cartSectionLoading')
   cy.visit(`/widget-1.html`)
   switch (type) {
     case 'configurable':
@@ -28,6 +29,13 @@ When('I add a {string} widget to my cart', function(type) {
       cy.get('#product_addtocart_form input[name="super_group[3]"]').clear().type('1')
       break;
     case 'bundle':
+      // There are four of these guys, so we wait for all of them...
+      // The one we care about is http://main.magento.localhost:3006/customer/section/load/?sections=cart,customer,messages,compare-products,product_data_storage,captcha&force_new_section_timestamp=false&_=1571690556626
+      // but it seems like we can't match on query params.
+      cy.wait('@cartSectionLoading')
+      cy.wait('@cartSectionLoading')
+      cy.wait('@cartSectionLoading')
+      cy.wait('@cartSectionLoading')
       cy.contains('Customize and Add to Cart').click()
       break;
     case 'simple':
