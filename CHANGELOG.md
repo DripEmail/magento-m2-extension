@@ -1,5 +1,9 @@
 # Magento 2 Drip Connect Changelog
 
+## NEXT
+
+* Disable product event based product syncing since it's very broken for configurable products. Product data is still sent as part of order and cart events.
+
 ## 1.7.4
 
 * Skip sending order items on after_save with invalid emails.
