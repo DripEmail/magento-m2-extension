@@ -30,3 +30,8 @@ afterEach(function() {
   cy.log('Reset web interface to avoid bleed-over')
   cy.visit('/lib/web/blank.html', { failOnStatusCode: false })
 })
+
+beforeEach(function() {
+  // Let's just start the stupid thing.
+  cy.server()
+})

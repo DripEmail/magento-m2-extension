@@ -16,7 +16,6 @@ When('I create an account', function() {
 })
 
 When('I add a {string} widget to my cart', function(type) {
-  cy.server()
   cy.route('POST', 'checkout/cart/add/**').as('addToCartRequest')
   cy.route('GET', /\/customer\/section\/load\/\?sections=cart,customer,messages,compare\-products,product_data_storage,captcha&force_new_section_timestamp=false&_=\d+/).as('cartSectionLoading')
   cy.visit(`/widget-1.html`)
@@ -44,7 +43,6 @@ When('I add a {string} widget to my cart', function(type) {
 
 // TODO: This is kind of ugly and duplicates the prior.
 When('I add a different {string} widget to my cart', function(type) {
-  cy.server()
   cy.route('POST', 'checkout/cart/add/**').as('addToCartRequest')
   cy.visit(`/widget-1.html`)
   switch (type) {

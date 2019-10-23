@@ -3,6 +3,7 @@
 ## NEXT
 
 * Disable product event based product syncing since it's very broken for configurable products. Product data is still sent as part of order and cart events.
+* Order batch sync now properly sends the frontend product URL.
 
 ## 1.7.4
 
