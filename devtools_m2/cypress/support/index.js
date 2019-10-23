@@ -14,6 +14,7 @@
 // ***********************************************************
 
 import chaiString from 'chai-string';
+import 'cypress-pipe'
 
 // Import commands.js using ES2015 syntax:
 import './commands'
