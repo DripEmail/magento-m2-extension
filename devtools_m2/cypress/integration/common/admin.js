@@ -10,19 +10,27 @@ Given('I am logged into the admin interface', function() {
 Given('I have set up a multi-store configuration', function() {
   cy.contains('All Stores').click({ force: true })
 
+  // globals.js defines window.setLocation, which is loaded async. We need to wait for this to be loaded.
+  cy.window().its('setLocation')
+
   cy.contains('Create Website').click()
+  cy.window().its('setLocation')
   cy.get('input[name="website[name]"]').type('site1_website')
   cy.get('input[name="website[code]"]').type('site1_website')
   cy.contains('Save Web Site').click()
 
+  cy.window().its('setLocation')
   cy.get('button#add_group').click()
+  cy.window().its('setLocation')
   cy.get('select[name="group[website_id]"]').select('site1_website')
   cy.get('input[name="group[name]"]').type('site1_store')
   cy.get('input[name="group[code]"]').type('site1_store')
   cy.get('select[name="group[root_category_id]"]').select('Default Category')
   cy.contains('Save Store').click()
 
+  cy.window().its('setLocation')
   cy.contains('Create Store View').click()
+  cy.window().its('setLocation')
   cy.get('select[name="store[group_id]"]').select('site1_store')
   cy.get('input[name="store[name]"]').type('site1_store_view')
   cy.get('input[name="store[code]"]').type('site1_store_view')
@@ -52,33 +60,17 @@ Given('I have set up a multi-store configuration', function() {
   cy.contains('Save Config').click()
 })
 
-Given('I have configured Drip to be enabled for site1', function() {
-  // cy.get('[data-ui-id="menu-magento-backend-stores-settings"]').within(function() {
-  //   cy.contains('Configuration').click({ force: true })
-  // })
-  cy.contains('Drip Connect').click({ force: true })
-  // cy.get('select#store_switcher').select('site1_website')
-  cy.contains('Module Settings').click()
-  cy.contains('API Settings').click()
-  cy.get('input[name="groups[module_settings][fields][is_enabled][inherit]"]').uncheck()
-  cy.get('select[name="groups[module_settings][fields][is_enabled][value]"]').select('Yes')
-  cy.get('input[name="groups[api_settings][fields][account_id][inherit]"]').uncheck()
-  cy.get('input[name="groups[api_settings][fields][account_id][value]"]').type('123456')
-  cy.get('input[name="groups[api_settings][fields][api_key][inherit]"]').uncheck()
-  cy.get('input[name="groups[api_settings][fields][api_key][value]"]').type('abc123')
-  cy.get('input[name="groups[api_settings][fields][url][inherit]"]').uncheck()
-  cy.get('input[name="groups[api_settings][fields][url][value]"]').clear().type('http://mock:1080/v2/')
-  cy.contains('Save Config').click()
-})
-
-Given('I have configured Drip to be enabled for main', function() {
-  // cy.get('[data-ui-id="menu-magento-backend-stores-settings"]').within(function() {
-  //   cy.contains('Configuration').click({ force: true })
-  // })
-  cy.contains('Drip Connect').click({ force: true })
+Given('I have configured Drip to be enabled for {string}', function(site) {
+  cy.get('li[data-ui-id="menu-magento-config-system-config"] a').click({force: true})
+  cy.contains('Drip Connect', {timeout: 20000}).click({ force: true })
+  let websiteKey
+  if (site == 'main') {
+    websiteKey = 'Main Website'
+  } else {
+    websiteKey = `${site}_website`
+  }
   cy.get('div.store-switcher').within(function() {
-    // cy.get('button#store-change-button').click({force: true})
-    cy.contains('Main Website').trigger('click', {force: true})
+    cy.contains(websiteKey).trigger('click', {force: true})
   })
   cy.contains('OK').click()
   cy.contains('Module Settings').click()
@@ -104,4 +96,105 @@ Given('I have configured a widget', function() {
   cy.get('input[name="product[price]"]').type('120')
   cy.get('input[name="product[quantity_and_stock_status][qty]"]').type('120')
   cy.contains('Save').click()
+})
+
+// Simple Product
+Given('I have configured a simple widget', function() {
+  cy.createProduct({
+    "sku": "widg-1",
+    "name": "Widget 1",
+    "description": "This is really a widget. There are many like it, but this one is mine.",
+    "shortDescription": "This is really a widget.",
+  })
+})
+
+// Configurable Product
+Given('I have configured a configurable widget', function() {
+  cy.createProduct({
+    "sku": "widg-1",
+    "name": "Widget 1",
+    "description": "This is really a widget. There are many like it, but this one is mine.",
+    "shortDescription": "This is really a widget.",
+    "typeId": "configurable",
+    "attributes": {
+      "widget_size": {
+        "XL": {
+          "sku": "widg-1-xl",
+          "name": "Widget 1 XL",
+          "description": "This is really an XL widget. There are many like it, but this one is mine.",
+          "shortDescription": "This is really an XL widget.",
+        },
+        "L": {
+          "sku": "widg-1-l",
+          "name": "Widget 1 L",
+          "description": "This is really an L widget. There are many like it, but this one is mine.",
+          "shortDescription": "This is really an L widget.",
+        }
+      }
+    }
+  })
+})
+
+// Grouped Product
+Given('I have configured a grouped widget', function() {
+  cy.createProduct({
+    "sku": "widg-1",
+    "name": "Widget 1",
+    "description": "This is really a widget. There are many like it, but this one is mine.",
+    "shortDescription": "This is really a widget.",
+    "typeId": "grouped",
+    "associated": [
+      {
+        "sku": "widg-1-sub1",
+        "name": "Widget 1 Sub 1",
+        "description": "This is really a sub1 widget. There are many like it, but this one is mine.",
+        "shortDescription": "This is really a sub1 widget.",
+      },
+      {
+        "sku": "widg-1-sub2",
+        "name": "Widget 1 Sub 2",
+        "description": "This is really a sub2 widget. There are many like it, but this one is mine.",
+        "shortDescription": "This is really a sub2 widget.",
+      }
+    ]
+  })
+})
+
+// Bundle Product
+Given('I have configured a bundle widget', function() {
+  // skuType of 1 is a fixed sku rather than generating a composite SKU.
+  cy.createProduct({
+    "sku": "widg-1",
+    "skuType": 1,
+    "name": "Widget 1",
+    "description": "This is really a widget. There are many like it, but this one is mine.",
+    "shortDescription": "This is really a widget.",
+    "typeId": "bundle",
+    "bundle_options": [
+      {
+        "title": "item01",
+        "default_title": "item01",
+        "product_options": [
+          {
+            "sku": "widg-1-sub1",
+            "name": "Widget 1 Sub 1",
+            "description": "This is really a sub1 widget. There are many like it, but this one is mine.",
+            "shortDescription": "This is really a sub1 widget.",
+          }
+        ]
+      },
+      {
+        "title": "item02",
+        "default_title": "item02",
+        "product_options": [
+          {
+            "sku": "widg-1-sub2",
+            "name": "Widget 1 Sub 2",
+            "description": "This is really a sub2 widget. There are many like it, but this one is mine.",
+            "shortDescription": "This is really a sub2 widget.",
+          }
+        ]
+      }
+    ]
+  })
 })

@@ -1,0 +1,18 @@
+{
+  "name": "drip/test_utils",
+  "description": "Testing scripts",
+  "require": {
+    "php": "~5.6.0|~7.0.0"
+  },
+  "type": "magento2-module",
+  "version": "1.1.7",
+  "license": [
+    "OSL-3.0"
+  ],
+  "autoload": {
+    "files": [ "registration.php" ],
+    "psr-4": {
+      "Drip\\TestUtils\\": ""
+    }
+  }
+}

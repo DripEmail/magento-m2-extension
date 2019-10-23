@@ -240,11 +240,11 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
             'first_name' => (string) $address->getFirstname(),
             'last_name' => (string) $address->getLastname(),
             'company' => (string) $address->getCompany(),
-            'address_1' => (string) $address->getStreet1(),
-            'address_2' => (string) $address->getStreet2(),
+            'address_1' => (string) $address->getStreetLine(1),
+            'address_2' => (string) $address->getStreetLine(2),
             'city' => (string) $address->getCity(),
             'state' => (string) $address->getRegion(),
-            'zip' => (string) $address->getPostcode(),
+            'postal_code' => (string) $address->getPostcode(),
             'country' => (string) $address->getCountryId(),
             'phone' => (string) $address->getTelephone(),
             'email' => (string) $address->getEmail(),
@@ -261,10 +261,22 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
      */
     protected function getOrderItemsData($order, $isRefund = false)
     {
-        $data = [];
+        $childItems = array();
         foreach ($order->getAllItems() as $item) {
+            if ($item->getParentItemId() === null) { continue; }
+            $childItems[$item->getParentItemId()] = $item;
+        }
+
+        $data = [];
+        foreach ($order->getAllVisibleItems() as $item) {
+            $productVariantItem = $item;
+            if ($item->getProductType() === 'configurable' && \array_key_exists($item->getId(), $childItems)) {
+                $productVariantItem = $childItems[$item->getId()];
+            }
+
             $group = [
                 'product_id' => (string) $item->getProductId(),
+                'product_variant_id' => (string) $productVariantItem->getProductId(),
                 'sku' => (string) $item->getSku(),
                 'name' => (string) $item->getName(),
                 'quantity' => (float) $item->getQtyOrdered(),
@@ -277,8 +289,9 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
             ];
             if ($item->getProduct() !== null) {
                 $product = $this->catalogProductFactory->create()->load($item->getProductId());
-                $categories = explode(',', $this->connectHelper->getProductCategoryNames($product));
-                if (empty($categories)) {
+                $productCategoryNames = $this->connectHelper->getProductCategoryNames($product);
+                $categories = explode(',', $productCategoryNames);
+                if ($productCategoryNames === '' || empty($categories)) {
                     $categories = [];
                 }
                 $group['categories'] = $categories;
