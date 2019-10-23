@@ -15,6 +15,8 @@
 
 import chaiString from 'chai-string';
 import 'cypress-pipe'
+// Pending first-party support: https://github.com/cypress-io/cypress/issues/1313
+import 'cypress-plugin-retries'
 
 // Import commands.js using ES2015 syntax:
 import './commands'

@@ -252,10 +252,11 @@ When('I check out', function() {
   cy.log('Resetting mocks')
   cy.wrap(Mockclient.reset())
 
-  cy.route('POST', 'rest/default/V1/carts/**').as('cartBuilder')
   cy.visit('/checkout/cart')
-  cy.wait('@cartBuilder', { requestTimeout: 10000 })
-  cy.get('button[data-role="proceed-to-checkout"]').click()
+  // What would Superman do if his instant reflexes caused him to click buttons
+  // before the JS actually caused them to be wired up? Click again, of course.
+  const click = $el => $el.click()
+  cy.get('button[data-role="proceed-to-checkout"]').should('be.visible').pipe(click)
 
   cy.contains('Shipping Address', {timeout: 20000})
   cy.get('input[name="street[0]"]').type('123 Main St.')
@@ -265,9 +266,6 @@ When('I check out', function() {
   cy.get('input[name="telephone"]').type('999-999-9999')
   cy.contains('Next').click()
 
-  // cy.route('GET', 'customer/section/load/?sections=cart,last-ordered-items,instant-purchase,messages&force_new_section_timestamp=true**').as('checkoutSections')
-  // // URL:          http://main.magento.localhost:3006/customer/section/load/?sections=cart,last-ordered-items,instant-purchase,messages&force_new_section_timestamp=true&_=1570808490447
-  // cy.wait('@checkoutSections')
   cy.get('input[name="billing-address-same-as-shipping"]').check()
 
   cy.contains('Place Order').click()
