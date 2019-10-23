@@ -1,9 +1,12 @@
 # Magento 2 Drip Connect Changelog
 
-## NEXT
+## 1.7.6
 
-* Disable product event based product syncing since it's very broken for configurable products. Product data is still sent as part of order and cart events.
+* Send `product_variant_id` correctly for all product types
+* Backend: Introduce the beginnings of a thorough Cypress.io based test suite.
+* When a product isn't in any categories, stop sending an array with a single empty string. Send an empty array instead.
 * Order batch sync now properly sends the frontend product URL.
+* Disable product event based product syncing since it's very broken for configurable products. Product data is still sent as part of order and cart events.
 
 ## 1.7.4
 
