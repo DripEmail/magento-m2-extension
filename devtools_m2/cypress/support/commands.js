@@ -35,3 +35,25 @@ beforeEach(function() {
   // Let's just start the stupid thing.
   cy.server()
 })
+
+Cypress.Commands.add("switchAdminContext", (site) => {
+  let websiteKey
+  switch (site) {
+    case 'main':
+      websiteKey = 'Main Website'
+      break;
+    case 'default':
+      websiteKey = 'Default Config'
+      break;
+    default:
+      websiteKey = `${site}_website`
+      break;
+  }
+  cy.get('div.store-switcher ul[data-role="stores-list"]').contains(websiteKey).click({force: true})
+  cy.get('div.store-switcher ul[data-role="stores-list"]').contains(websiteKey).then(function(link) {
+    // We assume that if the link is disabled, we're already in that context.
+    if (!link.parent().hasClass('disabled')) {
+      cy.root().contains('OK').click()
+    }
+  })
+})

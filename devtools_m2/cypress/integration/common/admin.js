@@ -63,25 +63,7 @@ Given('I have set up a multi-store configuration', function() {
 Given('I have configured Drip to be enabled for {string}', function(site) {
   cy.get('li[data-ui-id="menu-magento-config-system-config"] a').click({force: true})
   cy.contains('Drip Connect', {timeout: 20000}).click({ force: true })
-  let websiteKey
-  switch (site) {
-    case 'main':
-      websiteKey = 'Main Website'
-      break;
-    case 'default':
-      websiteKey = 'Default Config'
-      break;
-    default:
-      websiteKey = `${site}_website`
-      break;
-  }
-  cy.get('div.store-switcher ul[data-role="stores-list"]').contains(websiteKey).within(function(link) {
-    // We assume that if the link is disabled, we're already in that context.
-    if (!link.parent().hasClass('disabled')) {
-      link.trigger('click', {force: true})
-      cy.root().contains('OK').click()
-    }
-  })
+  cy.switchAdminContext(site)
   cy.contains('Module Settings').click()
   cy.contains('API Settings').click()
   if (site !== 'default') {
