@@ -53,7 +53,7 @@ Cypress.Commands.add("switchAdminContext", (site) => {
   cy.get('div.store-switcher ul[data-role="stores-list"]').contains(websiteKey).then(function(link) {
     // We assume that if the link is disabled, we're already in that context.
     if (!link.parent().hasClass('disabled')) {
-      cy.root().contains('OK').click()
+      cy.contains('OK').click()
     }
   })
 })

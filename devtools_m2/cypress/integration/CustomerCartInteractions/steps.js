@@ -17,7 +17,6 @@ When('I create an account', function() {
 
 When('I add a {string} widget to my cart', function(type) {
   cy.route('POST', 'checkout/cart/add/**').as('addToCartRequest')
-  cy.route('GET', /\/customer\/section\/load\/\?sections=cart,customer,messages,compare\-products,product_data_storage,captcha&force_new_section_timestamp=false&_=\d+/).as('cartSectionLoading')
   cy.visit(`/widget-1.html`)
   switch (type) {
     case 'configurable':
@@ -28,8 +27,12 @@ When('I add a {string} widget to my cart', function(type) {
       cy.get('#product_addtocart_form input[name="super_group[3]"]').clear().type('1')
       break;
     case 'bundle':
-      cy.wait('@cartSectionLoading')
-      cy.contains('Customize and Add to Cart').click()
+      // The pipe causes us to keep clicking until we get the stuff down below.
+      const click = $el => $el.click()
+      cy.contains('Customize and Add to Cart').should('be.visible').pipe(click).should(() => {
+        const finalButton = Cypress.$('#product-addtocart-button')
+        expect(finalButton).to.be.visible
+      })
       break;
     case 'simple':
       // Do nothing
