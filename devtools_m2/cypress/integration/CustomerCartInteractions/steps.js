@@ -16,9 +16,7 @@ When('I create an account', function() {
 })
 
 When('I add a {string} widget to my cart', function(type) {
-  cy.server()
   cy.route('POST', 'checkout/cart/add/**').as('addToCartRequest')
-  cy.route('GET', /\/customer\/section\/load\/\?sections=cart,customer,messages,compare\-products,product_data_storage,captcha&force_new_section_timestamp=false&_=\d+/).as('cartSectionLoading')
   cy.visit(`/widget-1.html`)
   switch (type) {
     case 'configurable':
@@ -29,8 +27,12 @@ When('I add a {string} widget to my cart', function(type) {
       cy.get('#product_addtocart_form input[name="super_group[3]"]').clear().type('1')
       break;
     case 'bundle':
-      cy.wait('@cartSectionLoading')
-      cy.contains('Customize and Add to Cart').click()
+      // The pipe causes us to keep clicking until we get the stuff down below.
+      const click = $el => $el.click()
+      cy.contains('Customize and Add to Cart').should('be.visible').pipe(click).should(() => {
+        const finalButton = Cypress.$('#product-addtocart-button')
+        expect(finalButton).to.be.visible
+      })
       break;
     case 'simple':
       // Do nothing
@@ -44,7 +46,6 @@ When('I add a {string} widget to my cart', function(type) {
 
 // TODO: This is kind of ugly and duplicates the prior.
 When('I add a different {string} widget to my cart', function(type) {
-  cy.server()
   cy.route('POST', 'checkout/cart/add/**').as('addToCartRequest')
   cy.visit(`/widget-1.html`)
   switch (type) {
@@ -264,9 +265,6 @@ When('I check out', function() {
   cy.get('input[name="telephone"]').type('999-999-9999')
   cy.contains('Next').click()
 
-  // cy.route('GET', 'customer/section/load/?sections=cart,last-ordered-items,instant-purchase,messages&force_new_section_timestamp=true**').as('checkoutSections')
-  // // URL:          http://main.magento.localhost:3006/customer/section/load/?sections=cart,last-ordered-items,instant-purchase,messages&force_new_section_timestamp=true&_=1570808490447
-  // cy.wait('@checkoutSections')
   cy.get('input[name="billing-address-same-as-shipping"]').check()
 
   cy.contains('Place Order').click()

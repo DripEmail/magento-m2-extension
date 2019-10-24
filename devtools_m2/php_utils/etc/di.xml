@@ -4,6 +4,7 @@
         <arguments>
             <argument name="commands" xsi:type="array">
                 <item name="driptestutils_createproduct" xsi:type="object">Drip\TestUtils\Console\Command\CreateProductCommand</item>
+                <item name="driptestutils_createcustomer" xsi:type="object">Drip\TestUtils\Console\Command\CreateCustomerCommand</item>
             </argument>
         </arguments>
     </type>

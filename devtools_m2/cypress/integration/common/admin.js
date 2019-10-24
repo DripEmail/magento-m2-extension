@@ -63,25 +63,18 @@ Given('I have set up a multi-store configuration', function() {
 Given('I have configured Drip to be enabled for {string}', function(site) {
   cy.get('li[data-ui-id="menu-magento-config-system-config"] a').click({force: true})
   cy.contains('Drip Connect', {timeout: 20000}).click({ force: true })
-  let websiteKey
-  if (site == 'main') {
-    websiteKey = 'Main Website'
-  } else {
-    websiteKey = `${site}_website`
-  }
-  cy.get('div.store-switcher').within(function() {
-    cy.contains(websiteKey).trigger('click', {force: true})
-  })
-  cy.contains('OK').click()
+  cy.switchAdminContext(site)
   cy.contains('Module Settings').click()
   cy.contains('API Settings').click()
-  cy.get('input[name="groups[module_settings][fields][is_enabled][inherit]"]').uncheck()
+  if (site !== 'default') {
+    cy.get('input[name="groups[module_settings][fields][is_enabled][inherit]"]').uncheck()
+    cy.get('input[name="groups[api_settings][fields][account_id][inherit]"]').uncheck()
+    cy.get('input[name="groups[api_settings][fields][api_key][inherit]"]').uncheck()
+    cy.get('input[name="groups[api_settings][fields][url][inherit]"]').uncheck()
+  }
   cy.get('select[name="groups[module_settings][fields][is_enabled][value]"]').select('Yes')
-  cy.get('input[name="groups[api_settings][fields][account_id][inherit]"]').uncheck()
   cy.get('input[name="groups[api_settings][fields][account_id][value]"]').type('123456')
-  cy.get('input[name="groups[api_settings][fields][api_key][inherit]"]').uncheck()
   cy.get('input[name="groups[api_settings][fields][api_key][value]"]').type('abc123')
-  cy.get('input[name="groups[api_settings][fields][url][inherit]"]').uncheck()
   cy.get('input[name="groups[api_settings][fields][url][value]"]').clear().type('http://mock:1080/v2/')
   cy.contains('Save Config').click()
 })
@@ -197,4 +190,48 @@ Given('I have configured a bundle widget', function() {
       }
     ]
   })
+})
+
+Given('a customer exists', function() {
+  cy.createCustomer({})
+})
+
+When('I create an order', function() {
+  cy.contains('Orders').click({force: true})
+  cy.contains('Create New Order').click()
+
+  // Select customer
+  cy.contains('John Doe').click()
+
+  // Add product to order
+  cy.contains('Add Products').click()
+  cy.contains('Widget 1').click()
+  cy.get('#product_composite_configure').within(function() {
+    cy.get('select[name="super_attribute[136]"]').select('XL')
+  })
+  cy.contains('OK').click()
+  cy.contains('Add Selected Product(s) to Order').click()
+
+  // Fill out shipping/billing addresses
+  cy.get('input[name="order[billing_address][firstname]"]').type('John')
+  cy.get('input[name="order[billing_address][lastname]"]').type('Doe')
+  cy.get('input[name="order[billing_address][street][0]"]').type('123 Main St.')
+  cy.get('input[name="order[billing_address][city]"]').type('Centerville')
+  cy.get('select[name="order[billing_address][region_id]"]').select('Minnesota')
+  cy.get('input[name="order[billing_address][postcode]"]').type('12345')
+  cy.get('input[name="order[billing_address][telephone]"]').type('999-999-9999')
+
+  cy.route('POST', '/admin_123/sales/order_create/loadBlock/block/shipping_method,totals,billing_method?isAjax=true').as('loadShipping')
+  cy.route('POST', '/admin_123/sales/order_create/loadBlock/block/shipping_method,totals?isAjax=true').as('loadShippingData')
+  // Why the second click is required, I haven't a clue... I tried a lot of ways to make this work, and this was the only one that did.
+  cy.get('#order-shipping-method-summary a').click()
+  cy.get('#order-shipping-method-summary a').click()
+  cy.wait('@loadShippingData')
+
+  cy.get('input[name="order[shipping_method]"]').click()
+  cy.wait('@loadShipping')
+
+  cy.contains('Submit Order').click()
+
+  cy.contains('Order # 000000001')
 })

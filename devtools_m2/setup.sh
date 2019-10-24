@@ -27,6 +27,8 @@ MAGE_MODE=developer ./bin/magento setup:install \
 --admin-firstname=FIRST_NAME \
 --admin-lastname=LAST_NAME && \
 ./bin/magento setup:config:set --backend-frontname='admin_123' && \
+./bin/magento config:set admin/security/admin_account_sharing 1 && \
+./bin/magento config:set admin/security/use_form_key 0 && \
 ./bin/magento deploy:mode:set developer
 SCRIPT
 )
