@@ -252,11 +252,10 @@ When('I check out', function() {
   cy.log('Resetting mocks')
   cy.wrap(Mockclient.reset())
 
+  cy.route('POST', 'rest/default/V1/carts/**').as('cartBuilder')
   cy.visit('/checkout/cart')
-  // What would Superman do if his instant reflexes caused him to click buttons
-  // before the JS actually caused them to be wired up? Click again, of course.
-  const click = $el => $el.click()
-  cy.get('button[data-role="proceed-to-checkout"]').should('be.visible').pipe(click)
+  cy.wait('@cartBuilder', { requestTimeout: 10000 })
+  cy.get('button[data-role="proceed-to-checkout"]').click()
 
   cy.contains('Shipping Address', {timeout: 20000})
   cy.get('input[name="street[0]"]').type('123 Main St.')
