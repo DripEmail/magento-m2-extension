@@ -182,9 +182,12 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
      */
     protected function prepareQuoteItemsData($quote)
     {
-        $childItems = array();
+        $childItems = [];
         foreach ($quote->getAllItems() as $item) {
-            if ($item->getParentItemId() === null) { continue; }
+            if ($item->getParentItemId() === null) {
+                continue;
+            }
+
             $childItems[$item->getParentItemId()] = $item;
         }
 
