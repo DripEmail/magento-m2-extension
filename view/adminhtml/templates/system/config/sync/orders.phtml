@@ -1,7 +1,7 @@
 <button onclick="return false;" type="button" id="<?=$block->getHtmlId()?>"
 <?php if (!$block->isSyncAvailable()) { ?> class="disabled" <?php } ?>
 >
-    <?php echo $block->escapeHtml($block->getButtonLabel()) ?>
+    <?= $block->escapeHtml($block->getButtonLabel()) ?>
 </button>
  &nbsp; <img id="<?=$block->getHtmlId()?>_loader" src="<?=$block->getViewFileUrl('Drip_Connect::images/loader.gif')?>" width="15" style="display:none;" />
  &nbsp; <b id="<?=$block->getHtmlId()?>_status"><?= $block->getStateLabel() ?></b>

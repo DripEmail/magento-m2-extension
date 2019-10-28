@@ -1,4 +1,4 @@
-<?php if ($block->isModuleActive()): ?>
+<?php if ($block->isModuleActive()) : ?>
     <?php
     $product = $block->getProduct();
     $currentPrice = $block->getHelper()->priceAsCents($product->getFinalPrice());
@@ -13,7 +13,7 @@
         brand: "<?= $block->getBrandName() ?>",
         categories: "<?= $block->getHelper()->getProductCategoryNames($product) ?>",
         price: "<?= $currentPrice ?>",
-        <?php if ($currentPrice != $initialPrice): ?>
+        <?php if ($currentPrice != $initialPrice) : ?>
         compared_at_price: "<?= $initialPrice ?>",
         <?php endif; ?>
         currency: "<?= $block->getStore()->getCurrentCurrencyCode() ?>",

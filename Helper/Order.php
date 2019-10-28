@@ -261,9 +261,12 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
      */
     protected function getOrderItemsData($order, $isRefund = false)
     {
-        $childItems = array();
+        $childItems = [];
         foreach ($order->getAllItems() as $item) {
-            if ($item->getParentItemId() === null) { continue; }
+            if ($item->getParentItemId() === null) {
+                continue;
+            }
+
             $childItems[$item->getParentItemId()] = $item;
         }
 
