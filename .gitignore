@@ -1,1 +1,6 @@
 *.sw[pon]
+.DS_Store
+/.idea
+.idea/
+/vendor
+/htdocs
