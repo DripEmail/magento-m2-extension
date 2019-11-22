@@ -39,7 +39,18 @@ When('I add a {string} widget to my wishlist', function (type) {
         default:
           throw 'Methinks thou hast forgotten something…'
       }
-    cy.contains('Add to Wish List').click()
+    cy.get('a[data-action="add-to-wishlist"]').within(($el) => {
+        cy.get($el).should("have.attr", "data-post")
+        const dataPostAttr = JSON.parse($el.attr("data-post"))
+        expect(dataPostAttr.data).to.not.be.undefined
+        expect(dataPostAttr.data.uenc).to.not.be.undefined
+        expect(dataPostAttr.data.product).to.not.be.undefined
+        expect(dataPostAttr.action).to.eq('http://main.magento.localhost:3006/wishlist/index/add/')
+        // just because the above exist, doesn't mean add-to-wishlist is done intializing...
+        // we'll wait just a titch longer
+        cy.wait(1000) 
+        cy.wrap($el).click()
+    })
 })
 
 Then('A wishlist {string} event should be sent to Drip', function (type) {
@@ -60,17 +71,17 @@ Then('A wishlist {string} event should be sent to Drip', function (type) {
         expect(event.properties.name).to.eq('Widget 1')
         expect(event.properties.price).to.eq(1122)
         expect(event.properties.currency).to.eq('USD')
-        expect(event.properties.image_url).to.eq('http://main.magento.localhost:3005/media/catalog/product/')
+        expect(event.properties.image_url).to.eq('http://main.magento.localhost:3006/pub/media/catalog/product/')
         expect(event.properties.source).to.eq('magento')
     })
 })
 
-When('I remove the {string} widget from my wishlist via {string}', function (type, method) {
+When('I remove the {string} widget from my wishlist', function (type) {
     // For some reason, Magento throws an error here in JS. We don't really care, so ignore it.
     cy.on('uncaught:exception', (err, runnable) => {
         return false
     })
-    cy.visit(`${getCurrentFrontendDomain()}/wishlist/index/index/`)
+    cy.visit(`/wishlist/`)
     switch (type) {
         case 'configurable':
             cy.get('#product-options-wrapper select').select('XL')
@@ -86,15 +97,15 @@ When('I remove the {string} widget from my wishlist via {string}', function (typ
         default:
             throw 'Methinks thou hast forgotten something…'
     }
-    switch (method) {
-        case 'quantity':
-            cy.get('input[class="input-text qty validate-not-negative-number"]').clear().type('0')
-            cy.get('button[title="Update Wishlist"]').first().click()
-            break;
-        case 'the trashcan':
-            cy.get('a[title="Remove Item"]').click()
-            break;
-        default:
-            throw 'Methinks thou hast forgotten something…'
-    }
+    cy.get('a[title="Remove Item"]').first().within(($el) => {
+        cy.get($el).should("have.attr", "data-post-remove")
+        const dataPostAttr = JSON.parse($el.attr("data-post-remove"))
+        expect(dataPostAttr.data.item).to.equal("1")
+        expect(dataPostAttr.data.uenc).to.eq("")
+        expect(dataPostAttr.action).to.eq('http://main.magento.localhost:3006/wishlist/index/remove/')
+        // just because the above exist, doesn't mean remove-from-wishlist is done intializing...
+        // we'll wait just a titch longer
+        cy.wait(1000) 
+        cy.wrap($el).click({force: true})
+    })
 })
