@@ -1,5 +1,7 @@
 import { Given, When, Then } from "cypress-cucumber-preprocessor/steps"
+import { setCurrentFrontendSite, getCurrentFrontendDomain } from "../../lib/frontend_context"
 
 When('I open the {string} homepage', function(site) {
-  cy.visit(`http://${site}.magento.localhost:3006/`)
+  setCurrentFrontendSite(site)
+  cy.visit(getCurrentFrontendDomain())
 })
