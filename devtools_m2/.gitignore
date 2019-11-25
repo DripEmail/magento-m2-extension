@@ -1,5 +1,5 @@
 # MySQL data
 db_data
-node_modules/
+node_modules
 cypress/screenshots
 cypress/videos
