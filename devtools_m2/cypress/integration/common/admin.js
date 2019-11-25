@@ -1,4 +1,5 @@
 import { Given, When, Then } from "cypress-cucumber-preprocessor/steps"
+import { mapFrontendWebsiteId } from "../../lib/frontend_context"
 
 Given('I am logged into the admin interface', function() {
   cy.visit(`http://main.magento.localhost:3006/admin_123`)
@@ -92,12 +93,15 @@ Given('I have configured a widget', function() {
 })
 
 // Simple Product
-Given('I have configured a simple widget', function() {
+Given('I have configured a simple widget for {string}', function(site) {
   cy.createProduct({
     "sku": "widg-1",
     "name": "Widget 1",
     "description": "This is really a widget. There are many like it, but this one is mine.",
     "shortDescription": "This is really a widget.",
+    // This is to set the context for the product save, so that rewrites and such get generated correctly.
+    "storeId": mapFrontendWebsiteId(site), // TODO: Fix to use the right store ID.
+    "websiteIds": [mapFrontendWebsiteId(site)]
   })
 })
 

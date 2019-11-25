@@ -1,5 +1,6 @@
 import { Given, When, Then } from "cypress-cucumber-preprocessor/steps"
 import { mockServerClient } from "mockserver-client"
+import { getCurrentFrontendDomain } from "../../lib/frontend_context"
 
 const Mockclient = mockServerClient("localhost", 1080);
 
@@ -21,14 +22,9 @@ When('I create a {string} account', function(state) {
 Then('A new {string} subscriber event should be sent to Drip', function(state) {
   cy.log('Validating that the subscriber call has everything we need')
 
-  cy.wrap(Mockclient.retrieveRecordedRequests()).then(function(req){
-    console.log(req)
-  })
-
   cy.wrap(Mockclient.retrieveRecordedRequests({
     'path': '/v2/123456/subscribers'
   })).then(function(recordedRequests) {
-    console.log(recordedRequests)
     expect(recordedRequests).to.have.lengthOf(1)
     const body = JSON.parse(recordedRequests[0].body.string)
     expect(body.subscribers).to.have.lengthOf(1)
@@ -82,7 +78,7 @@ When('I {string} from the general newsletter', function(state) {
   cy.log('Resetting mocks')
   cy.wrap(Mockclient.reset())
 
-  cy.visit('/newsletter/manage/')
+  cy.visit(`${getCurrentFrontendDomain()}/newsletter/manage/`)
 
   if (state === 'unsubscribe') {
     cy.get('input[name="is_subscribed"]').uncheck()

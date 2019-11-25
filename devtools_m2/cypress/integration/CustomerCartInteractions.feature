@@ -5,7 +5,7 @@ Feature: Customer Cart Interactions
   Scenario: A customer adds a simple product to their cart
     Given I am logged into the admin interface
       And I have configured Drip to be enabled for 'main'
-    Given I have configured a simple widget
+    Given I have configured a simple widget for 'main'
     When I open the 'main' homepage
       And I create an account
       And I add a 'simple' widget to my cart
@@ -58,3 +58,27 @@ Feature: Customer Cart Interactions
     Then A bundle cart event should be sent to Drip
     When I check out
     Then A bundle order event should be sent to Drip
+
+  Scenario: A customer adds a simple product to their cart when only that store is configured for Drip
+    Given I am logged into the admin interface
+      And I have set up a multi-store configuration
+      And I have configured Drip to be enabled for 'site1'
+      And I have configured a simple widget for 'site1'
+    When I open the 'site1' homepage
+      And I create an account
+      And I add a 'simple' widget to my cart
+    Then A simple cart event should be sent to Drip
+    When I check out
+    Then A simple order event should be sent to Drip
+
+  Scenario: A customer adds a simple product to their cart when a different store is configured for Drip
+    Given I am logged into the admin interface
+      And I have set up a multi-store configuration
+      And I have configured Drip to be enabled for 'site1'
+      And I have configured a simple widget for 'main'
+    When I open the 'main' homepage
+      And I create an account
+      And I add a 'simple' widget to my cart
+    Then No web requests are sent
+    When I check out
+    Then No web requests are sent

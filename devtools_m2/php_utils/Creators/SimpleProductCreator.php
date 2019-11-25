@@ -10,18 +10,30 @@ class SimpleProductCreator
     /** @var \Magento\Catalog\Api\ProductRepositoryInterface **/
     protected $productRepository;
 
+    /** @var \Magento\Store\Model\StoreManagerInterface **/
+    protected $storeManager;
+
     public function __construct(
         \Magento\Catalog\Model\ProductFactory $catalogProductFactory,
         \Magento\Catalog\Api\ProductRepositoryInterface $productRepository,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
         $productData
     ) {
         $this->catalogProductFactory = $catalogProductFactory;
         $this->productRepository = $productRepository;
+        $this->storeManager = $storeManager;
         $this->productData = $productData;
     }
 
     public function create()
     {
+        // Indexing properly depends on the store ID being set in the context.
+        // Otherwise, the rewrites get created for the wrong store view.
+        if (\array_key_exists('storeId', $this->productData)) {
+            $store = $this->storeManager->getStore($this->productData['storeId']);
+            $this->storeManager->setCurrentStore($store->getCode());
+        }
+
         $this->productRepository->save($this->build());
     }
 
