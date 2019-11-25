@@ -1,8 +1,7 @@
 Feature: Wishlist Interactions
 
   I want wishlist events sent to Drip when a customer changes their wishlist
-
-
+  
   Scenario: Adding a product to the wishlist
     Given I am logged into the admin interface
       And I have configured Drip to be enabled for 'main'

@@ -19,26 +19,26 @@ When('I add a {string} widget to my wishlist', function (type) {
     cy.visit(`/widget-1.html`)
     switch (type) {
         case 'configurable':
-          cy.get('#product-options-wrapper select').select('XL')
-          break;
+            cy.get('#product-options-wrapper select').select('XL')
+            break;
         case 'grouped':
-          cy.get('#product_addtocart_form input[name="super_group[2]"]').clear().type('1')
-          cy.get('#product_addtocart_form input[name="super_group[3]"]').clear().type('1')
-          break;
+            cy.get('#product_addtocart_form input[name="super_group[2]"]').clear().type('1')
+            cy.get('#product_addtocart_form input[name="super_group[3]"]').clear().type('1')
+            break;
         case 'bundle':
-          // The pipe causes us to keep clicking until we get the stuff down below.
-          const click = $el => $el.click()
-          cy.contains('Customize and Add to Cart').should('be.visible').pipe(click).should(() => {
-            const finalButton = Cypress.$('#product-addtocart-button')
-            expect(finalButton).to.be.visible
-          })
-          break;
+            // The pipe causes us to keep clicking until we get the stuff down below.
+            const click = $el => $el.click()
+            cy.contains('Customize and Add to Cart').should('be.visible').pipe(click).should(() => {
+                const finalButton = Cypress.$('#product-addtocart-button')
+                expect(finalButton).to.be.visible
+            })
+            break;
         case 'simple':
-          // Do nothing
-          break;
+            // Do nothing
+            break;
         default:
-          throw 'Methinks thou hast forgotten something…'
-      }
+            throw 'Methinks thou hast forgotten something…'
+    }
     cy.get('a[data-action="add-to-wishlist"]').within(($el) => {
         cy.get($el).should("have.attr", "data-post")
         const dataPostAttr = JSON.parse($el.attr("data-post"))
@@ -48,7 +48,7 @@ When('I add a {string} widget to my wishlist', function (type) {
         expect(dataPostAttr.action).to.eq('http://main.magento.localhost:3006/wishlist/index/add/')
         // just because the above exist, doesn't mean add-to-wishlist is done intializing...
         // we'll wait just a titch longer
-        cy.wait(1000) 
+        cy.wait(1000)
         cy.wrap($el).click()
     })
 })
@@ -105,7 +105,7 @@ When('I remove the {string} widget from my wishlist', function (type) {
         expect(dataPostAttr.action).to.eq('http://main.magento.localhost:3006/wishlist/index/remove/')
         // just because the above exist, doesn't mean remove-from-wishlist is done intializing...
         // we'll wait just a titch longer
-        cy.wait(1000) 
-        cy.wrap($el).click({force: true})
+        cy.wait(1000)
+        cy.wrap($el).click({ force: true })
     })
 })
