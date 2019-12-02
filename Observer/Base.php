@@ -32,7 +32,7 @@ abstract class Base implements \Magento\Framework\Event\ObserverInterface
 
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
-        if (!$this->connectHelper->isModuleActive()) {
+        if (!$this->isActive()) {
             return;
         }
 
@@ -45,5 +45,18 @@ abstract class Base implements \Magento\Framework\Event\ObserverInterface
             // We should never blow up a customer's site due to bugs in our code.
             $this->logger->critical($e);
         }
+    }
+
+    /**
+     * Override when you have a more specific concept of active than just the
+     * current scope.
+     *
+     * @param \Magento\Framework\Event\Observer $observer
+     * @return bool
+     */
+    protected function isActive(\Magento\Framework\Event\Observer $observer)
+    {
+        // TODO: Refactor connectHelper out of the class and call this directly.
+        return $this->connectHelper->isModuleActive();
     }
 }
