@@ -43,6 +43,7 @@ class Configuration
     protected $scope;
 
     /**
+     * @param \Magento\Config\Model\ResourceModel\Config $resourceConfig
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager,
      * @param int $storeId The ID of the Store View (called `store` in the DB and code)
