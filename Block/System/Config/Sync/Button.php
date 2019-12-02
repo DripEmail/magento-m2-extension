@@ -7,8 +7,8 @@ abstract class Button extends \Magento\Config\Block\System\Config\Form\Field
 {
     const BUTTON_TEMPLATE = '';
 
-    /** @var \Drip\Connect\Model\ConfigurationFactory */
-    protected $configFactory;
+    /** @var \Drip\Connect\Model\Configuration */
+    protected $config;
 
     /** @var \Drip\Connect\Helper\Data */
     protected $connectHelper;
@@ -20,7 +20,7 @@ abstract class Button extends \Magento\Config\Block\System\Config\Form\Field
         array $data = []
     ) {
         parent::__construct($context, $data);
-        $this->configFactory = $configFactory;
+        $this->config = $configFactory->createForCurrentStoreParam();
         $this->connectHelper = $connectHelper;
     }
 
@@ -29,7 +29,7 @@ abstract class Button extends \Magento\Config\Block\System\Config\Form\Field
      */
     public function isModuleActive()
     {
-        return $this->configFactory->createForCurrentStoreParam()->isEnabled();
+        return $this->config->isEnabled();
     }
 
     /**
@@ -75,13 +75,12 @@ abstract class Button extends \Magento\Config\Block\System\Config\Form\Field
     protected function _getElementHtml(\Magento\Framework\Data\Form\Element\AbstractElement $element)
     {
         $originalData = $element->getOriginalData();
-        $config = $this->configFactory->create((int) $this->_request->getParam('store'));
         $this->addData(
             [
                 'html_id' => $element->getHtmlId(),
                 'button_label' => __($originalData['button_label']),
-                'store_id' => $config->getStoreId(),
-                'account_id' => $config->getAccountId(),
+                'store_id' => $this->config->getStoreId(),
+                'account_id' => $this->config->getAccountId(),
             ]
         );
         return $this->_toHtml();

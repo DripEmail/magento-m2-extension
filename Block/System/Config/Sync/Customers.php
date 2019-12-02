@@ -19,11 +19,10 @@ class Customers extends \Drip\Connect\Block\System\Config\Sync\Button
 
     public function isSyncAvailable()
     {
-        $config = $this->configFactory->createForCurrentStoreParam();
-        if (!$config->isEnabled()) {
+        if (!$this->config->isEnabled()) {
             return false;
         }
-        $syncState = $config->getCustomersSyncState();
+        $syncState = $this->config->getCustomersSyncState();
         if ($syncState != \Drip\Connect\Model\Source\SyncState::READY &&
             $syncState != \Drip\Connect\Model\Source\SyncState::READYERRORS) {
             return false;
@@ -36,7 +35,6 @@ class Customers extends \Drip\Connect\Block\System\Config\Sync\Button
      */
     public function getStateLabel()
     {
-        $config = $this->configFactory->createForCurrentStoreParam();
-        return \Drip\Connect\Model\Source\SyncState::getLabel($config->getCustomersSyncState());
+        return \Drip\Connect\Model\Source\SyncState::getLabel($this->config->getCustomersSyncState());
     }
 }

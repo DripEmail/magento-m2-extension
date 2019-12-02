@@ -22,7 +22,7 @@ class Orders extends \Drip\Connect\Block\System\Config\Sync\Button
         if (!$this->isModuleActive()) {
             return false;
         }
-        $syncState = $this->connectHelper->getOrdersSyncStateForStore($this->_request->getParam('store'));
+        $syncState = $this->config->getOrdersSyncState();
         if ($syncState != \Drip\Connect\Model\Source\SyncState::READY &&
             $syncState != \Drip\Connect\Model\Source\SyncState::READYERRORS) {
             return false;
@@ -35,8 +35,6 @@ class Orders extends \Drip\Connect\Block\System\Config\Sync\Button
      */
     public function getStateLabel()
     {
-        return \Drip\Connect\Model\Source\SyncState::getLabel(
-            $this->connectHelper->getOrdersSyncStateForStore($this->_request->getParam('store'))
-        );
+        return \Drip\Connect\Model\Source\SyncState::getLabel($this->config->getOrdersSyncState());
     }
 }
