@@ -17,9 +17,6 @@ class Handler extends \Magento\Framework\Logger\Handler\Base
      */
     protected $fileName = '/var/log/drip.log';
 
-    /** @var string */
-    protected $_logSettingsXpath = 'dripconnect_general/log_settings';
-
     /**
      * Whether to actually send the logs
      * @var boolean
@@ -28,20 +25,18 @@ class Handler extends \Magento\Framework\Logger\Handler\Base
 
     /**
      * @param \Magento\Framework\Filesystem\DriverInterface $filesystem
-     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+     * @param \Drip\Connect\Model\ConfigurationFactory $configFactory,
      * @param \Magento\Framework\DataObjectFactory $dataObjectFactory
      * @throws \Exception
      */
     public function __construct(
         \Magento\Framework\Filesystem\DriverInterface $filesystem,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Magento\Framework\DataObjectFactory $dataObjectFactory
     ) {
         // Set whether this is enabled by the customer from their settings.
         $logSettings = $dataObjectFactory->create();
-        $logSettings->setData(
-            $scopeConfig->getValue($this->_logSettingsXpath, \Magento\Store\Model\ScopeInterface::SCOPE_STORE)
-        );
+        $logSettings->setData($configFactory->createForGlobalScope->getLogSettings());
 
         $this->isEnabled = $logSettings->getIsEnabled();
 
