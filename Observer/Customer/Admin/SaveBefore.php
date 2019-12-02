@@ -28,7 +28,7 @@ class SaveBefore extends \Drip\Connect\Observer\Base
      * constructor
      */
     public function __construct(
-        \Drip\Connect\Helper\Data $connectHelper,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Magento\Framework\Registry $registry,
         \Drip\Connect\Logger\Logger $logger,
         \Drip\Connect\Helper\Customer $customerHelper,
@@ -36,7 +36,7 @@ class SaveBefore extends \Drip\Connect\Observer\Base
         \Magento\Framework\Session\SessionManagerInterface $coreSession,
         \Magento\Customer\Model\CustomerFactory $customerCustomerFactory
     ) {
-        parent::__construct($connectHelper, $logger);
+        parent::__construct($configFactory, $logger);
         $this->registry = $registry;
         $this->customerHelper = $customerHelper;
         $this->subscriberFactory = $subscriberFactory;

@@ -10,6 +10,9 @@ class SaveAfter extends \Drip\Connect\Observer\Base
     /** @var \Drip\Connect\Helper\Product */
     protected $productHelper;
 
+    /** @var \Drip\Connect\Helper\Data */
+    protected $connectHelper;
+
     /** @var \Magento\Framework\Serialize\Serializer\Json */
     protected $json;
 
@@ -24,14 +27,16 @@ class SaveAfter extends \Drip\Connect\Observer\Base
         \Drip\Connect\Logger\Logger $logger,
         \Drip\Connect\Helper\Product $productHelper,
         \Drip\Connect\Helper\Data $connectHelper,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Magento\Framework\Serialize\Serializer\Json $json,
         \Magento\Framework\Registry $registry
     ) {
         $this->productRepository = $productRepository;
         $this->productHelper = $productHelper;
+        $this->connectHelper = $connectHelper;
         $this->registry = $registry;
         $this->json = $json;
-        parent::__construct($connectHelper, $logger);
+        parent::__construct($configFactory, $logger);
     }
 
     /**

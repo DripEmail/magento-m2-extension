@@ -10,6 +10,9 @@ class SaveBefore extends \Drip\Connect\Observer\Base
     /** @var \Drip\Connect\Helper\Product */
     protected $productHelper;
 
+    /** @var \Drip\Connect\Helper\Data */
+    protected $connectHelper;
+
     /** @var \Magento\Framework\Registry */
     protected $registry;
 
@@ -20,13 +23,15 @@ class SaveBefore extends \Drip\Connect\Observer\Base
         \Magento\Catalog\Model\ProductRepository $productRepository,
         \Drip\Connect\Helper\Product $productHelper,
         \Drip\Connect\Helper\Data $connectHelper,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Drip\Connect\Logger\Logger $logger,
         \Magento\Framework\Registry $registry
     ) {
         $this->productRepository = $productRepository;
         $this->productHelper = $productHelper;
+        $this->connectHelper = $connectHelper;
         $this->registry = $registry;
-        parent::__construct($connectHelper, $logger);
+        parent::__construct($configFactory, $logger);
     }
 
     /**

@@ -4,12 +4,6 @@ namespace Drip\Connect\Observer\Quote;
 
 class AfterQuoteSaved extends \Drip\Connect\Observer\Base
 {
-
-    /**
-     * @var \Drip\Connect\Helper\Data
-     */
-    protected $connectHelper;
-
     /**
      * @var \Drip\Connect\Helper\Quote
      */
@@ -21,14 +15,14 @@ class AfterQuoteSaved extends \Drip\Connect\Observer\Base
     protected $registry;
 
     public function __construct(
-        \Drip\Connect\Helper\Data $connectHelper,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Drip\Connect\Helper\Quote $connectQuoteHelper,
         \Drip\Connect\Logger\Logger $logger,
         \Magento\Framework\Registry $registry
     ) {
         $this->connectQuoteHelper = $connectQuoteHelper;
         $this->registry = $registry;
-        parent::__construct($connectHelper, $logger);
+        parent::__construct($configFactory, $logger);
     }
 
     public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)

@@ -4,12 +4,6 @@ namespace Drip\Connect\Observer\Quote;
 
 class BeforeQuoteSaved extends \Drip\Connect\Observer\Base
 {
-
-    /**
-     * @var \Drip\Connect\Helper\Data
-     */
-    protected $connectHelper;
-
     /**
      * @var \Drip\Connect\Helper\Quote
      */
@@ -27,7 +21,7 @@ class BeforeQuoteSaved extends \Drip\Connect\Observer\Base
     protected $registry;
 
     public function __construct(
-        \Drip\Connect\Helper\Data $connectHelper,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Drip\Connect\Helper\Quote $connectQuoteHelper,
         \Magento\Quote\Model\QuoteFactory $quoteQuoteFactory,
         \Magento\Checkout\Model\Session $checkoutSession,
@@ -38,7 +32,7 @@ class BeforeQuoteSaved extends \Drip\Connect\Observer\Base
         $this->quoteQuoteFactory = $quoteQuoteFactory;
         $this->checkoutSession = $checkoutSession;
         $this->registry = $registry;
-        parent::__construct($connectHelper, $logger);
+        parent::__construct($configFactory, $logger);
     }
 
     public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)

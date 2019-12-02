@@ -14,17 +14,17 @@ abstract class Base implements \Magento\Framework\Event\ObserverInterface
     const REGISTRY_KEY_SUBSCRIBER_PREV_STATE = 'oldsubscriptionstatus';
     const REGISTRY_KEY_SUBSCRIBER_SUBSCRIBE_INTENT = 'userwantstosubscribe';
 
-    /** @var \Drip\Connect\Helper\Data */
-    protected $connectHelper;
+    /** @var \Drip\Connect\Model\ConfigurationFactory */
+    protected $configFactory;
 
     /** @var \Drip\Connect\Logger\Logger */
     protected $logger;
 
     public function __construct(
-        \Drip\Connect\Helper\Data $connectHelper,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Drip\Connect\Logger\Logger $logger
     ) {
-        $this->connectHelper = $connectHelper;
+        $this->configFactory = $configFactory;
         $this->logger = $logger;
     }
 
@@ -56,7 +56,6 @@ abstract class Base implements \Magento\Framework\Event\ObserverInterface
      */
     protected function isActive(\Magento\Framework\Event\Observer $observer)
     {
-        // TODO: Refactor connectHelper out of the class and call this directly.
-        return $this->connectHelper->isModuleActive();
+        return $this->configFactory->createForCurrentStoreParam()->isEnabled();
     }
 }
