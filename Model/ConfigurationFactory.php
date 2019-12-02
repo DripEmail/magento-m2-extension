@@ -34,7 +34,7 @@ class ConfigurationFactory
      */
     public function create($storeId)
     {
-        return $this->objectManager->create(Drip\Connect\Model\Configuration::class, ['storeId' => $storeId]);
+        return $this->objectManager->create(\Drip\Connect\Model\Configuration::class, ['storeId' => $storeId]);
     }
 
     /**
