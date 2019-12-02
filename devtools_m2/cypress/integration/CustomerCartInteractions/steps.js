@@ -70,6 +70,34 @@ When('I add a different {string} widget to my cart', function(type) {
   cy.wait('@addToCartRequest') // Make sure that the cart addition has finished before continuing.
 })
 
+When('I check out as a guest', function() {
+  cy.log('Resetting mocks')
+  cy.wrap(Mockclient.reset())
+
+  cy.visit('/checkout/#shipping')
+  cy.contains('Flat Rate')  // wait for the page to render
+
+  cy.get('input[id="customer-email"]').first().type('testuser@example.com')
+  cy.get('input[name="firstname"]').type('Test')
+  cy.get('input[name="lastname"]').type('User')
+  cy.get('input[name="street[0]"]').type('123 Main St.')
+  cy.get('input[name="city"]').type('Centerville')
+  cy.get('select[name="region_id"]').select('Minnesota')
+  cy.get('input[name="postcode"]').type('12345')
+  cy.get('input[name="telephone"]').type('999-999-9999')
+  //cy.get('button[onclick="billing.save()"]').click()
+  cy.get('#shipping-method-buttons-container').contains('Next').click()
+
+  cy.contains('Check / Money order')
+  cy.contains('Place Order').click()
+
+  cy.contains('Thank you for your purchase!')
+})
+
+When('I logout', function() {
+  cy.visit('/customer/account/logout')
+})
+
 Then('A simple cart event should be sent to Drip', function() {
   cy.log('Validating that the cart call has everything we need')
   cy.wrap(Mockclient.retrieveRecordedRequests({
