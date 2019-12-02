@@ -6,6 +6,9 @@ class Template extends \Magento\Framework\View\Element\Template
     /** @var \Drip\Connect\Helper\Data */
     protected $helper;
 
+    /** @var \Drip\Connect\Model\ConfigurationFactory */
+    protected $configFactory;
+
     /** @var \Magento\Customer\Model\Session */
     protected $customerSession;
 
@@ -26,6 +29,7 @@ class Template extends \Magento\Framework\View\Element\Template
 
     public function __construct(
         \Drip\Connect\Helper\Data $helper,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Magento\Framework\Registry $coreRegistry,
         \Magento\Customer\Model\SessionFactory $customerSessionFactory,
         \Magento\Catalog\Model\Product\Media\ConfigFactory $catalogProductMediaConfigFactory,
@@ -35,6 +39,7 @@ class Template extends \Magento\Framework\View\Element\Template
         array $data = []
     ) {
         $this->helper = $helper;
+        $this->configFactory = $configFactory;
         $this->coreRegistry = $coreRegistry;
         $this->customerSessionFactory = $customerSessionFactory;
         $this->catalogProductMediaConfigFactory = $catalogProductMediaConfigFactory;
@@ -60,14 +65,6 @@ class Template extends \Magento\Framework\View\Element\Template
     }
 
     /**
-     * @return \Magento\Framework\App\Config\ScopeConfigInterface
-     */
-    public function getConfig()
-    {
-        return $this->_scopeConfig;
-    }
-
-    /**
      * @param \Magento\Catalog\Model\Product $product
      *
      * @return string
@@ -84,11 +81,9 @@ class Template extends \Magento\Framework\View\Element\Template
 
     public function getAccountId()
     {
-        return $this->getConfig()->getValue(
-            'dripconnect_general/api_settings/account_id',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-            $this->getStore()->getId()
-        );
+        // TODO: Consider setting up config in the constructor.
+        $config = $this->configFactory->create($this->getStore()->getId());
+        return $config->getAccountId();
     }
 
     /**
