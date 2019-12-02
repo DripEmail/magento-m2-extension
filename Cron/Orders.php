@@ -13,11 +13,11 @@ class Orders
     /** @var \Drip\Connect\Helper\Order */
     protected $orderHelper;
 
+    /** @var \Drip\Connect\Model\ConfigurationFactory */
+    protected $configFactory;
+
     /** @var \Drip\Connect\Helper\Data */
     protected $connectHelper;
-
-    /** @var \Magento\Framework\App\Config\ScopeConfigInterface */
-    protected $scopeConfig;
 
     /** @var \Magento\Store\Model\StoreManagerInterface */
     protected $storeManager;
@@ -31,14 +31,14 @@ class Orders
     public function __construct(
         \Magento\Sales\Model\ResourceModel\Order\CollectionFactory $salesResourceModelOrderCollectionFactory,
         \Drip\Connect\Helper\Order $orderHelper,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Drip\Connect\Logger\Logger $logger,
         \Drip\Connect\Helper\Data $connectHelper
     ) {
         $this->salesResourceModelOrderCollectionFactory = $salesResourceModelOrderCollectionFactory;
         $this->orderHelper = $orderHelper;
-        $this->scopeConfig = $scopeConfig;
+        $this->configFactory = $configFactory;
         $this->storeManager = $storeManager;
         $this->logger = $logger;
         $this->connectHelper = $connectHelper;
@@ -54,23 +54,23 @@ class Orders
      */
     public function syncOrders()
     {
-        ini_set('memory_limit', $this->scopeConfig->getValue('dripconnect_general/api_settings/memory_limit'));
+        $globalConfig = $this->configFactory->createForGlobalScope();
+
+        ini_set('memory_limit', $globalConfig->getMemoryLimit());
 
         $storeIds = [];
         $stores = $this->storeManager->getStores(false, false);
 
         $trackDefaultStatus = false;
 
-        if ($this->connectHelper->getOrdersSyncStateForStore(Store::DEFAULT_STORE_ID) == SyncState::QUEUED) {
+        if ($globalConfig->getOrdersSyncState() == SyncState::QUEUED) {
             $trackDefaultStatus = true;
             $storeIds = array_keys($stores);
-            $this->connectHelper->setOrdersSyncStateToStore(
-                Store::DEFAULT_STORE_ID,
-                SyncState::PROGRESS
-            );
+            $globalConfig->setOrdersSyncState(SyncState::PROGRESS);
         } else {
             foreach ($stores as $storeId => $store) {
-                if ($this->connectHelper->getOrdersSyncStateForStore($storeId) == SyncState::QUEUED) {
+                $storeConfig = $this->configFactory->create($storeId);
+                if ($storeConfig->getOrdersSyncState() == SyncState::QUEUED) {
                     $storeIds[] = $storeId;
                 }
             }
@@ -78,12 +78,9 @@ class Orders
 
         $statuses = [];
         foreach ($storeIds as $storeId) {
-            if (! $this->scopeConfig->getValue(
-                'dripconnect_general/module_settings/is_enabled',
-                ScopeInterface::SCOPE_STORE,
-                $storeId
-            )
-            ) {
+            $storeConfig = $this->configFactory->create($storeId);
+
+            if (!$storeConfig->isEnabled()) {
                 continue;
             }
 
@@ -92,7 +89,7 @@ class Orders
             $this->storeManager->setCurrentStore($storeId);
 
             try {
-                $result = $this->syncOrdersForStore($storeId);
+                $result = $this->syncOrdersForStore($storeConfig);
             } catch (\Exception $e) {
                 $result = false;
                 $this->logger->critical($e);
@@ -109,7 +106,7 @@ class Orders
 
             $statuses[$storeId] = $status;
 
-            $this->connectHelper->setOrdersSyncStateToStore($storeId, $status);
+            $storeConfig->setOrdersSyncState($status);
         }
 
         if ($trackDefaultStatus) {
@@ -122,18 +119,18 @@ class Orders
             } else {
                 $status = SyncState::READYERRORS;
             }
-            $this->connectHelper->setOrdersSyncStateToStore(Store::DEFAULT_STORE_ID, $status);
+            $globalConfig->setOrdersSyncState($status);
         }
     }
 
     /**
-     * @param int $storeId
+     * @param \Drip\Connect\Model\Configuration $config
      *
      * @return bool
      */
-    protected function syncOrdersForStore($storeId)
+    protected function syncOrdersForStore(\Drip\Connect\Model\Configuration $config)
     {
-        $this->connectHelper->setOrdersSyncStateToStore($storeId, SyncState::PROGRESS);
+        $config->setOrdersSyncState(SyncState::PROGRESS);
 
         $result = true;
         $page = 1;
@@ -144,7 +141,7 @@ class Orders
                     \Magento\Sales\Model\Order::STATE_CANCELED,
                     \Magento\Sales\Model\Order::STATE_CLOSED
                     ]])
-                ->addFieldToFilter('store_id', $storeId)
+                ->addFieldToFilter('store_id', $config->getStoreId())
                 ->setPageSize(\Drip\Connect\Model\ApiCalls\Helper::MAX_BATCH_SIZE)
                 ->setCurPage($page++)
                 ->load();
@@ -166,7 +163,7 @@ class Orders
             }
 
             if (count($batch)) {
-                $response = $this->orderHelper->proceedOrderBatch($batch, $storeId);
+                $response = $this->orderHelper->proceedOrderBatch($batch, $config->getStoreId());
 
                 if (empty($response) || $response->getResponseCode() != 202) { // drip success code for this action
                     $result = false;
