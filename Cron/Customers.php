@@ -19,9 +19,6 @@ class Customers
     /** @var \Drip\Connect\Helper\Data */
     protected $connectHelper;
 
-    /** @var \Magento\Framework\App\Config\ScopeConfigInterface */
-    protected $scopeConfig;
-
     /** @var \Drip\Connect\Model\ApiCalls\Helper\Batches\EventsFactory */
     protected $connectApiCallsHelperBatchesEventsFactory;
 
@@ -31,6 +28,9 @@ class Customers
     /** @var \Drip\Connect\Logger\Logger */
     protected $logger;
 
+    /** @var \Drip\Connect\Model\ConfigurationFactory */
+    protected $configFactory;
+
     /**
      * constructor
      */
@@ -39,19 +39,19 @@ class Customers
         \Magento\Newsletter\Model\ResourceModel\Subscriber\CollectionFactory $newsletterSubscriberCollectionFactory,
         \Drip\Connect\Helper\Customer $customerHelper,
         \Drip\Connect\Model\ApiCalls\Helper\Batches\EventsFactory $connectApiCallsHelperBatchesEventsFactory,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Drip\Connect\Logger\Logger $logger,
-        \Drip\Connect\Helper\Data $connectHelper
+        \Drip\Connect\Helper\Data $connectHelper,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory
     ) {
         $this->customerResourceModelCollectionFactory = $customerResourceModelCollectionFactory;
         $this->newsletterSubscriberCollectionFactory = $newsletterSubscriberCollectionFactory;
         $this->customerHelper = $customerHelper;
         $this->connectApiCallsHelperBatchesEventsFactory = $connectApiCallsHelperBatchesEventsFactory;
-        $this->scopeConfig = $scopeConfig;
         $this->storeManager = $storeManager;
         $this->logger = $logger;
         $this->connectHelper = $connectHelper;
+        $this->configFactory = $configFactory;
     }
 
     /**
@@ -64,23 +64,23 @@ class Customers
      */
     public function syncCustomers()
     {
-        ini_set('memory_limit', $this->scopeConfig->getValue('dripconnect_general/api_settings/memory_limit'));
+        $globalConfig = $this->configFactory->createForGlobalScope();
+
+        ini_set('memory_limit', $globalConfig->getMemoryLimit());
 
         $storeIds = [];
         $stores = $this->storeManager->getStores(false, false);
 
         $trackDefaultStatus = false;
 
-        if ($this->connectHelper->getCustomersSyncStateForStore(Store::DEFAULT_STORE_ID) == SyncState::QUEUED) {
+        if ($globalConfig->getCustomersSyncState() == SyncState::QUEUED) {
             $trackDefaultStatus = true;
             $storeIds = array_keys($stores);
-            $this->connectHelper->setCustomersSyncStateToStore(
-                Store::DEFAULT_STORE_ID,
-                SyncState::PROGRESS
-            );
+            $globalConfig->setCustomersSyncState(SyncState::PROGRESS);
         } else {
             foreach ($stores as $storeId => $store) {
-                if ($this->connectHelper->getCustomersSyncStateForStore($storeId) == SyncState::QUEUED) {
+                $storeConfig = $this->configFactory->create($storeId);
+                if ($storeConfig->getCustomersSyncState() == SyncState::QUEUED) {
                     $storeIds[] = $storeId;
                 }
             }
@@ -88,12 +88,9 @@ class Customers
 
         $statuses = [];
         foreach ($storeIds as $storeId) {
-            if (! $this->scopeConfig->getValue(
-                'dripconnect_general/module_settings/is_enabled',
-                ScopeInterface::SCOPE_STORE,
-                $storeId
-            )
-            ) {
+            $storeConfig = $this->configFactory->create($storeId);
+
+            if (!$storeConfig->isEnabled()) {
                 continue;
             }
 
@@ -103,14 +100,14 @@ class Customers
 
             try {
                 try {
-                    $customerResult = $this->syncCustomersForStore($storeId);
+                    $customerResult = $this->syncCustomersForStore($storeConfig);
                 } catch (\Exception $e) {
                     $customerResult = false;
                     $this->logger->critical($e);
                 }
 
                 try {
-                    $subscriberResult = $this->syncGuestSubscribersForStore($storeId);
+                    $subscriberResult = $this->syncGuestSubscribersForStore($storeConfig);
                 } catch (\Exception $e) {
                     $subscriberResult = false;
                     $this->logger->critical($e);
@@ -124,7 +121,7 @@ class Customers
 
                 $statuses[$storeId] = $status;
 
-                $this->connectHelper->setCustomersSyncStateToStore($storeId, $status);
+                $storeConfig->setCustomersSyncState($status);
             } finally {
                 // Restore whatever the previous store ID was.
                 $this->storeManager->setCurrentStore($prevStoreId);
@@ -141,20 +138,20 @@ class Customers
             } else {
                 $status = SyncState::READYERRORS;
             }
-            $this->connectHelper->setCustomersSyncStateToStore(Store::DEFAULT_STORE_ID, $status);
+            $globalConfig->setCustomersSyncState($status);
         }
     }
 
     /**
-     * @param int $storeId
+     * @param \Drip\Connect\Model\Configuration $config
      *
      * @return bool
      */
-    protected function syncGuestSubscribersForStore($storeId)
+    protected function syncGuestSubscribersForStore(\Drip\Connect\Model\Configuration $config)
     {
-        $this->connectHelper->setCustomersSyncStateToStore($storeId, SyncState::PROGRESS);
+        $config->setCustomersSyncState(SyncState::PROGRESS);
 
-        $delay = (int) $this->scopeConfig->getValue('dripconnect_general/api_settings/batch_delay');
+        $delay = $config->getBatchDelay();
 
         $result = true;
         $page = 1;
@@ -162,7 +159,7 @@ class Customers
             $collection = $this->newsletterSubscriberCollectionFactory->create()
                 ->addFieldToSelect('*')
                 ->addFieldToFilter('customer_id', 0) // need only guests b/c customers have already been processed
-                ->addFieldToFilter('store_id', $storeId)
+                ->addFieldToFilter('store_id', $config->getStoreId())
                 ->setPageSize(\Drip\Connect\Model\ApiCalls\Helper::MAX_BATCH_SIZE)
                 ->setCurPage($page++)
                 ->load();
@@ -194,7 +191,7 @@ class Customers
             }
 
             if (count($batchCustomer)) {
-                $response = $this->customerHelper->proceedAccountBatch($batchCustomer, $storeId);
+                $response = $this->customerHelper->proceedAccountBatch($batchCustomer, $config->getStoreId());
 
                 if (empty($response) || $response->getResponseCode() != 201) { // drip success code for this action
                     $result = false;
@@ -204,7 +201,7 @@ class Customers
                 $response = $this->connectApiCallsHelperBatchesEventsFactory->create([
                     'data' => [
                         'batch' => $batchEvents,
-                        'store_id' => $storeId,
+                        'store_id' => $config->getStoreId(),
                     ]
                 ])->call();
 
@@ -228,17 +225,17 @@ class Customers
     }
 
     /**
-     * @param int $storeId
+     * @param \Drip\Connect\Model\Configuration $config
      *
      * @return bool
      */
-    protected function syncCustomersForStore($storeId)
+    protected function syncCustomersForStore(\Drip\Connect\Model\Configuration $config)
     {
-        $this->connectHelper->setCustomersSyncStateToStore($storeId, SyncState::PROGRESS);
+        $config->setCustomersSyncState(SyncState::PROGRESS);
 
-        $delay = (int) $this->scopeConfig->getValue('dripconnect_general/api_settings/batch_delay');
+        $delay = $config->getBatchDelay();
 
-        $websiteId = $this->storeManager->getStore($storeId)->getWebsiteId();
+        $websiteId = $this->storeManager->getStore($config->getStoreId())->getWebsiteId();
 
         $result = true;
         $page = 1;
@@ -268,7 +265,7 @@ class Customers
             }
 
             if (count($batchCustomer)) {
-                $response = $this->customerHelper->proceedAccountBatch($batchCustomer, $storeId);
+                $response = $this->customerHelper->proceedAccountBatch($batchCustomer, $config->getStoreId());
 
                 if (empty($response) || $response->getResponseCode() != 201) { // drip success code for this action
                     $result = false;
