@@ -6,8 +6,8 @@ class Template extends \Magento\Framework\View\Element\Template
     /** @var \Drip\Connect\Helper\Data */
     protected $helper;
 
-    /** @var \Drip\Connect\Model\ConfigurationFactory */
-    protected $configFactory;
+    /** @var \Drip\Connect\Model\Configuration */
+    protected $config;
 
     /** @var \Magento\Customer\Model\Session */
     protected $customerSession;
@@ -38,14 +38,15 @@ class Template extends \Magento\Framework\View\Element\Template
         \Magento\Framework\App\ProductMetadataInterface $productMetadata,
         array $data = []
     ) {
+        parent::__construct($context, $data);
+
         $this->helper = $helper;
-        $this->configFactory = $configFactory;
+        $this->config = $configFactory->create($this->getStore()->getId());
         $this->coreRegistry = $coreRegistry;
         $this->customerSessionFactory = $customerSessionFactory;
         $this->catalogProductMediaConfigFactory = $catalogProductMediaConfigFactory;
         $this->moduleResource = $moduleResource;
         $this->productMetadata = $productMetadata;
-        parent::__construct($context, $data);
     }
 
     /**
@@ -81,9 +82,7 @@ class Template extends \Magento\Framework\View\Element\Template
 
     public function getAccountId()
     {
-        // TODO: Consider setting up config in the constructor.
-        $config = $this->configFactory->create($this->getStore()->getId());
-        return $config->getAccountId();
+        return $this->config->getAccountId();
     }
 
     /**
@@ -91,7 +90,7 @@ class Template extends \Magento\Framework\View\Element\Template
      */
     public function isModuleActive()
     {
-        return $this->helper->isModuleActive();
+        return $this->config->isEnabled();
     }
 
     /**
