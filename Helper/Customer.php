@@ -313,6 +313,23 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * Gets the first store when a customer is in website scope.
+     *
+     * @param \Magento\Customer\Model\Customer $customer
+     * @return string Store ID
+     */
+    public function getCustomerStoreId(\Magento\Customer\Model\Customer $customer)
+    {
+        $storeId = $customer->getStoreId();
+        if ((int)$storeId === 0) {
+            $storeIds = $this->storeManager->getWebsite($customer->getWebsiteId())->getStoreIds();
+            reset($storeIds);
+            $storeId = current($storeIds);
+        }
+        return $storeId;
+    }
+
+    /**
      * @param \Magento\Newsletter\Model\Subscriber $subscriber
      * @param bool $forceStatus
      */

@@ -2,16 +2,10 @@
 
 namespace Drip\Connect\Observer\Customer\Admin;
 
-class SaveAfter extends \Drip\Connect\Observer\Base
+class SaveAfter extends \Drip\Connect\Observer\Customer\Admin\Base
 {
-    /** @var \Drip\Connect\Helper\Customer */
-    protected $customerHelper;
-
     /** @var \Magento\Newsletter\Model\SubscriberFactory */
     protected $subscriberFactory;
-
-    /** @var \Magento\Customer\Model\CustomerFactory */
-    protected $customerCustomerFactory;
 
     /** @var \Magento\Framework\Session\SessionManagerInterface */
     protected $coreSession;
@@ -35,12 +29,10 @@ class SaveAfter extends \Drip\Connect\Observer\Base
         \Magento\Framework\Serialize\Serializer\Json $json,
         \Magento\Customer\Model\CustomerFactory $customerCustomerFactory
     ) {
-        parent::__construct($configFactory, $logger);
+        parent::__construct($customerCustomerFactory, $customerHelper, $configFactory, $logger);
         $this->registry = $registry;
-        $this->customerHelper = $customerHelper;
         $this->subscriberFactory = $subscriberFactory;
         $this->coreSession = $coreSession;
-        $this->customerCustomerFactory = $customerCustomerFactory;
         $this->json = $json;
     }
 
