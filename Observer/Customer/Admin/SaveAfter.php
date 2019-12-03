@@ -44,6 +44,9 @@ class SaveAfter extends \Drip\Connect\Observer\Customer\Admin\Base
         $customerData = $observer->getCustomer();
         $customer = $this->customerCustomerFactory->create()->load($customerData->getId());
 
+        $storeId = $this->customerHelper->getCustomerStoreId($customer);
+        $config = $this->configFactory->create($storeId);
+
         if ($this->coreSession->getCustomerIsNew()) {
             $this->coreSession->unsCustomerIsNew();
             $acceptsMarketing = $this->registry->registry(self::REGISTRY_KEY_NEW_USER_SUBSCRIBE_STATE);
@@ -53,6 +56,7 @@ class SaveAfter extends \Drip\Connect\Observer\Customer\Admin\Base
             // subscribe them in Drip if they aren't already.
             $this->customerHelper->proceedAccount(
                 $customer,
+                $config,
                 $acceptsMarketing,
                 \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_NEW,
                 $acceptsMarketing
@@ -63,6 +67,7 @@ class SaveAfter extends \Drip\Connect\Observer\Customer\Admin\Base
             // that their status change.
             $this->customerHelper->proceedAccount(
                 $customer,
+                $config,
                 null,
                 \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_UPDATED,
                 $this->isCustomerStatusChanged($customer)

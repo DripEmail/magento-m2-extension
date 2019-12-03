@@ -281,13 +281,15 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      * drip actions for customer account change
      *
      * @param \Magento\Customer\Model\Customer $customer
+     * @param \Drip\Connect\Model\Configuration $config
      * @param bool $acceptsMarketing whether the customer accepts marketing. Overrides the customer is_subscribed
      *                               record.
      * @param string $event The updated/created/deleted event.
      * @param bool $forceStatus Whether the customer has changed marketing preferences which should be synced to Drip.
      */
     public function proceedAccount(
-        $customer,
+        \Magento\Customer\Model\Customer $customer,
+        \Drip\Connect\Model\Configuration $config,
         $acceptsMarketing = null,
         $event = \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_UPDATED,
         $forceStatus = false

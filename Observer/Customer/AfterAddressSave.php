@@ -48,8 +48,13 @@ class AfterAddressSave extends \Drip\Connect\Observer\Base
 
         $customer = $this->customerCustomerFactory->create()->load($address->getCustomerId());
 
+        // TODO: This might be triggering in the context of the user. We should
+        //       have a test for this and use the store view context if available.
+        $storeId = $this->customerHelper->getCustomerStoreId($customer);
+        $config = $this->configFactory->create($storeId);
+
         if ($this->isAddressChanged($address)) {
-            $this->customerHelper->proceedAccount($customer);
+            $this->customerHelper->proceedAccount($customer, $config);
         }
 
         $this->registry->unregister(self::REGISTRY_KEY_CUSTOMER_OLD_ADDR);
