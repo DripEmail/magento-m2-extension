@@ -32,7 +32,7 @@ abstract class Base implements \Magento\Framework\Event\ObserverInterface
 
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
-        if (!$this->isActive()) {
+        if (!$this->isActive($observer)) {
             return;
         }
 
