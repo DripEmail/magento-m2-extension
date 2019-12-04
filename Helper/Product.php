@@ -87,7 +87,14 @@ class Product extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $data = $this->prepareData($product);
         $data['action'] = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateProduct::PRODUCT_NEW;
-        $this->connectApiCallsHelperCreateUpdateProductFactory->create(['data' => $data])->call();
+
+        // TODO: Inject config into this class.
+        $config = $configFactory->createForCurrentScope();
+
+        $this->connectApiCallsHelperCreateUpdateProductFactory->create([
+            'config' => $config,
+            'data' => $data,
+        ])->call();
     }
 
     /**
@@ -99,7 +106,14 @@ class Product extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $data = $this->prepareData($product);
         $data['action'] = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateProduct::PRODUCT_CHANGED;
-        $this->connectApiCallsHelperCreateUpdateProductFactory->create(['data' => $data])->call();
+
+        // TODO: Inject config into this class.
+        $config = $configFactory->createForCurrentScope();
+
+        $this->connectApiCallsHelperCreateUpdateProductFactory->create([
+            'config' => $config,
+            'data' => $data,
+        ])->call();
     }
 
     /**
@@ -113,7 +127,14 @@ class Product extends \Magento\Framework\App\Helper\AbstractHelper
         if ($product->getId() == $data['product_id']) {
             $data['action'] = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateProduct::PRODUCT_DELETED;
             unset($data['product_url']);
-            $this->connectApiCallsHelperCreateUpdateProductFactory->create(['data' => $data])->call();
+
+            // TODO: Inject config into this class.
+            $config = $configFactory->createForCurrentScope();
+
+            $this->connectApiCallsHelperCreateUpdateProductFactory->create([
+                'config' => $config,
+                'data' => $data,
+            ])->call();
         }
     }
 
