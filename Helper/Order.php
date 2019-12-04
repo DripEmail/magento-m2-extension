@@ -345,7 +345,12 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     public function proceedOrderNew($order)
     {
         $orderData = $this->getOrderDataNew($order);
+
+        // TODO: Inject config into this class.
+        $config = $configFactory->createForCurrentScope();
+
         $this->connectApiCallsHelperCreateUpdateOrderFactory->create([
+            'config' => $config,
             'data' => $orderData
         ])->call();
     }
@@ -356,7 +361,12 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     public function proceedOrderCompleted($order)
     {
         $orderData = $this->getOrderDataCompleted($order);
+
+        // TODO: Inject config into this class.
+        $config = $configFactory->createForCurrentScope();
+
         $this->connectApiCallsHelperCreateUpdateOrderFactory->create([
+            'config' => $config,
             'data' => $orderData
         ])->call();
     }
@@ -367,7 +377,12 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     public function proceedOrderCancel($order)
     {
         $orderData = $this->getOrderDataCanceled($order);
+
+        // TODO: Inject config into this class.
+        $config = $configFactory->createForCurrentScope();
+
         $this->connectApiCallsHelperCreateUpdateOrderFactory->create([
+            'config' => $config,
             'data' => $orderData
         ])->call();
     }
@@ -379,7 +394,12 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     public function proceedOrderRefund($order, $refundValue)
     {
         $orderData = $this->getOrderDataRefund($order, $refundValue);
+
+        // TODO: Inject config into this class.
+        $config = $configFactory->createForCurrentScope();
+
         $this->connectApiCallsHelperCreateUpdateOrderFactory->create([
+            'config' => $config,
             'data' => $orderData
         ])->call();
     }
@@ -390,7 +410,12 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     public function proceedOrderOther($order)
     {
         $orderData = $this->getOrderDataOther($order);
+
+        // TODO: Inject config into this class.
+        $config = $configFactory->createForCurrentScope();
+
         $this->connectApiCallsHelperCreateUpdateOrderFactory->create([
+            'config' => $config,
             'data' => $orderData
         ])->call();
     }
