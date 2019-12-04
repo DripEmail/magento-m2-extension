@@ -96,7 +96,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         if (!empty($this->request->getParam('store'))) {
             $config = $this->configFactory->createForCurrentStoreParam();
         } else {
-            $config = $this->configFactory->createForGlobalScope();
+            $config = $this->configFactory->createForCurrentScope();
         }
 
         return $config->isEnabled();

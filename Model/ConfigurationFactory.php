@@ -14,16 +14,21 @@ class ConfigurationFactory
      */
     protected $request;
 
+    /** @var \Magento\Store\Model\StoreManagerInterface */
+    protected $storeManager;
+
     /**
      * @param \Magento\Framework\ObjectManagerInterface $objectManager
      * @param \Magento\Framework\App\Request\Http $request
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        \Magento\Framework\App\Request\Http $request
+        \Magento\Framework\App\Request\Http $request,
+        \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
         $this->objectManager = $objectManager;
         $this->request = $request;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -57,15 +62,15 @@ class ConfigurationFactory
         return $this->create(\Magento\Store\Model\Store::DEFAULT_STORE_ID);
     }
 
-    // /**
-    //  * Obtains configuration scoped to the current store.
-    //  *
-    //  * Only useful when in a store view scope. E.g. this doesn't work in the admin.
-    //  *
-    //  * @return self
-    //  */
-    // public static function forCurrentScope()
-    // {
-    //     return new self(Mage::app()->getStore()->getId());
-    // }
+    /**
+     * Obtains configuration scoped to the current store.
+     *
+     * Only useful when in a store view scope. E.g. this doesn't work in the admin.
+     *
+     * @return \Drip\Connect\Model\Configuration
+     */
+    public function createForCurrentScope()
+    {
+        return $this->create($this->storeManager->getStore()->getId());
+    }
 }
