@@ -89,6 +89,7 @@ Then('A simple cart event should be sent to Drip', function() {
     expect(body.provider).to.eq('magento')
     expect(body.total_discounts).to.eq(0)
     expect(body.version).to.match(/^Magento 2\.3\.2, Drip Extension \d+\.\d+\.\d+$/)
+    expect(body.occurred_at).to.not.be.undefined
     expect(body.items).to.have.lengthOf(1)
 
     const item = body.items[0]
