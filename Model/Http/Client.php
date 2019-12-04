@@ -3,14 +3,12 @@ namespace Drip\Connect\Model\Http;
 
 class Client extends \Zend_Http_Client
 {
-    /** @var \Drip\Connect\Logger\Logger */
+    /** @var \Monolog\Logger */
     protected $logger;
 
-    public function __construct(array $args = [])
+    public function __construct($uri, array $config, \Monolog\Logger $logger)
     {
-        $uri = isset($args['uri']) ? $args['uri'] : null;
-        $config = isset($args['config']) ? $args['config'] : null;
-        $this->logger = $args['logger'];
+        $this->logger = $logger;
         parent::__construct($uri, $config);
     }
 

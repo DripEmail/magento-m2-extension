@@ -18,9 +18,6 @@ class CreateUpdateOrder extends \Drip\Connect\Model\ApiCalls\Helper
     /** @var \Drip\Connect\Model\ApiCalls\Request\BaseFactory */
     protected $connectApiCallsRequestBaseFactory;
 
-    /** @var \Magento\Framework\App\Config\ScopeConfigInterface */
-    protected $scopeConfig;
-
     /** @var \Magento\Framework\App\ProductMetadataInterface */
     protected $productMetadata;
 
@@ -30,25 +27,23 @@ class CreateUpdateOrder extends \Drip\Connect\Model\ApiCalls\Helper
     public function __construct(
         \Drip\Connect\Model\ApiCalls\BaseFactory $connectApiCallsBaseFactory,
         \Drip\Connect\Model\ApiCalls\Request\BaseFactory $connectApiCallsRequestBaseFactory,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Framework\Module\ResourceInterface $moduleResource,
         \Magento\Framework\App\ProductMetadataInterface $productMetadata,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
         $data = []
     ) {
         $this->connectApiCallsBaseFactory = $connectApiCallsBaseFactory;
         $this->connectApiCallsRequestBaseFactory = $connectApiCallsRequestBaseFactory;
-        $this->scopeConfig = $scopeConfig;
         $this->moduleResource = $moduleResource;
         $this->productMetadata = $productMetadata;
 
+        // TODO: This likely doesn't work. I need to pass config into this class.
+        $config = $configFactory->createForCurrentStoreParam();
+
         $this->apiClient = $this->connectApiCallsBaseFactory->create([
-            'options' => [
-                'endpoint' => $this->scopeConfig->getValue(
-                    'dripconnect_general/api_settings/account_id',
-                    \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-                ) . '/' . self::ENDPOINT_ORDERS,
-                'v3' => true,
-            ]
+            'endpoint' => $config->getAccountId() . '/' . self::ENDPOINT_ORDERS,
+            'config' => $config,
+            'v3' => true,
         ]);
 
         if (!empty($data) && is_array($data)) {

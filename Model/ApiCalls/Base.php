@@ -28,7 +28,9 @@ class Base extends \Drip\Connect\Model\Restapi\RestapiAbstract
         \Magento\Framework\Filesystem\DirectoryList $directory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Drip\Connect\Model\Http\ClientFactory $connectHttpClientFactory,
-        array $options = []
+        \Drip\Connect\Model\Configuration $config,
+        $endpoint,
+        $v3 = false
     ) {
         parent::__construct(
             $logger,
@@ -40,76 +42,36 @@ class Base extends \Drip\Connect\Model\Restapi\RestapiAbstract
 
         $this->storeManager = $storeManager;
 
-        $storeId = empty($options['store_id']) ? $this->storeManager->getStore()->getId() : $options['store_id'];
-        $this->setStoreId($storeId);
+        $this->setStoreId($config->getStoreId());
 
         $this->connectHttpClientFactory = $connectHttpClientFactory;
-        if (isset($options['response_model'])) {
-            $this->_responseModel = $options['response_model'];
-        } else {
-            $this->_responseModel = \Drip\Connect\Model\ApiCalls\Response\Base::class;
+        $this->_responseModel = \Drip\Connect\Model\ApiCalls\Response\Base::class;
+        $this->_behavior = $config->getBehavior();
+
+        $url = $config->getUrl() . $endpoint;
+        if ($v3) {
+            $url = str_replace('/v2/', '/v3/', $url);
         }
 
-        if (isset($options['behavior'])) {
-            $this->_behavior = $options['behavior'];
-        } else {
-            $this->_behavior = $this->scopeConfig->getValue(
-                'dripconnect_general/api_settings/behavior',
-                \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-                $this->storeId
-            );
-        }
-
-        if (isset($options['http_client'])) {
-            $this->_httpClient = $options['http_client'];
-        } else {
-            if ($options['endpoint']) {
-                $endpoint = $options['endpoint'];
-            } else {
-                $endpoint = '';
-            }
-            $url = $this->scopeConfig->getValue(
-                'dripconnect_general/api_settings/url',
-                \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-                $this->storeId
-            ) . $endpoint;
-            if (!empty($options['v3'])) {
-                $url = str_replace('/v2/', '/v3/', $url);
-            }
-
-            $config = [
+        $this->_httpClient = $this->connectHttpClientFactory->create([
+            'uri' => $url,
+            'config' => [
                 'useragent' => self::USERAGENT,
-                'timeout' => $this->scopeConfig->getValue(
-                    'dripconnect_general/api_settings/timeout',
-                    \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-                    $this->storeId
-                ) / 1000,
-            ];
-            if (!empty($options['config']) && is_array($options['config'])) {
-                $config = array_merge($config, $options['config']);
-            }
+                'timeout' => $config->getTimeout() / 1000,
+            ],
+            'logger' => $this->logger,
+        ]);
 
-            $this->_httpClient = $this->connectHttpClientFactory->create(['args' => [
-                'uri' => $url,
-                'config' => $config,
-                'logger' => $this->logger,
-            ]]);
+        $this->_httpClient->setHeaders([
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json'
+        ]);
 
-            $this->_httpClient->setHeaders([
-                'Accept' => 'application/json',
-                'Content-Type' => 'application/json'
-            ]);
-
-            $this->_httpClient->setAuth(
-                $this->scopeConfig->getValue(
-                    'dripconnect_general/api_settings/api_key',
-                    \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-                    $this->storeId
-                ),
-                '',
-                \Zend_Http_Client::AUTH_BASIC
-            );
-        }
+        $this->_httpClient->setAuth(
+            $config->getApiKey(),
+            '',
+            \Zend_Http_Client::AUTH_BASIC
+        );
     }
 
     /**
