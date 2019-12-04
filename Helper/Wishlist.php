@@ -53,7 +53,11 @@ class Wishlist extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function doWishlistEvent($action, $customer, $product)
     {
+        // TODO: Inject config into this class.
+        $config = $configFactory->createForCurrentScope();
+
         return $this->connectApiCallsHelperRecordAnEventFactory->create([
+            'config' => $config,
             'data' => [
                 'email' => $customer->getEmail(),
                 'action' => $action,

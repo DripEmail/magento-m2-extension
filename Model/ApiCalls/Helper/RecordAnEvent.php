@@ -14,38 +14,23 @@ class RecordAnEvent extends \Drip\Connect\Model\ApiCalls\Helper
     const EVENT_WISHLIST_ADD_PRODUCT = 'Added item to wishlist';
     const EVENT_WISHLIST_REMOVE_PRODUCT = 'Removed item from wishlist';
 
-    /** @var \Drip\Connect\Helper\Data */
-    protected $connectHelper;
-
-    /** @var \Drip\Connect\Model\ApiCalls\BaseFactory */
-    protected $connectApiCallsBaseFactory;
-
-    /** @var \Drip\Connect\Model\ApiCalls\Request\BaseFactory */
-    protected $connectApiCallsRequestBaseFactory;
-
     public function __construct(
         \Drip\Connect\Model\ApiCalls\BaseFactory $connectApiCallsBaseFactory,
         \Drip\Connect\Model\ApiCalls\Request\BaseFactory $connectApiCallsRequestBaseFactory,
         \Drip\Connect\Helper\Data $connectHelper,
-        \Drip\Connect\Model\ConfigurationFactory $configFactory,
-        $data = []
+        \Drip\Connect\Model\Configuration $config,
+        array $data
     ) {
-        $this->connectApiCallsBaseFactory = $connectApiCallsBaseFactory;
-        $this->connectApiCallsRequestBaseFactory = $connectApiCallsRequestBaseFactory;
-        $this->connectHelper = $connectHelper;
 
-        // TODO: Inject config into this class.
-        $config = $configFactory->createForCurrentScope();
-
-        $this->apiClient = $this->connectApiCallsBaseFactory->create([
+        $this->apiClient = $connectApiCallsBaseFactory->create([
             'endpoint' => $config->getAccountId() . '/' . self::ENDPOINT_EVENTS,
             'config' => $config,
         ]);
 
         if (!empty($data) && is_array($data)) {
             $data['properties']['source'] = 'magento';
-            $data['properties']['magento_source'] = $this->connectHelper->getArea();
-            $data['properties']['version'] = $this->connectHelper->getVersion();
+            $data['properties']['magento_source'] = $connectHelper->getArea();
+            $data['properties']['version'] = $connectHelper->getVersion();
         }
 
         $eventsInfo = [
@@ -54,7 +39,7 @@ class RecordAnEvent extends \Drip\Connect\Model\ApiCalls\Helper
             ]
         ];
 
-        $this->request = $this->connectApiCallsRequestBaseFactory->create()
+        $this->request = $connectApiCallsRequestBaseFactory->create()
             ->setMethod(\Zend_Http_Client::POST)
             ->setRawData(json_encode($eventsInfo));
     }

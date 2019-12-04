@@ -307,6 +307,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         ])->call();
 
         $this->connectApiCallsHelperRecordAnEventFactory->create([
+            'config' => $config,
             'data' => [
                 'email' => $email,
                 'action' => $event,
@@ -348,7 +349,11 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
             'data' => $data
         ])->call();
 
+        // TODO: Inject config into this class.
+        $config = $configFactory->createForCurrentScope();
+
         $this->connectApiCallsHelperRecordAnEventFactory->create([
+            'config' => $config,
             'data' => [
                 'email' => $email,
                 'action' => \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_NEW,
@@ -364,7 +369,12 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     public function proceedLogin($customer)
     {
         $this->quoteHelper->checkForEmptyQuote($customer);
+
+        // TODO: Inject config into this class.
+        $config = $configFactory->createForCurrentScope();
+
         $this->connectApiCallsHelperRecordAnEventFactory->create([
+            'config' => $config,
             'data' => [
                 'email' => $customer->getEmail(),
                 'action' => \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_LOGIN,
@@ -409,7 +419,11 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function proceedAccountDelete($customer)
     {
+        // TODO: Inject config into this class.
+        $config = $configFactory->createForCurrentScope();
+
         $this->connectApiCallsHelperRecordAnEventFactory->create([
+            'config' => $config,
             'data' => [
                 'email' => $customer->getEmail(),
                 'action' => \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_DELETED,
