@@ -26,9 +26,6 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     /** @var \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrderFactory */
     protected $connectApiCallsHelperCreateUpdateOrderFactory;
 
-    /** @var \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateRefundFactory */
-    protected $connectApiCallsHelperCreateUpdateRefundFactory;
-
     /** @var \Drip\Connect\Model\ApiCalls\Helper\Batches\OrdersFactory */
     protected $connectApiCallsHelperBatchesOrdersFactory;
 
@@ -40,7 +37,6 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Catalog\Model\Product\Media\ConfigFactory $catalogProductMediaConfigFactory,
         \Magento\Newsletter\Model\SubscriberFactory $subscriberFactory,
         \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrderFactory $connectApiCallsHelperCreateUpdateOrderFactory,
-        \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateRefundFactory $connectApiCallsHelperCreateUpdateRefundFactory,
         \Drip\Connect\Model\ApiCalls\Helper\Batches\OrdersFactory $connectApiCallsHelperBatchesOrdersFactory
     ) {
         $this->connectHelper = $connectHelper;
@@ -49,7 +45,6 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
         $this->catalogProductMediaConfigFactory = $catalogProductMediaConfigFactory;
         $this->subscriberFactory = $subscriberFactory;
         $this->connectApiCallsHelperCreateUpdateOrderFactory = $connectApiCallsHelperCreateUpdateOrderFactory;
-        $this->connectApiCallsHelperCreateUpdateRefundFactory = $connectApiCallsHelperCreateUpdateRefundFactory;
         $this->connectApiCallsHelperBatchesOrdersFactory = $connectApiCallsHelperBatchesOrdersFactory;
         parent::__construct($context);
     }
