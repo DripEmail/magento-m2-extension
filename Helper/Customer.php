@@ -455,11 +455,12 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function proceedAccountBatch($batch, $storeId)
     {
+        // TODO: Inject config into this class.
+        $config = $this->configFactory->create($storeId);
+
         return $this->connectApiCallsHelperBatchesSubscribersFactory->create([
-            'data' => [
-                'batch' => $batch,
-                'store_id' => $storeId,
-            ]
+            'config' => $config,
+            'batch' => $batch,
         ])->call();
     }
 }
