@@ -203,7 +203,11 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $customerData = $this->prepareCustomerDataForGuestCheckout($order);
 
+        // TODO: Inject config into this class.
+        $config = $configFactory->createForCurrentScope();
+
         $this->apiCallsCreateUpdateSubscriberFactory->create([
+            'config' => $config,
             'data' => $customerData
         ])->call();
     }
@@ -303,6 +307,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         $customerData = $this->prepareCustomerData($customer, true, $forceStatus, $acceptsMarketing);
 
         $this->apiCallsCreateUpdateSubscriberFactory->create([
+            'config' => $config,
             'data' => $customerData
         ])->call();
 
@@ -345,12 +350,13 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         }
         $data = $this->prepareGuestSubscriberData($subscriber, false, $forceStatus);
 
-        $this->apiCallsCreateUpdateSubscriberFactory->create([
-            'data' => $data
-        ])->call();
-
         // TODO: Inject config into this class.
         $config = $configFactory->createForCurrentScope();
+
+        $this->apiCallsCreateUpdateSubscriberFactory->create([
+            'config' => $config,
+            'data' => $data
+        ])->call();
 
         $this->connectApiCallsHelperRecordAnEventFactory->create([
             'config' => $config,
@@ -391,7 +397,11 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $data = $this->prepareGuestSubscriberData($subscriber);
 
+        // TODO: Inject config into this class.
+        $config = $configFactory->createForCurrentScope();
+
         $this->apiCallsCreateUpdateSubscriberFactory->create([
+            'config' => $config,
             'data' => $data
         ])->call();
     }
@@ -407,7 +417,11 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         $data['custom_fields']['accepts_marketing'] = 'no';
         $data['status'] = 'unsubscribed';
 
+        // TODO: Inject config into this class.
+        $config = $configFactory->createForCurrentScope();
+
         $this->apiCallsCreateUpdateSubscriberFactory->create([
+            'config' => $config,
             'data' => $data
         ])->call();
     }
