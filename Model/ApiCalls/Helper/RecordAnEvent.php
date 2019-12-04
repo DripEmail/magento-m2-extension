@@ -44,6 +44,7 @@ class RecordAnEvent extends \Drip\Connect\Model\ApiCalls\Helper
         $this->moduleResource = $moduleResource;
         $this->productMetadata = $productMetadata;
 
+        // TODO: Inject config into this class.
         $config = $configFactory->createForCurrentScope();
 
         $this->apiClient = $this->connectApiCallsBaseFactory->create([

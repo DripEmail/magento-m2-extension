@@ -20,6 +20,7 @@ class CreateUpdateRefund extends \Drip\Connect\Model\ApiCalls\Helper
         $this->connectApiCallsBaseFactory = $connectApiCallsBaseFactory;
         $this->connectApiCallsRequestBaseFactory = $connectApiCallsRequestBaseFactory;
 
+        // TODO: Inject config into this class.
         $config = $configFactory->createForCurrentScope();
 
         $this->apiClient = $this->connectApiCallsBaseFactory->create([

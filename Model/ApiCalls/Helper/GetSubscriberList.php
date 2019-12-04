@@ -27,6 +27,7 @@ class GetSubscriberList extends \Drip\Connect\Model\ApiCalls\Helper
             'per_page' => '',
         ], $data);
 
+        // TODO: Inject config into this class.
         $config = $configFactory->createForCurrentScope();
 
         $this->apiClient = $this->connectApiCallsBaseFactory->create([
