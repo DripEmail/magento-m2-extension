@@ -7,16 +7,16 @@ class Orders extends \Magento\Backend\App\Action
     /** @var @var \Magento\Framework\Controller\Result\JsonFactory */
     protected $resultJsonFactory;
 
-    /** @var \Drip\Connect\Helper\Data */
-    protected $connectHelper;
+    /** @var \Drip\Connect\Model\ConfigurationFactory */
+    protected $configFactory;
 
     public function __construct(
         \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
-        \Drip\Connect\Helper\Data $connectHelper,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Magento\Backend\App\Action\Context $context
     ) {
         $this->resultJsonFactory = $resultJsonFactory;
-        $this->connectHelper = $connectHelper;
+        $this->configFactory = $configFactory;
         parent::__construct($context);
     }
 
@@ -36,7 +36,8 @@ class Orders extends \Magento\Backend\App\Action
         }
 
         $storeId = $this->getRequest()->getParam('store_id');
-        $this->connectHelper->setOrdersSyncStateToStore($storeId, \Drip\Connect\Model\Source\SyncState::QUEUED);
+        $config = $this->configFactory->create($storeId);
+        $config->setOrdersSyncState(\Drip\Connect\Model\Source\SyncState::QUEUED);
 
         return $resultJson->setData($result);
     }

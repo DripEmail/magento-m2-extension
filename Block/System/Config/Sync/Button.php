@@ -7,15 +7,20 @@ abstract class Button extends \Magento\Config\Block\System\Config\Form\Field
 {
     const BUTTON_TEMPLATE = '';
 
+    /** @var \Drip\Connect\Model\Configuration */
+    protected $config;
+
     /** @var \Drip\Connect\Helper\Data */
     protected $connectHelper;
 
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Drip\Connect\Helper\Data $connectHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
+        $this->config = $configFactory->createForCurrentStoreParam();
         $this->connectHelper = $connectHelper;
     }
 
@@ -24,7 +29,7 @@ abstract class Button extends \Magento\Config\Block\System\Config\Form\Field
      */
     public function isModuleActive()
     {
-        return $this->connectHelper->isModuleActive();
+        return $this->config->isEnabled();
     }
 
     /**
@@ -74,12 +79,8 @@ abstract class Button extends \Magento\Config\Block\System\Config\Form\Field
             [
                 'html_id' => $element->getHtmlId(),
                 'button_label' => __($originalData['button_label']),
-                'store_id' => (int) $this->_request->getParam('store'),
-                'account_id' => $this->_scopeConfig->getValue(
-                    'dripconnect_general/api_settings/account_id',
-                    \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-                    $this->_request->getParam('store')
-                ),
+                'store_id' => $this->config->getStoreId(),
+                'account_id' => $this->config->getAccountId(),
             ]
         );
         return $this->_toHtml();

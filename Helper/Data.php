@@ -14,10 +14,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     protected $request;
 
-    /**
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
-     */
-    protected $scopeConfig;
+    /** @var \Drip\Connect\Model\ConfigurationFactory */
+    protected $configFactory;
 
     /**
      * @var \Magento\Customer\Model\GroupFactory
@@ -30,9 +28,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     /** @var \Magento\Framework\App\State */
     protected $state;
-
-    /** @var \Magento\Config\Model\ResourceModel\Config */
-    protected $resourceConfig;
 
     /** @var \Magento\Framework\App\Response\RedirectInterface */
     protected $redirect;
@@ -48,18 +43,17 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Framework\App\Request\Http $request,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\App\State $state,
-        \Magento\Config\Model\ResourceModel\Config $resourceConfig,
         \Magento\Eav\Api\AttributeRepositoryInterface $attributeRepository,
         \Magento\Framework\App\Response\RedirectInterface $redirect,
         \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory $catalogResourceModelCategoryCollectionFactory
     ) {
         $this->request = $request;
-        $this->scopeConfig = $context->getScopeConfig();
+        $this->configFactory = $configFactory;
         $this->storeManager = $storeManager;
         $this->state = $state;
-        $this->resourceConfig = $resourceConfig;
         $this->catalogResourceModelCategoryCollectionFactory = $catalogResourceModelCategoryCollectionFactory;
         $this->attributeRepository = $attributeRepository;
         $this->redirect = $redirect;
@@ -96,18 +90,16 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function isModuleActive()
     {
+        // TODO: This whole method exists to indeterminately figure out scope.
+        //       We need to nuke this in favor of always knowing what scope we
+        //       are dealing with.
         if (!empty($this->request->getParam('store'))) {
-            return (bool) $this->scopeConfig->getValue(
-                'dripconnect_general/module_settings/is_enabled',
-                \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-                $this->request->getParam('store')
-            );
+            $config = $this->configFactory->createForCurrentStoreParam();
+        } else {
+            $config = $this->configFactory->createForCurrentScope();
         }
 
-        return (bool) $this->scopeConfig->getValue(
-            'dripconnect_general/module_settings/is_enabled',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-        );
+        return $config->isEnabled();
     }
 
     /**
@@ -204,98 +196,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
-     * @param int $storeId
-     * @param int $state
-     */
-    public function setCustomersSyncStateToStore($storeId, $state)
-    {
-        if (empty($storeId)) {
-            $this->resourceConfig->saveConfig(
-                'dripconnect_general/actions/sync_customers_data_state',
-                $state,
-                \Magento\Framework\App\Config\ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
-                0
-            );
-            $storeId = null;
-        } else {
-            $this->resourceConfig->saveConfig(
-                'dripconnect_general/actions/sync_customers_data_state',
-                $state,
-                \Magento\Store\Model\ScopeInterface::SCOPE_STORES,
-                $storeId
-            );
-        }
-        $this->storeManager->getStore($storeId)->resetConfig();
-    }
-
-    /**
-     * @param int $storeId
-     */
-    public function getCustomersSyncStateForStore($storeId)
-    {
-        if (empty($storeId)) {
-            $state = $this->scopeConfig->getValue(
-                'dripconnect_general/actions/sync_customers_data_state',
-                \Magento\Framework\App\Config\ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
-                0
-            );
-        } else {
-            $state = $this->scopeConfig->getValue(
-                'dripconnect_general/actions/sync_customers_data_state',
-                \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-                $storeId
-            );
-        }
-        return $state;
-    }
-
-    /**
-     * @param int $storeId
-     * @param int $state
-     */
-    public function setOrdersSyncStateToStore($storeId, $state)
-    {
-        if (empty($storeId)) {
-            $this->resourceConfig->saveConfig(
-                'dripconnect_general/actions/sync_orders_data_state',
-                $state,
-                \Magento\Framework\App\Config\ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
-                0
-            );
-            $storeId = null;
-        } else {
-            $this->resourceConfig->saveConfig(
-                'dripconnect_general/actions/sync_orders_data_state',
-                $state,
-                \Magento\Store\Model\ScopeInterface::SCOPE_STORES,
-                $storeId
-            );
-        }
-        $this->storeManager->getStore($storeId)->resetConfig();
-    }
-
-    /**
-     * @param int $storeId
-     */
-    public function getOrdersSyncStateForStore($storeId)
-    {
-        if (empty($storeId)) {
-            $state = $this->scopeConfig->getValue(
-                'dripconnect_general/actions/sync_orders_data_state',
-                \Magento\Framework\App\Config\ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
-                0
-            );
-        } else {
-            $state = $this->scopeConfig->getValue(
-                'dripconnect_general/actions/sync_orders_data_state',
-                \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-                $storeId
-            );
-        }
-        return $state;
-    }
-
-    /**
      * @param string $date
      */
     public function formatDate($date)
@@ -311,7 +211,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     protected function getSalt()
     {
-        $salt = $this->scopeConfig->getValue('dripconnect_general/module_settings/salt');
+        $globalConfig = $this->configFactory->createForGlobalScope();
+        $salt = $globalConfig->getSalt();
         if (empty(trim($salt))) {
             $salt = self::SALT;
         }

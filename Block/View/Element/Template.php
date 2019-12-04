@@ -6,6 +6,9 @@ class Template extends \Magento\Framework\View\Element\Template
     /** @var \Drip\Connect\Helper\Data */
     protected $helper;
 
+    /** @var \Drip\Connect\Model\Configuration */
+    protected $config;
+
     /** @var \Magento\Customer\Model\Session */
     protected $customerSession;
 
@@ -26,6 +29,7 @@ class Template extends \Magento\Framework\View\Element\Template
 
     public function __construct(
         \Drip\Connect\Helper\Data $helper,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Magento\Framework\Registry $coreRegistry,
         \Magento\Customer\Model\SessionFactory $customerSessionFactory,
         \Magento\Catalog\Model\Product\Media\ConfigFactory $catalogProductMediaConfigFactory,
@@ -34,13 +38,15 @@ class Template extends \Magento\Framework\View\Element\Template
         \Magento\Framework\App\ProductMetadataInterface $productMetadata,
         array $data = []
     ) {
+        parent::__construct($context, $data);
+
         $this->helper = $helper;
+        $this->config = $configFactory->create($this->getStore()->getId());
         $this->coreRegistry = $coreRegistry;
         $this->customerSessionFactory = $customerSessionFactory;
         $this->catalogProductMediaConfigFactory = $catalogProductMediaConfigFactory;
         $this->moduleResource = $moduleResource;
         $this->productMetadata = $productMetadata;
-        parent::__construct($context, $data);
     }
 
     /**
@@ -60,14 +66,6 @@ class Template extends \Magento\Framework\View\Element\Template
     }
 
     /**
-     * @return \Magento\Framework\App\Config\ScopeConfigInterface
-     */
-    public function getConfig()
-    {
-        return $this->_scopeConfig;
-    }
-
-    /**
      * @param \Magento\Catalog\Model\Product $product
      *
      * @return string
@@ -84,11 +82,7 @@ class Template extends \Magento\Framework\View\Element\Template
 
     public function getAccountId()
     {
-        return $this->getConfig()->getValue(
-            'dripconnect_general/api_settings/account_id',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-            $this->getStore()->getId()
-        );
+        return $this->config->getAccountId();
     }
 
     /**
@@ -96,7 +90,7 @@ class Template extends \Magento\Framework\View\Element\Template
      */
     public function isModuleActive()
     {
-        return $this->helper->isModuleActive();
+        return $this->config->isEnabled();
     }
 
     /**
