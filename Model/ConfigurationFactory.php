@@ -18,8 +18,14 @@ class ConfigurationFactory
     protected $storeManager;
 
     /**
+     * @var \Magento\Store\Model\StoreManagerInterface $storeManager
+     */
+    protected $storeManager;
+
+    /**
      * @param \Magento\Framework\ObjectManagerInterface $objectManager
      * @param \Magento\Framework\App\Request\Http $request
+     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,

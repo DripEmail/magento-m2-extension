@@ -20,8 +20,7 @@ class CreateUpdateRefund extends \Drip\Connect\Model\ApiCalls\Helper
         $this->connectApiCallsBaseFactory = $connectApiCallsBaseFactory;
         $this->connectApiCallsRequestBaseFactory = $connectApiCallsRequestBaseFactory;
 
-        // TODO: This likely doesn't work. I need to pass config into this class.
-        $config = $configFactory->createForCurrentStoreParam();
+        $config = $configFactory->createForCurrentScope();
 
         $this->apiClient = $this->connectApiCallsBaseFactory->create([
             'endpoint' => $config->getAccountId() . '/' . self::ENDPOINT_REFUNDS,
