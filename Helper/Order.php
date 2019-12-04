@@ -430,11 +430,12 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function proceedOrderBatch($batch, $storeId)
     {
+        // TODO: Inject config into this class.
+        $config = $this->configFactory->create($storeId);
+
         return $this->connectApiCallsHelperBatchesOrdersFactory->create([
-            'data' => [
-                'batch' => $batch,
-                'store_id' => $storeId,
-            ]
+            'config' => $config,
+            'batch' => $batch,
         ])->call();
     }
 }
