@@ -199,10 +199,8 @@ class Customers
                 }
 
                 $response = $this->connectApiCallsHelperBatchesEventsFactory->create([
-                    'data' => [
-                        'batch' => $batchEvents,
-                        'store_id' => $config->getStoreId(),
-                    ]
+                    'config' => $config,
+                    'batch' => $batchEvents,
                 ])->call();
 
                 if (empty($response) || $response->getResponseCode() != 201) { // drip success code for this action
