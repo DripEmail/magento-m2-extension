@@ -116,7 +116,13 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
         $data['action'] = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateQuote::QUOTE_NEW;
         $data['occurred_at'] = $this->connectHelper->formatDate($quote->getUpdatedAt());
         if (count($data['items'])) {
-            $this->connectApiCallsHelperCreateUpdateQuoteFactory->create(['data' => $data])->call();
+            // TODO: Inject config into this class.
+            $config = $configFactory->createForCurrentScope();
+
+            $this->connectApiCallsHelperCreateUpdateQuoteFactory->create([
+                'config' => $config,
+                'data' => $data,
+            ])->call();
         }
     }
 
@@ -134,7 +140,13 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
         $data['action'] = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateQuote::QUOTE_NEW;
         $data['occurred_at'] = $this->connectHelper->formatDate($quote->getUpdatedAt());
 
-        $response = $this->connectApiCallsHelperCreateUpdateQuoteFactory->create(['data' => $data])->call();
+        // TODO: Inject config into this class.
+        $config = $configFactory->createForCurrentScope();
+
+        $response = $this->connectApiCallsHelperCreateUpdateQuoteFactory->create([
+            'config' => $config,
+            'data' => $data,
+        ])->call();
 
         return ($response->getResponseCode() == self::SUCCESS_RESPONSE_CODE);
     }
@@ -149,7 +161,14 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
         $data = $this->prepareQuoteData($quote);
         $data['action'] = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateQuote::QUOTE_CHANGED;
         $data['occurred_at'] = $this->connectHelper->formatDate($quote->getUpdatedAt());
-        $this->connectApiCallsHelperCreateUpdateQuoteFactory->create(['data' => $data])->call();
+
+        // TODO: Inject config into this class.
+        $config = $configFactory->createForCurrentScope();
+
+        $this->connectApiCallsHelperCreateUpdateQuoteFactory->create([
+            'config' => $config,
+            'data' => $data,
+        ])->call();
     }
 
     /**
