@@ -11,26 +11,21 @@ class CreateUpdateRefund extends \Drip\Connect\Model\ApiCalls\Helper
     /** @var \Drip\Connect\Model\ApiCalls\Request\BaseFactory */
     protected $connectApiCallsRequestBaseFactory;
 
-    /** @var \Magento\Framework\App\Config\ScopeConfigInterface */
-    protected $scopeConfig;
-
     public function __construct(
         \Drip\Connect\Model\ApiCalls\BaseFactory $connectApiCallsBaseFactory,
         \Drip\Connect\Model\ApiCalls\Request\BaseFactory $connectApiCallsRequestBaseFactory,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
         $data = []
     ) {
         $this->connectApiCallsBaseFactory = $connectApiCallsBaseFactory;
         $this->connectApiCallsRequestBaseFactory = $connectApiCallsRequestBaseFactory;
-        $this->scopeConfig = $scopeConfig;
+
+        // TODO: Inject config into this class.
+        $config = $configFactory->createForCurrentScope();
 
         $this->apiClient = $this->connectApiCallsBaseFactory->create([
-            'options' => [
-                'endpoint' => $this->scopeConfig->getValue(
-                    'dripconnect_general/api_settings/account_id',
-                    \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-                ) . '/' . self::ENDPOINT_REFUNDS
-            ]
+            'endpoint' => $config->getAccountId() . '/' . self::ENDPOINT_REFUNDS,
+            'config' => $config,
         ]);
 
         $ordersInfo = [

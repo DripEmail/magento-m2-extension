@@ -17,12 +17,18 @@ class GetProjectList extends \Drip\Connect\Model\ApiCalls\Helper
     public function __construct(
         \Drip\Connect\Model\ApiCalls\BaseFactory $connectApiCallsBaseFactory,
         \Drip\Connect\Model\ApiCalls\Request\BaseFactory $connectApiCallsRequestBaseFactory,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
         $data = []
     ) {
         $this->connectApiCallsBaseFactory = $connectApiCallsBaseFactory;
         $this->connectApiCallsRequestBaseFactory = $connectApiCallsRequestBaseFactory;
+
+        // TODO: Inject config into this class.
+        $config = $configFactory->createForCurrentScope();
+
         $this->apiClient = $this->connectApiCallsBaseFactory->create([
-            'options' => ['endpoint' => self::ENDPOINT_ACCOUNTS]
+            'endpoint' => self::ENDPOINT_ACCOUNTS,
+            'config' => $config,
         ]);
 
         $this->request = $this->connectApiCallsRequestBaseFactory->create()
