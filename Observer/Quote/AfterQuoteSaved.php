@@ -41,16 +41,18 @@ class AfterQuoteSaved extends \Drip\Connect\Observer\Base
             return;
         }
 
+        $config = $this->configFactory->createForCurrentScope();
+
         if ($this->registry->registry(\Drip\Connect\Helper\Quote::REGISTRY_KEY_IS_NEW)) {
-            $this->connectQuoteHelper->proceedQuoteNew($quote);
+            $this->connectQuoteHelper->proceedQuoteNew($quote, $config);
         } else {
             $oldData = $this->registry->registry(\Drip\Connect\Helper\Quote::REGISTRY_KEY_OLD_DATA);
             if (empty($oldData['items']) || count($oldData['items']) == 0) {
                 //customer logged in previously with empty cart and then adds a product
-                $this->connectQuoteHelper->proceedQuoteNew($quote);
+                $this->connectQuoteHelper->proceedQuoteNew($quote, $config);
             } else {
                 if ($this->connectQuoteHelper->isQuoteChanged($quote)) {
-                    $this->connectQuoteHelper->proceedQuote($quote);
+                    $this->connectQuoteHelper->proceedQuote($quote, $config);
                 }
             }
         }
