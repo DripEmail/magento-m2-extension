@@ -56,7 +56,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
      *
      * @return array
      */
-    public function getCommonOrderData($order)
+    public function getCommonOrderData(\Magento\Sales\Model\Order $order)
     {
         $subscriber = $this->subscriberFactory->create()->loadByEmail($order->getCustomerEmail());
 
@@ -89,7 +89,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
      *
      * @return array
      */
-    public function getOrderDataNew($order)
+    public function getOrderDataNew(\Magento\Sales\Model\Order $order)
     {
         $data = $this->getCommonOrderData($order);
         $data['action'] = (string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_NEW;
@@ -104,7 +104,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
      *
      * @return array
      */
-    public function getOrderDataCompleted($order)
+    public function getOrderDataCompleted(\Magento\Sales\Model\Order $order)
     {
         $data = $this->getCommonOrderData($order);
         $data['action'] = (string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_FULFILL;
@@ -119,7 +119,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
      *
      * @return array
      */
-    public function getOrderDataCanceled($order)
+    public function getOrderDataCanceled(\Magento\Sales\Model\Order $order)
     {
         $data = $this->getCommonOrderData($order);
         $data['action'] = (string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_CANCEL;
@@ -135,7 +135,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
      *
      * @return array
      */
-    public function getOrderDataRefund($order, $refundValue)
+    public function getOrderDataRefund(\Magento\Sales\Model\Order $order, $refundValue)
     {
         $refunds = $order->getCreditmemosCollection();
         $refund = $refunds->getLastItem();
@@ -162,7 +162,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
      *
      * @return array
      */
-    public function getOrderDataOther($order)
+    public function getOrderDataOther(\Magento\Sales\Model\Order $order)
     {
         $data = $this->getCommonOrderData($order);
         $data['action'] = (string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_CHANGE;
@@ -177,7 +177,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
      *
      * @return string
      */
-    protected function getOrderFulfillment($order)
+    protected function getOrderFulfillment(\Magento\Sales\Model\Order $order)
     {
         if ($order->getState() == \Magento\Sales\Model\Order::STATE_COMPLETE) {
             return self::FULFILLMENT_YES;
@@ -199,7 +199,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
      *
      * @return array
      */
-    protected function getOrderBillingData($order)
+    protected function getOrderBillingData(\Magento\Sales\Model\Order $order)
     {
         $addressId = $order->getBillingAddressId();
 
@@ -213,7 +213,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
      *
      * @return array
      */
-    protected function getOrderShippingData($order)
+    protected function getOrderShippingData(\Magento\Sales\Model\Order $order)
     {
         $addressId = $order->getShippingAddressId();
 
@@ -254,7 +254,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
      *
      * @return array
      */
-    protected function getOrderItemsData($order, $isRefund = false)
+    protected function getOrderItemsData(\Magento\Sales\Model\Order $order, $isRefund = false)
     {
         $childItems = [];
         foreach ($order->getAllItems() as $item) {
@@ -314,7 +314,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
      *
      * @return array
      */
-    public function getOrderItemStatusData($item, $useOrig = false)
+    public function getOrderItemStatusData(\Magento\Sales\Model\Order\Item $item, $useOrig = false)
     {
         return [
             'status' => ($useOrig ? $item->getOrigData('status') : $item->getStatus()),
@@ -334,7 +334,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
      *
      * @return bool
      */
-    public function isCanBeSent($order)
+    public function isCanBeSent(\Magento\Sales\Model\Order $order)
     {
         return $this->connectHelper->isEmailValid($order->getCustomerEmail());
     }
@@ -358,7 +358,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     /**
      * @param \Magento\Sales\Model\Order $order
      */
-    public function proceedOrderCompleted($order)
+    public function proceedOrderCompleted(\Magento\Sales\Model\Order $order)
     {
         $orderData = $this->getOrderDataCompleted($order);
 
@@ -374,7 +374,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     /**
      * @param \Magento\Sales\Model\Order $order
      */
-    public function proceedOrderCancel($order)
+    public function proceedOrderCancel(\Magento\Sales\Model\Order $order)
     {
         $orderData = $this->getOrderDataCanceled($order);
 
@@ -391,7 +391,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
      * @param \Magento\Sales\Model\Order $order
      * @param int $refundValue
      */
-    public function proceedOrderRefund($order, $refundValue)
+    public function proceedOrderRefund(\Magento\Sales\Model\Order $order, $refundValue)
     {
         $orderData = $this->getOrderDataRefund($order, $refundValue);
 
@@ -407,7 +407,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     /**
      * @param \Magento\Sales\Model\Order $order
      */
-    public function proceedOrderOther($order)
+    public function proceedOrderOther(\Magento\Sales\Model\Order $order)
     {
         $orderData = $this->getOrderDataOther($order);
 
@@ -428,7 +428,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
      *
      * @return \Drip\Connect\Model\Restapi\Response\ResponseAbstract
      */
-    public function proceedOrderBatch($batch, $storeId)
+    public function proceedOrderBatch(array $batch, $storeId)
     {
         // TODO: Inject config into this class.
         $config = $this->configFactory->create($storeId);
