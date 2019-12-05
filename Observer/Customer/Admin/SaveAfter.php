@@ -41,10 +41,11 @@ class SaveAfter extends \Drip\Connect\Observer\Customer\Admin\Base
      */
     public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)
     {
+        /** @var \Magento\Customer\Model\Data\Customer */
         $customerData = $observer->getCustomer();
         $customer = $this->customerCustomerFactory->create()->load($customerData->getId());
 
-        $storeId = $this->customerHelper->getCustomerStoreId($customer);
+        $storeId = $this->customerHelper->getCustomerStoreId($customerData);
         $config = $this->configFactory->create($storeId);
 
         if ($this->coreSession->getCustomerIsNew()) {

@@ -24,8 +24,7 @@ abstract class Base extends \Drip\Connect\Observer\Base
     protected function isActive(\Magento\Framework\Event\Observer $observer)
     {
         // When running from the admin, we need to do some more digging to determine whether we are active.
-        $customerData = $observer->getCustomer();
-        $customer = $this->customerCustomerFactory->create()->load($customerData->getId());
+        $customer = $observer->getCustomer();
         $storeId = $this->customerHelper->getCustomerStoreId($customer);
         return $this->configFactory->create($storeId)->isEnabled();
     }

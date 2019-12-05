@@ -56,7 +56,7 @@ Then('A new {string} subscriber event should be sent to Drip', function(state) {
     expect(sub.custom_fields.gender).to.eq('')
     expect(sub.custom_fields.last_name).to.eq('User')
     expect(sub.custom_fields.magento_customer_group).to.eq('General')
-    expect(sub.custom_fields.magento_store).to.eq('300')
+    expect(sub.custom_fields.magento_store).to.eq(300)
   })
 
   cy.log('Validating that the event calls have everything we need')
@@ -70,7 +70,7 @@ Then('A new {string} subscriber event should be sent to Drip', function(state) {
     expect(custCreatedBody.events[0].email).to.eq('testuser@example.com')
     expect(custCreatedBody.events[0].properties.magento_source).to.eq('Admin')
     expect(custCreatedBody.events[0].properties.source).to.eq('magento')
-    expect(custCreatedBody.events[0].properties.version).to.match(/^Magento 1\.9\.4\.2, Drip Extension \d+\.\d+\.\d+$/)
+    expect(custCreatedBody.events[0].properties.version).to.match(/^Magento 2\.3\.2, Drip Extension \d+\.\d+\.\d+$/)
   })
 })
 
@@ -78,12 +78,13 @@ When('An admin subscribes to the general newsletter', function() {
   cy.log('Resetting mocks')
   cy.wrap(Mockclient.reset())
 
-  cy.contains('testuser@example.com').click()
-  cy.get('#customer_info_tabs').contains('Newsletter').click()
+  cy.contains('testuser@example.com')
+  cy.get('.data-grid-actions-cell').contains('Edit').click()
+  cy.get('.admin__page-nav').contains('Newsletter').click()
   cy.get('input[name="subscription"]').check()
   cy.contains('Save Customer').click()
 
-  cy.contains('The customer has been saved')
+  cy.contains('You saved the customer')
 })
 
 Then('A {string} event should be sent to Drip', function(state) {
@@ -114,7 +115,7 @@ Then('A {string} event should be sent to Drip', function(state) {
     expect(sub.custom_fields.gender).to.eq('')
     expect(sub.custom_fields.last_name).to.eq('User')
     expect(sub.custom_fields.magento_customer_group).to.eq('General')
-    expect(sub.custom_fields.magento_store).to.eq('300')
+    expect(sub.custom_fields.magento_store).to.eq(300)
   })
 
   cy.log('Validating that the event calls have everything we need')
@@ -128,6 +129,6 @@ Then('A {string} event should be sent to Drip', function(state) {
     expect(custCreatedBody.events[0].email).to.eq('testuser@example.com')
     expect(custCreatedBody.events[0].properties.magento_source).to.eq('Admin')
     expect(custCreatedBody.events[0].properties.source).to.eq('magento')
-    expect(custCreatedBody.events[0].properties.version).to.match(/^Magento 1\.9\.4\.2, Drip Extension \d+\.\d+\.\d+$/)
+    expect(custCreatedBody.events[0].properties.version).to.match(/^Magento 2\.3\.2, Drip Extension \d+\.\d+\.\d+$/)
   })
 })

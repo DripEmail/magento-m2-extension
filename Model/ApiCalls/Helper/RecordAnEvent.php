@@ -21,7 +21,6 @@ class RecordAnEvent extends \Drip\Connect\Model\ApiCalls\Helper
         \Drip\Connect\Model\Configuration $config,
         array $data
     ) {
-
         $this->apiClient = $connectApiCallsBaseFactory->create([
             'endpoint' => $config->getAccountId() . '/' . self::ENDPOINT_EVENTS,
             'config' => $config,

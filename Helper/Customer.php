@@ -321,10 +321,12 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     /**
      * Gets the first store when a customer is in website scope.
      *
-     * @param \Magento\Customer\Model\Customer $customer
+     * @param \Magento\Customer\Api\Data\CustomerInterface $customer Customer object
+     *         (Note that we specifically don't use type hinting because
+     *          interceptors are sometimes returned from observers.)
      * @return string Store ID
      */
-    public function getCustomerStoreId(\Magento\Customer\Model\Customer $customer)
+    public function getCustomerStoreId($customer)
     {
         $storeId = $customer->getStoreId();
         if ((int)$storeId === 0) {
