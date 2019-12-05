@@ -94,6 +94,14 @@ class Configuration
         return $this->getStoreConfig(self::API_TIMEOUT_PATH);
     }
 
+    /**
+     * @param int $timeout The timeout in seconds.
+     */
+    public function setTimeout($timeout)
+    {
+        $this->setStoreConfig(self::API_TIMEOUT_PATH, $timeout);
+    }
+
     public function getApiKey()
     {
         return $this->getStoreConfig(self::API_KEY_PATH);
