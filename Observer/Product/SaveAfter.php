@@ -58,10 +58,10 @@ class SaveAfter extends \Drip\Connect\Observer\Base
         );
 
         if ($this->registry->registry(\Drip\Connect\Helper\Product::REGISTRY_KEY_IS_NEW)) {
-            $this->proceedProductNew($product);
+            $this->productHelper->proceedProductNew($product);
         } else {
             if ($this->isProductChanged($product)) {
-                $this->proceedProduct($product);
+                $this->productHelper->proceedProduct($product);
             }
         }
         $this->registry->unregister(\Drip\Connect\Helper\Product::REGISTRY_KEY_IS_NEW);
@@ -83,25 +83,5 @@ class SaveAfter extends \Drip\Connect\Observer\Base
         unset($newData['occurred_at']);
 
         return ($this->json->serialize($oldData) != $this->json->serialize($newData));
-    }
-
-    /**
-     * drip actions for product create
-     *
-     * @param \Magento\Catalog\Model\Product $product
-     */
-    protected function proceedProductNew($product)
-    {
-        $this->productHelper->proceedProductNew($product);
-    }
-
-    /**
-     * drip actions for product change
-     *
-     * @param \Magento\Catalog\Model\Product $product
-     */
-    protected function proceedProduct($product)
-    {
-        $this->productHelper->proceedProduct($product);
     }
 }
