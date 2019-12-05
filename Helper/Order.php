@@ -341,14 +341,12 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**
      * @param \Magento\Sales\Model\Order $order
+     * @param \Drip\Connect\Model\Configuration $config
      */
-    public function proceedOrderNew($order)
+    public function proceedOrderNew(\Magento\Sales\Model\Order $order, \Drip\Connect\Model\Configuration $config)
     {
         $orderData = $this->getOrderDataNew($order);
 
-        // TODO: Inject config into this class.
-        $config = $configFactory->createForCurrentScope();
-
         $this->connectApiCallsHelperCreateUpdateOrderFactory->create([
             'config' => $config,
             'data' => $orderData
@@ -357,14 +355,12 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**
      * @param \Magento\Sales\Model\Order $order
+     * @param \Drip\Connect\Model\Configuration $config
      */
-    public function proceedOrderCompleted(\Magento\Sales\Model\Order $order)
+    public function proceedOrderCompleted(\Magento\Sales\Model\Order $order, \Drip\Connect\Model\Configuration $config)
     {
         $orderData = $this->getOrderDataCompleted($order);
 
-        // TODO: Inject config into this class.
-        $config = $configFactory->createForCurrentScope();
-
         $this->connectApiCallsHelperCreateUpdateOrderFactory->create([
             'config' => $config,
             'data' => $orderData
@@ -373,13 +369,11 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**
      * @param \Magento\Sales\Model\Order $order
+     * @param \Drip\Connect\Model\Configuration $config
      */
-    public function proceedOrderCancel(\Magento\Sales\Model\Order $order)
+    public function proceedOrderCancel(\Magento\Sales\Model\Order $order, \Drip\Connect\Model\Configuration $config)
     {
         $orderData = $this->getOrderDataCanceled($order);
-
-        // TODO: Inject config into this class.
-        $config = $configFactory->createForCurrentScope();
 
         $this->connectApiCallsHelperCreateUpdateOrderFactory->create([
             'config' => $config,
@@ -390,13 +384,11 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     /**
      * @param \Magento\Sales\Model\Order $order
      * @param int $refundValue
+     * @param \Drip\Connect\Model\Configuration $config
      */
-    public function proceedOrderRefund(\Magento\Sales\Model\Order $order, $refundValue)
+    public function proceedOrderRefund(\Magento\Sales\Model\Order $order, $refundValue, \Drip\Connect\Model\Configuration $config)
     {
         $orderData = $this->getOrderDataRefund($order, $refundValue);
-
-        // TODO: Inject config into this class.
-        $config = $configFactory->createForCurrentScope();
 
         $this->connectApiCallsHelperCreateUpdateOrderFactory->create([
             'config' => $config,
@@ -406,13 +398,11 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**
      * @param \Magento\Sales\Model\Order $order
+     * @param \Drip\Connect\Model\Configuration $config
      */
-    public function proceedOrderOther(\Magento\Sales\Model\Order $order)
+    public function proceedOrderOther(\Magento\Sales\Model\Order $order, \Drip\Connect\Model\Configuration $config)
     {
         $orderData = $this->getOrderDataOther($order);
-
-        // TODO: Inject config into this class.
-        $config = $configFactory->createForCurrentScope();
 
         $this->connectApiCallsHelperCreateUpdateOrderFactory->create([
             'config' => $config,
@@ -424,15 +414,12 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
      * batch orders update
      *
      * @param array $batch
-     * @param int $storeId
+     * @param \Drip\Connect\Model\Configuration $config
      *
      * @return \Drip\Connect\Model\Restapi\Response\ResponseAbstract
      */
-    public function proceedOrderBatch(array $batch, $storeId)
+    public function proceedOrderBatch(array $batch, \Drip\Connect\Model\Configuration $config)
     {
-        // TODO: Inject config into this class.
-        $config = $this->configFactory->create($storeId);
-
         return $this->connectApiCallsHelperBatchesOrdersFactory->create([
             'config' => $config,
             'batch' => $batch,

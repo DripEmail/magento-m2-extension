@@ -38,7 +38,9 @@ class CreditmemoAfterSave extends \Drip\Connect\Observer\Base
         $creditMemo = $observer->getEvent()->getCreditmemo();
         $order = $this->order->load($creditMemo->getOrderId());
 
-        $this->orderHelper->proceedOrderRefund($order, $this->refundDiff($order));
+        $config = $this->configFactory->create($order->getStoreId());
+
+        $this->orderHelper->proceedOrderRefund($order, $this->refundDiff($order), $config);
     }
 
     /**

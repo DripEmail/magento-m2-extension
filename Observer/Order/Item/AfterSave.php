@@ -51,7 +51,9 @@ class AfterSave extends \Drip\Connect\Observer\Base
         // after save last item of all order items
         if ($itemsCount == self::$counter) {
             if ($this->isCompleteSomeItems($order)) {
-                $this->orderHelper->proceedOrderCompleted($order);
+                $config = $this->configFactory->create($order->getStoreId());
+
+                $this->orderHelper->proceedOrderCompleted($order, $config);
             }
         }
     }

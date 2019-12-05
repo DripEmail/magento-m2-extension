@@ -47,7 +47,7 @@ class AfterSave extends \Drip\Connect\Observer\Base
      *
      * @param \Magento\Sales\Model\Order $order
      */
-    protected function proceedOrder($order)
+    protected function proceedOrder(\Magento\Sales\Model\Order $order)
     {
         if ($this->isSameState($order)) {
             return;
@@ -56,6 +56,8 @@ class AfterSave extends \Drip\Connect\Observer\Base
         if (! $this->orderHelper->isCanBeSent($order)) {
             return;
         }
+
+        $config = $this->configFactory->create($order->getStoreId());
 
         if ($this->isOrderNew($order)) {
             //if guest checkout, create subscriber record
@@ -66,7 +68,7 @@ class AfterSave extends \Drip\Connect\Observer\Base
                 $this->customerHelper->accountActionsForGuestCheckout($order);
             }
             // new order
-            $this->orderHelper->proceedOrderNew($order);
+            $this->orderHelper->proceedOrderNew($order, $config);
 
             return;
         }
@@ -78,7 +80,7 @@ class AfterSave extends \Drip\Connect\Observer\Base
 
             case \Magento\Sales\Model\Order::STATE_CANCELED:
                 // cancel order
-                $this->orderHelper->proceedOrderCancel($order);
+                $this->orderHelper->proceedOrderCancel($order, $config);
                 break;
 
             case \Magento\Sales\Model\Order::STATE_CLOSED:
@@ -87,7 +89,7 @@ class AfterSave extends \Drip\Connect\Observer\Base
 
             default:
                 // other states
-                $this->orderHelper->proceedOrderOther($order);
+                $this->orderHelper->proceedOrderOther($order, $config);
         }
     }
 
