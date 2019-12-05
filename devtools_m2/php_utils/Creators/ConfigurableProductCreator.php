@@ -60,7 +60,6 @@ class ConfigurableProductCreator
 
             foreach ($attrValues as $option => $simpleProductData) {
                 $simpleProduct = $this->simpleProductCreatorFactory->create(['productData' => $simpleProductData])->build();
-                $simpleProduct->setVisibility(\Magento\Catalog\Model\Product\Visibility::VISIBILITY_NOT_VISIBLE);
                 $optionId = $attribute->setStoreId(0)->getSource()->getOptionId($option);
                 $simpleProduct->setData($attrName, $optionId);
                 $simpleProduct = $this->productRepository->save($simpleProduct);

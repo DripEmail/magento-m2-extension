@@ -204,8 +204,20 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
             }
 
             $productVariantItem = $item;
+            $productVariantProduct = $product;
             if ($item->getProductType() === 'configurable' && \array_key_exists($item->getId(), $childItems)) {
                 $productVariantItem = $childItems[$item->getId()];
+                $productVariantProduct = $this->catalogProductFactory->create()->load($productVariantItem->getProduct()->getId());
+            }
+
+            $productImage = $productVariantProduct->getImage();
+
+            if (empty($productImage) || $productVariantProduct->getVisibility() == \Magento\Catalog\Model\Product\Visibility::VISIBILITY_NOT_VISIBLE) {
+              $productImage = $product->getImage();
+            }
+
+            if (!empty($productImage)) {
+              $productImage = $this->catalogProductMediaConfigFactory->create()->getMediaUrl($productImage);
             }
 
             $group = [
@@ -219,7 +231,7 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
                 'discounts' => $this->connectHelper->priceAsCents($item->getDiscountAmount())/100,
                 'total' => $this->connectHelper->priceAsCents((float)$item->getQty() * (float)$item->getPrice()) / 100,
                 'product_url' => $product->getProductUrl(),
-                'image_url' => $this->catalogProductMediaConfigFactory->create()->getMediaUrl($product->getThumbnail()),
+                'image_url' => $productImage,
             ];
             $data[] = $group;
         }

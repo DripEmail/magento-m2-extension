@@ -32,4 +32,19 @@ function mapFrontendWebsiteId(site) {
   return websiteId
 }
 
-export { setCurrentFrontendSite, getCurrentFrontendSite, getCurrentFrontendDomain, getCurrentFrontendWebsiteId, mapFrontendWebsiteId }
+function mapFrontendStoreViewId(site) {
+  let storeViewId = 1
+  switch (site) {
+    case 'main':
+      storeViewId = 1
+      break
+    case 'site1':
+      storeViewId = 300
+      break
+    default:
+      throw `Unexpected site name ${site}`
+  }
+  return storeViewId
+}
+
+export { setCurrentFrontendSite, getCurrentFrontendSite, getCurrentFrontendDomain, getCurrentFrontendWebsiteId, mapFrontendWebsiteId, mapFrontendStoreViewId }

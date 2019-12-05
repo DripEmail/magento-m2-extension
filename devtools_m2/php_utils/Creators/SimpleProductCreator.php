@@ -52,6 +52,7 @@ class SimpleProductCreator
             "taxClassId" => 0, //tax class (0 - none, 1 - default, 2 - taxable, 4 - shipping)
             "price" => 11.22,
             "cost" => 22.33,
+            "image" => "my_image.png",
             "attributeSetId" => $defaultAttrSetId,
             "createdAt" => strtotime('now'),
             "updatedAt" => strtotime('now'),
@@ -61,6 +62,7 @@ class SimpleProductCreator
                 "is_in_stock" => 1,
                 "qty" => 999
             ),
+            "visibility" => \Magento\Catalog\Model\Product\Visibility::VISIBILITY_BOTH, //catalog and search visibility
         );
         $fullData = array_replace_recursive($defaults, $this->productData);
 
@@ -69,8 +71,6 @@ class SimpleProductCreator
             $methodName = "set".ucfirst($key);
             $product->$methodName($value);
         }
-
-        $product->setVisibility(\Magento\Catalog\Model\Product\Visibility::VISIBILITY_BOTH); //catalog and search visibility
 
         return $product;
     }
