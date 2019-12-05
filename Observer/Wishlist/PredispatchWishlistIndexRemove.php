@@ -54,12 +54,15 @@ class PredispatchWishlistIndexRemove extends \Drip\Connect\Observer\Base
     {
         $wishlistItemId = filter_var($this->request->getParam('item'), FILTER_SANITIZE_NUMBER_INT);
         if ($wishlistItemId) {
+            $config = $this->configFactory->createForCurrentScope();
+
             $wishlistItem = $this->wishlistItemFactory->create()->load($wishlistItemId);
             $product = $this->catalogProductFactory->create()->load($wishlistItem->getProductId());
             $customer = $this->customerSession->getCustomer();
 
             $this->wishlistHelper->doWishlistEvent(
                 \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_WISHLIST_REMOVE_PRODUCT,
+                $config,
                 $customer,
                 $product
             );

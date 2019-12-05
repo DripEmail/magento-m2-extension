@@ -41,8 +41,11 @@ class AddProduct extends \Drip\Connect\Observer\Base
         $customer = $this->customerSession->getCustomer();
         $product = $observer->getProduct();
 
+        $config = $this->configFactory->createForCurrentScope();
+
         $this->wishlistHelper->doWishlistEvent(
             \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_WISHLIST_ADD_PRODUCT,
+            $config,
             $customer,
             $product
         );
