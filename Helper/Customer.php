@@ -198,13 +198,11 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      * new customer for guest checkout
      *
      * @param \Magento\Sales\Model\Order $order
+     * @param \Drip\Connect\Model\Configuration $config
      */
-    public function accountActionsForGuestCheckout($order)
+    public function accountActionsForGuestCheckout(\Magento\Sales\Model\Order $order, \Drip\Connect\Model\Configuration $config)
     {
         $customerData = $this->prepareCustomerDataForGuestCheckout($order);
-
-        // TODO: Inject config into this class.
-        $config = $configFactory->createForCurrentScope();
 
         $this->apiCallsCreateUpdateSubscriberFactory->create([
             'config' => $config,
@@ -339,9 +337,10 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**
      * @param \Magento\Newsletter\Model\Subscriber $subscriber
+     * @param \Drip\Connect\Model\Configuration $config
      * @param bool $forceStatus
      */
-    public function proceedGuestSubscriberNew($subscriber, $forceStatus = false)
+    public function proceedGuestSubscriberNew(\Magento\Newsletter\Model\Subscriber $subscriber, \Drip\Connect\Model\Configuration $config, $forceStatus = false)
     {
         $email = $subscriber->getSubscriberEmail();
         if (!$this->connectHelper->isEmailValid($email)) {
@@ -349,9 +348,6 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
             return;
         }
         $data = $this->prepareGuestSubscriberData($subscriber, false, $forceStatus);
-
-        // TODO: Inject config into this class.
-        $config = $configFactory->createForCurrentScope();
 
         $this->apiCallsCreateUpdateSubscriberFactory->create([
             'config' => $config,
@@ -371,13 +367,11 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      * drip actions for customer log in
      *
      * @param \Magento\Customer\Model\Customer $customer
+     * @param \Drip\Connect\Model\Configuration $config
      */
-    public function proceedLogin($customer)
+    public function proceedLogin(\Magento\Customer\Model\Customer $customer, \Drip\Connect\Model\Configuration $config)
     {
         $this->quoteHelper->checkForEmptyQuote($customer);
-
-        // TODO: Inject config into this class.
-        $config = $configFactory->createForCurrentScope();
 
         $this->connectApiCallsHelperRecordAnEventFactory->create([
             'config' => $config,
@@ -392,13 +386,11 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      * drip actions for subscriber save
      *
      * @param \Magento\Newsletter\Model\Subscriber $subscriber
+     * @param \Drip\Connect\Model\Configuration $config
      */
-    public function proceedSubscriberSave($subscriber)
+    public function proceedSubscriberSave(\Magento\Newsletter\Model\Subscriber $subscriber, \Drip\Connect\Model\Configuration $config)
     {
         $data = $this->prepareGuestSubscriberData($subscriber);
-
-        // TODO: Inject config into this class.
-        $config = $configFactory->createForCurrentScope();
 
         $this->apiCallsCreateUpdateSubscriberFactory->create([
             'config' => $config,
@@ -410,15 +402,13 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      * drip actions for subscriber delete
      *
      * @param \Magento\Newsletter\Model\Subscriber $subscriber
+     * @param \Drip\Connect\Model\Configuration $config
      */
-    public function proceedSubscriberDelete($subscriber)
+    public function proceedSubscriberDelete(\Magento\Newsletter\Model\Subscriber $subscriber, \Drip\Connect\Model\Configuration $config)
     {
         $data = $this->prepareGuestSubscriberData($subscriber);
         $data['custom_fields']['accepts_marketing'] = 'no';
         $data['status'] = 'unsubscribed';
-
-        // TODO: Inject config into this class.
-        $config = $configFactory->createForCurrentScope();
 
         $this->apiCallsCreateUpdateSubscriberFactory->create([
             'config' => $config,
@@ -430,12 +420,10 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      * drip actions for customer account delete
      *
      * @param \Magento\Customer\Model\Customer $customer
+     * @param \Drip\Connect\Model\Configuration $config
      */
-    public function proceedAccountDelete($customer)
+    public function proceedAccountDelete(\Magento\Customer\Model\Customer $customer, \Drip\Connect\Model\Configuration $config)
     {
-        // TODO: Inject config into this class.
-        $config = $configFactory->createForCurrentScope();
-
         $this->connectApiCallsHelperRecordAnEventFactory->create([
             'config' => $config,
             'data' => [
@@ -449,15 +437,12 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      * batch customer update
      *
      * @param array $batch
-     * @param int $storeId
+     * @param \Drip\Connect\Model\Configuration $config
      *
      * @return \Drip\Connect\Model\Restapi\Response\ResponseAbstract
      */
-    public function proceedAccountBatch($batch, $storeId)
+    public function proceedAccountBatch(array $batch, \Drip\Connect\Model\Configuration $config)
     {
-        // TODO: Inject config into this class.
-        $config = $this->configFactory->create($storeId);
-
         return $this->connectApiCallsHelperBatchesSubscribersFactory->create([
             'config' => $config,
             'batch' => $batch,

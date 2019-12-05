@@ -65,7 +65,7 @@ class AfterSave extends \Drip\Connect\Observer\Base
                 && ! $this->customerHelper->isCustomerExists($order->getCustomerEmail())
                 && ! $this->customerHelper->isSubscriberExists($order->getCustomerEmail())
             ) {
-                $this->customerHelper->accountActionsForGuestCheckout($order);
+                $this->customerHelper->accountActionsForGuestCheckout($order, $config);
             }
             // new order
             $this->orderHelper->proceedOrderNew($order, $config);

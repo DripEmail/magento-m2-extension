@@ -191,7 +191,7 @@ class Customers
             }
 
             if (count($batchCustomer)) {
-                $response = $this->customerHelper->proceedAccountBatch($batchCustomer, $config->getStoreId());
+                $response = $this->customerHelper->proceedAccountBatch($batchCustomer, $config);
 
                 if (empty($response) || $response->getResponseCode() != 201) { // drip success code for this action
                     $result = false;
@@ -263,7 +263,7 @@ class Customers
             }
 
             if (count($batchCustomer)) {
-                $response = $this->customerHelper->proceedAccountBatch($batchCustomer, $config->getStoreId());
+                $response = $this->customerHelper->proceedAccountBatch($batchCustomer, $config);
 
                 if (empty($response) || $response->getResponseCode() != 201) { // drip success code for this action
                     $result = false;

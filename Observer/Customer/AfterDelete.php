@@ -21,7 +21,8 @@ class AfterDelete extends \Drip\Connect\Observer\Base
     public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)
     {
         $customer = $observer->getCustomer();
+        $config = $this->configFactory->createForCurrentScope();
 
-        $this->connectCustomerHelper->proceedAccountDelete($customer);
+        $this->connectCustomerHelper->proceedAccountDelete($customer, $config);
     }
 }

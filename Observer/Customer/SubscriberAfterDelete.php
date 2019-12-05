@@ -21,7 +21,8 @@ class SubscriberAfterDelete extends \Drip\Connect\Observer\Base
     public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)
     {
         $subscriber = $observer->getSubscriber();
+        $config = $this->configFactory->createForCurrentScope();
 
-        $this->connectCustomerHelper->proceedSubscriberDelete($subscriber);
+        $this->connectCustomerHelper->proceedSubscriberDelete($subscriber, $config);
     }
 }

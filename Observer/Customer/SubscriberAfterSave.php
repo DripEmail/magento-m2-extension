@@ -31,11 +31,13 @@ class SubscriberAfterSave extends \Drip\Connect\Observer\Base
             'newsletter_subscriber_massUnsubscribe'
         ];
 
+        $config = $this->configFactory->createForCurrentScope();
+
         // unlike to M1 treate all massactions here (from the both newsletters and customers grids)
         // but still avoid to run it on other customer changes
         if (in_array($route . '_' . $controller . '_' . $action, $allowedActions)) {
             $subscriber = $observer->getSubscriber();
-            $this->connectCustomerHelper->proceedSubscriberSave($subscriber);
+            $this->connectCustomerHelper->proceedSubscriberSave($subscriber, $config);
         }
     }
 }

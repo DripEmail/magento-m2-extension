@@ -47,6 +47,8 @@ class GuestSubscriberCreated extends \Drip\Connect\Observer\Base
             return;
         }
 
+        $config = $this->configFactory->createForCurrentScope();
+
         $email = $this->request->getParam('email');
 
         $subscriber = $this->subscriberFactory->create()->loadByEmail($email);
@@ -56,6 +58,6 @@ class GuestSubscriberCreated extends \Drip\Connect\Observer\Base
         // the user already exists in Drip and is subscribed there, we don't
         // want to unsubscribe them, because presumably they have opted in
         // elsewhere.
-        $this->customerHelper->proceedGuestSubscriberNew($subscriber, $newSubscriberSubscribed);
+        $this->customerHelper->proceedGuestSubscriberNew($subscriber, $config, $newSubscriberSubscribed);
     }
 }
