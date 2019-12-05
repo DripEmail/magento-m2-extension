@@ -82,14 +82,12 @@ class Product extends \Magento\Framework\App\Helper\AbstractHelper
      * drip actions when send product to drip 1st time
      *
      * @param \Magento\Catalog\Model\Product $product
+     * @param \Drip\Connect\Model\Configuration $config
      */
-    public function proceedProductNew($product)
+    public function proceedProductNew(\Magento\Catalog\Model\Product $product, \Drip\Connect\Model\Configuration $config)
     {
         $data = $this->prepareData($product);
         $data['action'] = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateProduct::PRODUCT_NEW;
-
-        // TODO: Inject config into this class.
-        $config = $configFactory->createForCurrentScope();
 
         $this->connectApiCallsHelperCreateUpdateProductFactory->create([
             'config' => $config,
@@ -101,14 +99,12 @@ class Product extends \Magento\Framework\App\Helper\AbstractHelper
      * drip actions when product gets changed
      *
      * @param \Magento\Catalog\Model\Product $product
+     * @param \Drip\Connect\Model\Configuration $config
      */
-    public function proceedProduct($product)
+    public function proceedProduct(\Magento\Catalog\Model\Product $product, \Drip\Connect\Model\Configuration $config)
     {
         $data = $this->prepareData($product);
         $data['action'] = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateProduct::PRODUCT_CHANGED;
-
-        // TODO: Inject config into this class.
-        $config = $configFactory->createForCurrentScope();
 
         $this->connectApiCallsHelperCreateUpdateProductFactory->create([
             'config' => $config,
@@ -120,16 +116,14 @@ class Product extends \Magento\Framework\App\Helper\AbstractHelper
      * drip actions when product is deleted
      *
      * @param \Magento\Catalog\Model\Product $product
+     * @param \Drip\Connect\Model\Configuration $config
      */
-    public function proceedProductDelete($product)
+    public function proceedProductDelete(\Magento\Catalog\Model\Product $product, \Drip\Connect\Model\Configuration $config)
     {
         $data = $this->registry->registry(\Drip\Connect\Helper\Product::REGISTRY_KEY_OLD_DATA);
         if ($product->getId() == $data['product_id']) {
             $data['action'] = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateProduct::PRODUCT_DELETED;
             unset($data['product_url']);
-
-            // TODO: Inject config into this class.
-            $config = $configFactory->createForCurrentScope();
 
             $this->connectApiCallsHelperCreateUpdateProductFactory->create([
                 'config' => $config,

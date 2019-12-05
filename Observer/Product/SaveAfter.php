@@ -50,6 +50,8 @@ class SaveAfter extends \Drip\Connect\Observer\Base
             return;
         }
 
+        $config = $this->configFactory->createForCurrentScope();
+
         $product = $this->productRepository->getById(
             $product->getId(),
             false,
@@ -58,10 +60,10 @@ class SaveAfter extends \Drip\Connect\Observer\Base
         );
 
         if ($this->registry->registry(\Drip\Connect\Helper\Product::REGISTRY_KEY_IS_NEW)) {
-            $this->productHelper->proceedProductNew($product);
+            $this->productHelper->proceedProductNew($product, $config);
         } else {
             if ($this->isProductChanged($product)) {
-                $this->productHelper->proceedProduct($product);
+                $this->productHelper->proceedProduct($product, $config);
             }
         }
         $this->registry->unregister(\Drip\Connect\Helper\Product::REGISTRY_KEY_IS_NEW);
