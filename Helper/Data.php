@@ -94,25 +94,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
-     * check if module active
-     *
-     * @return bool
-     */
-    public function isModuleActive()
-    {
-        // TODO: This whole method exists to indeterminately figure out scope.
-        //       We need to nuke this in favor of always knowing what scope we
-        //       are dealing with.
-        if (!empty($this->request->getParam('store'))) {
-            $config = $this->configFactory->createForCurrentStoreParam();
-        } else {
-            $config = $this->configFactory->createForCurrentScope();
-        }
-
-        return $config->isEnabled();
-    }
-
-    /**
      * get store id which is currently being edited
      *
      * @return int

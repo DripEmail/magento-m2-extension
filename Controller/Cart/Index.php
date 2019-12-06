@@ -4,6 +4,9 @@ namespace Drip\Connect\Controller\Cart;
 
 class Index extends \Magento\Framework\App\Action\Action
 {
+    /** @var \Drip\Connect\Model\ConfigurationFactory */
+    protected $configFactory;
+
     /** @var \Drip\Connect\Helper\Data */
     protected $connectHelper;
 
@@ -26,6 +29,7 @@ class Index extends \Magento\Framework\App\Action\Action
      * constructor
      */
     public function __construct(
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Magento\Framework\App\Action\Context $context,
         \Magento\Customer\Model\Session $customerSession,
         \Magento\Store\Api\StoreRepositoryInterface $storeRepository,
@@ -34,6 +38,7 @@ class Index extends \Magento\Framework\App\Action\Action
         \Drip\Connect\Helper\Data $connectHelper
     ) {
         parent::__construct($context);
+        $this->configFactory = $configFactory;
         $this->connectHelper = $connectHelper;
         $this->quoteHelper = $quoteHelper;
         $this->customerSession = $customerSession;
@@ -47,7 +52,9 @@ class Index extends \Magento\Framework\App\Action\Action
         /** @var \Magento\Framework\Controller\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultFactory->create(\Magento\Framework\Controller\ResultFactory::TYPE_REDIRECT);
 
-        if (! $this->connectHelper->isModuleActive()) {
+        $config = $this->configFactory->createForCurrentScope();
+
+        if (!$config->isEnabled()) {
             $resultRedirect->setPath('/');
             return $resultRedirect;
         }
