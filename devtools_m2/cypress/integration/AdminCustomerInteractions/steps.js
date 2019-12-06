@@ -78,8 +78,8 @@ When('An admin subscribes to the general newsletter', function() {
   cy.log('Resetting mocks')
   cy.wrap(Mockclient.reset())
 
-  cy.contains('testuser@example.com')
-  cy.get('.data-grid-actions-cell').contains('Edit').click()
+  cy.contains('testuser@example.com', {timeout: 30000})
+  cy.get('.data-grid-actions-cell').contains('Edit', {timeout: 30000}).click()
   cy.get('.admin__page-nav').contains('Newsletter').click()
   cy.get('input[name="subscription"]').check()
   cy.contains('Save Customer').click()

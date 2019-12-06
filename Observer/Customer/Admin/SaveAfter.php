@@ -102,7 +102,7 @@ class SaveAfter extends \Drip\Connect\Observer\Customer\Admin\Base
         $oldData = $this->registry->registry(self::REGISTRY_KEY_CUSTOMER_OLD_DATA);
         // TODO: Refactor away stringly typed boolean.
         $oldStatus = $oldData['custom_fields']['accepts_marketing'] == 'yes';
-        $subscriber = $this->subscriberFactory->create()->loadByEmail($customer->getEmail());
+        $subscriber = $this->subscriberFactory->create()->loadByCustomerId($customer->getId());
         $newStatus = $subscriber->isSubscribed();
         return $oldStatus !== $newStatus;
     }
