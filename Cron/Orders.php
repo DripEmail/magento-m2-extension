@@ -10,11 +10,14 @@ class Orders
     /** @var \Magento\Sales\Model\ResourceModel\Order\CollectionFactory */
     protected $salesResourceModelOrderCollectionFactory;
 
-    /** @var \Drip\Connect\Helper\Order */
-    protected $orderHelper;
+    /** @var \Drip\Connect\Model\Transformer\OrderFactory */
+    protected $orderTransformerFactory;
 
     /** @var \Drip\Connect\Model\ConfigurationFactory */
     protected $configFactory;
+
+    /** @var \Drip\Connect\Model\ApiCalls\Helper\Batches\OrdersFactory */
+    protected $connectApiCallsHelperBatchesOrdersFactory;
 
     /** @var \Drip\Connect\Helper\Data */
     protected $connectHelper;
@@ -30,17 +33,19 @@ class Orders
      */
     public function __construct(
         \Magento\Sales\Model\ResourceModel\Order\CollectionFactory $salesResourceModelOrderCollectionFactory,
-        \Drip\Connect\Helper\Order $orderHelper,
+        \Drip\Connect\Model\Transformer\OrderFactory $orderTransformerFactory,
         \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Drip\Connect\Logger\Logger $logger,
+        \Drip\Connect\Model\ApiCalls\Helper\Batches\OrdersFactory $connectApiCallsHelperBatchesOrdersFactory,
         \Drip\Connect\Helper\Data $connectHelper
     ) {
         $this->salesResourceModelOrderCollectionFactory = $salesResourceModelOrderCollectionFactory;
-        $this->orderHelper = $orderHelper;
+        $this->orderTransformerFactory = $orderTransformerFactory;
         $this->configFactory = $configFactory;
         $this->storeManager = $storeManager;
         $this->logger = $logger;
+        $this->connectApiCallsHelperBatchesOrdersFactory = $connectApiCallsHelperBatchesOrdersFactory;
         $this->connectHelper = $connectHelper;
     }
 
@@ -148,8 +153,13 @@ class Orders
 
             $batch = [];
             foreach ($collection as $order) {
-                if ($this->orderHelper->isCanBeSent($order)) {
-                    $data = $this->orderHelper->getOrderDataNew($order);
+                /** @var \Drip\Connect\Model\Transformer\Order */
+                $orderTransformer = $this->orderTransformerFactory->create([
+                    'order' => $order,
+                    'config' => $config,
+                ]);
+                if ($orderTransformer->isCanBeSent()) {
+                    $data = $orderTransformer->getOrderDataNew();
                     $data['occurred_at'] = $this->connectHelper->formatDate($order->getCreatedAt());
                     $batch[] = $data;
                 } else {
@@ -163,7 +173,10 @@ class Orders
             }
 
             if (count($batch)) {
-                $response = $this->orderHelper->proceedOrderBatch($batch, $config);
+                $response = $this->connectApiCallsHelperBatchesOrdersFactory->create([
+                    'config' => $config,
+                    'batch' => $batch,
+                ])->call();
 
                 if (empty($response) || $response->getResponseCode() != 202) { // drip success code for this action
                     $result = false;
