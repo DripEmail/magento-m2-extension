@@ -95,13 +95,12 @@ Given('I have configured a widget', function() {
 // Simple Product
 Given('I have configured a simple widget for {string}', function(site) {
   cy.createProduct({
-    "storeId": mapFrontendStoreViewId(site),
     "sku": "widg-1",
     "name": "Widget 1",
     "description": "This is really a widget. There are many like it, but this one is mine.",
     "shortDescription": "This is really a widget.",
     // This is to set the context for the product save, so that rewrites and such get generated correctly.
-    "storeId": mapFrontendWebsiteId(site), // TODO: Fix to use the right store ID.
+    "storeId": mapFrontendStoreViewId(site),
     "websiteIds": [mapFrontendWebsiteId(site)]
   })
 })
