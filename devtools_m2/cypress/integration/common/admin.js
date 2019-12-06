@@ -73,7 +73,7 @@ Given('I have configured Drip to be enabled for {string}', function(site) {
     cy.get('input[name="groups[api_settings][fields][api_key][inherit]"]').uncheck()
     cy.get('input[name="groups[api_settings][fields][url][inherit]"]').uncheck()
   }
-  cy.get('select[name="groups[module_settings][fields][is_enabled][value]"]').select('Yes')
+  cy.get('select[name="groups[module_settings][fields][is_enabled][value]"]').select('1')
   cy.get('input[name="groups[api_settings][fields][account_id][value]"]').type('123456')
   cy.get('input[name="groups[api_settings][fields][api_key][value]"]').type('abc123')
   cy.get('input[name="groups[api_settings][fields][url][value]"]').clear().type('http://mock:1080/v2/')
@@ -227,8 +227,19 @@ Given('I have configured a bundle widget', function() {
   })
 })
 
-Given('a customer exists', function() {
-  cy.createCustomer({})
+Given('a customer exists for website id {string}', function(websiteId) {
+  cy.createCustomer({
+    websiteId: websiteId,
+    storeId: websiteId,
+  })
+})
+
+Given('a different customer exists for website id {string}', function(websiteId) {
+  cy.createCustomer({
+    websiteId: websiteId,
+    storeId: websiteId,
+    email: "jd2@example.com",
+  })
 })
 
 When('I create an order', function() {
