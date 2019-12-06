@@ -23,26 +23,16 @@ class RecordAnEvent extends \Drip\Connect\Model\ApiCalls\Helper
     /** @var \Drip\Connect\Model\ApiCalls\Request\BaseFactory */
     protected $connectApiCallsRequestBaseFactory;
 
-    /** @var \Magento\Framework\App\ProductMetadataInterface */
-    protected $productMetadata;
-
-    /** @var \Magento\Framework\Module\ResourceInterface */
-    protected $moduleResource;
-
     public function __construct(
         \Drip\Connect\Model\ApiCalls\BaseFactory $connectApiCallsBaseFactory,
         \Drip\Connect\Model\ApiCalls\Request\BaseFactory $connectApiCallsRequestBaseFactory,
         \Drip\Connect\Helper\Data $connectHelper,
-        \Magento\Framework\Module\ResourceInterface $moduleResource,
-        \Magento\Framework\App\ProductMetadataInterface $productMetadata,
         \Drip\Connect\Model\ConfigurationFactory $configFactory,
         $data = []
     ) {
         $this->connectApiCallsBaseFactory = $connectApiCallsBaseFactory;
         $this->connectApiCallsRequestBaseFactory = $connectApiCallsRequestBaseFactory;
         $this->connectHelper = $connectHelper;
-        $this->moduleResource = $moduleResource;
-        $this->productMetadata = $productMetadata;
 
         // TODO: Inject config into this class.
         $config = $configFactory->createForCurrentScope();
@@ -55,8 +45,7 @@ class RecordAnEvent extends \Drip\Connect\Model\ApiCalls\Helper
         if (!empty($data) && is_array($data)) {
             $data['properties']['source'] = 'magento';
             $data['properties']['magento_source'] = $this->connectHelper->getArea();
-            $data['properties']['version'] = 'Magento ' . $this->productMetadata->getVersion() . ', '
-                                           . 'Drip Extension ' . $this->moduleResource->getDbVersion('Drip_Connect');
+            $data['properties']['version'] = $this->connectHelper->getVersion();
         }
 
         $eventsInfo = [
