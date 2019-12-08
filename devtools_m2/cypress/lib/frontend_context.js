@@ -39,7 +39,7 @@ function mapFrontendStoreViewId(site) {
       storeViewId = 1
       break
     case 'site1':
-      storeViewId = 300
+      storeViewId = 2
       break
     default:
       throw `Unexpected site name ${site}`

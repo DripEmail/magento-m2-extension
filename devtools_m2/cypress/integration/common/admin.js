@@ -100,8 +100,17 @@ Given('I have configured a simple widget for {string}', function(site) {
     "name": "Widget 1",
     "description": "This is really a widget. There are many like it, but this one is mine.",
     "shortDescription": "This is really a widget.",
-    // This is to set the context for the product save, so that rewrites and such get generated correctly.
-    "storeId": mapFrontendWebsiteId(site), // TODO: Fix to use the right store ID.
+    "websiteIds": [mapFrontendWebsiteId(site)]
+  })
+})
+
+Given('I have configured a different simple widget for {string}', function(site) {
+  cy.createProduct({
+    "storeId": mapFrontendStoreViewId(site),
+    "sku": "widg-2",
+    "name": "Widget 2",
+    "description": "This is really a widget. There are many like it, but this one is mine.",
+    "shortDescription": "This is really a widget.",
     "websiteIds": [mapFrontendWebsiteId(site)]
   })
 })
@@ -239,6 +248,7 @@ Given('a different customer exists for website id {string}', function(websiteId)
     websiteId: websiteId,
     storeId: websiteId,
     email: "jd2@example.com",
+    firstname: "John2"
   })
 })
 
@@ -252,11 +262,8 @@ When('I create an order', function() {
   // Add product to order
   cy.contains('Add Products').click()
   cy.contains('Widget 1').click()
-  cy.get('#product_composite_configure').within(function() {
-    cy.get('select[name="super_attribute[136]"]').select('XL')
-  })
-  cy.contains('OK').click()
-  cy.contains('Add Selected Product(s) to Order').click()
+
+  cy.contains('Add Selected Product(s) to Order').click({ force: true })
 
   // Fill out shipping/billing addresses
   cy.get('input[name="order[billing_address][firstname]"]').type('John')
@@ -277,7 +284,67 @@ When('I create an order', function() {
   cy.get('input[name="order[shipping_method]"]').click()
   cy.wait('@loadShipping')
 
-  cy.contains('Submit Order').click()
+  cy.contains('Submit Order').click({ force: true })
 
   cy.contains('Order # 000000001')
+})
+
+When('I create an order for {string}', function(site) {
+  cy.visit("http://main.magento.localhost:3006/admin_123/admin/dashboard/")
+  cy.contains('Orders').click({force: true})
+  cy.contains('Create New Order').click()
+
+  let storeSelector
+  let productName
+  let customerName
+  let orderNumber
+
+  switch (site) {
+    case 'site1':
+      storeSelector = '#store_2'
+      productName = 'Widget 2'
+      customerName = 'John2 Doe'
+      orderNumber = '2000000001'
+      break;
+    default:
+      storeSelector = '#store_1'
+      productName = 'Widget 1'
+      customerName = 'John Doe'
+      orderNumber = '000000001'
+  }
+
+  // Select customer
+  cy.contains(customerName).click()
+
+  // Select store
+  cy.get(storeSelector).check()
+
+  // Add product to order
+  cy.contains('Add Products').click()
+  cy.contains(productName).click()
+
+  cy.contains('Add Selected Product(s) to Order').click({ force: true })
+
+  // Fill out shipping/billing addresses
+  cy.get('input[name="order[billing_address][firstname]"]').type('John')
+  cy.get('input[name="order[billing_address][lastname]"]').type('Doe')
+  cy.get('input[name="order[billing_address][street][0]"]').type('123 Main St.')
+  cy.get('input[name="order[billing_address][city]"]').type('Centerville')
+  cy.get('select[name="order[billing_address][region_id]"]').select('Minnesota')
+  cy.get('input[name="order[billing_address][postcode]"]').type('12345')
+  cy.get('input[name="order[billing_address][telephone]"]').type('999-999-9999')
+
+  cy.route('POST', '/admin_123/sales/order_create/loadBlock/block/shipping_method,totals,billing_method?isAjax=true').as('loadShipping')
+  cy.route('POST', '/admin_123/sales/order_create/loadBlock/block/shipping_method,totals?isAjax=true').as('loadShippingData')
+  // Why the second click is required, I haven't a clue... I tried a lot of ways to make this work, and this was the only one that did.
+  cy.get('#order-shipping-method-summary a').click()
+  cy.get('#order-shipping-method-summary a').click()
+  cy.wait('@loadShippingData')
+
+  cy.get('input[name="order[shipping_method]"]').click()
+  cy.wait('@loadShipping')
+
+  cy.contains('Submit Order').click({ force: true })
+
+  cy.contains('Order # ' + orderNumber)
 })
