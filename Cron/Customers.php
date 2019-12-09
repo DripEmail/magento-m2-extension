@@ -191,7 +191,7 @@ class Customers
             }
 
             if (count($batchCustomer)) {
-                $response = $this->customerHelper->proceedAccountBatch($batchCustomer, $config->getStoreId());
+                $response = $this->customerHelper->proceedAccountBatch($batchCustomer, $config);
 
                 if (empty($response) || $response->getResponseCode() != 201) { // drip success code for this action
                     $result = false;
@@ -199,10 +199,8 @@ class Customers
                 }
 
                 $response = $this->connectApiCallsHelperBatchesEventsFactory->create([
-                    'data' => [
-                        'batch' => $batchEvents,
-                        'store_id' => $config->getStoreId(),
-                    ]
+                    'config' => $config,
+                    'batch' => $batchEvents,
                 ])->call();
 
                 if (empty($response) || $response->getResponseCode() != 201) { // drip success code for this action
@@ -265,7 +263,7 @@ class Customers
             }
 
             if (count($batchCustomer)) {
-                $response = $this->customerHelper->proceedAccountBatch($batchCustomer, $config->getStoreId());
+                $response = $this->customerHelper->proceedAccountBatch($batchCustomer, $config);
 
                 if (empty($response) || $response->getResponseCode() != 201) { // drip success code for this action
                     $result = false;

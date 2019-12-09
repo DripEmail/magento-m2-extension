@@ -163,7 +163,7 @@ class Orders
             }
 
             if (count($batch)) {
-                $response = $this->orderHelper->proceedOrderBatch($batch, $config->getStoreId());
+                $response = $this->orderHelper->proceedOrderBatch($batch, $config);
 
                 if (empty($response) || $response->getResponseCode() != 202) { // drip success code for this action
                     $result = false;

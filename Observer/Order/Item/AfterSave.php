@@ -13,13 +13,13 @@ class AfterSave extends \Drip\Connect\Observer\Base
      * constructor
      */
     public function __construct(
-        \Drip\Connect\Helper\Data $connectHelper,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Drip\Connect\Logger\Logger $logger,
         \Drip\Connect\Helper\Order $orderHelper,
         \Magento\Sales\Api\Data\OrderInterface $order,
         \Magento\Framework\Registry $registry
     ) {
-        parent::__construct($connectHelper, $logger);
+        parent::__construct($configFactory, $logger);
         $this->registry = $registry;
         $this->orderHelper = $orderHelper;
         $this->order = $order;
@@ -51,7 +51,9 @@ class AfterSave extends \Drip\Connect\Observer\Base
         // after save last item of all order items
         if ($itemsCount == self::$counter) {
             if ($this->isCompleteSomeItems($order)) {
-                $this->orderHelper->proceedOrderCompleted($order);
+                $config = $this->configFactory->create($order->getStoreId());
+
+                $this->orderHelper->proceedOrderCompleted($order, $config);
             }
         }
     }

@@ -13,10 +13,10 @@ class DeleteAfter extends \Drip\Connect\Observer\Base
     public function __construct(
         \Drip\Connect\Helper\Product $productHelper,
         \Drip\Connect\Logger\Logger $logger,
-        \Drip\Connect\Helper\Data $connectHelper
+        \Drip\Connect\Model\ConfigurationFactory $configFactory
     ) {
         $this->productHelper = $productHelper;
-        parent::__construct($connectHelper, $logger);
+        parent::__construct($configFactory, $logger);
     }
 
     /**
@@ -30,16 +30,8 @@ class DeleteAfter extends \Drip\Connect\Observer\Base
             return;
         }
 
-        $this->proceedProductDelete($product);
-    }
+        $config = $this->configFactory->createForCurrentScope();
 
-    /**
-     * drip actions for product create
-     *
-     * @param \Magento\Catalog\Model\Product $product
-     */
-    protected function proceedProductDelete($product)
-    {
-        $this->productHelper->proceedProductDelete($product);
+        $this->productHelper->proceedProductDelete($product, $config);
     }
 }

@@ -20,7 +20,8 @@ abstract class Button extends \Magento\Config\Block\System\Config\Form\Field
         array $data = []
     ) {
         parent::__construct($context, $data);
-        $this->config = $configFactory->createForCurrentStoreParam();
+        // We coerce null to 0 in order to handle the default scope when setting parameters.
+        $this->config = $configFactory->create((int) $this->_request->getParam('store'));
         $this->connectHelper = $connectHelper;
     }
 

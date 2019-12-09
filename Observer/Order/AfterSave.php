@@ -17,13 +17,13 @@ class AfterSave extends \Drip\Connect\Observer\Base
      * constructor
      */
     public function __construct(
-        \Drip\Connect\Helper\Data $connectHelper,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Drip\Connect\Helper\Order $orderHelper,
         \Drip\Connect\Logger\Logger $logger,
         \Drip\Connect\Helper\Customer $customerHelper,
         \Magento\Framework\Registry $registry
     ) {
-        parent::__construct($connectHelper, $logger);
+        parent::__construct($configFactory, $logger);
         $this->registry = $registry;
         $this->orderHelper = $orderHelper;
         $this->customerHelper = $customerHelper;
@@ -47,7 +47,7 @@ class AfterSave extends \Drip\Connect\Observer\Base
      *
      * @param \Magento\Sales\Model\Order $order
      */
-    protected function proceedOrder($order)
+    protected function proceedOrder(\Magento\Sales\Model\Order $order)
     {
         if ($this->isSameState($order)) {
             return;
@@ -57,16 +57,18 @@ class AfterSave extends \Drip\Connect\Observer\Base
             return;
         }
 
+        $config = $this->configFactory->create($order->getStoreId());
+
         if ($this->isOrderNew($order)) {
             //if guest checkout, create subscriber record
             if ($order->getCustomerIsGuest()
                 && ! $this->customerHelper->isCustomerExists($order->getCustomerEmail())
                 && ! $this->customerHelper->isSubscriberExists($order->getCustomerEmail())
             ) {
-                $this->customerHelper->accountActionsForGuestCheckout($order);
+                $this->customerHelper->accountActionsForGuestCheckout($order, $config);
             }
             // new order
-            $this->orderHelper->proceedOrderNew($order);
+            $this->orderHelper->proceedOrderNew($order, $config);
 
             return;
         }
@@ -78,7 +80,7 @@ class AfterSave extends \Drip\Connect\Observer\Base
 
             case \Magento\Sales\Model\Order::STATE_CANCELED:
                 // cancel order
-                $this->orderHelper->proceedOrderCancel($order);
+                $this->orderHelper->proceedOrderCancel($order, $config);
                 break;
 
             case \Magento\Sales\Model\Order::STATE_CLOSED:
@@ -87,7 +89,7 @@ class AfterSave extends \Drip\Connect\Observer\Base
 
             default:
                 // other states
-                $this->orderHelper->proceedOrderOther($order);
+                $this->orderHelper->proceedOrderOther($order, $config);
         }
     }
 

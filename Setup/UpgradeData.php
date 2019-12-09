@@ -17,11 +17,16 @@ class UpgradeData implements \Magento\Framework\Setup\UpgradeDataInterface
     /** @var \Magento\Config\Model\ResourceModel\Config */
     protected $resourceConfig;
 
+    /** @var \Drip\Connect\Model\ConfigurationFactory */
+    protected $configFactory;
+
     public function __construct(
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Magento\Config\Model\ResourceModel\Config $resourceConfig,
         \Magento\Customer\Setup\CustomerSetupFactory $customerSetupFactory,
         \Magento\Eav\Model\Entity\Attribute\SetFactory $attributeSetFactory
     ) {
+        $this->configFactory = $configFactory;
         $this->resourceConfig = $resourceConfig;
         $this->customerSetupFactory = $customerSetupFactory;
         $this->attributeSetFactory = $attributeSetFactory;
@@ -117,11 +122,6 @@ class UpgradeData implements \Magento\Framework\Setup\UpgradeDataInterface
      */
     protected function changeTimeout()
     {
-        $this->resourceConfig->saveConfig(
-            'dripconnect_general/api_settings/timeout',
-            30000,
-            'default',
-            0
-        );
+        $this->configFactory->createForGlobalScope()->setTimeout(30000);
     }
 }

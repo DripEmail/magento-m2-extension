@@ -11,12 +11,12 @@ class BeforeSave extends \Drip\Connect\Observer\Base
      * constructor
      */
     public function __construct(
-        \Drip\Connect\Helper\Data $connectHelper,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Drip\Connect\Logger\Logger $logger,
         \Drip\Connect\Helper\Order $orderHelper,
         \Magento\Framework\Registry $registry
     ) {
-        parent::__construct($connectHelper, $logger);
+        parent::__construct($configFactory, $logger);
         $this->registry = $registry;
         $this->orderHelper = $orderHelper;
     }

@@ -1,6 +1,6 @@
 import { Given, When, Then } from "cypress-cucumber-preprocessor/steps"
 import { mockServerClient } from "mockserver-client"
-import { getCurrentFrontendDomain, getCurrentFrontendWebsiteId, getCurrentFrontendSite } from "../../lib/frontend_context"
+import { getCurrentFrontendDomain, getCurrentFrontendStoreViewId, getCurrentFrontendSite } from "../../lib/frontend_context"
 
 const Mockclient = mockServerClient("localhost", 1080);
 
@@ -323,16 +323,16 @@ When('I check out', function() {
 })
 
 function basicOrderBodyAssertions(body) {
-  let websiteId = getCurrentFrontendWebsiteId()
-  if (websiteId == 1) {
-    websiteId = ''
+  let storeViewId = getCurrentFrontendStoreViewId()
+  if (storeViewId == 1) {
+    storeViewId = ''
   }
 
   expect(body.currency).to.eq('USD')
   expect(body.magento_source).to.eq('Storefront')
   expect(body.occurred_at).to.match(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z/)
-  expect(body.order_id).to.eq(`${websiteId}000000001`)
-  expect(body.order_public_id).to.eq(`${websiteId}000000001`)
+  expect(body.order_id).to.eq(`${storeViewId}000000001`)
+  expect(body.order_public_id).to.eq(`${storeViewId}000000001`)
   expect(body.provider).to.eq('magento')
   expect(body.total_discounts).to.eq(0)
   expect(body.total_taxes).to.eq(0)

@@ -5,11 +5,6 @@ namespace Drip\Connect\Observer\Wishlist;
 class AddProduct extends \Drip\Connect\Observer\Base
 {
     /**
-     * @var \Drip\Connect\Helper\Data
-     */
-    protected $connectHelper;
-
-    /**
      * @var \Magento\Customer\Model\Session
      */
     protected $customerSession;
@@ -25,13 +20,13 @@ class AddProduct extends \Drip\Connect\Observer\Base
     protected $wishlistHelper;
 
     public function __construct(
-        \Drip\Connect\Helper\Data $connectHelper,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Magento\Customer\Model\Session $customerSession,
         \Magento\Framework\App\Request\Http $request,
         \Drip\Connect\Logger\Logger $logger,
         \Drip\Connect\Helper\Wishlist $wishlistHelper
     ) {
-        parent::__construct($connectHelper, $logger);
+        parent::__construct($configFactory, $logger);
         $this->customerSession = $customerSession;
         $this->request = $request;
         $this->wishlistHelper = $wishlistHelper;
@@ -46,8 +41,11 @@ class AddProduct extends \Drip\Connect\Observer\Base
         $customer = $this->customerSession->getCustomer();
         $product = $observer->getProduct();
 
+        $config = $this->configFactory->createForCurrentScope();
+
         $this->wishlistHelper->doWishlistEvent(
             \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_WISHLIST_ADD_PRODUCT,
+            $config,
             $customer,
             $product
         );

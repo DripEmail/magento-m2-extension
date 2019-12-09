@@ -14,17 +14,17 @@ abstract class Base implements \Magento\Framework\Event\ObserverInterface
     const REGISTRY_KEY_SUBSCRIBER_PREV_STATE = 'oldsubscriptionstatus';
     const REGISTRY_KEY_SUBSCRIBER_SUBSCRIBE_INTENT = 'userwantstosubscribe';
 
-    /** @var \Drip\Connect\Helper\Data */
-    protected $connectHelper;
+    /** @var \Drip\Connect\Model\ConfigurationFactory */
+    protected $configFactory;
 
     /** @var \Drip\Connect\Logger\Logger */
     protected $logger;
 
     public function __construct(
-        \Drip\Connect\Helper\Data $connectHelper,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Drip\Connect\Logger\Logger $logger
     ) {
-        $this->connectHelper = $connectHelper;
+        $this->configFactory = $configFactory;
         $this->logger = $logger;
     }
 
@@ -32,7 +32,7 @@ abstract class Base implements \Magento\Framework\Event\ObserverInterface
 
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
-        if (!$this->connectHelper->isModuleActive()) {
+        if (!$this->isActive($observer)) {
             return;
         }
 
@@ -45,5 +45,17 @@ abstract class Base implements \Magento\Framework\Event\ObserverInterface
             // We should never blow up a customer's site due to bugs in our code.
             $this->logger->critical($e);
         }
+    }
+
+    /**
+     * Override when you have a more specific concept of active than just the
+     * current scope.
+     *
+     * @param \Magento\Framework\Event\Observer $observer
+     * @return bool
+     */
+    protected function isActive(\Magento\Framework\Event\Observer $observer)
+    {
+        return $this->configFactory->createForCurrentScope()->isEnabled();
     }
 }
