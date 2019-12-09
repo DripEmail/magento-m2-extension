@@ -5,7 +5,7 @@ Feature: Admin Order Interactions
   Scenario: An admin creates an order
     Given I am logged into the admin interface
       And I have configured Drip to be enabled for 'default'
-      And a customer exists for website id '1'
+      And a customer exists for website 'main'
       And I have configured a simple widget for 'main'
     When I create an order
     Then an order event is sent to Drip

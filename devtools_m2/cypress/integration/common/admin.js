@@ -301,16 +301,20 @@ When('I create an order for {string}', function(site) {
 
   switch (site) {
     case 'site1':
-      storeSelector = '#store_2'
+      storeSelector = '#store_300'
       productName = 'Widget 2'
       customerName = 'John2 Doe'
-      orderNumber = '2000000001'
+      orderNumber = '300000000001'
       break;
-    default:
+    case 'main':
       storeSelector = '#store_1'
       productName = 'Widget 1'
       customerName = 'John Doe'
       orderNumber = '000000001'
+      break;
+    default:
+      throw 'Unsupported site'
+
   }
 
   // Select customer
