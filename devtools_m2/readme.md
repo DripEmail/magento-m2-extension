@@ -17,7 +17,7 @@ $ npm install
 127.0.0.1 main.magento.localhost
 127.0.0.1 site1.magento.localhost
 ```
- - Spin up Docker and Magento with `setup.sh` in the devtools_m1 directory
+ - Spin up Docker and Magento with `setup.sh` in the devtools_m2 directory
  ```aidl
 $ DRIP_COMPOSE_ENV=test ./setup.sh
 ```

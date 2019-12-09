@@ -14,24 +14,19 @@ class CreateUpdateProduct extends \Drip\Connect\Model\ApiCalls\Helper
     /** @var \Drip\Connect\Model\ApiCalls\Request\BaseFactory */
     protected $connectApiCallsRequestBaseFactory;
 
-    /** @var \Magento\Framework\App\ProductMetadataInterface */
-    protected $productMetadata;
-
-    /** @var \Magento\Framework\Module\ResourceInterface */
-    protected $moduleResource;
+    /** @var \Drip\Connect\Helper\Data */
+    protected $connectHelper;
 
     public function __construct(
         \Drip\Connect\Model\ApiCalls\BaseFactory $connectApiCallsBaseFactory,
         \Drip\Connect\Model\ApiCalls\Request\BaseFactory $connectApiCallsRequestBaseFactory,
-        \Magento\Framework\Module\ResourceInterface $moduleResource,
-        \Magento\Framework\App\ProductMetadataInterface $productMetadata,
+        \Drip\Connect\Helper\Data $connectHelper,
         \Drip\Connect\Model\ConfigurationFactory $configFactory,
         $data = []
     ) {
         $this->connectApiCallsBaseFactory = $connectApiCallsBaseFactory;
         $this->connectApiCallsRequestBaseFactory = $connectApiCallsRequestBaseFactory;
-        $this->moduleResource = $moduleResource;
-        $this->productMetadata = $productMetadata;
+        $this->connectHelper = $connectHelper;
 
         // TODO: Inject config into this class.
         $config = $configFactory->createForCurrentScope();
@@ -43,8 +38,7 @@ class CreateUpdateProduct extends \Drip\Connect\Model\ApiCalls\Helper
         ]);
 
         if (!empty($data) && is_array($data)) {
-            $data['version'] = 'Magento ' . $this->productMetadata->getVersion() . ', '
-                             . 'Drip Extension ' . $this->moduleResource->getDbVersion('Drip_Connect');
+            $data['version'] = $this->connectHelper->getVersion();
         }
 
         $this->request = $this->connectApiCallsRequestBaseFactory->create()

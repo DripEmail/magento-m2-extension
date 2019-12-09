@@ -40,6 +40,12 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     /** @var \Magento\Eav\Api\AttributeRepositoryInterface */
     protected $attributeRepository;
 
+    /** @var \Magento\Framework\App\ProductMetadataInterface */
+    protected $productMetadata;
+
+    /** @var \Magento\Framework\Module\ResourceInterface */
+    protected $moduleResource;
+
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Framework\App\Request\Http $request,
@@ -48,7 +54,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Framework\App\State $state,
         \Magento\Eav\Api\AttributeRepositoryInterface $attributeRepository,
         \Magento\Framework\App\Response\RedirectInterface $redirect,
-        \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory $catalogResourceModelCategoryCollectionFactory
+        \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory $catalogResourceModelCategoryCollectionFactory,
+        \Magento\Framework\Module\ResourceInterface $moduleResource,
+        \Magento\Framework\App\ProductMetadataInterface $productMetadata
     ) {
         $this->request = $request;
         $this->configFactory = $configFactory;
@@ -57,6 +65,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $this->catalogResourceModelCategoryCollectionFactory = $catalogResourceModelCategoryCollectionFactory;
         $this->attributeRepository = $attributeRepository;
         $this->redirect = $redirect;
+        $this->moduleResource = $moduleResource;
+        $this->productMetadata = $productMetadata;
         parent::__construct($context);
     }
 
@@ -253,5 +263,16 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function isEmailValid($email)
     {
         return !empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL);
+    }
+
+    /**
+     * get version
+     *
+     * @return string
+     */
+    public function getVersion()
+    {
+        return 'Magento ' . $this->productMetadata->getVersion() . ', '
+            . 'Drip Extension ' . $this->moduleResource->getDbVersion('Drip_Connect');
     }
 }
