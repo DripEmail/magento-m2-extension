@@ -48,3 +48,30 @@ Then run `setup.sh` to bring a clean instance back up.
 ## To run cron
 
 Run the `cron.sh` script in the `devtools_m2/` directory.
+
+## Debugging using XDebug
+
+XDebug is enabled in the TEST environment ( `DRIP_COMPOSE_ENV=test ./setup.sh` ), and works with VSCode, but there are a few things you'll need to do configure your environment:
+
+- Get the [Xdebug Helper for Firefox](https://addons.mozilla.org/en-US/firefox/addon/xdebug-helper-for-firefox/), or [Xdebug helper for Chrome](https://chrome.google.com/extensions/detail/eadndfjplgieldjbigjakmdgkmoaaaoc)
+- Install XDebug locally `pecl install xdebug`
+- Install `PHP Debug` in VSCode  (you'll do yourself a favor to restart VSCode)
+- Modify `.vscode/launch.json` "Listen for XDebug" entry to look like this:
+```    {
+      "name": "Listen for XDebug",
+      "type": "php",
+      "request": "launch",
+      "port": 9000,
+      "pathMappings": { "/var/www/html/magento/app/code/Drip/Connect": "${workspaceFolder}" },
+      "xdebugSettings": { "max_data": 65535, "show_hidden": 1, "max_children": 100, "max_depth": 5 }
+    }
+```
+
+From here you'll be ready to debug.
+- Click the Debugger icon on the left menu in VSCode
+- Make sure your profile is "Listen for XDebug".
+- Click the green triangle at the top `Debug` menu
+- Set a breakpoint
+- Open up your browser and visit a page in the magento test environment (e.g. http://main.magento.localhost:3006/admin_123/).
+- Enable debugging by clicking the debug icon that appeared when you installed the Xdebug Helper plugin (above).
+- Trigger your breakpoint by navigating in your browswer.

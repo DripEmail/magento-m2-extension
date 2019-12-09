@@ -28,7 +28,7 @@ afterEach(function() {
   // https://github.com/cypress-io/cypress/issues/216
   // https://github.com/cypress-io/cypress/issues/686
   cy.log('Reset web interface to avoid bleed-over')
-  cy.visit('/lib/web/blank.html', { failOnStatusCode: false })
+  cy.visit('/lib/web/blank.html', { failOnStatusCode: false  })
 })
 
 beforeEach(function() {

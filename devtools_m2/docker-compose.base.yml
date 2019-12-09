@@ -14,6 +14,7 @@ services:
       - type: bind
         source: './..'
         target: /var/www/html/magento/app/code/Drip/Connect
+        consistency: cached
   db:
     image: mysql:5.7.27
     environment:
