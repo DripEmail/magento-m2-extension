@@ -4,7 +4,7 @@ namespace Drip\Connect\Observer\Order\Item;
 
 class BeforeSave extends \Drip\Connect\Observer\Base
 {
-    /** @var Drip\Connect\Model\Transformer\OrderItemFactory */
+    /** @var \Drip\Connect\Model\Transformer\OrderItemFactory */
     protected $orderItemTransformerFactory;
 
     /** @var \Magento\Framework\Registry */
@@ -16,7 +16,7 @@ class BeforeSave extends \Drip\Connect\Observer\Base
     public function __construct(
         \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Drip\Connect\Logger\Logger $logger,
-        Drip\Connect\Model\Transformer\OrderItemFactory $orderItemTransformerFactory,
+        \Drip\Connect\Model\Transformer\OrderItemFactory $orderItemTransformerFactory,
         \Magento\Framework\Registry $registry
     ) {
         parent::__construct($configFactory, $logger);

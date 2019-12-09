@@ -6,7 +6,7 @@ class AfterSave extends \Drip\Connect\Observer\Base
 {
     protected static $counter = 0;
 
-    /** @var Drip\Connect\Model\Transformer\OrderItemFactory */
+    /** @var \Drip\Connect\Model\Transformer\OrderItemFactory */
     protected $orderItemTransformerFactory;
 
     /** @var \Drip\Connect\Model\Transformer\OrderFactory */
@@ -24,7 +24,7 @@ class AfterSave extends \Drip\Connect\Observer\Base
     public function __construct(
         \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Drip\Connect\Logger\Logger $logger,
-        Drip\Connect\Model\Transformer\OrderItemFactory $orderItemTransformerFactory,
+        \Drip\Connect\Model\Transformer\OrderItemFactory $orderItemTransformerFactory,
         \Drip\Connect\Model\Transformer\OrderFactory $orderTransformerFactory,
         \Magento\Sales\Api\Data\OrderInterface $order,
         \Magento\Framework\Registry $registry
