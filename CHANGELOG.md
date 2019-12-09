@@ -1,5 +1,10 @@
 # Magento 2 Drip Connect Changelog
 
+## NEXT
+
+* Set occurred_at on cart events.
+* Use parent image and url when child products are not individually visible
+
 ## 1.7.6
 
 * Send `product_variant_id` correctly for all product types
@@ -7,8 +12,6 @@
 * When a product isn't in any categories, stop sending an array with a single empty string. Send an empty array instead.
 * Order batch sync now properly sends the frontend product URL.
 * Disable product event based product syncing since it's very broken for configurable products. Product data is still sent as part of order and cart events.
-* Set occurred_at on cart events.
-* Use parent image and url when child products are not individually visible
 
 ## 1.7.4
 
