@@ -52,7 +52,7 @@ class Configuration
         \Magento\Config\Model\ResourceModel\Config $resourceConfig,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        $storeId
+        int $storeId
     ) {
         $this->resourceConfig = $resourceConfig;
         $this->scopeConfig = $scopeConfig;

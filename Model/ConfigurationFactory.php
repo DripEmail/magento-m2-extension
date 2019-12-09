@@ -38,7 +38,7 @@ class ConfigurationFactory
      * @param int $storeId
      * @return \Drip\Connect\Model\Configuration
      */
-    public function create($storeId)
+    public function create(int $storeId)
     {
         return $this->objectManager->create(\Drip\Connect\Model\Configuration::class, ['storeId' => $storeId]);
     }
@@ -50,7 +50,11 @@ class ConfigurationFactory
      */
     public function createForCurrentStoreParam()
     {
-        return $this->create($this->request->getParam('store'));
+        $storeId = $this->request->getParam('store');
+        if ($storeId === null) {
+            throw new \Exception("Current store param is null");
+        }
+        return $this->create((int) $storeId);
     }
 
     /**
@@ -72,6 +76,10 @@ class ConfigurationFactory
      */
     public function createForCurrentScope()
     {
-        return $this->create($this->storeManager->getStore()->getId());
+        $storeId = $this->storeManager->getStore()->getId();
+        if ($storeId === null) {
+            throw new \Exception("Current scope store id is null");
+        }
+        return $this->create((int) $storeId);
     }
 }
