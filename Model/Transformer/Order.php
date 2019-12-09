@@ -33,7 +33,6 @@ class Order
     protected $config;
 
     public function __construct(
-        // TODO: Assess whether these are all useful.
         \Drip\Connect\Helper\Data $connectHelper,
         \Magento\Sales\Model\Order\AddressFactory $salesOrderAddressFactory,
         \Magento\Catalog\Model\ProductFactory $catalogProductFactory,
