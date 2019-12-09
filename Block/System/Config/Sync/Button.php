@@ -26,14 +26,6 @@ abstract class Button extends \Magento\Config\Block\System\Config\Form\Field
     }
 
     /**
-     * check if module active
-     */
-    public function isModuleActive()
-    {
-        return $this->config->isEnabled();
-    }
-
-    /**
      * Set template to itself
      *
      * @return $this
