@@ -7,20 +7,34 @@ class CreditmemoAfterSave extends \Drip\Connect\Observer\Base
     /** @var \Magento\Framework\Registry */
     protected $registry;
 
+    /** @var \Drip\Connect\Model\Transformer\OrderFactory */
+    protected $orderTransformerFactory;
+
+    /** @var \Magento\Sales\Api\Data\OrderInterface */
+    protected $order;
+
+    /** @var \Drip\Connect\Helper\Customer */
+    protected $customerHelper;
+
+    /** @var \Drip\Connect\Helper\Data */
+    protected $connectHelper;
+
     /**
      * constructor
      */
     public function __construct(
         \Drip\Connect\Helper\Data $connectHelper,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Drip\Connect\Logger\Logger $logger,
-        \Drip\Connect\Helper\Order $orderHelper,
+        \Drip\Connect\Model\Transformer\OrderFactory $orderTransformerFactory,
         \Magento\Sales\Api\Data\OrderInterface $order,
         \Drip\Connect\Helper\Customer $customerHelper,
         \Magento\Framework\Registry $registry
     ) {
-        parent::__construct($connectHelper, $logger);
+        parent::__construct($configFactory, $logger);
+        $this->connectHelper = $connectHelper;
         $this->registry = $registry;
-        $this->orderHelper = $orderHelper;
+        $this->orderTransformerFactory = $orderTransformerFactory;
         $this->order = $order;
         $this->customerHelper = $customerHelper;
     }
@@ -33,7 +47,15 @@ class CreditmemoAfterSave extends \Drip\Connect\Observer\Base
         $creditMemo = $observer->getEvent()->getCreditmemo();
         $order = $this->order->load($creditMemo->getOrderId());
 
-        $this->orderHelper->proceedOrderRefund($order, $this->refundDiff($order));
+        $config = $this->configFactory->create($order->getStoreId());
+
+        /** @var \Drip\Connect\Model\Transformer\Order */
+        $orderTransformer = $this->orderTransformerFactory->create([
+            'order' => $order,
+            'config' => $config,
+        ]);
+
+        $orderTransformer->proceedOrderRefund($this->refundDiff($order));
     }
 
     /**

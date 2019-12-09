@@ -3,25 +3,13 @@ namespace Drip\Connect\Model\ApiCalls\Helper;
 
 class CreateUpdateSubscriber extends \Drip\Connect\Model\ApiCalls\Helper
 {
-    /** @var \Drip\Connect\Model\ApiCalls\BaseFactory */
-    protected $connectApiCallsBaseFactory;
-
-    /** @var \Drip\Connect\Model\ApiCalls\Request\BaseFactory */
-    protected $connectApiCallsRequestBaseFactory;
-
     public function __construct(
         \Drip\Connect\Model\ApiCalls\BaseFactory $connectApiCallsBaseFactory,
         \Drip\Connect\Model\ApiCalls\Request\BaseFactory $connectApiCallsRequestBaseFactory,
-        \Drip\Connect\Model\ConfigurationFactory $configFactory,
+        \Drip\Connect\Model\Configuration $config,
         $data = []
     ) {
-        $this->connectApiCallsBaseFactory = $connectApiCallsBaseFactory;
-        $this->connectApiCallsRequestBaseFactory = $connectApiCallsRequestBaseFactory;
-
-        // TODO: Inject config into this class.
-        $config = $configFactory->createForCurrentScope();
-
-        $this->apiClient = $this->connectApiCallsBaseFactory->create([
+        $this->apiClient = $connectApiCallsBaseFactory->create([
             'endpoint' => $config->getAccountId() . '/' . self::ENDPOINT_SUBSCRIBERS,
             'config' => $config,
         ]);
@@ -32,7 +20,7 @@ class CreateUpdateSubscriber extends \Drip\Connect\Model\ApiCalls\Helper
             ]
         ];
 
-        $this->request = $this->connectApiCallsRequestBaseFactory->create()
+        $this->request = $connectApiCallsRequestBaseFactory->create()
             ->setMethod(\Zend_Http_Client::POST)
             ->setRawData(json_encode($subscribersInfo));
     }

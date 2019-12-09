@@ -95,7 +95,6 @@ Given('I have configured a widget', function() {
 // Simple Product
 Given('I have configured a simple widget for {string}', function(site) {
   cy.createProduct({
-    "storeId": mapFrontendStoreViewId(site),
     "sku": "widg-1",
     "name": "Widget 1",
     "description": "This is really a widget. There are many like it, but this one is mine.",
@@ -106,11 +105,12 @@ Given('I have configured a simple widget for {string}', function(site) {
 
 Given('I have configured a different simple widget for {string}', function(site) {
   cy.createProduct({
-    "storeId": mapFrontendStoreViewId(site),
     "sku": "widg-2",
     "name": "Widget 2",
     "description": "This is really a widget. There are many like it, but this one is mine.",
     "shortDescription": "This is really a widget.",
+    // This is to set the context for the product save, so that rewrites and such get generated correctly.
+    "storeId": mapFrontendStoreViewId(site),
     "websiteIds": [mapFrontendWebsiteId(site)]
   })
 })
@@ -236,17 +236,17 @@ Given('I have configured a bundle widget', function() {
   })
 })
 
-Given('a customer exists for website id {string}', function(websiteId) {
+Given('a customer exists for website {string}', function(site) {
   cy.createCustomer({
-    websiteId: websiteId,
-    storeId: websiteId,
+    websiteId: mapFrontendWebsiteId(site),
+    storeId: mapFrontendStoreViewId(site),
   })
 })
 
-Given('a different customer exists for website id {string}', function(websiteId) {
+Given('a different customer exists for website {string}', function(site) {
   cy.createCustomer({
-    websiteId: websiteId,
-    storeId: websiteId,
+    websiteId: mapFrontendWebsiteId(site),
+    storeId: mapFrontendStoreViewId(site),
     email: "jd2@example.com",
     firstname: "John2"
   })

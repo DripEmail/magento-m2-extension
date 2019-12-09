@@ -4,12 +4,6 @@ namespace Drip\Connect\Observer\Quote;
 
 class AfterQuoteSaved extends \Drip\Connect\Observer\Base
 {
-
-    /**
-     * @var \Drip\Connect\Helper\Data
-     */
-    protected $connectHelper;
-
     /**
      * @var \Drip\Connect\Helper\Quote
      */
@@ -21,14 +15,14 @@ class AfterQuoteSaved extends \Drip\Connect\Observer\Base
     protected $registry;
 
     public function __construct(
-        \Drip\Connect\Helper\Data $connectHelper,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Drip\Connect\Helper\Quote $connectQuoteHelper,
         \Drip\Connect\Logger\Logger $logger,
         \Magento\Framework\Registry $registry
     ) {
         $this->connectQuoteHelper = $connectQuoteHelper;
         $this->registry = $registry;
-        parent::__construct($connectHelper, $logger);
+        parent::__construct($configFactory, $logger);
     }
 
     public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)
@@ -47,16 +41,18 @@ class AfterQuoteSaved extends \Drip\Connect\Observer\Base
             return;
         }
 
+        $config = $this->configFactory->createForCurrentScope();
+
         if ($this->registry->registry(\Drip\Connect\Helper\Quote::REGISTRY_KEY_IS_NEW)) {
-            $this->connectQuoteHelper->proceedQuoteNew($quote);
+            $this->connectQuoteHelper->proceedQuoteNew($quote, $config);
         } else {
             $oldData = $this->registry->registry(\Drip\Connect\Helper\Quote::REGISTRY_KEY_OLD_DATA);
             if (empty($oldData['items']) || count($oldData['items']) == 0) {
                 //customer logged in previously with empty cart and then adds a product
-                $this->connectQuoteHelper->proceedQuoteNew($quote);
+                $this->connectQuoteHelper->proceedQuoteNew($quote, $config);
             } else {
                 if ($this->connectQuoteHelper->isQuoteChanged($quote)) {
-                    $this->connectQuoteHelper->proceedQuote($quote);
+                    $this->connectQuoteHelper->proceedQuote($quote, $config);
                 }
             }
         }

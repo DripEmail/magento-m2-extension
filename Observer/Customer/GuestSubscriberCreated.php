@@ -20,14 +20,14 @@ class GuestSubscriberCreated extends \Drip\Connect\Observer\Base
      * constructor
      */
     public function __construct(
-        \Drip\Connect\Helper\Data $connectHelper,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Magento\Framework\Registry $registry,
         \Drip\Connect\Logger\Logger $logger,
         \Drip\Connect\Helper\Customer $customerHelper,
         \Magento\Framework\App\Request\Http $request,
         \Magento\Newsletter\Model\SubscriberFactory $subscriberFactory
     ) {
-        parent::__construct($connectHelper, $logger);
+        parent::__construct($configFactory, $logger);
         $this->registry = $registry;
         $this->subscriberFactory = $subscriberFactory;
         $this->request = $request;
@@ -47,6 +47,8 @@ class GuestSubscriberCreated extends \Drip\Connect\Observer\Base
             return;
         }
 
+        $config = $this->configFactory->createForCurrentScope();
+
         $email = $this->request->getParam('email');
 
         $subscriber = $this->subscriberFactory->create()->loadByEmail($email);
@@ -56,6 +58,6 @@ class GuestSubscriberCreated extends \Drip\Connect\Observer\Base
         // the user already exists in Drip and is subscribed there, we don't
         // want to unsubscribe them, because presumably they have opted in
         // elsewhere.
-        $this->customerHelper->proceedGuestSubscriberNew($subscriber, $newSubscriberSubscribed);
+        $this->customerHelper->proceedGuestSubscriberNew($subscriber, $config, $newSubscriberSubscribed);
     }
 }

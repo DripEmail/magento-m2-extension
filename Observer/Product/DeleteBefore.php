@@ -7,6 +7,9 @@ class DeleteBefore extends \Drip\Connect\Observer\Base
     /** @var \Drip\Connect\Helper\Product */
     protected $productHelper;
 
+    /** @var \Drip\Connect\Helper\Data */
+    protected $connectHelper;
+
     /** @var \Magento\Catalog\Model\ProductRepository */
     protected $productRepository;
 
@@ -19,14 +22,16 @@ class DeleteBefore extends \Drip\Connect\Observer\Base
     public function __construct(
         \Drip\Connect\Helper\Product $productHelper,
         \Drip\Connect\Helper\Data $connectHelper,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Drip\Connect\Logger\Logger $logger,
         \Magento\Catalog\Model\ProductRepository $productRepository,
         \Magento\Framework\Registry $registry
     ) {
         $this->productHelper = $productHelper;
+        $this->connectHelper = $connectHelper;
         $this->productRepository = $productRepository;
         $this->registry = $registry;
-        parent::__construct($connectHelper, $logger);
+        parent::__construct($configFactory, $logger);
     }
 
     /**

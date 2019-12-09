@@ -4,8 +4,8 @@ namespace Drip\Connect\Observer\Order;
 
 class AfterSave extends \Drip\Connect\Observer\Base
 {
-    /** @var \Drip\Connect\Helper\Order */
-    protected $orderHelper;
+    /** @var \Drip\Connect\Model\Transformer\OrderFactory */
+    protected $orderTransformerFactory;
 
     /** @var \Drip\Connect\Helper\Customer */
     protected $customerHelper;
@@ -17,15 +17,15 @@ class AfterSave extends \Drip\Connect\Observer\Base
      * constructor
      */
     public function __construct(
-        \Drip\Connect\Helper\Data $connectHelper,
-        \Drip\Connect\Helper\Order $orderHelper,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
+        \Drip\Connect\Model\Transformer\OrderFactory $orderTransformerFactory,
         \Drip\Connect\Logger\Logger $logger,
         \Drip\Connect\Helper\Customer $customerHelper,
         \Magento\Framework\Registry $registry
     ) {
-        parent::__construct($connectHelper, $logger);
+        parent::__construct($configFactory, $logger);
         $this->registry = $registry;
-        $this->orderHelper = $orderHelper;
+        $this->orderTransformerFactory = $orderTransformerFactory;
         $this->customerHelper = $customerHelper;
     }
 
@@ -47,13 +47,21 @@ class AfterSave extends \Drip\Connect\Observer\Base
      *
      * @param \Magento\Sales\Model\Order $order
      */
-    protected function proceedOrder($order)
+    protected function proceedOrder(\Magento\Sales\Model\Order $order)
     {
         if ($this->isSameState($order)) {
             return;
         }
 
-        if (! $this->orderHelper->isCanBeSent($order)) {
+        $config = $this->configFactory->create($order->getStoreId());
+
+        /** @var \Drip\Connect\Model\Transformer\Order */
+        $orderTransformer = $this->orderTransformerFactory->create([
+            'order' => $order,
+            'config' => $config,
+        ]);
+
+        if (!$orderTransformer->isCanBeSent()) {
             return;
         }
 
@@ -63,10 +71,10 @@ class AfterSave extends \Drip\Connect\Observer\Base
                 && ! $this->customerHelper->isCustomerExists($order->getCustomerEmail())
                 && ! $this->customerHelper->isSubscriberExists($order->getCustomerEmail())
             ) {
-                $this->customerHelper->accountActionsForGuestCheckout($order);
+                $this->customerHelper->accountActionsForGuestCheckout($order, $config);
             }
             // new order
-            $this->orderHelper->proceedOrderNew($order);
+            $orderTransformer->proceedOrderNew();
 
             return;
         }
@@ -78,7 +86,7 @@ class AfterSave extends \Drip\Connect\Observer\Base
 
             case \Magento\Sales\Model\Order::STATE_CANCELED:
                 // cancel order
-                $this->orderHelper->proceedOrderCancel($order);
+                $orderTransformer->proceedOrderCancel();
                 break;
 
             case \Magento\Sales\Model\Order::STATE_CLOSED:
@@ -87,7 +95,7 @@ class AfterSave extends \Drip\Connect\Observer\Base
 
             default:
                 // other states
-                $this->orderHelper->proceedOrderOther($order);
+                $orderTransformer->proceedOrderOther();
         }
     }
 
