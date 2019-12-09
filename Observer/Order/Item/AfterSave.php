@@ -6,6 +6,15 @@ class AfterSave extends \Drip\Connect\Observer\Base
 {
     protected static $counter = 0;
 
+    /** @var \Drip\Connect\Model\Transformer\OrderItemFactory */
+    protected $orderItemTransformerFactory;
+
+    /** @var \Drip\Connect\Model\Transformer\OrderFactory */
+    protected $orderTransformerFactory;
+
+    /** @var \Magento\Sales\Api\Data\OrderInterface */
+    protected $order;
+
     /** @var \Magento\Framework\Registry */
     protected $registry;
 
@@ -15,13 +24,15 @@ class AfterSave extends \Drip\Connect\Observer\Base
     public function __construct(
         \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Drip\Connect\Logger\Logger $logger,
-        \Drip\Connect\Helper\Order $orderHelper,
+        \Drip\Connect\Model\Transformer\OrderItemFactory $orderItemTransformerFactory,
+        \Drip\Connect\Model\Transformer\OrderFactory $orderTransformerFactory,
         \Magento\Sales\Api\Data\OrderInterface $order,
         \Magento\Framework\Registry $registry
     ) {
         parent::__construct($configFactory, $logger);
         $this->registry = $registry;
-        $this->orderHelper = $orderHelper;
+        $this->orderItemTransformerFactory = $orderItemTransformerFactory;
+        $this->orderTransformerFactory = $orderTransformerFactory;
         $this->order = $order;
     }
 
@@ -41,8 +52,15 @@ class AfterSave extends \Drip\Connect\Observer\Base
         $items = $this->registry->registry(self::REGISTRY_KEY_ORDER_ITEMS_OLD_DATA);
 
         $order = $this->order->load($orderItem->getOrderId());
+        $config = $this->configFactory->create($order->getStoreId());
 
-        if (!$this->orderHelper->isCanBeSent($order)) {
+        /** @var \Drip\Connect\Model\Transformer\Order */
+        $orderTransformer = $this->orderTransformerFactory->create([
+            'order' => $order,
+            'config' => $config,
+        ]);
+
+        if (!$orderTransformer->isCanBeSent()) {
             return;
         }
 
@@ -51,9 +69,7 @@ class AfterSave extends \Drip\Connect\Observer\Base
         // after save last item of all order items
         if ($itemsCount == self::$counter) {
             if ($this->isCompleteSomeItems($order)) {
-                $config = $this->configFactory->create($order->getStoreId());
-
-                $this->orderHelper->proceedOrderCompleted($order, $config);
+                $orderTransformer->proceedOrderCompleted();
             }
         }
     }
@@ -71,8 +87,11 @@ class AfterSave extends \Drip\Connect\Observer\Base
         $oldItems = $this->registry->registry(self::REGISTRY_KEY_ORDER_ITEMS_OLD_DATA);
 
         foreach ($order->getAllItems() as $item) {
-
-            $itemDataCurrent = $this->orderHelper->getOrderItemStatusData($item);
+            /** @var Drip\Connect\Model\Transformer\OrderItem */
+            $orderItemTransformer = $this->orderItemTransformerFactory->create([
+                'item' => $item,
+            ]);
+            $itemDataCurrent = $orderItemTransformer->getStatusData();
             $itemDataOld = $oldItems[$item->getId()];
 
             if ($this->isOrderItemComplete($itemDataCurrent)

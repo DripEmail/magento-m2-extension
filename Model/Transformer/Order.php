@@ -1,8 +1,8 @@
 <?php
 
-namespace Drip\Connect\Helper;
+namespace Drip\Connect\Model\Transformer;
 
-class Order extends \Magento\Framework\App\Helper\AbstractHelper
+class Order
 {
     const FULFILLMENT_NO = 'not_fulfilled';
     const FULFILLMENT_PARTLY = 'partially_fulfilled';
@@ -26,18 +26,22 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     /** @var \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrderFactory */
     protected $connectApiCallsHelperCreateUpdateOrderFactory;
 
-    /** @var \Drip\Connect\Model\ApiCalls\Helper\Batches\OrdersFactory */
-    protected $connectApiCallsHelperBatchesOrdersFactory;
+    /** @var \Magento\Sales\Model\Order */
+    protected $order;
+
+    /** @var \Drip\Connect\Model\Configuration */
+    protected $config;
 
     public function __construct(
-        \Magento\Framework\App\Helper\Context $context,
         \Drip\Connect\Helper\Data $connectHelper,
         \Magento\Sales\Model\Order\AddressFactory $salesOrderAddressFactory,
         \Magento\Catalog\Model\ProductFactory $catalogProductFactory,
         \Magento\Catalog\Model\Product\Media\ConfigFactory $catalogProductMediaConfigFactory,
         \Magento\Newsletter\Model\SubscriberFactory $subscriberFactory,
         \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrderFactory $connectApiCallsHelperCreateUpdateOrderFactory,
-        \Drip\Connect\Model\ApiCalls\Helper\Batches\OrdersFactory $connectApiCallsHelperBatchesOrdersFactory
+
+        \Magento\Sales\Model\Order $order,
+        \Drip\Connect\Model\Configuration $config
     ) {
         $this->connectHelper = $connectHelper;
         $this->salesOrderAddressFactory = $salesOrderAddressFactory;
@@ -45,37 +49,45 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
         $this->catalogProductMediaConfigFactory = $catalogProductMediaConfigFactory;
         $this->subscriberFactory = $subscriberFactory;
         $this->connectApiCallsHelperCreateUpdateOrderFactory = $connectApiCallsHelperCreateUpdateOrderFactory;
-        $this->connectApiCallsHelperBatchesOrdersFactory = $connectApiCallsHelperBatchesOrdersFactory;
-        parent::__construct($context);
+
+        $this->order = $order;
+        $this->config = $config;
+    }
+
+    /**
+     * @return \Magento\Sales\Model\Order
+     */
+    public function getOrder()
+    {
+        return $this->order;
     }
 
     /**
      * prepare array of order data we use to send in drip for new orders
      *
-     * @param \Magento\Sales\Model\Order $order
-     *
      * @return array
      */
-    public function getCommonOrderData(\Magento\Sales\Model\Order $order)
+    protected function getCommonOrderData()
     {
-        $subscriber = $this->subscriberFactory->create()->loadByEmail($order->getCustomerEmail());
+        // TODO: We might want to get the subscriber by ID instead of email for better support of multi-store.
+        $subscriber = $this->subscriberFactory->create()->loadByEmail($this->order->getCustomerEmail());
 
         $data = [
             'provider' => (string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::PROVIDER_NAME,
-            'email' => (string) $order->getCustomerEmail(),
+            'email' => (string) $this->order->getCustomerEmail(),
             'initial_status' => ($subscriber->isSubscribed() ? 'active' : 'unsubscribed'),
-            'order_id' => (string) $order->getIncrementId(),
-            'order_public_id' => (string) $order->getIncrementId(),
-            'grand_total' => $this->connectHelper->priceAsCents($order->getGrandTotal()) / 100,
-            'total_discounts' => $this->connectHelper->priceAsCents($order->getDiscountAmount()) / 100,
-            'total_taxes' => $this->connectHelper->priceAsCents($order->getTaxAmount()) / 100,
-            'total_shipping' => $this->connectHelper->priceAsCents($order->getShippingAmount()) / 100,
-            'currency' => (string) $order->getOrderCurrencyCode(),
-            'occurred_at' => (string) $this->connectHelper->formatDate($order->getUpdatedAt()),
-            'items' => $this->getOrderItemsData($order),
-            'billing_address' => $this->getOrderBillingData($order),
-            'shipping_address' => $this->getOrderShippingData($order),
-            'items_count' => floatval($order->getTotalQtyOrdered()),
+            'order_id' => (string) $this->order->getIncrementId(),
+            'order_public_id' => (string) $this->order->getIncrementId(),
+            'grand_total' => $this->connectHelper->priceAsCents($this->order->getGrandTotal()) / 100,
+            'total_discounts' => $this->connectHelper->priceAsCents($this->order->getDiscountAmount()) / 100,
+            'total_taxes' => $this->connectHelper->priceAsCents($this->order->getTaxAmount()) / 100,
+            'total_shipping' => $this->connectHelper->priceAsCents($this->order->getShippingAmount()) / 100,
+            'currency' => (string) $this->order->getOrderCurrencyCode(),
+            'occurred_at' => (string) $this->connectHelper->formatDate($this->order->getUpdatedAt()),
+            'items' => $this->getOrderItemsData(),
+            'billing_address' => $this->getOrderBillingData(),
+            'shipping_address' => $this->getOrderShippingData(),
+            'items_count' => floatval($this->order->getTotalQtyOrdered()),
             'magento_source' => (string) $this->connectHelper->getArea(),
         ];
 
@@ -85,13 +97,11 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     /**
      * prepare array of order data we use to send in drip for new orders
      *
-     * @param \Magento\Sales\Model\Order $order
-     *
      * @return array
      */
-    public function getOrderDataNew(\Magento\Sales\Model\Order $order)
+    public function getOrderDataNew()
     {
-        $data = $this->getCommonOrderData($order);
+        $data = $this->getCommonOrderData();
         $data['action'] = (string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_NEW;
 
         return $data;
@@ -100,13 +110,11 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     /**
      * prepare array of order data we use to send in drip for full/partly completed orders
      *
-     * @param \Magento\Sales\Model\Order $order
-     *
      * @return array
      */
-    public function getOrderDataCompleted(\Magento\Sales\Model\Order $order)
+    protected function getOrderDataCompleted()
     {
-        $data = $this->getCommonOrderData($order);
+        $data = $this->getCommonOrderData();
         $data['action'] = (string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_FULFILL;
 
         return $data;
@@ -115,13 +123,11 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     /**
      * prepare array of order data we use to send in drip for canceled orders
      *
-     * @param \Magento\Sales\Model\Order $order
-     *
      * @return array
      */
-    public function getOrderDataCanceled(\Magento\Sales\Model\Order $order)
+    protected function getOrderDataCanceled()
     {
-        $data = $this->getCommonOrderData($order);
+        $data = $this->getCommonOrderData();
         $data['action'] = (string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_CANCEL;
 
         return $data;
@@ -130,25 +136,24 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     /**
      * prepare array of order data we use to send in drip for full/partly refunded orders
      *
-     * @param \Magento\Sales\Model\Order $order
      * @param int $refundValue
      *
      * @return array
      */
-    public function getOrderDataRefund(\Magento\Sales\Model\Order $order, $refundValue)
+    protected function getOrderDataRefund($refundValue)
     {
-        $refunds = $order->getCreditmemosCollection();
+        $refunds = $this->order->getCreditmemosCollection();
         $refund = $refunds->getLastItem();
         $refundId = $refund->getIncrementId();
 
         $data = [
             'provider' => (string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateRefund::PROVIDER_NAME,
-            'email' => (string) $order->getCustomerEmail(),
+            'email' => (string) $this->order->getCustomerEmail(),
             'action' => (string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_REFUND,
-            'order_id' => (string) $order->getIncrementId(),
-            'order_public_id' => (string) $order->getIncrementId(),
-            'occurred_at' => (string) $this->connectHelper->formatDate($order->getUpdatedAt()),
-            'grand_total' => $this->connectHelper->priceAsCents($order->getGrandTotal()) / 100,
+            'order_id' => (string) $this->order->getIncrementId(),
+            'order_public_id' => (string) $this->order->getIncrementId(),
+            'occurred_at' => (string) $this->connectHelper->formatDate($this->order->getUpdatedAt()),
+            'grand_total' => $this->connectHelper->priceAsCents($this->order->getGrandTotal()) / 100,
             'refund_amount' => $refundValue / 100,
         ];
 
@@ -158,50 +163,24 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     /**
      * prepare array of order data we use to send in drip for all other order states
      *
-     * @param \Magento\Sales\Model\Order $order
-     *
      * @return array
      */
-    public function getOrderDataOther(\Magento\Sales\Model\Order $order)
+    protected function getOrderDataOther()
     {
-        $data = $this->getCommonOrderData($order);
+        $data = $this->getCommonOrderData();
         $data['action'] = (string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_CHANGE;
 
         return $data;
     }
 
     /**
-     * check fullfilment state of an order
-     *
-     * @param \Magento\Sales\Model\Order $order
-     *
-     * @return string
-     */
-    protected function getOrderFulfillment(\Magento\Sales\Model\Order $order)
-    {
-        if ($order->getState() == \Magento\Sales\Model\Order::STATE_COMPLETE) {
-            return self::FULFILLMENT_YES;
-        }
-
-        foreach ($order->getAllItems() as $item) {
-            if ($item->getStatus() == 'Shipped') {
-                return self::FULFILLMENT_PARTLY;
-            }
-        }
-
-        return self::FULFILLMENT_NO;
-    }
-
-    /**
      * get order's billing address data
-     *
-     * @param \Magento\Sales\Model\Order $order
      *
      * @return array
      */
-    protected function getOrderBillingData(\Magento\Sales\Model\Order $order)
+    protected function getOrderBillingData()
     {
-        $addressId = $order->getBillingAddressId();
+        $addressId = $this->order->getBillingAddressId();
 
         return $this->getOrderAddressData($addressId);
     }
@@ -209,13 +188,11 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     /**
      * get order's shipping address data
      *
-     * @param \Magento\Sales\Model\Order $order
-     *
      * @return array
      */
-    protected function getOrderShippingData(\Magento\Sales\Model\Order $order)
+    protected function getOrderShippingData()
     {
-        $addressId = $order->getShippingAddressId();
+        $addressId = $this->order->getShippingAddressId();
 
         return $this->getOrderAddressData($addressId);
     }
@@ -249,15 +226,14 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     /**
      * get order's items data
      *
-     * @param \Magento\Sales\Model\Order $order
      * @param bool $isRefund
      *
      * @return array
      */
-    protected function getOrderItemsData(\Magento\Sales\Model\Order $order, $isRefund = false)
+    protected function getOrderItemsData($isRefund = false)
     {
         $childItems = [];
-        foreach ($order->getAllItems() as $item) {
+        foreach ($this->order->getAllItems() as $item) {
             if ($item->getParentItemId() === null) {
                 continue;
             }
@@ -266,7 +242,7 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
         }
 
         $data = [];
-        foreach ($order->getAllVisibleItems() as $item) {
+        foreach ($this->order->getAllVisibleItems() as $item) {
             $productVariantItem = $item;
             if ($item->getProductType() === 'configurable' && \array_key_exists($item->getId(), $childItems)) {
                 $productVariantItem = $childItems[$item->getId()];
@@ -309,120 +285,65 @@ class Order extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
-     * @param \Magento\Sales\Model\Order\Item $item
-     * @param bool use normal or orig data
-     *
-     * @return array
-     */
-    public function getOrderItemStatusData(\Magento\Sales\Model\Order\Item $item, $useOrig = false)
-    {
-        return [
-            'status' => ($useOrig ? $item->getOrigData('status') : $item->getStatus()),
-            'qty_backordered' => ($useOrig ? $item->getOrigData('qty_backordered') : $item->getQtyBackordered()),
-            'qty_canceled' => ($useOrig ? $item->getOrigData('qty_canceled') : $item->getQtyCanceled()),
-            'qty_invoiced' => ($useOrig ? $item->getOrigData('qty_invoiced') : $item->getQtyInvoiced()),
-            'qty_ordered' => ($useOrig ? $item->getOrigData('qty_ordered') : $item->getQtyOrdered()),
-            'qty_refunded' => ($useOrig ? $item->getOrigData('qty_refunded') : $item->getQtyRefunded()),
-            'qty_shipped' => ($useOrig ? $item->getOrigData('qty_shipped') : $item->getQtyShipped()),
-        ];
-    }
-
-    /**
      * check if given order can be sent to drip
-     *
-     * @param \Magento\Sales\Model\Order $order
      *
      * @return bool
      */
-    public function isCanBeSent(\Magento\Sales\Model\Order $order)
+    public function isCanBeSent()
     {
-        return $this->connectHelper->isEmailValid($order->getCustomerEmail());
+        return $this->connectHelper->isEmailValid($this->order->getCustomerEmail());
     }
 
-    /**
-     * @param \Magento\Sales\Model\Order $order
-     * @param \Drip\Connect\Model\Configuration $config
-     */
-    public function proceedOrderNew(\Magento\Sales\Model\Order $order, \Drip\Connect\Model\Configuration $config)
+    public function proceedOrderNew()
     {
-        $orderData = $this->getOrderDataNew($order);
+        $orderData = $this->getOrderDataNew();
 
         $this->connectApiCallsHelperCreateUpdateOrderFactory->create([
-            'config' => $config,
+            'config' => $this->config,
+            'data' => $orderData
+        ])->call();
+    }
+
+    public function proceedOrderCompleted()
+    {
+        $orderData = $this->getOrderDataCompleted();
+
+        $this->connectApiCallsHelperCreateUpdateOrderFactory->create([
+            'config' => $this->config,
+            'data' => $orderData
+        ])->call();
+    }
+
+    public function proceedOrderCancel()
+    {
+        $orderData = $this->getOrderDataCanceled();
+
+        $this->connectApiCallsHelperCreateUpdateOrderFactory->create([
+            'config' => $this->config,
             'data' => $orderData
         ])->call();
     }
 
     /**
-     * @param \Magento\Sales\Model\Order $order
-     * @param \Drip\Connect\Model\Configuration $config
-     */
-    public function proceedOrderCompleted(\Magento\Sales\Model\Order $order, \Drip\Connect\Model\Configuration $config)
-    {
-        $orderData = $this->getOrderDataCompleted($order);
-
-        $this->connectApiCallsHelperCreateUpdateOrderFactory->create([
-            'config' => $config,
-            'data' => $orderData
-        ])->call();
-    }
-
-    /**
-     * @param \Magento\Sales\Model\Order $order
-     * @param \Drip\Connect\Model\Configuration $config
-     */
-    public function proceedOrderCancel(\Magento\Sales\Model\Order $order, \Drip\Connect\Model\Configuration $config)
-    {
-        $orderData = $this->getOrderDataCanceled($order);
-
-        $this->connectApiCallsHelperCreateUpdateOrderFactory->create([
-            'config' => $config,
-            'data' => $orderData
-        ])->call();
-    }
-
-    /**
-     * @param \Magento\Sales\Model\Order $order
      * @param int $refundValue
-     * @param \Drip\Connect\Model\Configuration $config
      */
-    public function proceedOrderRefund(\Magento\Sales\Model\Order $order, $refundValue, \Drip\Connect\Model\Configuration $config)
+    public function proceedOrderRefund($refundValue)
     {
-        $orderData = $this->getOrderDataRefund($order, $refundValue);
+        $orderData = $this->getOrderDataRefund($refundValue);
 
         $this->connectApiCallsHelperCreateUpdateOrderFactory->create([
-            'config' => $config,
+            'config' => $this->config,
             'data' => $orderData
         ])->call();
     }
 
-    /**
-     * @param \Magento\Sales\Model\Order $order
-     * @param \Drip\Connect\Model\Configuration $config
-     */
-    public function proceedOrderOther(\Magento\Sales\Model\Order $order, \Drip\Connect\Model\Configuration $config)
+    public function proceedOrderOther()
     {
-        $orderData = $this->getOrderDataOther($order);
+        $orderData = $this->getOrderDataOther();
 
         $this->connectApiCallsHelperCreateUpdateOrderFactory->create([
-            'config' => $config,
+            'config' => $this->config,
             'data' => $orderData
-        ])->call();
-    }
-
-    /**
-     * batch orders update
-     *
-     * @param array $batch
-     * @param \Drip\Connect\Model\Configuration $config
-     *
-     * @return \Drip\Connect\Model\Restapi\Response\ResponseAbstract
-     */
-    public function proceedOrderBatch(array $batch, \Drip\Connect\Model\Configuration $config)
-    {
-        return $this->connectApiCallsHelperBatchesOrdersFactory->create([
-            'config' => $config,
-            'batch' => $batch,
         ])->call();
     }
 }
