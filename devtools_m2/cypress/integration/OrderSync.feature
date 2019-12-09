@@ -5,7 +5,7 @@ Feature: Order Batch Sync
   Scenario: An admin syncs an order
     Given I am logged into the admin interface
       And I have configured Drip to be enabled for 'default'
-      And a customer exists for website id '1'
+      And a customer exists for website 'main'
       And I have configured a configurable widget
     When I create an order
       And I click order sync
