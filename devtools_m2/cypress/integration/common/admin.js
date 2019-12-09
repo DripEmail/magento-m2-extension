@@ -99,6 +99,8 @@ Given('I have configured a simple widget for {string}', function(site) {
     "name": "Widget 1",
     "description": "This is really a widget. There are many like it, but this one is mine.",
     "shortDescription": "This is really a widget.",
+    // This is to set the context for the product save, so that rewrites and such get generated correctly.
+    "storeId": mapFrontendStoreViewId(site),
     "websiteIds": [mapFrontendWebsiteId(site)]
   })
 })
