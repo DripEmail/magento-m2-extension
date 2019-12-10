@@ -3,8 +3,8 @@
 ## NEXT
 
 *  Properly support multi-site. What makes this tricky is that customers are associated with websites, whereas orders are associated with store views. When an order event occurs, the order's store view is interrogated to determine which Drip configuration should be utilized. When a frontend customer event occurs, the currently used store view is utilized; however for an admin customer event, the first store view for that website is used. This means that trying to configure Drip at a store view level when there is more than one store view per website may result in unexpected behavior.
-* Set occurred_at on cart events.
-* Use parent image and url when child products are not individually visible
+* Set occurred_at time for cart events based on time the relevant Quote was updated.
+* When a configurable product has children than are not visible individually, use the parent's url and image_url.
 * Only allow setting the memory limit override globally
 
 ## 1.7.6
