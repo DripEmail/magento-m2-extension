@@ -1,0 +1,4 @@
+#!/bin/bash
+
+(service php7.2-fpm start > /dev/null 2>&1 &)
+exec nginx -g 'daemon off;'

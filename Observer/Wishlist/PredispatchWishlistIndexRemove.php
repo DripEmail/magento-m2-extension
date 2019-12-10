@@ -4,12 +4,6 @@ namespace Drip\Connect\Observer\Wishlist;
 
 class PredispatchWishlistIndexRemove extends \Drip\Connect\Observer\Base
 {
-
-    /**
-     * @var \Drip\Connect\Helper\Data
-     */
-    protected $connectHelper;
-
     /**
      * @var \Drip\Connect\Helper\Wishlist
      */
@@ -36,7 +30,7 @@ class PredispatchWishlistIndexRemove extends \Drip\Connect\Observer\Base
     protected $catalogProductFactory;
 
     public function __construct(
-        \Drip\Connect\Helper\Data $connectHelper,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Drip\Connect\Helper\Wishlist $wishlistHelper,
         \Magento\Customer\Model\Session $customerSession,
         \Magento\Framework\App\Request\Http $request,
@@ -44,7 +38,7 @@ class PredispatchWishlistIndexRemove extends \Drip\Connect\Observer\Base
         \Magento\Wishlist\Model\ItemFactory $wishlistItemFactory,
         \Magento\Catalog\Model\ProductFactory $catalogProductFactory
     ) {
-        parent::__construct($connectHelper, $logger);
+        parent::__construct($configFactory, $logger);
         $this->wishlistHelper = $wishlistHelper;
         $this->customerSession = $customerSession;
         $this->request = $request;
@@ -60,12 +54,15 @@ class PredispatchWishlistIndexRemove extends \Drip\Connect\Observer\Base
     {
         $wishlistItemId = filter_var($this->request->getParam('item'), FILTER_SANITIZE_NUMBER_INT);
         if ($wishlistItemId) {
+            $config = $this->configFactory->createForCurrentScope();
+
             $wishlistItem = $this->wishlistItemFactory->create()->load($wishlistItemId);
             $product = $this->catalogProductFactory->create()->load($wishlistItem->getProductId());
             $customer = $this->customerSession->getCustomer();
 
             $this->wishlistHelper->doWishlistEvent(
                 \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_WISHLIST_REMOVE_PRODUCT,
+                $config,
                 $customer,
                 $product
             );

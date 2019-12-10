@@ -44,7 +44,7 @@
                     <label>Batch Delay</label>
                     <comment>Delay in seconds between batch api calls (not recommended to have it lower than 72)</comment>
                 </field>
-                <field id="memory_limit" translate="label comment" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="memory_limit" translate="label comment" type="text" sortOrder="60" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Memory Limit</label>
                     <comment>Memory Limit in Mb</comment>
                 </field>

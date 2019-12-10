@@ -1,5 +1,12 @@
 # Magento 2 Drip Connect Changelog
 
+## NEXT
+
+*  Properly support multi-site. What makes this tricky is that customers are associated with websites, whereas orders are associated with store views. When an order event occurs, the order's store view is interrogated to determine which Drip configuration should be utilized. When a frontend customer event occurs, the currently used store view is utilized; however for an admin customer event, the first store view for that website is used. This means that trying to configure Drip at a store view level when there is more than one store view per website may result in unexpected behavior.
+* Set occurred_at on cart events.
+* Use parent image and url when child products are not individually visible
+* Only allow setting the memory limit override globally
+
 ## 1.7.6
 
 * Send `product_variant_id` correctly for all product types
@@ -7,8 +14,6 @@
 * When a product isn't in any categories, stop sending an array with a single empty string. Send an empty array instead.
 * Order batch sync now properly sends the frontend product URL.
 * Disable product event based product syncing since it's very broken for configurable products. Product data is still sent as part of order and cart events.
-* Set occurred_at on cart events.
-* Use parent image and url when child products are not individually visible
 
 ## 1.7.4
 

@@ -1,6 +1,7 @@
 *.sw[pon]
 .DS_Store
 /.idea
+.vscode/
 .idea/
 /vendor
 /htdocs

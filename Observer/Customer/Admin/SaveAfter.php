@@ -2,16 +2,10 @@
 
 namespace Drip\Connect\Observer\Customer\Admin;
 
-class SaveAfter extends \Drip\Connect\Observer\Base
+class SaveAfter extends \Drip\Connect\Observer\Customer\Admin\Base
 {
-    /** @var \Drip\Connect\Helper\Customer */
-    protected $customerHelper;
-
     /** @var \Magento\Newsletter\Model\SubscriberFactory */
     protected $subscriberFactory;
-
-    /** @var \Magento\Customer\Model\CustomerFactory */
-    protected $customerCustomerFactory;
 
     /** @var \Magento\Framework\Session\SessionManagerInterface */
     protected $coreSession;
@@ -26,7 +20,7 @@ class SaveAfter extends \Drip\Connect\Observer\Base
      * constructor
      */
     public function __construct(
-        \Drip\Connect\Helper\Data $connectHelper,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Magento\Framework\Registry $registry,
         \Drip\Connect\Helper\Customer $customerHelper,
         \Drip\Connect\Logger\Logger $logger,
@@ -35,12 +29,10 @@ class SaveAfter extends \Drip\Connect\Observer\Base
         \Magento\Framework\Serialize\Serializer\Json $json,
         \Magento\Customer\Model\CustomerFactory $customerCustomerFactory
     ) {
-        parent::__construct($connectHelper, $logger);
+        parent::__construct($customerCustomerFactory, $customerHelper, $configFactory, $logger);
         $this->registry = $registry;
-        $this->customerHelper = $customerHelper;
         $this->subscriberFactory = $subscriberFactory;
         $this->coreSession = $coreSession;
-        $this->customerCustomerFactory = $customerCustomerFactory;
         $this->json = $json;
     }
 
@@ -49,8 +41,12 @@ class SaveAfter extends \Drip\Connect\Observer\Base
      */
     public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)
     {
+        /** @var \Magento\Customer\Model\Data\Customer */
         $customerData = $observer->getCustomer();
         $customer = $this->customerCustomerFactory->create()->load($customerData->getId());
+
+        $storeId = $this->customerHelper->getCustomerStoreId($customerData);
+        $config = $this->configFactory->create($storeId);
 
         if ($this->coreSession->getCustomerIsNew()) {
             $this->coreSession->unsCustomerIsNew();
@@ -61,6 +57,7 @@ class SaveAfter extends \Drip\Connect\Observer\Base
             // subscribe them in Drip if they aren't already.
             $this->customerHelper->proceedAccount(
                 $customer,
+                $config,
                 $acceptsMarketing,
                 \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_NEW,
                 $acceptsMarketing
@@ -71,6 +68,7 @@ class SaveAfter extends \Drip\Connect\Observer\Base
             // that their status change.
             $this->customerHelper->proceedAccount(
                 $customer,
+                $config,
                 null,
                 \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_UPDATED,
                 $this->isCustomerStatusChanged($customer)
@@ -104,7 +102,7 @@ class SaveAfter extends \Drip\Connect\Observer\Base
         $oldData = $this->registry->registry(self::REGISTRY_KEY_CUSTOMER_OLD_DATA);
         // TODO: Refactor away stringly typed boolean.
         $oldStatus = $oldData['custom_fields']['accepts_marketing'] == 'yes';
-        $subscriber = $this->subscriberFactory->create()->loadByEmail($customer->getEmail());
+        $subscriber = $this->subscriberFactory->create()->loadByCustomerId($customer->getId());
         $newStatus = $subscriber->isSubscribed();
         return $oldStatus !== $newStatus;
     }

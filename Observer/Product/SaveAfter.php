@@ -10,6 +10,9 @@ class SaveAfter extends \Drip\Connect\Observer\Base
     /** @var \Drip\Connect\Helper\Product */
     protected $productHelper;
 
+    /** @var \Drip\Connect\Helper\Data */
+    protected $connectHelper;
+
     /** @var \Magento\Framework\Serialize\Serializer\Json */
     protected $json;
 
@@ -24,14 +27,16 @@ class SaveAfter extends \Drip\Connect\Observer\Base
         \Drip\Connect\Logger\Logger $logger,
         \Drip\Connect\Helper\Product $productHelper,
         \Drip\Connect\Helper\Data $connectHelper,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Magento\Framework\Serialize\Serializer\Json $json,
         \Magento\Framework\Registry $registry
     ) {
         $this->productRepository = $productRepository;
         $this->productHelper = $productHelper;
+        $this->connectHelper = $connectHelper;
         $this->registry = $registry;
         $this->json = $json;
-        parent::__construct($connectHelper, $logger);
+        parent::__construct($configFactory, $logger);
     }
 
     /**
@@ -45,6 +50,8 @@ class SaveAfter extends \Drip\Connect\Observer\Base
             return;
         }
 
+        $config = $this->configFactory->createForCurrentScope();
+
         $product = $this->productRepository->getById(
             $product->getId(),
             false,
@@ -53,10 +60,10 @@ class SaveAfter extends \Drip\Connect\Observer\Base
         );
 
         if ($this->registry->registry(\Drip\Connect\Helper\Product::REGISTRY_KEY_IS_NEW)) {
-            $this->proceedProductNew($product);
+            $this->productHelper->proceedProductNew($product, $config);
         } else {
             if ($this->isProductChanged($product)) {
-                $this->proceedProduct($product);
+                $this->productHelper->proceedProduct($product, $config);
             }
         }
         $this->registry->unregister(\Drip\Connect\Helper\Product::REGISTRY_KEY_IS_NEW);
@@ -78,25 +85,5 @@ class SaveAfter extends \Drip\Connect\Observer\Base
         unset($newData['occurred_at']);
 
         return ($this->json->serialize($oldData) != $this->json->serialize($newData));
-    }
-
-    /**
-     * drip actions for product create
-     *
-     * @param \Magento\Catalog\Model\Product $product
-     */
-    protected function proceedProductNew($product)
-    {
-        $this->productHelper->proceedProductNew($product);
-    }
-
-    /**
-     * drip actions for product change
-     *
-     * @param \Magento\Catalog\Model\Product $product
-     */
-    protected function proceedProduct($product)
-    {
-        $this->productHelper->proceedProduct($product);
     }
 }

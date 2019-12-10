@@ -40,6 +40,12 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     /** @var \Magento\Eav\Api\AttributeRepositoryInterface */
     protected $attributeRepository;
 
+    /** @var \Magento\Framework\App\ProductMetadataInterface */
+    protected $productMetadata;
+
+    /** @var \Magento\Framework\Module\ResourceInterface */
+    protected $moduleResource;
+
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Framework\App\Request\Http $request,
@@ -48,7 +54,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Framework\App\State $state,
         \Magento\Eav\Api\AttributeRepositoryInterface $attributeRepository,
         \Magento\Framework\App\Response\RedirectInterface $redirect,
-        \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory $catalogResourceModelCategoryCollectionFactory
+        \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory $catalogResourceModelCategoryCollectionFactory,
+        \Magento\Framework\Module\ResourceInterface $moduleResource,
+        \Magento\Framework\App\ProductMetadataInterface $productMetadata
     ) {
         $this->request = $request;
         $this->configFactory = $configFactory;
@@ -57,6 +65,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $this->catalogResourceModelCategoryCollectionFactory = $catalogResourceModelCategoryCollectionFactory;
         $this->attributeRepository = $attributeRepository;
         $this->redirect = $redirect;
+        $this->moduleResource = $moduleResource;
+        $this->productMetadata = $productMetadata;
         parent::__construct($context);
     }
 
@@ -81,25 +91,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         }
 
         return $brandName;
-    }
-
-    /**
-     * check if module active
-     *
-     * @return bool
-     */
-    public function isModuleActive()
-    {
-        // TODO: This whole method exists to indeterminately figure out scope.
-        //       We need to nuke this in favor of always knowing what scope we
-        //       are dealing with.
-        if (!empty($this->request->getParam('store'))) {
-            $config = $this->configFactory->createForCurrentStoreParam();
-        } else {
-            $config = $this->configFactory->createForCurrentScope();
-        }
-
-        return $config->isEnabled();
     }
 
     /**
@@ -253,5 +244,16 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function isEmailValid($email)
     {
         return !empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL);
+    }
+
+    /**
+     * get version
+     *
+     * @return string
+     */
+    public function getVersion()
+    {
+        return 'Magento ' . $this->productMetadata->getVersion() . ', '
+            . 'Drip Extension ' . $this->moduleResource->getDbVersion('Drip_Connect');
     }
 }

@@ -19,7 +19,7 @@ class Orders extends \Drip\Connect\Block\System\Config\Sync\Button
 
     public function isSyncAvailable()
     {
-        if (!$this->isModuleActive()) {
+        if (!$this->config->isEnabled()) {
             return false;
         }
         $syncState = $this->config->getOrdersSyncState();

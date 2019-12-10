@@ -1,37 +1,22 @@
 <?php
 namespace Drip\Connect\Model\ApiCalls\Helper;
 
+// TODO: This class doesn't seem to be called from anywhere. Confirm that it is dead.
+
 class GetProjectList extends \Drip\Connect\Model\ApiCalls\Helper
 {
-
-    /**
-     * @var \Drip\Connect\Model\ApiCalls\BaseFactory
-     */
-    protected $connectApiCallsBaseFactory;
-
-    /**
-     * @var \Drip\Connect\Model\ApiCalls\Request\BaseFactory
-     */
-    protected $connectApiCallsRequestBaseFactory;
-
     public function __construct(
         \Drip\Connect\Model\ApiCalls\BaseFactory $connectApiCallsBaseFactory,
         \Drip\Connect\Model\ApiCalls\Request\BaseFactory $connectApiCallsRequestBaseFactory,
-        \Drip\Connect\Model\ConfigurationFactory $configFactory,
+        \Drip\Connect\Model\Configuration $config,
         $data = []
     ) {
-        $this->connectApiCallsBaseFactory = $connectApiCallsBaseFactory;
-        $this->connectApiCallsRequestBaseFactory = $connectApiCallsRequestBaseFactory;
-
-        // TODO: Inject config into this class.
-        $config = $configFactory->createForCurrentScope();
-
-        $this->apiClient = $this->connectApiCallsBaseFactory->create([
+        $this->apiClient = $connectApiCallsBaseFactory->create([
             'endpoint' => self::ENDPOINT_ACCOUNTS,
             'config' => $config,
         ]);
 
-        $this->request = $this->connectApiCallsRequestBaseFactory->create()
+        $this->request = $connectApiCallsRequestBaseFactory->create()
             ->setMethod(\Zend_Http_Client::GET);
     }
 }

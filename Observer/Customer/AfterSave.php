@@ -20,14 +20,14 @@ class AfterSave extends \Drip\Connect\Observer\Base
      * constructor
      */
     public function __construct(
-        \Drip\Connect\Helper\Data $connectHelper,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Magento\Framework\Registry $registry,
         \Drip\Connect\Logger\Logger $logger,
         \Drip\Connect\Helper\Customer $customerHelper,
         \Magento\Framework\Serialize\Serializer\Json $json,
         \Magento\Customer\Model\CustomerFactory $customerCustomerFactory
     ) {
-        parent::__construct($connectHelper, $logger);
+        parent::__construct($configFactory, $logger);
         $this->registry = $registry;
         $this->customerHelper = $customerHelper;
         $this->customerCustomerFactory = $customerCustomerFactory;
@@ -46,10 +46,13 @@ class AfterSave extends \Drip\Connect\Observer\Base
     {
         $customer = $observer->getCustomer();
 
+        $config = $this->configFactory->createForCurrentScope();
+
         if ($this->registry->registry(self::REGISTRY_KEY_CUSTOMER_IS_NEW)) {
             $acceptsMarketing = $this->registry->registry(self::REGISTRY_KEY_NEW_USER_SUBSCRIBE_STATE);
             $this->customerHelper->proceedAccount(
                 $customer,
+                $config,
                 $acceptsMarketing,
                 \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_NEW,
                 $acceptsMarketing
@@ -58,6 +61,7 @@ class AfterSave extends \Drip\Connect\Observer\Base
             if ($this->isCustomerChanged($customer)) {
                 $this->customerHelper->proceedAccount(
                     $customer,
+                    $config,
                     $this->registry->registry(self::REGISTRY_KEY_SUBSCRIBER_SUBSCRIBE_INTENT),
                     \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_UPDATED,
                     $this->isCustomerStatusChanged($customer)

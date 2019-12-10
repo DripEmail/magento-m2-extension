@@ -52,7 +52,7 @@ class Configuration
         \Magento\Config\Model\ResourceModel\Config $resourceConfig,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        $storeId
+        int $storeId
     ) {
         $this->resourceConfig = $resourceConfig;
         $this->scopeConfig = $scopeConfig;
@@ -92,6 +92,14 @@ class Configuration
     public function getTimeout()
     {
         return $this->getStoreConfig(self::API_TIMEOUT_PATH);
+    }
+
+    /**
+     * @param int $timeout The timeout in seconds.
+     */
+    public function setTimeout($timeout)
+    {
+        $this->setStoreConfig(self::API_TIMEOUT_PATH, $timeout);
     }
 
     public function getApiKey()

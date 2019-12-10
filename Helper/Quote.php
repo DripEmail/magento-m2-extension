@@ -109,14 +109,18 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
      * drip actions when send quote to drip 1st time
      *
      * @param \Magento\Quote\Model\Quote $quote
+     * @param \Drip\Connect\Model\Configuration $config
      */
-    public function proceedQuoteNew($quote)
+    public function proceedQuoteNew(\Magento\Quote\Model\Quote $quote, \Drip\Connect\Model\Configuration $config)
     {
         $data = $this->prepareQuoteData($quote);
         $data['action'] = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateQuote::QUOTE_NEW;
         $data['occurred_at'] = $this->connectHelper->formatDate($quote->getUpdatedAt());
         if (count($data['items'])) {
-            $this->connectApiCallsHelperCreateUpdateQuoteFactory->create(['data' => $data])->call();
+            $this->connectApiCallsHelperCreateUpdateQuoteFactory->create([
+                'config' => $config,
+                'data' => $data,
+            ])->call();
         }
     }
 
@@ -124,17 +128,22 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
      * drip actions when send quote to drip from guest checkout, when user enters his email
      *
      * @param \Magento\Quote\Model\Quote $quote
+     * @param string $email
+     * @param \Drip\Connect\Model\Configuration $config
      *
      * @return bool
      */
-    public function proceedQuoteGuestCheckout($quote, $email)
+    public function proceedQuoteGuestCheckout(\Magento\Quote\Model\Quote $quote, $email, \Drip\Connect\Model\Configuration $config)
     {
         $data = $this->prepareQuoteData($quote);
         $data['email'] = $email;
         $data['action'] = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateQuote::QUOTE_NEW;
         $data['occurred_at'] = $this->connectHelper->formatDate($quote->getUpdatedAt());
 
-        $response = $this->connectApiCallsHelperCreateUpdateQuoteFactory->create(['data' => $data])->call();
+        $response = $this->connectApiCallsHelperCreateUpdateQuoteFactory->create([
+            'config' => $config,
+            'data' => $data,
+        ])->call();
 
         return ($response->getResponseCode() == self::SUCCESS_RESPONSE_CODE);
     }
@@ -143,13 +152,18 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
      * drip actions existing quote gets changed
      *
      * @param \Magento\Quote\Model\Quote $quote
+     * @param \Drip\Connect\Model\Configuration $config
      */
-    public function proceedQuote($quote)
+    public function proceedQuote(\Magento\Quote\Model\Quote $quote, \Drip\Connect\Model\Configuration $config)
     {
         $data = $this->prepareQuoteData($quote);
         $data['action'] = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateQuote::QUOTE_CHANGED;
         $data['occurred_at'] = $this->connectHelper->formatDate($quote->getUpdatedAt());
-        $this->connectApiCallsHelperCreateUpdateQuoteFactory->create(['data' => $data])->call();
+
+        $this->connectApiCallsHelperCreateUpdateQuoteFactory->create([
+            'config' => $config,
+            'data' => $data,
+        ])->call();
     }
 
     /**

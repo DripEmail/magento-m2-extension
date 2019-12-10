@@ -10,6 +10,9 @@ class CheckoutSendCart extends \Magento\Framework\App\Action\Action
     /** @var \Magento\Checkout\Model\Session */
     protected $checkoutSession;
 
+    /** @var \Drip\Connect\Model\ConfigurationFactory */
+    protected $configFactory;
+
     /** @var \Drip\Connect\Helper\Quote */
     protected $connectQuoteHelper;
 
@@ -19,12 +22,14 @@ class CheckoutSendCart extends \Magento\Framework\App\Action\Action
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
         \Magento\Checkout\Model\Session $checkoutSession,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Drip\Connect\Helper\Quote $connectQuoteHelper,
         \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
     ) {
         parent::__construct($context);
         $this->resultJsonFactory = $resultJsonFactory;
         $this->checkoutSession = $checkoutSession;
+        $this->configFactory = $configFactory;
         $this->connectQuoteHelper = $connectQuoteHelper;
     }
 
@@ -42,7 +47,9 @@ class CheckoutSendCart extends \Magento\Framework\App\Action\Action
             } else {
 
                 if ($email != $this->checkoutSession->getGuestEmail()) {
-                    $result = $this->connectQuoteHelper->proceedQuoteGuestCheckout($quote, $email);
+                    $config = $this->configFactory->createForCurrentScope();
+
+                    $result = $this->connectQuoteHelper->proceedQuoteGuestCheckout($quote, $email, $config);
                     $this->checkoutSession->setGuestEmail($email);
                 } else {
                     $result = 1; // do not need to send call

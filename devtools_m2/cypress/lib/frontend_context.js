@@ -16,6 +16,10 @@ function getCurrentFrontendWebsiteId() {
   return mapFrontendWebsiteId(currentSite)
 }
 
+function getCurrentFrontendStoreViewId() {
+  return mapFrontendStoreViewId(currentSite)
+}
+
 function mapFrontendWebsiteId(site) {
   let websiteId = 1
   switch (site) {
@@ -23,7 +27,7 @@ function mapFrontendWebsiteId(site) {
       websiteId = 1
       break
     case 'site1':
-      websiteId = 2
+      websiteId = 100
       break
     default:
       throw `Unexpected site name ${site}`
@@ -47,4 +51,4 @@ function mapFrontendStoreViewId(site) {
   return storeViewId
 }
 
-export { setCurrentFrontendSite, getCurrentFrontendSite, getCurrentFrontendDomain, getCurrentFrontendWebsiteId, mapFrontendWebsiteId, mapFrontendStoreViewId }
+export { setCurrentFrontendSite, getCurrentFrontendSite, getCurrentFrontendDomain, getCurrentFrontendWebsiteId, getCurrentFrontendStoreViewId, mapFrontendWebsiteId, mapFrontendStoreViewId }
