@@ -93,3 +93,4 @@ Feature: Customer Cart Interactions
     Then No web requests are sent
     When I check out
     Then No web requests are sent
+

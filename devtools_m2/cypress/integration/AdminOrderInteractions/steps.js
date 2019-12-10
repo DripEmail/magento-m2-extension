@@ -53,7 +53,7 @@ Then('an order event is sent to Drip', function() {
     const item = body.items[0]
     expect(item.categories).to.be.empty
     expect(item.discounts).to.eq(0)
-    expect(item.image_url).to.eq('http://main.magento.localhost:3006/pub/media/catalog/product/')
+    expect(item.image_url).to.eq('http://main.magento.localhost:3006/media/catalog/product/')
     expect(item.name).to.eq('Widget 1')
     expect(item.price).to.eq(11.22)
     expect(item.product_id).to.eq('1')

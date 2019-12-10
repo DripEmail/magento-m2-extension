@@ -71,7 +71,7 @@ Then('A wishlist {string} event should be sent to Drip', function (type) {
         expect(event.properties.name).to.eq('Widget 1')
         expect(event.properties.price).to.eq(1122)
         expect(event.properties.currency).to.eq('USD')
-        expect(event.properties.image_url).to.eq('http://main.magento.localhost:3006/pub/media/catalog/product/')
+        expect(event.properties.image_url).to.eq('http://main.magento.localhost:3006/media/catalog/product/')
         expect(event.properties.source).to.eq('magento')
     })
 })
