@@ -29,4 +29,7 @@ echo "All versions check out. Generating tarball..."
 
 git archive --format=zip HEAD > drip_m2connect-$(echo -n $release_version | tr '.' '_')-$(date "+%Y-%m-%d").zip
 
-echo "Tarball generated. Don't forget to tag a release and push the tag."
+git tag -a -m "Version $release_version" "$release_version"
+git push origin "$release_version"
+
+echo "Tarball generated and tag created and pushed."
