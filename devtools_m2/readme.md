@@ -70,7 +70,7 @@ XDebug is enabled in the TEST environment ( `DRIP_COMPOSE_ENV=test ./setup.sh` )
 
 From here you'll be ready to debug.
 - Click the Debugger icon on the left menu in VSCode
-- Make sure your profile is "Listen for XDebug".
+- Make sure your profile is "M2:Listen for XDebug".
 - Click the green triangle at the top `Debug` menu
 - Set a breakpoint
 - Open up your browser and visit a page in the magento test environment (e.g. http://main.magento.localhost:3006/admin_123/).
