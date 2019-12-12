@@ -56,10 +56,10 @@ XDebug is enabled in the TEST environment ( `DRIP_COMPOSE_ENV=test ./setup.sh` )
 - Get the [Xdebug Helper for Firefox](https://addons.mozilla.org/en-US/firefox/addon/xdebug-helper-for-firefox/), or [Xdebug helper for Chrome](https://chrome.google.com/extensions/detail/eadndfjplgieldjbigjakmdgkmoaaaoc)
 - Install XDebug locally `pecl install xdebug`
 - Install `PHP Debug` in VSCode  (you'll do yourself a favor to restart VSCode)
-- Modify `.vscode/launch.json` "Listen for XDebug" entry to look like this:
+- Modify `.vscode/launch.json` to have an entry that looks like this:
 ```
     {
-      "name": "Listen for XDebug",
+      "name": "M2:Listen for XDebug",
       "type": "php",
       "request": "launch",
       "port": 9000,
