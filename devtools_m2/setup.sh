@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+eval $(aws ecr get-login --no-include-email --registry-ids 648846177135 --region us-east-1)
+
 # Spin up a new instance of Magento
 # Add --build when you need to rebuild the Dockerfile.
 ./docker_compose.sh up -d
