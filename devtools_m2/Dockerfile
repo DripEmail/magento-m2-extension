@@ -8,6 +8,9 @@ RUN add-apt-repository ppa:ondrej/php
 RUN apt install -y php7.2 php7.2-fpm php7.2-bcmath php7.2-gd php7.2-intl php7.2-pdo-mysql php7.2-soap php7.2-xsl php7.2-zip php7.2-curl php7.2-mbstring php7.2-dev composer
 RUN test "true" = "${CONTINUOUS_INTEGRATION}" && echo "skipping install of php-xdebug" || pecl install xdebug
 RUN apt purge -y apache2 && apt autoremove
+RUN service nginx stop;service php7.2-fpm stop;echo "nginx and php-fpm stopped"
+# https://github.com/nginxinc/docker-nginx/blob/8921999083def7ba43a06fabd5f80e4406651353/mainline/jessie/Dockerfile#L21-L23
+RUN ln -sf /dev/stdout /var/log/nginx/magento-access.log && ln -sf /dev/stderr /var/log/nginx/magento-error.log
 
 # Configure nginx and php
 ADD nginx*magento /etc/nginx/sites-available/magento
