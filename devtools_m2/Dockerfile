@@ -6,7 +6,7 @@ RUN apt update && apt install -y software-properties-common git wget curl gnupg2
 RUN add-apt-repository ppa:ondrej/php
 RUN apt install -y php7.2 php7.2-fpm php7.2-bcmath php7.2-gd php7.2-intl php7.2-pdo-mysql php7.2-soap php7.2-xsl php7.2-zip php7.2-curl php7.2-mbstring php7.2-dev composer
 RUN pecl install xdebug
-RUN apt purge -y apache2 && apt autoremove 
+RUN apt purge -y apache2 && apt autoremove
 
 # Configure nginx and php
 ADD nginx*magento /etc/nginx/sites-available/magento
@@ -28,7 +28,7 @@ RUN cd /var/www/html/magento && /usr/bin/patch < nginx.conf.sample.patch && rm n
 RUN cd /var/www/html/magento && composer install
 
 USER root
-ENTRYPOINT [ "/startup.sh" ]
+CMD [ "/startup.sh" ]
 
 # Make life a little nicer when we log into the container.
 WORKDIR /var/www/html/magento
