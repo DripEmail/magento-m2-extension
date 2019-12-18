@@ -10,9 +10,11 @@ map $http_host $MAGE_RUN_CODE {
 
 server {
     listen 80;
+    server_name  *.magento.localhost;
+    access_log  /var/log/nginx/magento-access.log combined buffer=1m flush=10s;
+    error_log   /var/log/nginx/magento-error.log error;
     listen [::]:80;
     index  index.php index.html index.htm;
-    server_name  *.magento.localhost;
 
     set $MAGE_ROOT /var/www/html/magento;
     set $MAGE_MODE production;
