@@ -1,7 +1,10 @@
 version: '3.7'
 services:
   web:
-    build: .
+    build:
+      context: .
+      args:
+          - CONTINUOUS_INTEGRATION
     ports:
     - 3006:80
     links:
