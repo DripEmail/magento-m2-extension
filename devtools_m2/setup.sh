@@ -31,8 +31,15 @@ MAGE_MODE=developer ./bin/magento setup:install \
 --admin-lastname=LAST_NAME && \
 ./bin/magento setup:config:set --backend-frontname='admin_123' && \
 ./bin/magento config:set admin/security/admin_account_sharing 1 && \
+./bin/magento config:set catalog/frontend/flat_catalog_product 1 && \
 ./bin/magento config:set admin/security/use_form_key 0 && \
-./bin/magento deploy:mode:set developer
+./bin/magento config:set dev/js/merge_files 1 && \
+./bin/magento config:set dev/js/enable_js_bundling 1 && \
+./bin/magento config:set dev/js/minify_files 1 && \
+./bin/magento config:set dev/css/merge_css_files 1 && \
+./bin/magento config:set dev/css/minify_files 1 && \
+./bin/magento setup:static-content:deploy -f && \
+./bin/magento deploy:mode:set production
 SCRIPT
 )
 
