@@ -14,6 +14,8 @@ When('I create an account', function() {
     cy.get('input[name="password_confirmation"]').type('blahblah123!!!')
     cy.contains('Create an Account').click()
   })
+  cy.get('.message-success > div').contains('Thank you for registering with')
+  cy.visit('/lib/web/blank.html')
 })
 
 When('I add a {string} widget to my cart', function(type) {
@@ -334,7 +336,7 @@ When('I check out', function() {
   }
   cy.route('POST', `rest/${storeViewCode}/V1/carts/**`).as('cartBuilder')
   cy.visit(`${getCurrentFrontendDomain()}/checkout/cart`)
-  cy.wait('@cartBuilder', { requestTimeout: 10000 })
+  cy.wait('@cartBuilder', { timeout: 20000 })
   cy.get('button[data-role="proceed-to-checkout"]').click()
 
   cy.contains('Shipping Address', {timeout: 20000})
