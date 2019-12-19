@@ -75,7 +75,7 @@ When('I check out as a guest', function() {
   cy.wrap(Mockclient.reset())
 
   cy.visit('/checkout/#shipping')
-  cy.contains('Flat Rate')  // wait for the page to render
+  cy.contains('Flat Rate', {timeout: 30000})  // wait for the page to render
 
   cy.get('input[id="customer-email"]').first().type('testuser@example.com')
   cy.get('input[name="firstname"]').type('Test')
@@ -89,7 +89,8 @@ When('I check out as a guest', function() {
   cy.get('#shipping-method-buttons-container').contains('Next').click()
 
   cy.contains('Check / Money order')
-  cy.contains('Place Order').click()
+  cy.get('input[name="billing-address-same-as-shipping"]').check()
+  cy.contains('Place Order', {timeout: 30000}).click()
 
   cy.contains('Thank you for your purchase!')
 })

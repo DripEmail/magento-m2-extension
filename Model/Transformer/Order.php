@@ -180,9 +180,12 @@ class Order
      */
     protected function getOrderBillingData()
     {
+        if ( $this->order->getCustomerIsGuest() ) {
+            $address = $this->order->getBillingAddress();
+            return $this->buildOrderAddressDataStructure($address);
+        }
         $addressId = $this->order->getBillingAddressId();
-
-        return $this->getOrderAddressData($addressId);
+        return $this->getOrderAddressData( $addressId );
     }
 
     /**
@@ -192,9 +195,12 @@ class Order
      */
     protected function getOrderShippingData()
     {
+        if ( $this->order->getCustomerIsGuest() ) {
+            $address = $this->order->getShippingAddress();
+            return $this->buildOrderAddressDataStructure( $address );
+        }
         $addressId = $this->order->getShippingAddressId();
-
-        return $this->getOrderAddressData($addressId);
+        return $this->getOrderAddressData( $addressId );
     }
 
     /**
@@ -207,7 +213,18 @@ class Order
     protected function getOrderAddressData($addressId)
     {
         $address = $this->salesOrderAddressFactory->create()->load($addressId);
+        return $this->buildOrderAddressDataStructure($address);
+    }
 
+    /**
+     * helper function for forOrder<*>Data
+     *
+     * @param \Magento\Customer\Model\Address $address
+     * 
+     * @return array
+     */
+    protected function buildOrderAddressDataStructure(\Magento\Sales\Model\Order\Address $address)
+    {
         return [
             'first_name' => (string) $address->getFirstname(),
             'last_name' => (string) $address->getLastname(),
