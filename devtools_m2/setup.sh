@@ -39,8 +39,7 @@ MAGE_MODE=developer ./bin/magento setup:install \
 ./bin/magento config:set dev/css/merge_css_files 1 && \
 ./bin/magento config:set dev/css/minify_files 1 && \
 ./bin/magento setup:static-content:deploy -f && \
-./bin/magento deploy:mode:set production && \
-./bin/magento cron:run
+./bin/magento deploy:mode:set production
 SCRIPT
 )
 
