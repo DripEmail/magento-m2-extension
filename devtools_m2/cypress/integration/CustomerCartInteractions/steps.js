@@ -14,6 +14,8 @@ When('I create an account', function() {
     cy.get('input[name="password_confirmation"]').type('blahblah123!!!')
     cy.contains('Create an Account').click()
   })
+  cy.get('.message-success > div').contains('Thank you for registering with')
+  cy.visit('/lib/web/blank.html')
 })
 
 When('I add a {string} widget to my cart', function(type) {
@@ -68,6 +70,35 @@ When('I add a different {string} widget to my cart', function(type) {
   }
   cy.get('#product-addtocart-button').click()
   cy.wait('@addToCartRequest') // Make sure that the cart addition has finished before continuing.
+})
+
+When('I check out as a guest', function() {
+  cy.log('Resetting mocks')
+  cy.wrap(Mockclient.reset())
+
+  cy.visit('/checkout/#shipping')
+  cy.contains('Flat Rate', {timeout: 30000})  // wait for the page to render
+
+  cy.get('input[id="customer-email"]').first().type('testuser@example.com')
+  cy.get('input[name="firstname"]').type('Test')
+  cy.get('input[name="lastname"]').type('User')
+  cy.get('input[name="street[0]"]').type('123 Main St.')
+  cy.get('input[name="city"]').type('Centerville')
+  cy.get('select[name="region_id"]').select('Minnesota')
+  cy.get('input[name="postcode"]').type('12345')
+  cy.get('input[name="telephone"]').type('999-999-9999')
+  //cy.get('button[onclick="billing.save()"]').click()
+  cy.get('#shipping-method-buttons-container').contains('Next').click()
+
+  cy.contains('Check / Money order')
+  cy.get('input[name="billing-address-same-as-shipping"]').check()
+  cy.contains('Place Order', {timeout: 30000}).click()
+
+  cy.contains('Thank you for your purchase!')
+})
+
+When('I logout', function() {
+  cy.visit('/customer/account/logout')
 })
 
 Then('A simple cart event should be sent to Drip', function() {
@@ -305,7 +336,7 @@ When('I check out', function() {
   }
   cy.route('POST', `rest/${storeViewCode}/V1/carts/**`).as('cartBuilder')
   cy.visit(`${getCurrentFrontendDomain()}/checkout/cart`)
-  cy.wait('@cartBuilder', { requestTimeout: 10000 })
+  cy.wait('@cartBuilder', { timeout: 20000 })
   cy.get('button[data-role="proceed-to-checkout"]').click()
 
   cy.contains('Shipping Address', {timeout: 20000})
