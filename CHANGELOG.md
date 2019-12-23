@@ -2,7 +2,7 @@
 
 ## NEXT
 
-* Send order created events when a guest complete checkout.
+* Send order created events when a guest completes checkout.
 
 ## 1.8.0
 
