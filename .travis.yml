@@ -23,6 +23,8 @@ matrix:
       language: node_js
       node_js:
         - '10'
+      env:
+        secure: KLIVg65GQEnm6/VN+EL3DRviLCJ1tHBuncMu6Hj5+2+mxLoTgB04fGkPIA/DrhTQIyua0Pfawj8BlAgCXjjzqdLiDhqLu1EYu2Dx/6WnqRh6Xyq1NphkYZPzOI7ogztSKbSl2POEGdjmLCOlbYl11SQUbUfbGvD+xhBGTI/S/WGJ/OnqRmAht7v+RXmWL2fUb5UwsbhcZ1dsHmpHaPF0HR68Jl9cPQyIvk8DpDjOl17M3Z8bGy6aNpW4qOgi99jxWAIM81Dsw5nAeaUuVSpvRSakE2y2/5vfyYuKhAlYt2KQrR8vODdbOydCwGbYQLLqNrBXW7hkuSZ1IZjtMBX8dRk2tNFsarVtVjM/DpH9KVEQasVtddLiVeD9TJ3FFtwz43VMdfQPagWWMahKVFWivh8pGGHQFM6VpJ8KalFdpCQbQtBsblxh9R+7pfzCHl3aG2iKj0L3i9yaYjcANKdSkqNjY2ZuroFq7NKNkWw+u/Y/9W734AJxnYR5iphRAy7vV/zfDck/irjqNoyKAn1QWR157lHk610KcAXBUJYruXHre5LdvqLDXhkgTZkXyNpaBiV9G0kemBvHfjDSwuHdvqBju1Qt7oFxxHjwVJz44zTMJjOnlcrHHoNogWG/NXoC1LNhRCQyicXllQUVvtWuRe0ZNjZp3gGESOZAbsxmkKU=
       addons:
         chrome: stable
         hosts:
@@ -39,8 +41,9 @@ matrix:
         directories:
           # we also need to cache folder with Cypress binary
           - ~/.cache
+      before_install:
+        - pip install --user awscli
       install:
         - cd $TRAVIS_BUILD_DIR/devtools_m2/ && npm ci
       script:
         - cd $TRAVIS_BUILD_DIR/devtools_m2/ && ./tests.sh
-

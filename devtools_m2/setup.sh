@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+eval $(aws ecr get-login --no-include-email --registry-ids 648846177135 --region us-east-1)
+
 # Spin up a new instance of Magento
 # Add --build when you need to rebuild the Dockerfile.
 ./docker_compose.sh up -d
@@ -31,6 +33,7 @@ MAGE_MODE=developer ./bin/magento setup:install \
 --admin-lastname=LAST_NAME && \
 ./bin/magento setup:config:set --backend-frontname='admin_123' && \
 ./bin/magento config:set admin/security/admin_account_sharing 1 && \
+./bin/magento config:set catalog/frontend/flat_catalog_product 1 && \
 ./bin/magento config:set admin/security/use_form_key 0 && \
 ./bin/magento config:set dev/js/merge_files 1 && \
 ./bin/magento config:set dev/js/enable_js_bundling 1 && \
@@ -38,9 +41,7 @@ MAGE_MODE=developer ./bin/magento setup:install \
 ./bin/magento config:set dev/css/merge_css_files 1 && \
 ./bin/magento config:set dev/css/minify_files 1 && \
 ./bin/magento setup:static-content:deploy -f && \
-./bin/magento deploy:mode:set production && \
-chmod -R 775 pub/static/ pub/media/ var/ && \
-./bin/magento cron:run
+./bin/magento deploy:mode:set production
 SCRIPT
 )
 

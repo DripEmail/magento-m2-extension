@@ -3,5 +3,5 @@ import { setCurrentFrontendSite, getCurrentFrontendDomain } from "../../lib/fron
 
 When('I open the {string} homepage', function(site) {
   setCurrentFrontendSite(site)
-  cy.visit(getCurrentFrontendDomain())
+  cy.visit(getCurrentFrontendDomain(), {timeout: 15000})
 })
