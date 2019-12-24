@@ -22,6 +22,17 @@ Feature: Customer Subscription Interactions
     When I 'subscribe' from the general newsletter
     Then A 'subscribed' event should be sent to Drip
 
+@focus
+  Scenario: A customer creates a subscribed account, unsubscribes, and then resubscribes
+    Given I am logged into the admin interface
+      And I have set up a multi-store configuration
+      And I have configured Drip to be enabled for 'main'
+    When I open the 'main' homepage
+      And I create a 'subscribed' account
+      And I 'unsubscribe' from the general newsletter
+    When I subscribe on the homepage
+    Then A 'subscribed' event should be sent to Drip
+
   Scenario: A customer creates a subscribed account and then unsubscribes when not configured for Drip
     Given I am logged into the admin interface
       And I have set up a multi-store configuration

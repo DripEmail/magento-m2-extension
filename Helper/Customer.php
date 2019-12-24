@@ -280,6 +280,23 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * @param string $email
+     * @param int $websiteId
+     *
+     * @return bool
+     */
+    public function getCustomerByEmail($email, $websiteId = null)
+    {
+        if ($websiteId == null) {
+            $websiteId = $this->storeManager->getStore()->getWebsiteId();
+        }
+
+        $customer = $this->customerCustomerFactory->create()->setWebsiteId($websiteId)->loadByEmail($email);
+
+        return $customer;
+    }
+
+    /**
      * drip actions for customer account change
      *
      * @param \Magento\Customer\Model\Customer $customer

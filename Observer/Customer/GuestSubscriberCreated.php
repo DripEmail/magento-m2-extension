@@ -16,6 +16,9 @@ class GuestSubscriberCreated extends \Drip\Connect\Observer\Base
     /** @var \Magento\Framework\Registry */
     protected $registry;
 
+    // /** @var \Magento\Store\Model\StoreManagerInterface */
+    // protected $storeManager;
+
     /**
      * constructor
      */
@@ -43,16 +46,27 @@ class GuestSubscriberCreated extends \Drip\Connect\Observer\Base
      */
     public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)
     {
-        if (! $this->registry->registry(self::REGISTRY_KEY_NEW_GUEST_SUBSCRIBER)) {
-            return;
-        }
-
         $config = $this->configFactory->createForCurrentScope();
 
         $email = $this->request->getParam('email');
 
         $subscriber = $this->subscriberFactory->create()->loadByEmail($email);
         $newSubscriberSubscribed = $subscriber->isSubscribed();
+
+        if (! $this->registry->registry(self::REGISTRY_KEY_NEW_GUEST_SUBSCRIBER)) {
+            $customer = $this->customerHelper->getCustomerByEmail($email);
+            if ((bool) $customer->getId()) {
+              $this->customerHelper->proceedAccount(
+                $customer,
+                $config,
+                true,
+                \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_UPDATED,
+                true
+              );
+
+            }
+            return;
+        }
 
         // We only force subscription status in Drip when subscribed because if
         // the user already exists in Drip and is subscribed there, we don't

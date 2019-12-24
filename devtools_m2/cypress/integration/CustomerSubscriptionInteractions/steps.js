@@ -88,6 +88,16 @@ When('I {string} from the general newsletter', function(state) {
   cy.contains('Save').click()
 })
 
+When('I subscribe on the homepage', function(state) {
+  cy.log('Resetting mocks')
+  cy.wrap(Mockclient.reset())
+
+  cy.visit(`${getCurrentFrontendDomain()}`)
+
+  cy.get('#newsletter').type("testuser@example.com")
+  cy.contains('Subscribe').click()
+})
+
 Then('A {string} event should be sent to Drip', function(state) {
   cy.log('Validating that the subscriber call has everything we need')
   cy.wrap(Mockclient.retrieveRecordedRequests({
