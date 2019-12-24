@@ -16,9 +16,6 @@ class GuestSubscriberCreated extends \Drip\Connect\Observer\Base
     /** @var \Magento\Framework\Registry */
     protected $registry;
 
-    // /** @var \Magento\Store\Model\StoreManagerInterface */
-    // protected $storeManager;
-
     /**
      * constructor
      */
