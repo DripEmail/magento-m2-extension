@@ -283,7 +283,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      * @param string $email
      * @param int $websiteId
      *
-     * @return bool
+     * @return \Magento\Customer\Model\Customer $customer
      */
     public function getCustomerByEmail($email, $websiteId = null)
     {
