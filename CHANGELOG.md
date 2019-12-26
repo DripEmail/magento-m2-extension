@@ -3,6 +3,7 @@
 ## NEXT
 
 * Send order created events when a guest completes checkout.
+* Send customers to Drip on newsletter signup.
 
 ## 1.8.0
 
