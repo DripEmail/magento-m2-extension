@@ -51,8 +51,8 @@ class GuestSubscriberCreated extends \Drip\Connect\Observer\Base
         $newSubscriberSubscribed = $subscriber->isSubscribed();
 
         if (! $this->registry->registry(self::REGISTRY_KEY_NEW_GUEST_SUBSCRIBER)) {
-            $customer = $this->customerHelper->getCustomerByEmail($email);
-            if ((bool) $customer->getId()) {
+            $customer = $this->customerHelper->getCustomerByEmail($email, $config);
+            if ($customer->getId() !== null) {
               $this->customerHelper->proceedAccount(
                 $customer,
                 $config,
@@ -63,12 +63,12 @@ class GuestSubscriberCreated extends \Drip\Connect\Observer\Base
 
             }
             return;
+        } else {
+          // We only force subscription status in Drip when subscribed because if
+          // the user already exists in Drip and is subscribed there, we don't
+          // want to unsubscribe them, because presumably they have opted in
+          // elsewhere.
+          $this->customerHelper->proceedGuestSubscriberNew($subscriber, $config, $newSubscriberSubscribed);
         }
-
-        // We only force subscription status in Drip when subscribed because if
-        // the user already exists in Drip and is subscribed there, we don't
-        // want to unsubscribe them, because presumably they have opted in
-        // elsewhere.
-        $this->customerHelper->proceedGuestSubscriberNew($subscriber, $config, $newSubscriberSubscribed);
     }
 }

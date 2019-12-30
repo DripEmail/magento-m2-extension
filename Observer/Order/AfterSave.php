@@ -38,20 +38,20 @@ class AfterSave extends \Drip\Connect\Observer\Base
         $order = $event->getOrder();
 
         // For some strange reason, Magento2 does not fire
-        // the sales_order_save_commit_after for guest checkouts,                                                       
+        // the sales_order_save_commit_after for guest checkouts,
         // but it does for registered customer checkouts.
         // So, we only care about the sales_order_save_after
         // event if the customer is checking out as a guest,
         // otherwise we'll wait for the more desirable
         // sales_order_save_commit_after event.
-        if ($event->getName() == "sales_order_save_after" ) { 
-            if (!$order->getCustomerIsGuest()) return;          
+        if ($event->getName() == "sales_order_save_after" ) {
+            if (!$order->getCustomerIsGuest()) return;
         }
 
         if (!$order->getId()) {
             return;
         }
-        
+
         $this->proceedOrder($order);
         $this->registry->unregister(self::REGISTRY_KEY_ORDER_OLD_DATA);
     }
@@ -82,7 +82,7 @@ class AfterSave extends \Drip\Connect\Observer\Base
         if ($this->isOrderNew($order)) {
             //if guest checkout, create subscriber record
             if ($order->getCustomerIsGuest()
-                && ! $this->customerHelper->isCustomerExists($order->getCustomerEmail())
+                && ! $this->customerHelper->isCustomerExists($order->getCustomerEmail(), $config)
                 && ! $this->customerHelper->isSubscriberExists($order->getCustomerEmail())
             ) {
                 $this->customerHelper->accountActionsForGuestCheckout($order, $config);

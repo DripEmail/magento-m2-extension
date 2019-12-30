@@ -264,15 +264,13 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**
      * @param string $email
-     * @param int $websiteId
+     * @param \Drip\Connect\Model\Configuration $config
      *
      * @return bool
      */
-    public function isCustomerExists($email, $websiteId = null)
+    public function isCustomerExists($email, \Drip\Connect\Model\Configuration $config)
     {
-        if ($websiteId == null) {
-            $websiteId = $this->storeManager->getStore()->getWebsiteId();
-        }
+        $websiteId = $config->getWebsiteId();
 
         $customer = $this->customerCustomerFactory->create()->setWebsiteId($websiteId)->loadByEmail($email);
 
@@ -281,19 +279,15 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**
      * @param string $email
-     * @param int $websiteId
+     * @param \Drip\Connect\Model\Configuration $config
      *
-     * @return \Magento\Customer\Model\Customer $customer
+     * @return \Magento\Customer\Model\Customer
      */
-    public function getCustomerByEmail($email, $websiteId = null)
+    public function getCustomerByEmail($email, \Drip\Connect\Model\Configuration $config)
     {
-        if ($websiteId == null) {
-            $websiteId = $this->storeManager->getStore()->getWebsiteId();
-        }
+        $websiteId = $config->getWebsiteId();
 
-        $customer = $this->customerCustomerFactory->create()->setWebsiteId($websiteId)->loadByEmail($email);
-
-        return $customer;
+        return $this->customerCustomerFactory->create()->setWebsiteId($websiteId)->loadByEmail($email);
     }
 
     /**

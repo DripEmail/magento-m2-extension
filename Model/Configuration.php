@@ -74,6 +74,16 @@ class Configuration
         return $this->storeId;
     }
 
+    /**
+     * The website ID attached to the current store view.
+     *
+     * @returns int
+     */
+    public function getWebsiteId()
+    {
+        return $this->storeManager->getStore($this->storeId)->getWebsiteId();
+    }
+
     public function getAccountId()
     {
         return $this->getStoreConfig(self::ACCOUNT_ID_PATH);
