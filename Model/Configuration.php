@@ -77,7 +77,7 @@ class Configuration
     /**
      * The website ID attached to the current store view.
      *
-     * @returns int
+     * @return int
      */
     public function getWebsiteId()
     {
