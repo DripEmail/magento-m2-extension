@@ -6,12 +6,6 @@
             instance="Drip\Connect\Observer\Customer\CreateAccount"
             disabled="false" />
     </event>
-    <event name="controller_action_predispatch_newsletter_subscriber_new">
-        <observer
-            name="drip_connect_controller_action_predispatch_newsletter_subscriber_new"
-            instance="Drip\Connect\Observer\Customer\GuestSubscriberAttempt"
-            disabled="false" />
-    </event>
     <event name="controller_action_postdispatch_newsletter_subscriber_new">
         <observer
             name="drip_connect_controller_action_postdispatch_newsletter_subscriber_new"
