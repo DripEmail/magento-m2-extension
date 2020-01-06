@@ -1,6 +1,6 @@
 # Magento 2 Drip Connect Changelog
 
-## NEXT
+## 1.8.2
 
 * Send order created events when a guest completes checkout.
 * Send customers to Drip on newsletter signup.
