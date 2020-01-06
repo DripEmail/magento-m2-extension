@@ -264,19 +264,26 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**
      * @param string $email
-     * @param int $websiteId
+     * @param \Drip\Connect\Model\Configuration $config
      *
      * @return bool
      */
-    public function isCustomerExists($email, $websiteId = null)
+    public function isCustomerExists($email, \Drip\Connect\Model\Configuration $config)
     {
-        if ($websiteId == null) {
-            $websiteId = $this->storeManager->getStore()->getWebsiteId();
-        }
+        return (bool) $this->getCustomerByEmail($email, $config);
+    }
 
-        $customer = $this->customerCustomerFactory->create()->setWebsiteId($websiteId)->loadByEmail($email);
+    /**
+     * @param string $email
+     * @param \Drip\Connect\Model\Configuration $config
+     *
+     * @return \Magento\Customer\Model\Customer
+     */
+    public function getCustomerByEmail($email, \Drip\Connect\Model\Configuration $config)
+    {
+        $websiteId = $config->getWebsiteId();
 
-        return (bool) $customer->getId();
+        return $this->customerCustomerFactory->create()->setWebsiteId($websiteId)->loadByEmail($email);
     }
 
     /**

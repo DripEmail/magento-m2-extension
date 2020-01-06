@@ -43,10 +43,6 @@ class GuestSubscriberCreated extends \Drip\Connect\Observer\Base
      */
     public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)
     {
-        if (! $this->registry->registry(self::REGISTRY_KEY_NEW_GUEST_SUBSCRIBER)) {
-            return;
-        }
-
         $config = $this->configFactory->createForCurrentScope();
 
         $email = $this->request->getParam('email');
@@ -54,10 +50,21 @@ class GuestSubscriberCreated extends \Drip\Connect\Observer\Base
         $subscriber = $this->subscriberFactory->create()->loadByEmail($email);
         $newSubscriberSubscribed = $subscriber->isSubscribed();
 
-        // We only force subscription status in Drip when subscribed because if
-        // the user already exists in Drip and is subscribed there, we don't
-        // want to unsubscribe them, because presumably they have opted in
-        // elsewhere.
-        $this->customerHelper->proceedGuestSubscriberNew($subscriber, $config, $newSubscriberSubscribed);
+        $customer = $this->customerHelper->getCustomerByEmail($email, $config);
+        if ($customer->getId() === null) {
+            // We only force subscription status in Drip when subscribed because if
+            // the user already exists in Drip and is subscribed there, we don't
+            // want to unsubscribe them, because presumably they have opted in
+            // elsewhere.
+            $this->customerHelper->proceedGuestSubscriberNew($subscriber, $config, $newSubscriberSubscribed);
+        } else {
+            $this->customerHelper->proceedAccount(
+                $customer,
+                $config,
+                true,
+                \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_UPDATED,
+                true
+            );
+        }
     }
 }
