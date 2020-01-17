@@ -104,8 +104,6 @@ Feature: Customer Cart Interactions
       And I check out as a guest
     Then A simple order event should be sent to Drip
 
-#The cart url doesn't seem to work in M2. Takes you to an empty cart.
-#Not sure if this is something we're manipulating incorrectly or if it is related to how sessions work
 Scenario: A customer adds a simple product to their cart and drip receives a working abandoned cart url
     Given I am logged into the admin interface
       And I have set up a multi-store configuration
@@ -115,5 +113,5 @@ Scenario: A customer adds a simple product to their cart and drip receives a wor
       And I create an account
       And I add a 'simple' widget to my cart
     Then A simple cart event should be sent to Drip
-    #When I logout
-    Then I open the abandoned cart url
+    When I open the abandoned cart url
+    Then my item is there

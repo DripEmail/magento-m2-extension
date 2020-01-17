@@ -39,7 +39,6 @@ When('I add a {string} widget to my cart', function(type) {
       break;
     case 'simple':
       // Do nothing
-      console.log('In simple case')
       break;
     default:
       throw 'Methinks thou hast forgotten something…'
@@ -134,12 +133,13 @@ Then('A simple cart event should be sent to Drip', function() {
     expect(item.discounts).to.eq(0)
     expect(item.image_url).to.eq(`${getCurrentFrontendDomain()}/media/catalog/product/my_image.png`)
     expect(item.name).to.eq('Widget 1')
+    self.item = item.name
     expect(item.price).to.eq(11.22)
     expect(item.product_url).to.eq(`${getCurrentFrontendDomain()}/widget-1.html`)
     expect(item.quantity).to.eq(1)
     expect(item.total).to.eq(11.22)
   })
-  
+
 })
 
 Then('A configurable cart event should be sent to Drip', function() {
@@ -546,6 +546,11 @@ Then('I open the abandoned cart url', function(){
   cy.log('Resetting mocks')
   cy.wrap(Mockclient.reset())
   // To use this step, a previous step has to fill the abandonedCartUrl property. See 'A simple cart event should be sent to Drip' for an example.
-  cy.log(self.carturl)
   cy.visit(self.carturl)
+})
+
+Then("my item is there", function(){
+
+  // To use this step, a previous step has to set the item property. See 'A simple cart event should be sent to Drip' for an example.
+  cy.contains(self.item)
 })
