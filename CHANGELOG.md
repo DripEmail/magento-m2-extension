@@ -1,5 +1,9 @@
 # Magento 2 Drip Connect Changelog
 
+## Next
+
+* Fix bug that caused abandoned carts to appear empty
+
 ## 1.8.2
 
 * Send order created events when a guest completes checkout.

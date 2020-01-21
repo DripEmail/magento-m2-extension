@@ -295,9 +295,12 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
     public function recreateCartFromQuote($oldQuote)
     {
         $quote = $this->checkoutSession->getQuote();
-        $quote->removeAllItems();
-        $quote->merge($oldQuote);
-        $quote->collectTotals()->save();
+
+        if ($quote->getId() !== $oldQuote->getId()) {
+            $quote->removeAllItems();
+            $quote->merge($oldQuote);
+            $quote->collectTotals()->save();
+        }
         $this->checkoutSession->setQuoteId($quote->getId());
     }
 }

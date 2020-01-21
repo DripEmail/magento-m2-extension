@@ -112,6 +112,8 @@ Then('A simple cart event should be sent to Drip', function() {
     expect(body.action).to.eq('created')
     expect(body.cart_id).to.eq('1')
     expect(body.cart_url).to.startWith(`${getCurrentFrontendDomain()}/drip/cart/index/q/1`)
+    // Cucumber runs scenarios in a World object. Step definitions are run in the context of the current World instance. Data can be used between steps using the self prefix.
+    self.carturl = body.cart_url
     expect(body.currency).to.eq('USD')
     expect(body.grand_total).to.eq(11.22)
     expect(body.initial_status).to.eq('unsubscribed')
@@ -131,11 +133,13 @@ Then('A simple cart event should be sent to Drip', function() {
     expect(item.discounts).to.eq(0)
     expect(item.image_url).to.eq(`${getCurrentFrontendDomain()}/media/catalog/product/my_image.png`)
     expect(item.name).to.eq('Widget 1')
+    self.item = item.name
     expect(item.price).to.eq(11.22)
     expect(item.product_url).to.eq(`${getCurrentFrontendDomain()}/widget-1.html`)
     expect(item.quantity).to.eq(1)
     expect(item.total).to.eq(11.22)
   })
+
 })
 
 Then('A configurable cart event should be sent to Drip', function() {
@@ -536,4 +540,17 @@ Then('A bundle order event should be sent to Drip', function() {
     expect(item.taxes).to.eq(0)
     expect(item.total).to.eq(22.44)
   })
+})
+
+Then('I open the abandoned cart url', function(){
+  cy.log('Resetting mocks')
+  cy.wrap(Mockclient.reset())
+  // To use this step, a previous step has to fill the abandonedCartUrl property. See 'A simple cart event should be sent to Drip' for an example.
+  cy.visit(self.carturl)
+})
+
+Then("my item is there", function(){
+
+  // To use this step, a previous step has to set the item property. See 'A simple cart event should be sent to Drip' for an example.
+  cy.contains(self.item)
 })
