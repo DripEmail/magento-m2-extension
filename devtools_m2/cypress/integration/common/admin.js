@@ -267,43 +267,6 @@ Given('a different customer exists for website {string}', function(site) {
   })
 })
 
-When('I create an order', function() {
-  cy.contains('Orders').click({force: true})
-  cy.contains('Create New Order').click()
-
-  // Select customer
-  cy.contains('John Doe').click()
-
-  // Add product to order
-  cy.contains('Add Products').click()
-  cy.contains('Widget 1').click()
-
-  cy.contains('Add Selected Product(s) to Order').click({ force: true })
-
-  // Fill out shipping/billing addresses
-  cy.get('input[name="order[billing_address][firstname]"]').type('John')
-  cy.get('input[name="order[billing_address][lastname]"]').type('Doe')
-  cy.get('input[name="order[billing_address][street][0]"]').type('123 Main St.')
-  cy.get('input[name="order[billing_address][city]"]').type('Centerville')
-  cy.get('select[name="order[billing_address][region_id]"]').select('Minnesota')
-  cy.get('input[name="order[billing_address][postcode]"]').type('12345')
-  cy.get('input[name="order[billing_address][telephone]"]').type('999-999-9999')
-
-  cy.route('POST', '/admin_123/sales/order_create/loadBlock/block/shipping_method,totals,billing_method?isAjax=true').as('loadShipping')
-  cy.route('POST', '/admin_123/sales/order_create/loadBlock/block/shipping_method,totals?isAjax=true').as('loadShippingData')
-  // Why the second click is required, I haven't a clue... I tried a lot of ways to make this work, and this was the only one that did.
-  cy.get('#order-shipping-method-summary a').click()
-  cy.get('#order-shipping-method-summary a').click()
-  cy.wait('@loadShippingData')
-
-  cy.get('input[name="order[shipping_method]"]').click()
-  cy.wait('@loadShipping')
-
-  cy.contains('Submit Order').click({ force: true })
-
-  cy.contains('Order # 000000001')
-})
-
 When('I create an order for a {string} widget', function(widgetType) {
   cy.contains('Orders').click({force: true})
   cy.contains('Create New Order').click()

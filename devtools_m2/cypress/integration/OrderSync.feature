@@ -7,7 +7,7 @@ Feature: Order Batch Sync
       And I have configured Drip to be enabled for 'default'
       And a customer exists for website 'main'
       And I have configured a simple widget for 'main'
-    When I create an order
+    When I create an order for a 'simple' widget
       And I click order sync
     Then an order event is sent to Drip
 
