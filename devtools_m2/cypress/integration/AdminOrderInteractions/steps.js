@@ -40,7 +40,7 @@ Then('an order event is sent to Drip for the {string} widget', function(widgetTy
 
     if(isVirtualProduct(widgetType)) {
       expect(Object.keys(body)).to.not.contain('shipping_address')
-      expect(Object.keys(body)).to.not.contain('total_shipping')
+      expect(body.total_shipping).to.eq(0)
     } else {
       expect(body.total_shipping).to.eq(5)
       expect(body.shipping_address.address_1).to.eq('123 Main St.')

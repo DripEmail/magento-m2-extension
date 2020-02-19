@@ -424,8 +424,8 @@ Then('A virtual order event should be sent to Drip', function() {
     expect(body.initial_status).to.eq('unsubscribed')
     expect(body.items_count).to.eq(1)
     expect(body.items).to.have.lengthOf(1)
+    expect(body.total_shipping).to.eq(0)
 
-    expect(Object.keys(body)).to.not.contain('total_shipping')
     expect(Object.keys(body)).to.not.contain('shipping_address')
 
     basicOrderBodyAssertions(body, false)

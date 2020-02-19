@@ -81,6 +81,7 @@ class Order
             'grand_total' => $this->connectHelper->priceAsCents($this->order->getGrandTotal()) / 100,
             'total_discounts' => $this->connectHelper->priceAsCents($this->order->getDiscountAmount()) / 100,
             'total_taxes' => $this->connectHelper->priceAsCents($this->order->getTaxAmount()) / 100,
+            'total_shipping' => 0,
             'currency' => (string) $this->order->getOrderCurrencyCode(),
             'occurred_at' => (string) $this->connectHelper->formatDate($this->order->getUpdatedAt()),
             'items' => $this->getOrderItemsData(),
@@ -226,6 +227,10 @@ class Order
      */
     protected function getOrderAddressData($addressId)
     {
+        if($addressId === null) {
+            return;
+        }
+
         $address = $this->salesOrderAddressFactory->create()->load($addressId);
         return $this->buildOrderAddressDataStructure($address);
     }
