@@ -20,7 +20,7 @@ When('I create an account', function() {
 
 When('I add a {string} widget to my cart', function(type) {
   cy.route('POST', 'checkout/cart/add/**').as('addToCartRequest')
-  cy.visit(`${getCurrentFrontendDomain()}/widget-1.html`)
+  cy.visit(widgetUrl(type))
   switch (type) {
     case 'configurable':
       cy.get('#product-options-wrapper select').select('XL')
@@ -38,7 +38,7 @@ When('I add a {string} widget to my cart', function(type) {
       })
       break;
     case 'simple':
-      // Do nothing
+    case 'virtual':   
       break;
     default:
       throw 'Methinks thou hast forgotten something…'
@@ -357,44 +357,39 @@ When('I check out', function() {
   cy.contains('Thank you for your purchase!')
 })
 
-function basicOrderBodyAssertions(body) {
-  let storeViewId = getCurrentFrontendStoreViewId()
-  if (storeViewId == 1) {
-    storeViewId = ''
+When('I check out with only a virtual product', function() {
+  // TODO: Extract this into the frontend_context file.
+  const currentSite = getCurrentFrontendSite()
+  let storeViewCode;
+  switch (currentSite) {
+    case 'site1':
+      storeViewCode = 'site1_store_view'
+      break;
+    case 'main':
+      storeViewCode = 'default'
+      break;
+    default:
+      throw 'Methinks thou hast forgotten something…'
   }
+  cy.route('POST', `rest/${storeViewCode}/V1/carts/**`).as('cartBuilder')
+  cy.visit(`${getCurrentFrontendDomain()}/checkout/cart`)
+  cy.wait('@cartBuilder', { timeout: 20000 })
+  cy.get('button[data-role="proceed-to-checkout"]').click()
 
-  expect(body.currency).to.eq('USD')
-  expect(body.magento_source).to.eq('Storefront')
-  expect(body.occurred_at).to.match(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z/)
-  expect(body.order_id).to.eq(`${storeViewId}000000001`)
-  expect(body.order_public_id).to.eq(`${storeViewId}000000001`)
-  expect(body.provider).to.eq('magento')
-  expect(body.total_discounts).to.eq(0)
-  expect(body.total_taxes).to.eq(0)
-  expect(body.version).to.match(/^Magento 2\.3\.2, Drip Extension \d+\.\d+\.\d+$/)
+  cy.get('.billing-address-form > form > .fieldset > .street ', {timeout: 20000}).should('be.visible')
+  cy.get('div[name="billingAddresscheckmo.street.0"] input[name="street[0]"]').type('123 Main St.')
+  cy.get('div[name="billingAddresscheckmo.city"] input[name="city"]').type('Centerville')
+  cy.get('div[name="billingAddresscheckmo.region_id"] select[name="region_id"]').select('Minnesota')
+  cy.get('div[name="billingAddresscheckmo.postcode"] input[name="postcode"]').type('12345')
+  cy.get('div[name="billingAddresscheckmo.country_id"] select[name="country_id"').select('United States')
+  cy.get('div[name="billingAddresscheckmo.telephone"] input[name="telephone"]').type('999-999-9999')
+  cy.contains("Update").click().wait(1000)
 
-  expect(body.billing_address.address_1).to.eq('123 Main St.')
-  expect(body.billing_address.address_2).to.eq('')
-  expect(body.billing_address.city).to.eq('Centerville')
-  expect(body.billing_address.company).to.eq('')
-  expect(body.billing_address.country).to.eq('US')
-  expect(body.billing_address.first_name).to.eq('Test')
-  expect(body.billing_address.last_name).to.eq('User')
-  expect(body.billing_address.phone).to.eq('999-999-9999')
-  expect(body.billing_address.postal_code).to.eq('12345')
-  expect(body.billing_address.state).to.eq('Minnesota')
-
-  expect(body.shipping_address.address_1).to.eq('123 Main St.')
-  expect(body.shipping_address.address_2).to.eq('')
-  expect(body.shipping_address.city).to.eq('Centerville')
-  expect(body.shipping_address.company).to.eq('')
-  expect(body.shipping_address.country).to.eq('US')
-  expect(body.shipping_address.first_name).to.eq('Test')
-  expect(body.shipping_address.last_name).to.eq('User')
-  expect(body.shipping_address.phone).to.eq('999-999-9999')
-  expect(body.shipping_address.postal_code).to.eq('12345')
-  expect(body.shipping_address.state).to.eq('Minnesota')
-}
+  cy.log('Resetting mocks')
+  cy.wrap(Mockclient.reset())
+  cy.contains('Place Order').click()
+  cy.contains('Thank you for your purchase!')
+})
 
 Then('A simple order event should be sent to Drip', function() {
   cy.log('Validating that the order call has everything we need')
@@ -412,20 +407,30 @@ Then('A simple order event should be sent to Drip', function() {
     expect(body.items).to.have.lengthOf(1)
 
     basicOrderBodyAssertions(body)
+    validateSimpleProduct(body.items[0])
+  })
+})
 
-    const item = body.items[0]
-    expect(item.categories).to.be.empty
-    expect(item.discounts).to.eq(0)
-    expect(item.image_url).to.eq(`${getCurrentFrontendDomain()}/media/catalog/product/`)
-    expect(item.name).to.eq('Widget 1')
-    expect(item.price).to.eq(11.22)
-    expect(item.product_id).to.eq('1')
-    expect(item.product_variant_id).to.eq('1')
-    expect(item.product_url).to.eq(`${getCurrentFrontendDomain()}/widget-1.html`)
-    expect(item.quantity).to.eq(1)
-    expect(item.sku).to.eq('widg-1')
-    expect(item.taxes).to.eq(0)
-    expect(item.total).to.eq(11.22)
+Then('A virtual order event should be sent to Drip', function() {
+  cy.log('Validating that the order call has everything we need')
+  cy.wrap(Mockclient.retrieveRecordedRequests({
+    'path': '/v3/123456/shopper_activity/order'
+  })).then(function(recordedRequests) {
+    expect(recordedRequests).to.have.lengthOf(1)
+    const body = JSON.parse(recordedRequests[0].body.string)
+    expect(body.action).to.eq('placed')
+    expect(body.email).to.eq('testuser@example.com')
+    expect(body.grand_total).to.eq(0.01)
+    expect(body.initial_status).to.eq('unsubscribed')
+    expect(body.items_count).to.eq(1)
+    expect(body.items).to.have.lengthOf(1)
+
+    expect(Object.keys(body)).to.not.contain('total_shipping')
+    expect(Object.keys(body)).to.not.contain('shipping_address')
+
+    basicOrderBodyAssertions(body, false)
+
+    validateVirtualProduct(body.items[0])
   })
 })
 
@@ -542,6 +547,37 @@ Then('A bundle order event should be sent to Drip', function() {
   })
 })
 
+Then('A mixed order event should be sent to Drip', function() {
+  cy.log('Validating that the order call has everything we need')
+  cy.wrap(Mockclient.retrieveRecordedRequests({
+    'path': '/v3/123456/shopper_activity/order'
+  })).then(function(recordedRequests) {
+    expect(recordedRequests).to.have.lengthOf(1)
+    const body = JSON.parse(recordedRequests[0].body.string)
+    expect(body.action).to.eq('placed')
+    expect(body.email).to.eq('testuser@example.com')
+    expect(body.grand_total).to.eq(16.23)
+    expect(body.initial_status).to.eq('unsubscribed')
+    expect(body.items_count).to.eq(2)
+    expect(body.items).to.have.lengthOf(2)
+
+    basicOrderBodyAssertions(body)
+
+    body.items.forEach(item => {
+      switch(item.name) {
+        case 'Virtual Widget 1':
+          validateVirtualProduct(item)
+          break;
+        case 'Widget 1':
+          validateSimpleProduct(item)
+          break;
+        default:
+          throw 'Errr... What?'
+      }
+    })
+  })
+})
+
 Then('I open the abandoned cart url', function(){
   cy.log('Resetting mocks')
   cy.wrap(Mockclient.reset())
@@ -554,3 +590,82 @@ Then("my item is there", function(){
   // To use this step, a previous step has to set the item property. See 'A simple cart event should be sent to Drip' for an example.
   cy.contains(self.item)
 })
+
+function basicOrderBodyAssertions(body, hasPhysicalProduct=true) {
+  let storeViewId = getCurrentFrontendStoreViewId()
+  if (storeViewId == 1) {
+    storeViewId = ''
+  }
+
+  expect(body.currency).to.eq('USD')
+  expect(body.magento_source).to.eq('Storefront')
+  expect(body.occurred_at).to.match(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z/)
+  expect(body.order_id).to.eq(`${storeViewId}000000001`)
+  expect(body.order_public_id).to.eq(`${storeViewId}000000001`)
+  expect(body.provider).to.eq('magento')
+  expect(body.total_discounts).to.eq(0)
+  expect(body.total_taxes).to.eq(0)
+  expect(body.version).to.match(/^Magento 2\.3\.2, Drip Extension \d+\.\d+\.\d+$/)
+
+  expect(body.billing_address.address_1).to.eq('123 Main St.')
+  expect(body.billing_address.address_2).to.eq('')
+  expect(body.billing_address.city).to.eq('Centerville')
+  expect(body.billing_address.company).to.eq('')
+  expect(body.billing_address.country).to.eq('US')
+  expect(body.billing_address.first_name).to.eq('Test')
+  expect(body.billing_address.last_name).to.eq('User')
+  expect(body.billing_address.phone).to.eq('999-999-9999')
+  expect(body.billing_address.postal_code).to.eq('12345')
+  expect(body.billing_address.state).to.eq('Minnesota')
+
+  if(hasPhysicalProduct) {
+    expect(body.shipping_address.address_1).to.eq('123 Main St.')
+    expect(body.shipping_address.address_2).to.eq('')
+    expect(body.shipping_address.city).to.eq('Centerville')
+    expect(body.shipping_address.company).to.eq('')
+    expect(body.shipping_address.country).to.eq('US')
+    expect(body.shipping_address.first_name).to.eq('Test')
+    expect(body.shipping_address.last_name).to.eq('User')
+    expect(body.shipping_address.phone).to.eq('999-999-9999')
+    expect(body.shipping_address.postal_code).to.eq('12345')
+    expect(body.shipping_address.state).to.eq('Minnesota')
+  }
+}
+
+const widgetUrl = function(type) {
+  if(type === 'virtual') {
+    return `${getCurrentFrontendDomain()}/virtual-widget-1.html`
+
+  }
+  return `${getCurrentFrontendDomain()}/widget-1.html`  
+}
+
+const validateSimpleProduct = function(item) {
+  expect(item.categories).to.be.empty
+  expect(item.discounts).to.eq(0)
+  expect(item.image_url).to.eq(`${getCurrentFrontendDomain()}/media/catalog/product/`)
+  expect(item.name).to.eq('Widget 1')
+  expect(item.price).to.eq(11.22)
+  expect(item.product_id).to.eq('1')
+  expect(item.product_variant_id).to.eq('1')
+  expect(item.product_url).to.eq(`${getCurrentFrontendDomain()}/widget-1.html`)
+  expect(item.quantity).to.eq(1)
+  expect(item.sku).to.eq('widg-1')
+  expect(item.taxes).to.eq(0)
+  expect(item.total).to.eq(11.22)
+}
+
+const validateVirtualProduct = function(item) {
+  expect(item.categories).to.be.empty
+  expect(item.discounts).to.eq(0)
+  expect(item.image_url).to.eq(`${getCurrentFrontendDomain()}/media/catalog/product/`)
+  expect(item.name).to.eq('Virtual Widget 1')
+  expect(item.price).to.eq(0.01)
+  expect(item.product_id).to.be.finite
+  expect(item.product_variant_id).to.be.finite
+  expect(item.product_url).to.eq(`${getCurrentFrontendDomain()}/virtual-widget-1.html`)
+  expect(item.quantity).to.eq(1)
+  expect(item.sku).to.eq('virt-1')
+  expect(item.taxes).to.eq(0)
+  expect(item.total).to.eq(0.01)
+}
