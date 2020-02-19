@@ -23,12 +23,16 @@ class CreateProductCommand extends Command
     /** @var \Drip\TestUtils\Creators\BundleProductCreatorFactory **/
     protected $bundleProductCreatorFactory;
 
+        /** @var \Drip\TestUtils\Creators\VirtualProductCreatorFactory **/
+        protected $virtualProductCreatorFactory;
+
     public function __construct(
         \Magento\Framework\App\State $state,
         \Drip\TestUtils\Creators\SimpleProductCreatorFactory $simpleProductCreatorFactory,
         \Drip\TestUtils\Creators\ConfigurableProductCreatorFactory $configurableProductCreatorFactory,
         \Drip\TestUtils\Creators\GroupedProductCreatorFactory $groupedProductCreatorFactory,
-        \Drip\TestUtils\Creators\BundleProductCreatorFactory $bundleProductCreatorFactory
+        \Drip\TestUtils\Creators\BundleProductCreatorFactory $bundleProductCreatorFactory,
+        \Drip\TestUtils\Creators\VirtualProductCreatorFactory $virtualProductCreatorFactory
     ) {
         parent::__construct();
 
@@ -37,6 +41,7 @@ class CreateProductCommand extends Command
         $this->configurableProductCreatorFactory = $configurableProductCreatorFactory;
         $this->groupedProductCreatorFactory = $groupedProductCreatorFactory;
         $this->bundleProductCreatorFactory = $bundleProductCreatorFactory;
+        $this->virtualProductCreatorFactory = $virtualProductCreatorFactory;
     }
 
     /**
@@ -79,6 +84,9 @@ class CreateProductCommand extends Command
                 break;
             case 'bundle':
                 $factory = $this->bundleProductCreatorFactory;
+                break;
+            case 'virtual':
+                $factory = $this->virtualProductCreatorFactory;
                 break;
             default:
                 throw new \Exception("Unsupported type: ${type}");

@@ -115,3 +115,25 @@ Scenario: A customer adds a simple product to their cart and drip receives a wor
     Then A simple cart event should be sent to Drip
     When I open the abandoned cart url
     Then my item is there
+
+  Scenario: A customer adds a virtual product to their cart
+    Given I am logged into the admin interface
+      And I have configured Drip to be enabled for 'main'
+    Given I have configured a virtual widget for 'main'
+    When I open the 'main' homepage
+      And I create an account
+      And I add a 'virtual' widget to my cart
+      And I check out with only a virtual product
+    Then A virtual order event should be sent to Drip
+
+  Scenario: A customer adds a mixed products to their cart
+    Given I am logged into the admin interface
+      And I have configured Drip to be enabled for 'main'
+      And I have configured a simple widget for 'main'
+      And I have configured a virtual widget for 'main'
+    When I open the 'main' homepage
+      And I create an account
+      And I add a 'simple' widget to my cart
+      And I add a 'virtual' widget to my cart
+      And I check out
+    Then A mixed order event should be sent to Drip

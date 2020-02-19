@@ -238,6 +238,19 @@ Given('I have configured a bundle widget', function() {
   })
 })
 
+// Virtual product
+Given('I have configured a virtual widget for {string}', function(site) {
+  cy.createProduct({
+    "sku": "virt-1",
+    "name": "Virtual Widget 1",
+    "description": "This is not really a widget. Any resemblance between this an a real widget is the misuse of imagination.",
+    "shortDescription": "This is a non-real virtual widget.",
+    "typeId": "virtual",
+    "storeId": mapFrontendStoreViewId(site),
+    "websiteIds": [mapFrontendWebsiteId(site)]
+  })
+})
+
 Given('a customer exists for website {string}', function(site) {
   cy.createCustomer({
     websiteId: mapFrontendWebsiteId(site),
@@ -254,7 +267,7 @@ Given('a different customer exists for website {string}', function(site) {
   })
 })
 
-When('I create an order', function() {
+When('I create an order for a {string} widget', function(widgetType) {
   cy.contains('Orders').click({force: true})
   cy.contains('Create New Order').click()
 
@@ -276,15 +289,17 @@ When('I create an order', function() {
   cy.get('input[name="order[billing_address][postcode]"]').type('12345')
   cy.get('input[name="order[billing_address][telephone]"]').type('999-999-9999')
 
-  cy.route('POST', '/admin_123/sales/order_create/loadBlock/block/shipping_method,totals,billing_method?isAjax=true').as('loadShipping')
-  cy.route('POST', '/admin_123/sales/order_create/loadBlock/block/shipping_method,totals?isAjax=true').as('loadShippingData')
-  // Why the second click is required, I haven't a clue... I tried a lot of ways to make this work, and this was the only one that did.
-  cy.get('#order-shipping-method-summary a').click()
-  cy.get('#order-shipping-method-summary a').click()
-  cy.wait('@loadShippingData')
+  if(widgetType != 'virtual') {
+    cy.route('POST', '/admin_123/sales/order_create/loadBlock/block/shipping_method,totals,billing_method?isAjax=true').as('loadShipping')
+    cy.route('POST', '/admin_123/sales/order_create/loadBlock/block/shipping_method,totals?isAjax=true').as('loadShippingData')
+    // Why the second click is required, I haven't a clue... I tried a lot of ways to make this work, and this was the only one that did.
+    cy.get('#order-shipping-method-summary a').click()
+    cy.get('#order-shipping-method-summary a').click()
+    cy.wait('@loadShippingData')
 
-  cy.get('input[name="order[shipping_method]"]').click()
-  cy.wait('@loadShipping')
+    cy.get('input[name="order[shipping_method]"]').click()
+    cy.wait('@loadShipping')
+  }
 
   cy.contains('Submit Order').click({ force: true })
 

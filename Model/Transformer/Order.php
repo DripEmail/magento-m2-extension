@@ -81,17 +81,31 @@ class Order
             'grand_total' => $this->connectHelper->priceAsCents($this->order->getGrandTotal()) / 100,
             'total_discounts' => $this->connectHelper->priceAsCents($this->order->getDiscountAmount()) / 100,
             'total_taxes' => $this->connectHelper->priceAsCents($this->order->getTaxAmount()) / 100,
-            'total_shipping' => $this->connectHelper->priceAsCents($this->order->getShippingAmount()) / 100,
             'currency' => (string) $this->order->getOrderCurrencyCode(),
             'occurred_at' => (string) $this->connectHelper->formatDate($this->order->getUpdatedAt()),
             'items' => $this->getOrderItemsData(),
             'billing_address' => $this->getOrderBillingData(),
-            'shipping_address' => $this->getOrderShippingData(),
             'items_count' => floatval($this->order->getTotalQtyOrdered()),
             'magento_source' => (string) $this->connectHelper->getArea(),
         ];
 
+        if($this->hasPhysicalProduct()) {
+            $data['shipping_address'] = $this->getOrderShippingData();
+            $data['total_shipping'] = $this->connectHelper->priceAsCents($this->order->getShippingAmount()) / 100;
+        }
+
         return $data;
+    }
+
+    /**
+     * determine if this order only has virtual products or not
+     * @return boolean
+    */
+    protected function hasPhysicalProduct() {
+        foreach ($this->order->getAllItems() as $item) {
+            if($item->getProductType() != 'virtual') { return true; }
+        }
+        return false;
     }
 
     /**
