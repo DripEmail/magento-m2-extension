@@ -90,7 +90,7 @@ class Order
             'magento_source' => (string) $this->connectHelper->getArea(),
         ];
 
-        // The following differs from M1 based on Magento's documenation that states that M2 will
+        // The following differs from M1 based on Magento's documentation that states that M2 will
         // will only present shipping information to the end user if an order contains non-virtual
         // products.
         if($this->hasPhysicalProduct()) {
