@@ -81,6 +81,7 @@ class Order
             'grand_total' => $this->connectHelper->priceAsCents($this->order->getGrandTotal()) / 100,
             'total_discounts' => $this->connectHelper->priceAsCents($this->order->getDiscountAmount()) / 100,
             'total_taxes' => $this->connectHelper->priceAsCents($this->order->getTaxAmount()) / 100,
+            'total_shipping' => $this->connectHelper->priceAsCents($this->order->getShippingAmount()) / 100,
             'currency' => (string) $this->order->getOrderCurrencyCode(),
             'occurred_at' => (string) $this->connectHelper->formatDate($this->order->getUpdatedAt()),
             'items' => $this->getOrderItemsData(),
@@ -89,9 +90,11 @@ class Order
             'magento_source' => (string) $this->connectHelper->getArea(),
         ];
 
+        // The following differs from M1 based on Magento's documentation that states that M2 will
+        // will only present shipping information to the end user if an order contains non-virtual
+        // products.
         if($this->hasPhysicalProduct()) {
             $data['shipping_address'] = $this->getOrderShippingData();
-            $data['total_shipping'] = $this->connectHelper->priceAsCents($this->order->getShippingAmount()) / 100;
         }
 
         return $data;
@@ -226,6 +229,10 @@ class Order
      */
     protected function getOrderAddressData($addressId)
     {
+        if($addressId === null) {
+            return;
+        }
+
         $address = $this->salesOrderAddressFactory->create()->load($addressId);
         return $this->buildOrderAddressDataStructure($address);
     }
