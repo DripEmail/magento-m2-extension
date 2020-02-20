@@ -2,6 +2,9 @@
 
 ## Next
 
+## 1.8.3
+
+* Fixed a bug that caused shipping address to be queried for orders that contained only virtual products
 * Fix bug that caused abandoned carts to appear empty
 
 ## 1.8.2
