@@ -6,3 +6,5 @@
 /.bitbucket-pipelines export-ignore
 /devtools_m2 export-ignore
 /license.txt export-ignore
+.travis.yml export-ignore
+/README.md export-ignore
