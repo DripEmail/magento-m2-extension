@@ -7,7 +7,7 @@ class CreateUpdateOrder extends \Drip\Connect\Model\ApiCalls\Helper
 
     const ACTION_NEW = 'placed';
     const ACTION_CHANGE = 'updated';
-    const ACTION_PAID = 'paid';
+    const ACTION_PAID = 'paid'; // not used?
     const ACTION_FULFILL = 'fulfilled';
     const ACTION_REFUND = 'refunded';
     const ACTION_CANCEL = 'canceled';
