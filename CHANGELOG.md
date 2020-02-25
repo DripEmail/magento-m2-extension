@@ -2,7 +2,7 @@
 
 ## Next
 
- * Guard against synching orders with invalid information. It seems there is a possibility that Magento will hand us an invlid order -- one with no information attached. In this case we simply will not synch the order to Drip from the scheduled job, instead logging an error.
+ * Guard against syncing orders with invalid information. It seems there is a possibility that Magento will hand us an invalid order -- one with no information attached. In this case we simply will not sync the order to Drip from the scheduled job, instead logging an error.
 
 ## 1.8.3
 
