@@ -333,7 +333,7 @@ class Order
 
     /**
      * check if given order can be sent to drip
-     * 
+     *
      * @return bool
      */
     public function isCanBeSent()
