@@ -23,7 +23,7 @@ Feature: Order Batch Sync
       And I create an order for 'site1'
     When I click order sync
     Then an order event is sent to Drip
-@focus
+
   Scenario: An admin syncs an order with a no-name-product
     Given I am logged into the admin interface
       And I have configured Drip to be enabled for 'default'

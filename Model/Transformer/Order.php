@@ -290,7 +290,7 @@ class Order
                 'product_id' => (string) $item->getProductId(),
                 'product_variant_id' => (string) $productVariantItem->getProductId(),
                 'sku' => (string) $item->getSku(),
-                'name' => (string) $item->getName(),
+                'name' => trim((string) $item->getName()) ?: $this->generateDefaultProductName($item, $productVariantItem),
                 'quantity' => (float) $item->getQtyOrdered(),
                 'price' => $this->connectHelper->priceAsCents($item->getPrice()) / 100,
                 'discounts' => $this->connectHelper->priceAsCents($item->getDiscountAmount()) / 100,
@@ -321,8 +321,20 @@ class Order
 
         return $data;
     }
+   /**
+     * generate a default product name based on id and variant id
+     * @param mixed $order_item, $variant_item
+     * @return string
+     */
+    private function generateDefaultProductName($order_item, $variant_item)
+    {
+        $product_id = (string) $order_item->getProductId() ?: '0';
+        $variant_id = (string) $variant_item->getProductId() ?: '0';
 
-/**
+        return '[Missing Product ' . $product_id . '-' . $variant_id . ' Name]';
+    }
+    
+    /**
      * simple check for valid stringage
      * @param  mixed $stuff
      * @return bool
