@@ -23,3 +23,12 @@ Feature: Order Batch Sync
       And I create an order for 'site1'
     When I click order sync
     Then an order event is sent to Drip
+
+  Scenario: An admin syncs an order with a no-name-product
+    Given I am logged into the admin interface
+      And I have configured Drip to be enabled for 'default'
+      And a customer exists for website 'main'
+      And I have configured a no-name-widget
+    When I create an order with the no-name-widget
+      And I click order sync
+    Then an modified order event is sent to Drip
