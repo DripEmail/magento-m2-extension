@@ -12,6 +12,10 @@ The official way to install this extension is [from the Magento store](https://m
 
 There is a simple Docker-based development environment in `devtools_m2/`. The readme in there has more details.
 
+## Support
+
+Please send support requests to our team within Drip.
+
 ## Contributing
 
 Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
