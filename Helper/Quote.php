@@ -130,24 +130,6 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
-     * drip actions existing quote gets changed
-     *
-     * @param \Magento\Quote\Model\Quote $quote
-     * @param \Drip\Connect\Model\Configuration $config
-     */
-    public function proceedQuote(\Magento\Quote\Model\Quote $quote, \Drip\Connect\Model\Configuration $config)
-    {
-        $data = $this->prepareQuoteData($quote);
-        $data['action'] = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateQuote::QUOTE_CHANGED;
-        $data['occurred_at'] = $this->connectHelper->formatDate($quote->getUpdatedAt());
-
-        $this->connectApiCallsHelperCreateUpdateQuoteFactory->create([
-            'config' => $config,
-            'data' => $data,
-        ])->call();
-    }
-
-    /**
      * @param \Magento\Quote\Model\Quote $quote
      *
      * @return array
@@ -235,42 +217,7 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
-     * compare orig and new data
-     * Data types of data must match or there will be a difference
-     *
-     * @param \Magento\Quote\Model\Quote $quote
-     *
-     * @return bool
-     */
-    public function isQuoteChanged($quote)
-    {
-        $oldData = $this->registry->registry(self::REGISTRY_KEY_OLD_DATA);
-        $newData = $this->prepareQuoteData($quote);
-
-        return ($this->json->serialize($oldData) != $this->json->serialize($newData));
-    }
-
-    /**
-     * check if we know the user's email (need it to track in drip)
-     *
-     * @param \Magento\Quote\Model\Quote $quote
-     *
-     * @return bool
-     */
-    public function isUnknownUser($quote)
-    {
-        $this->email = '';
-
-        if ($quote->getCustomerEmail()) {
-            $this->email = $quote->getCustomerEmail();
-        } elseif ($email = $this->checkoutSession->getGuestEmail()) {
-            $this->email = $email;
-        }
-
-        return ! (bool) $this->email;
-    }
-
-    /**
+     * @todo Consider moving this into the cart controller.
      * @param \Magento\Quote\Api\Data\CartInterface $oldQuote
      */
     public function recreateCartFromQuote($oldQuote)
