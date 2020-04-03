@@ -27,11 +27,6 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
     protected $connectHelper;
 
     /**
-     * @var \Magento\Checkout\Helper\Cart
-     */
-    protected $checkoutCartHelper;
-
-    /**
      * @var \Magento\Catalog\Model\ProductFactory
      */
     protected $catalogProductFactory;
@@ -62,7 +57,6 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Quote\Model\QuoteFactory $quoteQuoteFactory,
         \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateQuoteFactory $connectApiCallsHelperCreateUpdateQuoteFactory,
         \Drip\Connect\Helper\Data $connectHelper,
-        \Magento\Checkout\Helper\Cart $checkoutCartHelper,
         \Magento\Catalog\Model\ProductFactory $catalogProductFactory,
         \Magento\Newsletter\Model\SubscriberFactory $subscriberFactory,
         \Magento\Catalog\Model\Product\Media\ConfigFactory $catalogProductMediaConfigFactory,
@@ -73,7 +67,6 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
         $this->quoteQuoteFactory = $quoteQuoteFactory;
         $this->connectApiCallsHelperCreateUpdateQuoteFactory = $connectApiCallsHelperCreateUpdateQuoteFactory;
         $this->connectHelper = $connectHelper;
-        $this->checkoutCartHelper = $checkoutCartHelper;
         $this->catalogProductFactory = $catalogProductFactory;
         $this->subscriberFactory = $subscriberFactory;
         $this->catalogProductMediaConfigFactory = $catalogProductMediaConfigFactory;
