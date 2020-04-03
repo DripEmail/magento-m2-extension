@@ -106,25 +106,6 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
-     * drip actions when send quote to drip 1st time
-     *
-     * @param \Magento\Quote\Model\Quote $quote
-     * @param \Drip\Connect\Model\Configuration $config
-     */
-    public function proceedQuoteNew(\Magento\Quote\Model\Quote $quote, \Drip\Connect\Model\Configuration $config)
-    {
-        $data = $this->prepareQuoteData($quote);
-        $data['action'] = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateQuote::QUOTE_NEW;
-        $data['occurred_at'] = $this->connectHelper->formatDate($quote->getUpdatedAt());
-        if (count($data['items'])) {
-            $this->connectApiCallsHelperCreateUpdateQuoteFactory->create([
-                'config' => $config,
-                'data' => $data,
-            ])->call();
-        }
-    }
-
-    /**
      * drip actions when send quote to drip from guest checkout, when user enters his email
      *
      * @param \Magento\Quote\Model\Quote $quote

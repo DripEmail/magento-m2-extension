@@ -49,8 +49,9 @@ class CheckoutSendCart extends \Magento\Framework\App\Action\Action
                 if ($email != $this->checkoutSession->getGuestEmail()) {
                     $config = $this->configFactory->createForCurrentScope();
 
-                    $result = $this->connectQuoteHelper->proceedQuoteGuestCheckout($quote, $email, $config);
-                    $this->checkoutSession->setGuestEmail($email);
+                    // TODO: See if we still need this.
+                    // $result = $this->connectQuoteHelper->proceedQuoteGuestCheckout($quote, $email, $config);
+                    // $this->checkoutSession->setGuestEmail($email);
                 } else {
                     $result = 1; // do not need to send call
                 }

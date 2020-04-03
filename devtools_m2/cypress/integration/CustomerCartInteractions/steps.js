@@ -38,7 +38,7 @@ When('I add a {string} widget to my cart', function(type) {
       })
       break;
     case 'simple':
-    case 'virtual':   
+    case 'virtual':
       break;
     default:
       throw 'Methinks thou hast forgotten something…'
@@ -637,7 +637,7 @@ const widgetUrl = function(type) {
     return `${getCurrentFrontendDomain()}/virtual-widget-1.html`
 
   }
-  return `${getCurrentFrontendDomain()}/widget-1.html`  
+  return `${getCurrentFrontendDomain()}/widget-1.html`
 }
 
 const validateSimpleProduct = function(item) {
