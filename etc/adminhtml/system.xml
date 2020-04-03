@@ -33,6 +33,9 @@
                 <field id="api_key" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Drip API Key</label>
                 </field>
+                <field id="api_integration_param" translate="label" type="text" sortOrder="21" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Drip Integration Param</label>
+                </field>
                 <field id="url" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>API Endpoint URL</label>
                 </field>

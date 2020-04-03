@@ -9,6 +9,7 @@ class Configuration
     const API_URL_PATH = 'dripconnect_general/api_settings/url';
     const API_TIMEOUT_PATH = 'dripconnect_general/api_settings/timeout';
     const API_KEY_PATH = 'dripconnect_general/api_settings/api_key';
+    const API_INTEGRATION_PARAM = 'dripconnect_general/api_settings/api_integration_param';
     const CUSTOMER_DATA_STATE_PATH = 'dripconnect_general/actions/sync_customers_data_state';
     const ORDER_DATA_STATE_PATH = 'dripconnect_general/actions/sync_orders_data_state';
     const MODULE_ENABLED_PATH = 'dripconnect_general/module_settings/is_enabled';
@@ -115,6 +116,11 @@ class Configuration
     public function getApiKey()
     {
         return $this->getStoreConfig(self::API_KEY_PATH);
+    }
+
+    public function getApiIntegrationParam()
+    {
+        return $this->getStoreConfig(self::API_INTEGRATION_PARAM);
     }
 
     public function getCustomersSyncState()
