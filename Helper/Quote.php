@@ -17,11 +17,6 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
     protected $quoteQuoteFactory;
 
     /**
-     * @var \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateQuoteFactory
-     */
-    protected $connectApiCallsHelperCreateUpdateQuoteFactory;
-
-    /**
      * @var \Drip\Connect\Helper\Data
      */
     protected $connectHelper;
@@ -30,11 +25,6 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
      * @var \Magento\Catalog\Model\ProductFactory
      */
     protected $catalogProductFactory;
-
-    /**
-     * @var \Magento\Newsletter\Model\SubscriberFactory
-     */
-    protected $subscriberFactory;
 
     /**
      * @var \Magento\Catalog\Model\Product\Media\ConfigFactory
@@ -49,30 +39,36 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
      */
     protected $registry;
 
-    /** @var \Magento\Framework\Serialize\Serializer\Json */
-    protected $json;
+    /** @var \Magento\Framework\App\ProductMetadataInterface */
+    protected $productMetadata;
+
+    /** @var \Magento\Framework\Module\ResourceInterface */
+    protected $moduleResource;
+
+    /** @var \Drip\Connect\Model\ApiCalls\Helper\SendEventPayloadFactory */
+    protected $connectApiCallsHelperSendEventPayloadFactory;
 
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Quote\Model\QuoteFactory $quoteQuoteFactory,
-        \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateQuoteFactory $connectApiCallsHelperCreateUpdateQuoteFactory,
         \Drip\Connect\Helper\Data $connectHelper,
         \Magento\Catalog\Model\ProductFactory $catalogProductFactory,
-        \Magento\Newsletter\Model\SubscriberFactory $subscriberFactory,
         \Magento\Catalog\Model\Product\Media\ConfigFactory $catalogProductMediaConfigFactory,
         \Magento\Checkout\Model\Session $checkoutSession,
-        \Magento\Framework\Serialize\Serializer\Json $json,
-        \Magento\Framework\Registry $registry
+        \Magento\Framework\App\ProductMetadataInterface $productMetadata,
+        \Magento\Framework\Module\ResourceInterface $moduleResource,
+        \Drip\Connect\Model\ApiCalls\Helper\SendEventPayloadFactory $connectApiCallsHelperSendEventPayloadFactory,
+        \Magento\Framework\Registry $registry // TODO: Get rid of this.
     ) {
         $this->quoteQuoteFactory = $quoteQuoteFactory;
-        $this->connectApiCallsHelperCreateUpdateQuoteFactory = $connectApiCallsHelperCreateUpdateQuoteFactory;
         $this->connectHelper = $connectHelper;
         $this->catalogProductFactory = $catalogProductFactory;
-        $this->subscriberFactory = $subscriberFactory;
         $this->catalogProductMediaConfigFactory = $catalogProductMediaConfigFactory;
         $this->checkoutSession = $checkoutSession;
         $this->registry = $registry;
-        $this->json = $json;
+        $this->productMetadata = $productMetadata;
+        $this->moduleResource = $moduleResource;
+        $this->connectApiCallsHelperSendEventPayloadFactory = $connectApiCallsHelperSendEventPayloadFactory;
         parent::__construct(
             $context
         );
@@ -98,115 +94,71 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
         }
     }
 
-    /**
-     * drip actions when send quote to drip from guest checkout, when user enters his email
-     *
-     * @param \Magento\Quote\Model\Quote $quote
-     * @param string $email
-     * @param \Drip\Connect\Model\Configuration $config
-     *
-     * @return bool
-     */
-    public function proceedQuoteGuestCheckout(\Magento\Quote\Model\Quote $quote, $email, \Drip\Connect\Model\Configuration $config)
+    public function sendRawQuote(\Magento\Quote\Model\Quote $quote, \Drip\Connect\Model\Configuration $config, string $email = null, array $ancillary_data = [])
     {
-        $data = $this->prepareQuoteData($quote);
-        $data['email'] = $email;
-        $data['action'] = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateQuote::QUOTE_NEW;
-        $data['occurred_at'] = $this->connectHelper->formatDate($quote->getUpdatedAt());
-
-        $response = $this->connectApiCallsHelperCreateUpdateQuoteFactory->create([
-            'config' => $config,
-            'data' => $data,
-        ])->call();
-
-        return ($response->getResponseCode() == self::SUCCESS_RESPONSE_CODE);
-    }
-
-    /**
-     * @param \Magento\Quote\Model\Quote $quote
-     *
-     * @return array
-     */
-    public function prepareQuoteData($quote)
-    {
-        $subscriber = $this->subscriberFactory->create()->loadByEmail($this->email);
-
-        $data =  [
-            'provider' => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateQuote::PROVIDER_NAME,
-            'email' => $this->email,
-            'initial_status' => ($subscriber->isSubscribed() ? 'active' : 'unsubscribed'),
-            'cart_id' => $quote->getId(),
-            'grand_total' => $this->connectHelper->priceAsCents($quote->getGrandTotal())/100,
-            'total_discounts' => $this->connectHelper->priceAsCents(
-                (float) $quote->getSubtotal() - (float) $quote->getSubtotalWithDiscount()
-            ) / 100,
-            'currency' => $quote->getQuoteCurrencyCode(),
-            'cart_url' => $this->connectHelper->getAbandonedCartUrl($quote),
-            'items' => $this->prepareQuoteItemsData($quote),
-            'items_count' => floatval($quote->getItemsQty()),
+        //////////////////// Generate payload ////////////////////
+        $payload = [
+            'magento_version' => $this->productMetadata->getVersion(),
+            'plugin_version' => $this->moduleResource->getDbVersion('Drip_Connect'),
             'magento_source' => $this->connectHelper->getArea(),
+            'event_name' => 'saved_quote',
+            'base_object' => [
+                'class_name' => get_class($quote),
+                'resource_name' => $quote->getResourceName(),
+                'fields' => $quote->getData(),
+                'ancillary_data' => \array_merge([
+                    'cart_url' => $this->connectHelper->getAbandonedCartUrl($quote),
+                    'guest_checkout_email' => $this->checkoutSession->getGuestEmail(),
+                    'provided_email' => $email,
+                ], $ancillary_data),
+            ],
+            'related_objects' => [],
         ];
-        return $data;
-    }
-    /**
-     * @param \Magento\Quote\Model\Quote $quote
-     *
-     * @return array
-     */
-    protected function prepareQuoteItemsData($quote)
-    {
-        $childItems = [];
+
         foreach ($quote->getAllItems() as $item) {
-            if ($item->getParentItemId() === null) {
-                continue;
-            }
-
-            $childItems[$item->getParentItemId()] = $item;
-        }
-
-        $data = [];
-        foreach ($quote->getAllVisibleItems() as $item) {
-            $product = $this->catalogProductFactory->create()->load($item->getProduct()->getId());
-
-            $productCategoryNames = explode(',', $this->connectHelper->getProductCategoryNames($product));
-            if ($productCategoryNames === '' || empty($categories)) {
-                $categories = [];
-            }
-
-            $productVariantItem = $item;
-            $productVariantProduct = $product;
-            if ($item->getProductType() === 'configurable' && \array_key_exists($item->getId(), $childItems)) {
-                $productVariantItem = $childItems[$item->getId()];
-                $productVariantProduct = $this->catalogProductFactory->create()->load($productVariantItem->getProduct()->getId());
-            }
-
-            $productImage = $productVariantProduct->getImage();
-
-            if (empty($productImage) || $productVariantProduct->getVisibility() == \Magento\Catalog\Model\Product\Visibility::VISIBILITY_NOT_VISIBLE) {
-              $productImage = $product->getImage();
-            }
-
-            if (!empty($productImage)) {
-              $productImage = $this->catalogProductMediaConfigFactory->create()->getMediaUrl($productImage);
-            }
-
-            $group = [
-                'product_id' => $item->getProductId(),
-                'product_variant_id' => $productVariantItem->getProductId(),
-                'sku' => $item->getSku(),
-                'name' => $item->getName(),
-                'categories' => $categories,
-                'quantity' => $item->getQty(),
-                'price' => $this->connectHelper->priceAsCents($item->getPrice())/100,
-                'discounts' => $this->connectHelper->priceAsCents($item->getDiscountAmount())/100,
-                'total' => $this->connectHelper->priceAsCents((float)$item->getQty() * (float)$item->getPrice()) / 100,
-                'product_url' => $product->getProductUrl(),
-                'image_url' => $productImage,
+            $payload['related_objects'][] = [
+                'class_name' => get_class($item),
+                'resource_name' => $item->getResourceName(),
+                'fields' => $item->getData(),
             ];
-            $data[] = $group;
+            $product = $this->catalogProductFactory->create()->load($item->getProduct()->getId());
+            if ($product) {
+                // Categories
+                $productCategoryNames = explode(',', $this->connectHelper->getProductCategoryNames($product));
+                if ($productCategoryNames === '' || empty($productCategoryNames)) {
+                    $productCategoryNames = [];
+                }
+
+                // Image
+                $productImage = $product->getImage();
+                if (!empty($productImage)) {
+                    $productImage = $this->catalogProductMediaConfigFactory->create()->getMediaUrl($productImage);
+                }
+
+
+                $payload['related_objects'][] = [
+                    'class_name' => get_class($product),
+                    'resource_name' => $product->getResourceName(),
+                    'fields' => $product->getData(),
+                    'ancillary_data' => [
+                        'product_catalog_names' => $productCategoryNames,
+                        'image' => $productImage,
+                    ],
+                ];
+            }
         }
 
-        return $data;
+
+
+
+
+        //////////////////// Send payload ////////////////////
+
+        // TODO: Log responses.
+        $response = $this->connectApiCallsHelperSendEventPayloadFactory->create([
+            'config' => $config,
+            'payload' => $payload,
+        ])->call();
     }
 
     /**
