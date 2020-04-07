@@ -4,9 +4,6 @@ namespace Drip\Connect\Helper;
 class Quote extends \Magento\Framework\App\Helper\AbstractHelper
 {
     const REGISTRY_KEY_IS_NEW = 'newquote';
-    const REGISTRY_KEY_OLD_DATA = 'oldquotedata';
-    const REGISTRY_KEY_CUSTOMER_REGISTERED_OR_LOGGED_IN_WITH_EMTPY_QUOTE = 'customercreatedemptycart';
-    const SUCCESS_RESPONSE_CODE = 202;
 
     // if/when we know the user's email, it will be saved here
     protected $email;
@@ -34,11 +31,6 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
     /** @var \Magento\Checkout\Model\Session */
     protected $checkoutSession;
 
-    /**
-     * @var \Magento\Framework\Registry
-     */
-    protected $registry;
-
     /** @var \Magento\Framework\App\ProductMetadataInterface */
     protected $productMetadata;
 
@@ -57,41 +49,19 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Checkout\Model\Session $checkoutSession,
         \Magento\Framework\App\ProductMetadataInterface $productMetadata,
         \Magento\Framework\Module\ResourceInterface $moduleResource,
-        \Drip\Connect\Model\ApiCalls\Helper\SendEventPayloadFactory $connectApiCallsHelperSendEventPayloadFactory,
-        \Magento\Framework\Registry $registry // TODO: Get rid of this.
+        \Drip\Connect\Model\ApiCalls\Helper\SendEventPayloadFactory $connectApiCallsHelperSendEventPayloadFactory
     ) {
         $this->quoteQuoteFactory = $quoteQuoteFactory;
         $this->connectHelper = $connectHelper;
         $this->catalogProductFactory = $catalogProductFactory;
         $this->catalogProductMediaConfigFactory = $catalogProductMediaConfigFactory;
         $this->checkoutSession = $checkoutSession;
-        $this->registry = $registry;
         $this->productMetadata = $productMetadata;
         $this->moduleResource = $moduleResource;
         $this->connectApiCallsHelperSendEventPayloadFactory = $connectApiCallsHelperSendEventPayloadFactory;
         parent::__construct(
             $context
         );
-    }
-
-    /**
-     * If customer registers during checkout, they will login, but quote has not been updated with customer info yet
-     * so we can't fire "checkout created" on the quote b/c it's not yet assigned to the customer.  Doesn't matter
-     * anyway since they've already place an order.
-     *
-     * When customer logs in or registers, magento creates an empty quote right away.  We don't want to call
-     * checkout created on this action, so we check the quote total to avoid firing any quote related events.
-     *
-     * @param $customer
-     */
-    public function checkForEmptyQuote($customer)
-    {
-        //gets active quote for customer, but troube is quote hasn't been updated with this customer info yet
-        $quote = $this->quoteQuoteFactory->create()->loadByCustomer($customer);
-
-        if ($this->connectHelper->priceAsCents($quote->getGrandTotal()) == 0) {
-            $this->registry->register(self::REGISTRY_KEY_CUSTOMER_REGISTERED_OR_LOGGED_IN_WITH_EMTPY_QUOTE, 1);
-        }
     }
 
     public function sendRawQuote(\Magento\Quote\Model\Quote $quote, \Drip\Connect\Model\Configuration $config, string $email = null, array $ancillary_data = [])
