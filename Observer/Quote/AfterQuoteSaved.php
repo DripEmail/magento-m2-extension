@@ -70,6 +70,7 @@ class AfterQuoteSaved extends \Drip\Connect\Observer\Base
             'event_name' => 'saved_quote',
             'base_object' => [
                 'class_name' => get_class($quote),
+                'resource_name' => $quote->getResourceName(),
                 'fields' => $quote->getData(),
                 'ancillary_data' => [
                     'cart_url' => $this->connectHelper->getAbandonedCartUrl($quote),
@@ -83,6 +84,7 @@ class AfterQuoteSaved extends \Drip\Connect\Observer\Base
         foreach ($quote->getAllItems() as $item) {
             $payload['related_objects'][] = [
                 'class_name' => get_class($item),
+                'resource_name' => $item->getResourceName(),
                 'fields' => $item->getData(),
             ];
             $product = $this->catalogProductFactory->create()->load($item->getProduct()->getId());
@@ -102,6 +104,7 @@ class AfterQuoteSaved extends \Drip\Connect\Observer\Base
 
                 $payload['related_objects'][] = [
                     'class_name' => get_class($product),
+                    'resource_name' => $product->getResourceName(),
                     'fields' => $product->getData(),
                     'ancillary_data' => [
                         'product_catalog_names' => $productCategoryNames,
