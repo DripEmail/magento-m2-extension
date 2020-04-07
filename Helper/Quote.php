@@ -37,6 +37,9 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
     /** @var \Drip\Connect\Model\ApiCalls\Helper\SendEventPayloadFactory */
     protected $connectApiCallsHelperSendEventPayloadFactory;
 
+    /** @var \Magento\Newsletter\Model\SubscriberFactory */
+    protected $subscriberFactory;
+
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Quote\Model\QuoteFactory $quoteQuoteFactory,
@@ -46,7 +49,8 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Checkout\Model\Session $checkoutSession,
         \Magento\Framework\App\ProductMetadataInterface $productMetadata,
         \Magento\Framework\Module\ResourceInterface $moduleResource,
-        \Drip\Connect\Model\ApiCalls\Helper\SendEventPayloadFactory $connectApiCallsHelperSendEventPayloadFactory
+        \Drip\Connect\Model\ApiCalls\Helper\SendEventPayloadFactory $connectApiCallsHelperSendEventPayloadFactory,
+        \Magento\Newsletter\Model\SubscriberFactory $subscriberFactory
     ) {
         $this->quoteQuoteFactory = $quoteQuoteFactory;
         $this->connectHelper = $connectHelper;
@@ -56,6 +60,7 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
         $this->productMetadata = $productMetadata;
         $this->moduleResource = $moduleResource;
         $this->connectApiCallsHelperSendEventPayloadFactory = $connectApiCallsHelperSendEventPayloadFactory;
+        $this->subscriberFactory = $subscriberFactory;
         parent::__construct(
             $context
         );
@@ -63,6 +68,8 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function sendRawQuote(\Magento\Quote\Model\Quote $quote, \Drip\Connect\Model\Configuration $config, string $email = null, array $ancillary_data = [])
     {
+        $subscriber = $this->subscriberFactory->create()->loadByEmail($email || $this->checkoutSession->getGuestEmail() || $quote->getCustomerEmail());
+
         //////////////////// Generate payload ////////////////////
         $payload = [
             'magento_version' => $this->productMetadata->getVersion(),
@@ -79,7 +86,9 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
                     'provided_email' => $email,
                 ], $ancillary_data),
             ],
-            'related_objects' => [],
+            'related_objects' => [
+                $subscriber->getData(),
+            ],
         ];
 
         foreach ($quote->getAllItems() as $item) {
