@@ -380,8 +380,6 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function proceedLogin(\Magento\Customer\Model\Customer $customer, \Drip\Connect\Model\Configuration $config)
     {
-        $this->quoteHelper->checkForEmptyQuote($customer);
-
         $this->connectApiCallsHelperRecordAnEventFactory->create([
             'config' => $config,
             'data' => [

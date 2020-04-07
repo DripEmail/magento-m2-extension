@@ -6,7 +6,6 @@ class Product extends \Magento\Framework\App\Helper\AbstractHelper
 {
     const REGISTRY_KEY_IS_NEW = 'newproduct';
     const REGISTRY_KEY_OLD_DATA = 'oldproductdata';
-    const SUCCESS_RESPONSE_CODE = 202;
 
     /** @var \Drip\Connect\Helper\Data */
     protected $connectHelper;
