@@ -5,9 +5,6 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
 {
     const REGISTRY_KEY_IS_NEW = 'newquote';
 
-    // if/when we know the user's email, it will be saved here
-    protected $email;
-
     /**
      * @var \Magento\Quote\Model\QuoteFactory
      */
