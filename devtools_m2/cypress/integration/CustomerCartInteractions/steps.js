@@ -104,220 +104,57 @@ When('I logout', function() {
 Then('A simple cart event should be sent to Drip', function() {
   cy.log('Validating that the cart call has everything we need')
   cy.wrap(Mockclient.retrieveRecordedRequests({
-    'path': '/v3/123456/shopper_activity/cart'
+    'path': '/123456/integrations/xyz123/events'
   })).then(function(recordedRequests) {
-    expect(recordedRequests).to.have.lengthOf(1)
-    const body = JSON.parse(recordedRequests[0].body.string)
-    expect(body.email).to.eq('testuser@example.com')
-    expect(body.action).to.eq('created')
-    expect(body.cart_id).to.eq('1')
-    expect(body.cart_url).to.startWith(`${getCurrentFrontendDomain()}/drip/cart/index/q/1`)
+    // First when logged in and second with actual cart.
+    expect(recordedRequests).to.have.lengthOf(2)
+
+    const emptyBody = JSON.parse(recordedRequests[0].body.string)
+    expect(emptyBody.base_object.fields.items_count).to.eq(0)
+    expect(emptyBody.related_objects).to.have.lengthOf(1)
+    expect(emptyBody.related_objects[0]).to.have.lengthOf(0)
+
+    const body = JSON.parse(recordedRequests[1].body.string)
+    expect(body.event_name).to.eq('saved_quote')
+    expect(body.base_object.fields.customer_email).to.eq('testuser@example.com')
+    expect(body.related_objects).to.have.lengthOf(3)
+
     // Cucumber runs scenarios in a World object. Step definitions are run in the context of the current World instance. Data can be used between steps using the self prefix.
-    self.carturl = body.cart_url
-    expect(body.currency).to.eq('USD')
-    expect(body.grand_total).to.eq(11.22)
-    expect(body.initial_status).to.eq('unsubscribed')
-    expect(body.items_count).to.eq(1)
-    expect(body.magento_source).to.eq('Storefront')
-    expect(body.provider).to.eq('magento')
-    expect(body.total_discounts).to.eq(0)
-    expect(body.version).to.match(/^Magento 2\.3\.2, Drip Extension \d+\.\d+\.\d+$/)
-    expect(body.occurred_at).to.match(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z/)
-    expect(body.items).to.have.lengthOf(1)
-
-    const item = body.items[0]
-    expect(item.product_id).to.eq('1')
-    expect(item.product_variant_id).to.eq('1')
-    expect(item.sku).to.eq('widg-1')
-    expect(item.categories).to.be.empty
-    expect(item.discounts).to.eq(0)
-    expect(item.image_url).to.eq(`${getCurrentFrontendDomain()}/media/catalog/product/my_image.png`)
-    expect(item.name).to.eq('Widget 1')
-    self.item = item.name
-    expect(item.price).to.eq(11.22)
-    expect(item.product_url).to.eq(`${getCurrentFrontendDomain()}/widget-1.html`)
-    expect(item.quantity).to.eq(1)
-    expect(item.total).to.eq(11.22)
+    self.carturl = body.base_object.ancillary_data.cart_url
+    self.item = body.related_objects[1].fields.name
   })
-
 })
 
 Then('A configurable cart event should be sent to Drip', function() {
   cy.log('Validating that the cart call has everything we need')
   cy.wrap(Mockclient.retrieveRecordedRequests({
-    'path': '/v3/123456/shopper_activity/cart'
-  })).then(function(recordedRequests) {
-    expect(recordedRequests).to.have.lengthOf(1)
-    const body = JSON.parse(recordedRequests[0].body.string)
-    expect(body.email).to.eq('testuser@example.com')
-    expect(body.action).to.eq('created')
-    expect(body.cart_id).to.eq('1')
-    expect(body.cart_url).to.startWith(`${getCurrentFrontendDomain()}/drip/cart/index/q/1`)
-    expect(body.currency).to.eq('USD')
-    expect(body.grand_total).to.eq(11.22)
-    expect(body.initial_status).to.eq('unsubscribed')
-    expect(body.items_count).to.eq(1)
-    expect(body.magento_source).to.eq('Storefront')
-    expect(body.provider).to.eq('magento')
-    expect(body.total_discounts).to.eq(0)
-    expect(body.version).to.match(/^Magento 2\.3\.2, Drip Extension \d+\.\d+\.\d+$/)
-    expect(body.items).to.have.lengthOf(1)
-
-    const item = body.items[0]
-    expect(item.product_id).to.eq('3')
-    expect(item.product_variant_id).to.eq('1')
-    expect(item.sku).to.eq('widg-1-xl')
-    expect(item.categories).to.be.empty
-    expect(item.discounts).to.eq(0)
-    expect(item.image_url).to.eq(`${getCurrentFrontendDomain()}/media/catalog/product/my_image.png`)
-    expect(item.name).to.eq('Widget 1') // TODO: Figure out whether this is correct.
-    expect(item.price).to.eq(11.22)
-    expect(item.product_url).to.eq(`${getCurrentFrontendDomain()}/widget-1.html`)
-    expect(item.quantity).to.eq(1)
-    expect(item.total).to.eq(11.22)
-  })
-})
-
-Then('A configurable cart event with parent image and url should be sent to Drip', function() {
-  cy.log('Validating that the cart call has everything we need')
-  cy.wrap(Mockclient.retrieveRecordedRequests({
-    'path': '/v3/123456/shopper_activity/cart'
-  })).then(function(recordedRequests) {
-    expect(recordedRequests).to.have.lengthOf(1)
-    const body = JSON.parse(recordedRequests[0].body.string)
-    expect(body.email).to.eq('testuser@example.com')
-    expect(body.action).to.eq('created')
-    expect(body.cart_id).to.eq('1')
-    expect(body.cart_url).to.startWith(`${getCurrentFrontendDomain()}/drip/cart/index/q/1`)
-    expect(body.currency).to.eq('USD')
-    expect(body.grand_total).to.eq(11.22)
-    expect(body.initial_status).to.eq('unsubscribed')
-    expect(body.items_count).to.eq(1)
-    expect(body.magento_source).to.eq('Storefront')
-    expect(body.provider).to.eq('magento')
-    expect(body.total_discounts).to.eq(0)
-    expect(body.version).to.match(/^Magento 2\.3\.2, Drip Extension \d+\.\d+\.\d+$/)
-    expect(body.items).to.have.lengthOf(1)
-
-    const item = body.items[0]
-    expect(item.product_id).to.eq('3')
-    expect(item.product_variant_id).to.eq('1')
-    expect(item.sku).to.eq('widg-1-xl')
-    expect(item.categories).to.be.empty
-    expect(item.discounts).to.eq(0)
-    expect(item.image_url).to.eq(`${getCurrentFrontendDomain()}/media/catalog/product/parent_image.png`)
-    expect(item.name).to.eq('Widget 1') // TODO: Figure out whether this is correct.
-    expect(item.price).to.eq(11.22)
-    expect(item.product_url).to.eq(`${getCurrentFrontendDomain()}/widget-1.html`)
-    expect(item.quantity).to.eq(1)
-    expect(item.total).to.eq(11.22)
-  })
-})
-
-Then('Configurable cart events should be sent to Drip', function() {
-  cy.log('Validating that the cart call has everything we need')
-  cy.wrap(Mockclient.retrieveRecordedRequests({
-    'path': '/v3/123456/shopper_activity/cart'
+    'path': '/123456/integrations/xyz123/events'
   })).then(function(recordedRequests) {
     expect(recordedRequests).to.have.lengthOf(2)
-    const body = JSON.parse(recordedRequests[recordedRequests.length - 1].body.string)
-    expect(body.email).to.eq('testuser@example.com')
-    expect(body.items).to.have.lengthOf(2)
-    const item1 = body.items[0]
-    expect(item1.product_id).to.eq('3')
-    expect(item1.product_variant_id).to.eq('1')
-    expect(item1.sku).to.eq('widg-1-xl')
-    const item2 = body.items[1]
-    expect(item2.product_id).to.eq('3')
-    expect(item2.product_variant_id).to.eq('2')
-    expect(item2.sku).to.eq('widg-1-l')
+    const body = JSON.parse(recordedRequests[1].body.string)
+    expect(body.related_objects).to.have.lengthOf(5)
   })
 })
 
 Then('A grouped cart event should be sent to Drip', function() {
   cy.log('Validating that the cart call has everything we need')
   cy.wrap(Mockclient.retrieveRecordedRequests({
-    'path': '/v3/123456/shopper_activity/cart'
+    'path': '/123456/integrations/xyz123/events'
   })).then(function(recordedRequests) {
-    expect(recordedRequests).to.have.lengthOf(1)
-    const body = JSON.parse(recordedRequests[0].body.string)
-    expect(body.email).to.eq('testuser@example.com')
-    expect(body.action).to.eq('created')
-    expect(body.cart_id).to.eq('1')
-    expect(body.cart_url).to.startWith(`${getCurrentFrontendDomain()}/drip/cart/index/q/1`)
-    expect(body.currency).to.eq('USD')
-    expect(body.grand_total).to.eq(22.44)
-    expect(body.initial_status).to.eq('unsubscribed')
-    expect(body.items_count).to.eq(2)
-    expect(body.magento_source).to.eq('Storefront')
-    expect(body.provider).to.eq('magento')
-    expect(body.total_discounts).to.eq(0)
-    expect(body.version).to.match(/^Magento 2\.3\.2, Drip Extension \d+\.\d+\.\d+$/)
-    expect(body.items).to.have.lengthOf(2)
-
-    // These may be in any order, so we'll loop and assert based on SKU.
-    body.items.forEach(item => {
-      switch (item.sku) {
-        case 'widg-1-sub1':
-          expect(item.product_id).to.eq('2')
-          expect(item.product_variant_id).to.eq('2')
-          expect(item.name).to.eq('Widget 1 Sub 1')
-          expect(item.product_url).to.eq(`${getCurrentFrontendDomain()}/widget-1-sub-1.html`)
-          break;
-        case 'widg-1-sub2':
-          expect(item.product_id).to.eq('3')
-          expect(item.product_variant_id).to.eq('3')
-          expect(item.name).to.eq('Widget 1 Sub 2')
-          expect(item.product_url).to.eq(`${getCurrentFrontendDomain()}/widget-1-sub-2.html`)
-          break;
-        default:
-          expect.fail(`Unknown SKU: ${item.sku}`)
-          break;
-      }
-      expect(item.categories).to.be.empty
-      expect(item.discounts).to.eq(0)
-      expect(item.image_url).to.eq(`${getCurrentFrontendDomain()}/media/catalog/product/my_image.png`)
-      expect(item.price).to.eq(11.22)
-      expect(item.quantity).to.eq(1)
-      expect(item.total).to.eq(11.22)
-    });
+    expect(recordedRequests).to.have.lengthOf(2)
+    const body = JSON.parse(recordedRequests[1].body.string)
+    expect(body.related_objects).to.have.lengthOf(5)
   })
 })
 
 Then('A bundle cart event should be sent to Drip', function() {
   cy.log('Validating that the cart call has everything we need')
   cy.wrap(Mockclient.retrieveRecordedRequests({
-    'path': '/v3/123456/shopper_activity/cart'
+    'path': '/123456/integrations/xyz123/events'
   })).then(function(recordedRequests) {
-    expect(recordedRequests).to.have.lengthOf(1)
-    const body = JSON.parse(recordedRequests[0].body.string)
-    expect(body.email).to.eq('testuser@example.com')
-    expect(body.action).to.eq('created')
-    expect(body.cart_id).to.eq('1')
-    expect(body.cart_url).to.startWith(`${getCurrentFrontendDomain()}/drip/cart/index/q/1`)
-    expect(body.currency).to.eq('USD')
-    expect(body.grand_total).to.eq(22.44)
-    expect(body.initial_status).to.eq('unsubscribed')
-    expect(body.items_count).to.eq(1)
-    expect(body.magento_source).to.eq('Storefront')
-    expect(body.provider).to.eq('magento')
-    expect(body.total_discounts).to.eq(0)
-    expect(body.version).to.match(/^Magento 2\.3\.2, Drip Extension \d+\.\d+\.\d+$/)
-    expect(body.items).to.have.lengthOf(1)
-
-    // We don't send anything unique for the child products right now.
-    const item = body.items[0]
-    expect(item.product_id).to.eq('3')
-    expect(item.product_variant_id).to.eq('3')
-    expect(item.sku).to.eq('widg-1')
-    expect(item.categories).to.be.empty
-    expect(item.discounts).to.eq(0)
-    expect(item.image_url).to.eq(`${getCurrentFrontendDomain()}/media/catalog/product/my_image.png`)
-    expect(item.name).to.eq('Widget 1')
-    expect(item.price).to.eq(22.44)
-    expect(item.product_url).to.eq(`${getCurrentFrontendDomain()}/widget-1.html`)
-    expect(item.quantity).to.eq(1)
-    expect(item.total).to.eq(22.44)
+    expect(recordedRequests).to.have.lengthOf(2)
+    const body = JSON.parse(recordedRequests[1].body.string)
+    expect(body.related_objects).to.have.lengthOf(7)
   })
 })
 
