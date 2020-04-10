@@ -91,6 +91,7 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
             ],
         ];
 
+        // All items includes both parent and child products.
         foreach ($quote->getAllItems() as $item) {
             $payload['related_objects'][] = [
                 'class_name' => get_class($item),
@@ -110,7 +111,6 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
                 if (!empty($productImage)) {
                     $productImage = $this->catalogProductMediaConfigFactory->create()->getMediaUrl($productImage);
                 }
-
 
                 $payload['related_objects'][] = [
                     'class_name' => get_class($product),

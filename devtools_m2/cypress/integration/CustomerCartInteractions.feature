@@ -24,27 +24,6 @@ Feature: Customer Cart Interactions
     When I check out
     Then A configurable order event should be sent to Drip
 
-  Scenario: A customer adds a configurable product where the sub-item is not individually visible
-    Given I am logged into the admin interface
-      And I have configured Drip to be enabled for 'main'
-      And I have configured a configurable widget with an invisible child
-    When I open the 'main' homepage
-      And I create an account
-      And I add a 'configurable' widget to my cart
-    Then A configurable cart event with parent image and url should be sent to Drip
-    When I check out
-    Then A configurable order event should be sent to Drip
-
-  Scenario: A customer adds several configurable products to their cart and sees data about the sub-items
-    Given I am logged into the admin interface
-      And I have configured Drip to be enabled for 'main'
-      And I have configured a configurable widget
-    When I open the 'main' homepage
-      And I create an account
-      And I add a 'configurable' widget to my cart
-      And I add a different 'configurable' widget to my cart
-    Then Configurable cart events should be sent to Drip
-
   Scenario: A customer adds a grouped product to their cart and sees all the individual items
     Given I am logged into the admin interface
       And I have configured Drip to be enabled for 'main'
@@ -104,7 +83,7 @@ Feature: Customer Cart Interactions
       And I check out as a guest
     Then A simple order event should be sent to Drip
 
-Scenario: A customer adds a simple product to their cart and drip receives a working abandoned cart url
+  Scenario: A customer adds a simple product to their cart and drip receives a working abandoned cart url
     Given I am logged into the admin interface
       And I have set up a multi-store configuration
       And I have configured Drip to be enabled for 'site1'
