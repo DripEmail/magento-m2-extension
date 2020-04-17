@@ -86,14 +86,16 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
                     'provided_email' => $email,
                 ], $ancillary_data),
             ],
-            'related_objects' => [
-                [
-                    'class_name' => get_class($subscriber),
-                    'resource_name' => $subscriber->getResourceName(),
-                    'fields' => $subscriber->getData(),
-                ],
-            ],
+            'related_objects' => [],
         ];
+
+        if ($subscriber->getId()) {
+            $payload['related_objects'][] = [
+                'class_name' => get_class($subscriber),
+                'resource_name' => $subscriber->getResourceName(),
+                'fields' => $subscriber->getData(),
+            ];
+        }
 
         // All items includes both parent and child products.
         foreach ($quote->getAllItems() as $item) {
