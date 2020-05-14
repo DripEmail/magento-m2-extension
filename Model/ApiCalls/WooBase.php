@@ -47,7 +47,6 @@ class WooBase extends \Drip\Connect\Model\Restapi\RestapiAbstract
 
         $this->connectHttpClientFactory = $connectHttpClientFactory;
         $this->_responseModel = \Drip\Connect\Model\ApiCalls\Response\Base::class;
-        $this->_behavior = $config->getBehavior();
 
         $this->_httpClient = $this->connectHttpClientFactory->create([
             'uri' => $url,

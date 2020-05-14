@@ -5,7 +5,6 @@ namespace Drip\Connect\Model;
 class Configuration
 {
     const ACCOUNT_ID_PATH = 'dripconnect_general/api_settings/account_id';
-    const BEHAVIOR_PATH = 'dripconnect_general/api_settings/behavior';
     const API_URL_PATH = 'dripconnect_general/api_settings/url';
     const API_TIMEOUT_PATH = 'dripconnect_general/api_settings/timeout';
     const API_KEY_PATH = 'dripconnect_general/api_settings/api_key';
@@ -88,11 +87,6 @@ class Configuration
     public function getAccountId()
     {
         return $this->getStoreConfig(self::ACCOUNT_ID_PATH);
-    }
-
-    public function getBehavior()
-    {
-        return $this->getStoreConfig(self::BEHAVIOR_PATH);
     }
 
     public function getUrl()
