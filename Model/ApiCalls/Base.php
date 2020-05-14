@@ -46,7 +46,6 @@ class Base extends \Drip\Connect\Model\Restapi\RestapiAbstract
 
         $this->connectHttpClientFactory = $connectHttpClientFactory;
         $this->_responseModel = \Drip\Connect\Model\ApiCalls\Response\Base::class;
-        $this->_behavior = $config->getBehavior();
 
         $url = $config->getUrl() . $endpoint;
         if ($v3) {
