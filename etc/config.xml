@@ -7,16 +7,8 @@
                 <salt>some default string</salt>
             </module_settings>
             <api_settings>
-                <url>https://api.getdrip.com/v2/</url>
-                <timeout>30000</timeout>
-                <batch_delay>72</batch_delay>
-                <behavior>call_api</behavior>
-                <memory_limit>4096M</memory_limit>
+                <wis_url>https://woo.drip.sh</wis_url>
             </api_settings>
-            <actions>
-                <sync_customers_data_state>0</sync_customers_data_state>
-                <sync_orders_data_state>0</sync_orders_data_state>
-            </actions>
         </dripconnect_general>
     </default>
 </config>
