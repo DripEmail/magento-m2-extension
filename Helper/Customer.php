@@ -46,7 +46,6 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Customer\Model\GroupFactory $customerGroupFactory,
         \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateSubscriberFactory $apiCallsCreateUpdateSubscriberFactory,
         \Drip\Connect\Model\ApiCalls\Helper\RecordAnEventFactory $connectApiCallsHelperRecordAnEventFactory,
-        \Drip\Connect\Model\ApiCalls\Helper\Batches\SubscribersFactory $connectApiCallsHelperBatchesSubscribersFactory,
         \Drip\Connect\Helper\Quote $quoteHelper,
         \Magento\Customer\Model\CustomerFactory $customerCustomerFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
@@ -60,7 +59,6 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         $this->remoteAddress = $context->getRemoteAddress();
         $this->apiCallsCreateUpdateSubscriberFactory = $apiCallsCreateUpdateSubscriberFactory;
         $this->connectApiCallsHelperRecordAnEventFactory = $connectApiCallsHelperRecordAnEventFactory;
-        $this->connectApiCallsHelperBatchesSubscribersFactory = $connectApiCallsHelperBatchesSubscribersFactory;
         $this->header = $context->getHttpHeader();
         $this->quoteHelper = $quoteHelper;
         $this->customerCustomerFactory = $customerCustomerFactory;
@@ -437,22 +435,6 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
                 'email' => $customer->getEmail(),
                 'action' => \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_DELETED,
             ]
-        ])->call();
-    }
-
-    /**
-     * batch customer update
-     *
-     * @param array $batch
-     * @param \Drip\Connect\Model\Configuration $config
-     *
-     * @return \Drip\Connect\Model\Restapi\Response\ResponseAbstract
-     */
-    public function proceedAccountBatch(array $batch, \Drip\Connect\Model\Configuration $config)
-    {
-        return $this->connectApiCallsHelperBatchesSubscribersFactory->create([
-            'config' => $config,
-            'batch' => $batch,
         ])->call();
     }
 }
