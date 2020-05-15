@@ -68,6 +68,7 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function sendRawQuote(\Magento\Quote\Model\Quote $quote, \Drip\Connect\Model\Configuration $config, string $email = null, array $ancillary_data = [])
     {
+        /** @var \Magento\Newsletter\Model\Subscriber */
         $subscriber = $this->subscriberFactory->create()->loadByEmail($email ?? $this->checkoutSession->getGuestEmail() ?? $quote->getCustomerEmail());
 
         //////////////////// Generate payload ////////////////////
