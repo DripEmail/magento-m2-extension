@@ -16,16 +16,6 @@
             })();
         </script>
         <!-- end Drip -->
-
-        <?php if ($block->isCustomerLoggedIn()) : ?>
-            <!-- identify Drip customer -->
-            <script type="text/javascript">
-            _dcq.push(["identify", {
-                email: "<?= $block->getCustomerEmail()?>"
-            }]);
-            </script>
-            <!-- end identify -->
-        <?php endif; ?>
     <?php else : ?>
         <!-- Skipping Drip JS inclusion due to lack of account id -->
     <?php endif; ?>
