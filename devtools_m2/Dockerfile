@@ -1,11 +1,11 @@
-FROM ubuntu:19.04
+FROM ubuntu:20.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 ARG CONTINUOUS_INTEGRATION
 
 RUN apt update && apt install -y software-properties-common git wget curl gnupg2 ca-certificates lsb-release vim nginx fcgiwrap unzip
 RUN add-apt-repository ppa:ondrej/php
-RUN apt install -y php7.2 php7.2-fpm php7.2-bcmath php7.2-gd php7.2-intl php7.2-pdo-mysql php7.2-soap php7.2-xsl php7.2-zip php7.2-curl php7.2-mbstring php7.2-dev composer
+RUN apt install -y php7.2 php7.2-fpm php7.2-bcmath php7.2-gd php7.2-intl php7.2-pdo-mysql php7.2-soap php7.2-xsl php7.2-zip php7.2-curl php7.2-mbstring php7.2-dev php7.2-cli php7.2-xml composer
 RUN test "true" = "${CONTINUOUS_INTEGRATION}" && echo "skipping install of php-xdebug" || pecl install xdebug
 RUN apt purge -y apache2 && apt autoremove
 RUN service nginx stop;service php7.2-fpm stop;echo "nginx and php-fpm stopped"
