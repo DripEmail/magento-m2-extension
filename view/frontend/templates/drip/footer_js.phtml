@@ -15,6 +15,13 @@
                 s.parentNode.insertBefore(dc, s);
             })();
         </script>
+        <script type="text/x-magento-init">
+        {
+            "*": {
+                "Drip_Connect/js/identification": {}
+            }
+        }
+        </script>
         <!-- end Drip -->
     <?php else : ?>
         <!-- Skipping Drip JS inclusion due to lack of account id -->

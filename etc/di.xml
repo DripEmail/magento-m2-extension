@@ -13,4 +13,7 @@
             </argument>
         </arguments>
     </type>
+    <type name="Magento\Customer\CustomerData\Customer">
+        <plugin name="additional_section_data" type="Drip\Connect\Model\Plugin\CustomerData" />
+    </type>
 </config>
