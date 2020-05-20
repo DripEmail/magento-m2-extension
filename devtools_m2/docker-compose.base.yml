@@ -2,6 +2,7 @@ version: '3.7'
 services:
   web:
     image: 648846177135.dkr.ecr.us-east-1.amazonaws.com/eci/magento-m2-extension:2.3.2
+    # build: .
     ports:
     - 3006:80
     links:
