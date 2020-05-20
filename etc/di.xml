@@ -13,6 +13,7 @@
             </argument>
         </arguments>
     </type>
+    <!-- Inject additional data into the customerData.get("customer") hash for private fetching of email.  -->
     <type name="Magento\Customer\CustomerData\Customer">
         <plugin name="additional_section_data" type="Drip\Connect\Model\Plugin\CustomerData" />
     </type>
