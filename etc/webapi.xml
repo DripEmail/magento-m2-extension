@@ -3,7 +3,7 @@
     <route method="GET" url="/V1/drip/account_id">
         <service class="Drip\Connect\Api\SettingsInterface" method="getAccountId"/>
         <resources>
-            <resource ref="anonymous"/>
+            <resource ref="Drip::account_id"/>
         </resources>
     </route>
 </routes>
