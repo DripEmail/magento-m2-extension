@@ -4,6 +4,11 @@ var config = {
             'Magento_Checkout/js/action/set-shipping-information': {
                 'Drip_Connect/js/order/set-shipping-information-mixin': true
             }
+        },
+        map: {
+            '*': {
+                identification: 'Drip_Connect/js/identification',
+            }
         }
     }
 };
