@@ -2,6 +2,10 @@
 
 ## Next
 
+## 1.8.6
+
+* Fetch email for identification call via ajax so that sites with certain page caching configurations (such as Varnish) will not cache and identify customer emails across users.
+
 ## 1.8.5
 
 * Fixed a bug that would cause order sync'ing to fail. If an order item has no product name associated with it, we will generate a default product name of "[Missing Product <x>-<y> Name]" where <x> and <y> are the parent product ID, and associated product ID respectively. If the product is not associated, both ids will be the same.
