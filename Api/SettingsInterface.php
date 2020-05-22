@@ -9,4 +9,11 @@ interface SettingsInterface {
 		 * @return string
 		 */
     public function updateSettings($websiteId, $accountParam, $integrationToken);
+
+		/**
+		 * POST for integration settings API
+		 * @param string $websiteId]
+		 * @return string
+		 */
+		public function showStatus($websiteId);
 }

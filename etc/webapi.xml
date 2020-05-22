@@ -3,7 +3,13 @@
     <route method="POST" url="/V1/drip/integration">
         <service class="Drip\Connect\Api\SettingsInterface" method="updateSettings"/>
         <resources>
-            <resource ref="Drip::update_settings"/>
+            <resource ref="Drip::settings"/>
+        </resources>
+    </route>
+    <route method="GET" url="/V1/drip/status">
+        <service class="Drip\Connect\Api\SettingsInterface" method="showStatus"/>
+        <resources>
+            <resource ref="Drip::settings"/>
         </resources>
     </route>
 </routes>

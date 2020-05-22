@@ -3,7 +3,7 @@
     <acl>
         <resources>
             <resource id="Magento_Backend::admin">
-                <resource id="Drip::update_settings" title="update_settings" translate="title" sortOrder="110" />
+                <resource id="Drip::settings" title="settings" translate="title" sortOrder="110" />
             </resource>
         </resources>
     </acl>
