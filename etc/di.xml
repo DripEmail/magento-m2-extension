@@ -17,4 +17,6 @@
     <type name="Magento\Customer\CustomerData\Customer">
         <plugin name="additional_section_data" type="Drip\Connect\Model\Plugin\CustomerData" />
     </type>
+    <preference for="Drip\Connect\Api\SettingsInterface"
+            type="Drip\Connect\Api\Settings" />
 </config>

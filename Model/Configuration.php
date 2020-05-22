@@ -4,11 +4,13 @@ namespace Drip\Connect\Model;
 
 class Configuration
 {
+		const ACCOUNT_PARAM_PATH = 'dripconnect_general/api_settings/account_param';
     const WIS_URL_PATH = 'dripconnect_general/api_settings/wis_url';
     const INTEGRATION_TOKEN = 'dripconnect_general/api_settings/integration_token';
     const MODULE_ENABLED_PATH = 'dripconnect_general/module_settings/is_enabled';
     const SALT_PATH = 'dripconnect_general/module_settings/salt';
     const LOG_SETTINGS_PATH = 'dripconnect_general/log_settings';
+		const API_TIMEOUT_PATH = 'dripconnect_general/api_settings/timeout';
 
     /**
      * @var \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
@@ -70,6 +72,11 @@ class Configuration
         return $this->getConfig(self::INTEGRATION_TOKEN);
     }
 
+		public function getAccountParam()
+    {
+        return $this->getStoreConfig(self::ACCOUNT_PARAM_PATH);
+    }
+
     /**
      * @return bool
      */
@@ -88,6 +95,35 @@ class Configuration
         return $this->getConfig(self::LOG_SETTINGS_PATH);
     }
 
+		/**
+     * @param string $accountParam
+     */
+    public function setAccountParam($accountParam)
+    {
+        $this->setWebsiteConfig(self::ACCOUNT_PARAM_PATH, $accountParam);
+    }
+
+		/**
+     * @param string $integrationToken
+     */
+    public function setIntegrationToken($integrationToken)
+    {
+        $this->setWebsiteConfig(self::INTEGRATION_TOKEN, $integrationToken);
+    }
+
+		public function getTimeout()
+    {
+        return $this->getStoreConfig(self::API_TIMEOUT_PATH);
+    }
+
+    /**
+     * @param int $timeout The timeout in seconds.
+     */
+    public function setTimeout($timeout)
+    {
+        $this->setStoreConfig(self::API_TIMEOUT_PATH, $timeout);
+    }
+
     /**
      * @param string $path
      */
@@ -99,4 +135,34 @@ class Configuration
             $this->websiteId
         );
     }
+
+		/**
+		 * @param string $path
+		 * @param mixed $val
+		 */
+		protected function setStoreConfig($path, $val)
+		{
+				$this->resourceConfig->saveConfig(
+						$path,
+						$val,
+						$this->scope,
+						$this->storeId
+				);
+				$this->storeManager->getStore($this->storeId)->resetConfig();
+		}
+
+		/**
+		 * @param string $path
+		 * @param mixed $val
+		 */
+		protected function setWebsiteConfig($path, $val)
+		{
+				$this->resourceConfig->saveConfig(
+						$path,
+						$val,
+						\Magento\Store\Model\ScopeInterface::SCOPE_WEBSITES,
+						$this->storeId
+				);
+				$this->storeManager->getStore($this->storeId)->resetConfig();
+		}
 }

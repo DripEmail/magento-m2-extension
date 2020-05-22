@@ -8,6 +8,8 @@
             </module_settings>
             <api_settings>
                 <wis_url>https://woo.drip.sh</wis_url>
+                <account_param></account_param>
+                <integration_token></integration_token>
             </api_settings>
         </dripconnect_general>
     </default>
