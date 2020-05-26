@@ -27,7 +27,7 @@
             </group>
             <group id="api_settings" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" translate="label">
                 <label>API Settings</label>
-                <field id="integration_token" translate="label" type="text" sortOrder="21" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="integration_token" translate="label" type="text" sortOrder="21" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Drip Integration Token</label>
                 </field>
                 <field id="account_param" translate="label" type="text" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1">
