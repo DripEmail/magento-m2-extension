@@ -30,7 +30,7 @@
                 <field id="integration_token" translate="label" type="text" sortOrder="21" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Drip Integration Token</label>
                 </field>
-                <field id="account_param" translate="label" type="text" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="account_param" translate="label" type="text" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Drip Account ID</label>
                 </field>
                 <field id="wis_url" translate="label" type="text" sortOrder="30" showInDefault="0" showInWebsite="0" showInStore="0">
