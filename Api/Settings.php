@@ -18,20 +18,20 @@ class Settings implements SettingsInterface
 
 		public function __construct(
 				\Drip\Connect\Model\ConfigurationFactory $configFactory,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
+				\Magento\Store\Model\StoreManagerInterface $storeManager,
 				\Magento\Framework\App\ProductMetadata $productMetadata,
 				\Magento\Framework\Module\ResourceInterface $moduleResource
 		) {
 				$this->configFactory = $configFactory;
-        $this->storeManager = $storeManager;
+				$this->storeManager = $storeManager;
 				$this->productMetadata = $productMetadata;
 				$this->moduleResource = $moduleResource;
 		}
 
 		/**
-     * {@inheritdoc}
-     */
-    public function updateSettings($websiteId, $accountParam, $integrationToken) {
+		 * {@inheritdoc}
+		 */
+		public function updateSettings($websiteId, $accountParam, $integrationToken) {
 				$storeIds = $this->storeManager->getWebsite($websiteId)->getStoreIds();
 				reset($storeIds);
 				$storeId = current($storeIds);
@@ -39,12 +39,12 @@ class Settings implements SettingsInterface
 				$config->setAccountParam($accountParam);
 				$config->setIntegrationToken($integrationToken);
 				return json_encode(['account_param' => $config->getAccountParam(), 'integration_token' => $config->getIntegrationToken()]);
-    }
+			}
 
 		/**
-     * {@inheritdoc}
-     */
-    public function showStatus($websiteId) {
+		 * {@inheritdoc}
+		 */
+		public function showStatus($websiteId) {
 				$storeIds = $this->storeManager->getWebsite($websiteId)->getStoreIds();
 				reset($storeIds);
 				$storeId = current($storeIds);
@@ -56,5 +56,5 @@ class Settings implements SettingsInterface
 					'plugin_version' => $this->moduleResource->getDbVersion('Drip_Connect'),
 					'enabled' => $config->isEnabled()
 				]);
-    }
+			}
 }
