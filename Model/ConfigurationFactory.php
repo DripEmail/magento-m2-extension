@@ -38,16 +38,16 @@ class ConfigurationFactory
      * @param int $storeId
      * @return \Drip\Connect\Model\Configuration
      */
-	public function create(int $storeId)
+    public function create(int $storeId)
     {
-		$websiteId = $this->storeManager->getStore($storeId)->getWebsiteId();
-		return $this->createFromWebsiteId($websiteId);
-	}
+        $websiteId = $this->storeManager->getStore($storeId)->getWebsiteId();
+        return $this->createFromWebsiteId($websiteId);
+    }
 
-	public function createFromWebsiteId(int $websiteId)
-	{
-		return $this->objectManager->create(\Drip\Connect\Model\Configuration::class, ['websiteId' => $websiteId]);
-	}
+    public function createFromWebsiteId(int $websiteId)
+    {
+        return $this->objectManager->create(\Drip\Connect\Model\Configuration::class, ['websiteId' => $websiteId]);
+    }
 
     /**
      * Create a configuration model scoped to the current store based on the request param
@@ -68,10 +68,10 @@ class ConfigurationFactory
      *
      * @return \Drip\Connect\Model\Configuration
      */
-	 public function createForGlobalScope()
-	 {
-		$websiteId = $this->storeManager->getDefaultStoreView()->getWebsiteId();
-		return $this->createFromWebsiteId($websiteId);
+    public function createForGlobalScope()
+    {
+        $websiteId = $this->storeManager->getDefaultStoreView()->getWebsiteId();
+        return $this->createFromWebsiteId($websiteId);
     }
 
     /**
