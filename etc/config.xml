@@ -8,7 +8,6 @@
             </module_settings>
             <api_settings>
                 <wis_url>https://woo.drip.sh</wis_url>
-                <timeout>30000</timeout>
             </api_settings>
         </dripconnect_general>
     </default>
