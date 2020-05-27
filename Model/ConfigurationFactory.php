@@ -40,7 +40,13 @@ class ConfigurationFactory
      */
     public function create(int $storeId)
     {
-        return $this->objectManager->create(\Drip\Connect\Model\Configuration::class, ['storeId' => $storeId]);
+        $websiteId = $this->storeManager->getStore($storeId)->getWebsiteId();
+        return $this->createFromWebsiteId($websiteId);
+    }
+
+    public function createFromWebsiteId(int $websiteId)
+    {
+        return $this->objectManager->create(\Drip\Connect\Model\Configuration::class, ['websiteId' => $websiteId]);
     }
 
     /**
@@ -64,7 +70,8 @@ class ConfigurationFactory
      */
     public function createForGlobalScope()
     {
-        return $this->create(\Magento\Store\Model\Store::DEFAULT_STORE_ID);
+        $websiteId = $this->storeManager->getDefaultStoreView()->getWebsiteId();
+        return $this->createFromWebsiteId($websiteId);
     }
 
     /**
