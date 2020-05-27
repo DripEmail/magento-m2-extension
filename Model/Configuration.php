@@ -62,12 +62,12 @@ class Configuration
 
     public function getWisUrl()
     {
-        return $this->getWebsiteConfig(self::WIS_URL_PATH);
+        return $this->getConfig(self::WIS_URL_PATH);
     }
 
     public function getIntegrationToken()
     {
-        return $this->getWebsiteConfig(self::INTEGRATION_TOKEN);
+        return $this->getConfig(self::INTEGRATION_TOKEN);
     }
 
     /**
@@ -75,23 +75,23 @@ class Configuration
      */
     public function isEnabled()
     {
-        return (bool) $this->getWebsiteConfig(self::MODULE_ENABLED_PATH);
+        return (bool) $this->getConfig(self::MODULE_ENABLED_PATH);
     }
 
     public function getSalt()
     {
-        return $this->getWebsiteConfig(self::SALT_PATH);
+        return $this->getConfig(self::SALT_PATH);
     }
 
     public function getLogSettings()
     {
-        return $this->getWebsiteConfig(self::LOG_SETTINGS_PATH);
+        return $this->getConfig(self::LOG_SETTINGS_PATH);
     }
 
     /**
      * @param string $path
      */
-    protected function getWebsiteConfig($path)
+    protected function getConfig($path)
     {
         return $this->scopeConfig->getValue(
             $path,
