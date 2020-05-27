@@ -38,11 +38,11 @@ class ConfigurationFactory
      * @param int $storeId
      * @return \Drip\Connect\Model\Configuration
      */
-    public function create(int $storeId)
+	public function create(int $storeId)
     {
-        $websiteId = $this->storeManager->getStore($storeId)->getWebsiteId();
+		$websiteId = $this->storeManager->getStore($storeId)->getWebsiteId();
 		return $this->createFromWebsiteId($websiteId);
-    }
+	}
 
 	public function createFromWebsiteId(int $websiteId)
 	{
@@ -68,10 +68,10 @@ class ConfigurationFactory
      *
      * @return \Drip\Connect\Model\Configuration
      */
-    public function createForGlobalScope()
-    {
+	 public function createForGlobalScope()
+	 {
 		$websiteId = $this->storeManager->getDefaultStoreView()->getWebsiteId();
-        return $this->createFromWebsiteId($websiteId);
+		return $this->createFromWebsiteId($websiteId);
     }
 
     /**
