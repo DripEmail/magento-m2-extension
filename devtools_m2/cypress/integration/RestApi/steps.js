@@ -123,3 +123,23 @@ Then('an unauthorized status request gives the correct response', function(site)
     expect(response.status).to.eq(401)
   })
 })
+
+Then('an authorized order details request gives the correct response', function() {
+  cy.request({
+    url: "http://main.magento.localhost:3006/rest/V1/integration/admin/token",
+    method: "POST",
+    body: {"username":"admin", "password":"abc1234567890"}
+  }).then((token_response) => {
+    cy.request({
+      url: "http://main.magento.localhost:3006/rest/V1/drip/order/1",
+      method: "GET",
+      auth: {
+        bearer: token_response.body
+      }
+    }).then((response) => {
+      expect(response.status).to.eq(200)
+      const body = JSON.parse(response.body)
+      expect(body["order_url"]).to.eq('http://main.magento.localhost:3006/sales/order/view/order_id/1/')
+    })
+  })
+})
