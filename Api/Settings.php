@@ -16,16 +16,21 @@ class Settings implements SettingsInterface
     /** @var \Magento\Framework\Module\ResourceInterface */
     protected $moduleResource;
 
+	/** @var \Magento\Sales\Block\Adminhtml\Order\View\Info */
+	protected $orderViewInfo;
+
     public function __construct(
         \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\App\ProductMetadata $productMetadata,
-        \Magento\Framework\Module\ResourceInterface $moduleResource
+        \Magento\Framework\Module\ResourceInterface $moduleResource,
+        \Magento\Sales\Block\Adminhtml\Order\View\Info $orderViewInfo
     ) {
         $this->configFactory = $configFactory;
         $this->storeManager = $storeManager;
         $this->productMetadata = $productMetadata;
         $this->moduleResource = $moduleResource;
+		$this->orderViewInfo = $orderViewInfo;
     }
 
     /**
@@ -51,5 +56,13 @@ class Settings implements SettingsInterface
             'magento_version' => $this->productMetadata->getVersion(),
             'plugin_version' => $this->moduleResource->getDbVersion('Drip_Connect')
         ]);
+    }
+
+	/**
+     * {@inheritdoc}
+     */
+    public function orderDetails($orderId) {
+		$url = $this->orderViewInfo->getViewUrl($orderId);
+        return json_encode(['order_url' => $url]);
     }
 }
