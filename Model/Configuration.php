@@ -52,7 +52,12 @@ class Configuration
         $this->storeManager = $storeManager;
         $this->websiteId = $websiteId;
 
-        $this->scope = \Magento\Store\Model\ScopeInterface::SCOPE_WEBSITES;
+        if ($this->websiteId == 0) {
+            $this->scope = \Magento\Framework\App\Config\ScopeConfigInterface::SCOPE_TYPE_DEFAULT;
+        } else {
+            $this->scope = \Magento\Store\Model\ScopeInterface::SCOPE_WEBSITES;
+        }
+
     }
 
     public function getWebsiteId()
