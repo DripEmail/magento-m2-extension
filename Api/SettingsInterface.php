@@ -18,9 +18,16 @@ interface SettingsInterface {
     public function showStatus($websiteId = 0);
 
     /**
-     * POST for integration settings API
-     * @param string $websiteId]
+     * GET for order details
+     * @param string $orderId
      * @return string
      */
     public function orderDetails($orderId);
+
+    /**
+     * POST for product details
+     * @param string $productId
+     * @return string
+     */
+    public function productDetails($productId);
 }
