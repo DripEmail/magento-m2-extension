@@ -31,7 +31,10 @@ class Settings implements SettingsInterface
     /**
      * {@inheritdoc}
      */
-    public function updateSettings($websiteId, $accountParam, $integrationToken) {
+    public function updateSettings($websiteId = 0, $accountParam, $integrationToken) {
+				if (!is_null($websiteId)) {
+					$website = $this->storeManager->getWebsite($websiteId);
+				}
         $config = $this->configFactory->createFromWebsiteId($websiteId);
         $config->setAccountParam($accountParam);
         $config->setIntegrationToken($integrationToken);
@@ -41,7 +44,10 @@ class Settings implements SettingsInterface
     /**
      * {@inheritdoc}
      */
-    public function showStatus($websiteId) {
+    public function showStatus($websiteId = 0) {
+				if (!is_null($websiteId)) {
+					$website = $this->storeManager->getWebsite($websiteId);
+				}
         $config = $this->configFactory->createFromWebsiteId($websiteId);
         return json_encode([
             'account_param' => $config->getAccountParam(),

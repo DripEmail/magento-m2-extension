@@ -6,6 +6,14 @@ Feature: REST API Interactions
     Given I am logged into the admin interface
     Then an authorized integration request gives the correct response
 
+  Scenario: Authorized request to set integration token for default scope
+    Given I am logged into the admin interface
+    Then an authorized integration request with no websiteId gives the correct response
+
+  Scenario: Authorized request to set integration token for non-existent website
+    Given I am logged into the admin interface
+    Then an authorized integration request for a non-existent site gives the correct response
+
   Scenario: Unauthorized request to set integration token
     Given I am logged into the admin interface
     Then an unauthorized integration request gives the correct response
