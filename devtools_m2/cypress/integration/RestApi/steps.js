@@ -143,3 +143,24 @@ Then('an authorized order details request gives the correct response', function(
     })
   })
 })
+
+Then('an authorized product details request gives the correct response', function() {
+  cy.request({
+    url: "http://main.magento.localhost:3006/rest/V1/integration/admin/token",
+    method: "POST",
+    body: {"username":"admin", "password":"abc1234567890"}
+  }).then((token_response) => {
+    cy.request({
+      url: "http://main.magento.localhost:3006/rest/V1/drip/product/1",
+      method: "GET",
+      auth: {
+        bearer: token_response.body
+      }
+    }).then((response) => {
+      expect(response.status).to.eq(200)
+      const body = JSON.parse(response.body)
+      expect(body.product_url).to.eq('http://main.magento.localhost:3006/widget-1.html')
+      expect(body.image_url).to.eq('http://main.magento.localhost:3006/media/catalog/product/my_image.png')
+    })
+  })
+})
