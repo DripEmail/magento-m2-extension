@@ -70,7 +70,7 @@ class Configuration
         return $this->getConfig(self::INTEGRATION_TOKEN);
     }
 
-        public function getAccountParam()
+    public function getAccountParam()
     {
         return $this->getConfig(self::ACCOUNT_PARAM_PATH);
     }
