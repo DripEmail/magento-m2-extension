@@ -3,7 +3,6 @@
     <default>
         <dripconnect_general>
             <module_settings>
-                <is_enabled>0</is_enabled>
                 <salt>some default string</salt>
             </module_settings>
             <api_settings>

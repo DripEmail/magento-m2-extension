@@ -56,6 +56,6 @@ abstract class Base implements \Magento\Framework\Event\ObserverInterface
      */
     protected function isActive(\Magento\Framework\Event\Observer $observer)
     {
-        return $this->configFactory->createForCurrentScope()->isEnabled();
+        return !is_null($this->configFactory->createForCurrentScope()->getIntegrationToken());
     }
 }

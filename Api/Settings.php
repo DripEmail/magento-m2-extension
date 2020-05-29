@@ -48,8 +48,7 @@ class Settings implements SettingsInterface
             'account_param' => $config->getAccountParam(),
             'integration_token' => $config->getIntegrationToken(),
             'magento_version' => $this->productMetadata->getVersion(),
-            'plugin_version' => $this->moduleResource->getDbVersion('Drip_Connect'),
-            'enabled' => $config->isEnabled()
+            'plugin_version' => $this->moduleResource->getDbVersion('Drip_Connect')
         ]);
     }
 }

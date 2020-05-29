@@ -68,11 +68,9 @@ Given('I have configured Drip to be enabled for {string}', function(site) {
   cy.contains('Module Settings').click()
   cy.contains('API Settings').click()
   if (site !== 'default') {
-    cy.get('input[name="groups[module_settings][fields][is_enabled][inherit]"]').uncheck()
     cy.get('input[name="groups[api_settings][fields][account_param][inherit]"]').uncheck()
     cy.get('input[name="groups[api_settings][fields][integration_token][inherit]"]').uncheck()
   }
-  cy.get('select[name="groups[module_settings][fields][is_enabled][value]"]').select('1')
   cy.contains('Save Config').click()
 })
 
