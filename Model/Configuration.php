@@ -125,10 +125,10 @@ class Configuration
                 $this->scope,
                 $this->websiteId
         );
-		$stores = $this->storeManager->getStores();
-		foreach ($stores as $store) {
+        $stores = $this->storeManager->getStores();
+        foreach ($stores as $store) {
                $store->resetConfig();
-     	}
+         }
     }
 
 }

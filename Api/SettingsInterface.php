@@ -11,7 +11,7 @@ interface SettingsInterface {
      public function updateSettings($websiteId, $accountParam, $integrationToken);
 
     /**
-     * POST for integration settings API
+     * GET for integration settings API
      * @param string $websiteId]
      * @return string
      */
