@@ -54,7 +54,7 @@ class Index extends \Magento\Framework\App\Action\Action
 
         $config = $this->configFactory->createForCurrentScope();
 
-        if (!$config->isEnabled()) {
+        if (is_null($config->getIntegrationToken())) {
             $resultRedirect->setPath('/');
             return $resultRedirect;
         }

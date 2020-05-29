@@ -7,7 +7,6 @@ class Configuration
     const ACCOUNT_PARAM_PATH = 'dripconnect_general/api_settings/account_param';
     const WIS_URL_PATH = 'dripconnect_general/api_settings/wis_url';
     const INTEGRATION_TOKEN = 'dripconnect_general/api_settings/integration_token';
-    const MODULE_ENABLED_PATH = 'dripconnect_general/module_settings/is_enabled';
     const SALT_PATH = 'dripconnect_general/module_settings/salt';
     const LOG_SETTINGS_PATH = 'dripconnect_general/log_settings';
 
@@ -75,19 +74,6 @@ class Configuration
     {
         return $this->getConfig(self::ACCOUNT_PARAM_PATH);
     }
-
-    /**
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        return (bool) $this->getConfig(self::MODULE_ENABLED_PATH);
-    }
-
-	public function enable()
-	{
-		return $this->setConfig(self::MODULE_ENABLED_PATH, 1);
-	}
 
     public function getSalt()
     {
