@@ -12,4 +12,16 @@
             <resource ref="Drip::settings"/>
         </resources>
     </route>
+    <route method="GET" url="/V1/drip/order/:orderId">
+        <service class="Drip\Connect\Api\ResourceDetailsInterface" method="orderDetails"/>
+        <resources>
+            <resource ref="Drip::settings"/>
+        </resources>
+    </route>
+    <route method="GET" url="/V1/drip/product/:productId">
+        <service class="Drip\Connect\Api\ResourceDetailsInterface" method="productDetails"/>
+        <resources>
+            <resource ref="Drip::settings"/>
+        </resources>
+    </route>
 </routes>
