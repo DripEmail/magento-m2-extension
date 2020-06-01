@@ -3,11 +3,12 @@
     <default>
         <dripconnect_general>
             <module_settings>
-                <is_enabled>0</is_enabled>
                 <salt>some default string</salt>
             </module_settings>
             <api_settings>
                 <wis_url>https://woo.drip.sh</wis_url>
+                <account_param></account_param>
+                <integration_token></integration_token>
             </api_settings>
         </dripconnect_general>
     </default>

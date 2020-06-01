@@ -16,10 +16,6 @@
                     <label>Version</label>
                     <frontend_model>Drip\Connect\Block\System\Config\Version</frontend_model>
                 </field>
-                <field id="is_enabled" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Is Module Enabled</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                </field>
                 <field id="salt" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Security Hash</label>
                     <comment>Put any random string here. If value is 'some default string' replace it with something else. This is used to create abandoned cart links.</comment>
@@ -27,8 +23,11 @@
             </group>
             <group id="api_settings" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" translate="label">
                 <label>API Settings</label>
-                <field id="integration_token" translate="label" type="text" sortOrder="21" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="integration_token" translate="label" type="text" sortOrder="21" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Drip Integration Token</label>
+                </field>
+                <field id="account_param" translate="label" type="text" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Drip Account ID</label>
                 </field>
                 <field id="wis_url" translate="label" type="text" sortOrder="30" showInDefault="0" showInWebsite="0" showInStore="0">
                     <label>API Endpoint URL</label>

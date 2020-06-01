@@ -13,4 +13,8 @@
             </argument>
         </arguments>
     </type>
+    <preference for="Drip\Connect\Api\SettingsInterface"
+            type="Drip\Connect\Api\Settings" />
+    <preference for="Drip\Connect\Api\ResourceDetailsInterface"
+            type="Drip\Connect\Api\ResourceDetails" />
 </config>

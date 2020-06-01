@@ -44,7 +44,7 @@ class ConfigurationFactory
         return $this->createFromWebsiteId($websiteId);
     }
 
-    public function createFromWebsiteId(int $websiteId)
+    public function createFromWebsiteId(int $websiteId = 0)
     {
         return $this->objectManager->create(\Drip\Connect\Model\Configuration::class, ['websiteId' => $websiteId]);
     }
