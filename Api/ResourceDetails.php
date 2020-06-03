@@ -32,7 +32,7 @@ class ResourceDetails implements ResourceDetailsInterface
      */
     public function orderDetails($orderId) {
         $url = $this->orderViewInfo->getViewUrl($orderId);
-        return json_encode(['order_url' => $url]);
+        return ['order_url' => $url];
     }
 
     /**
@@ -44,6 +44,6 @@ class ResourceDetails implements ResourceDetailsInterface
         if (!empty($productImage)) {
             $productImage = $this->catalogProductMediaConfigFactory->create()->getMediaUrl($productImage);
         }
-        return json_encode(['product_url' => $product->getProductUrl(), 'image_url' => $productImage]);
+        return ['product_url' => $product->getProductUrl(), 'image_url' => $productImage];
     }
 }
