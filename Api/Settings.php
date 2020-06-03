@@ -36,7 +36,7 @@ class Settings implements SettingsInterface
         $config = $this->configFactory->createFromWebsiteId($websiteId);
         $config->setAccountParam($accountParam);
         $config->setIntegrationToken($integrationToken);
-        return json_encode(['account_param' => $config->getAccountParam(), 'integration_token' => $config->getIntegrationToken()]);
+        return ['account_param' => $config->getAccountParam(), 'integration_token' => $config->getIntegrationToken()];
     }
 
     /**
@@ -45,11 +45,11 @@ class Settings implements SettingsInterface
     public function showStatus($websiteId = 0) {
         $website = $this->storeManager->getWebsite($websiteId);
         $config = $this->configFactory->createFromWebsiteId($websiteId);
-        return json_encode([
+        return [
             'account_param' => $config->getAccountParam(),
             'integration_token' => $config->getIntegrationToken(),
             'magento_version' => $this->productMetadata->getVersion(),
             'plugin_version' => $this->moduleResource->getDbVersion('Drip_Connect')
-        ]);
+        ];
     }
 }
