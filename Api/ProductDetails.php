@@ -28,7 +28,7 @@ class ProductDetails
         $this->responseFactory = $responseFactory;
     }
 
-		/**
+        /**
      * POST for product details
      * @param string $productId
      * @return \Drip\Connect\Api\ProductDetailsResponse
