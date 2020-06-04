@@ -1,8 +1,8 @@
 <?php
 namespace Drip\Connect\Api;
-use Drip\Connect\Api\ORderDetailsInterface;
+use Drip\Connect\Api\OrderDetailsInterface;
 
-class ORderDetails implements ORderDetailsInterface
+class OrderDetails implements OrderDetailsInterface
 {
     /** @var \Magento\Sales\Block\Adminhtml\Order\View\Info */
     protected $orderViewInfo;
