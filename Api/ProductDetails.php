@@ -14,7 +14,7 @@ class ProductDetails implements ProductDetailsInterface
      */
     protected $catalogProductMediaConfigFactory;
 
-		/**
+        /**
     * @var \Drip\Connect\Api\ProductDetailsResponseFactory
     */
     protected $responseFactory;
