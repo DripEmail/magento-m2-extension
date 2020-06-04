@@ -1,35 +1,8 @@
 <?php
 namespace Drip\Connect\Api;
 
-class Response  extends \Magento\Framework\DataObject
+class SettingsResponse  extends \Magento\Framework\DataObject
 {
-    /**
-     * Get order url
-     *
-     * @return string
-     */
-    public function getOrderUrl() {
-        return $this->getData('order_url');
-    }
-
-    /**
-     * Get product url
-     *
-     * @return string
-     */
-    public function getProductUrl() {
-        return $this->getData('product_url');
-    }
-
-    /**
-     * Get image url
-     *
-     * @return string
-     */
-    public function getImageUrl() {
-        return $this->getData('image_url');
-    }
-
     /**
      * Get account param
      *
