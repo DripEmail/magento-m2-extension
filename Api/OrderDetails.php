@@ -18,7 +18,7 @@ class OrderDetails implements OrderDetailsInterface
     protected $catalogProductMediaConfigFactory;
 
     /**
-    * @var \Drip\Connect\Api\OrderDetailsResponseFactory
+     * @var \Drip\Connect\Api\OrderDetailsResponseFactory
     */
     protected $responseFactory;
 
