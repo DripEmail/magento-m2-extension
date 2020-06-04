@@ -1,8 +1,7 @@
 <?php
 namespace Drip\Connect\Api;
-use Drip\Connect\Api\ProductDetailsInterface;
 
-class ProductDetails implements ProductDetailsInterface
+class ProductDetails
 {
     /**
      * @var \Magento\Catalog\Model\ProductFactory
@@ -29,8 +28,10 @@ class ProductDetails implements ProductDetailsInterface
         $this->responseFactory = $responseFactory;
     }
 
-    /**
-     * {@inheritdoc}
+        /**
+     * POST for product details
+     * @param string $productId
+     * @return \Drip\Connect\Api\ProductDetailsResponse
      */
     public function showDetails($productId) {
         $response = $this->responseFactory->create();
