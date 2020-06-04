@@ -16,40 +16,63 @@ class Settings implements SettingsInterface
     /** @var \Magento\Framework\Module\ResourceInterface */
     protected $moduleResource;
 
+    /**
+    * @var \Drip\Connect\Api\ResponseFactory
+    */
+    protected $responseFactory;
+
+    /**
+    * @var \Drip\Connect\Api\Response
+    */
+    protected $response;
+
     public function __construct(
         \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\App\ProductMetadata $productMetadata,
-        \Magento\Framework\Module\ResourceInterface $moduleResource
+        \Magento\Framework\Module\ResourceInterface $moduleResource,
+        \Drip\Connect\Api\SettingsResponseFactory $responseFactory
     ) {
         $this->configFactory = $configFactory;
         $this->storeManager = $storeManager;
         $this->productMetadata = $productMetadata;
         $this->moduleResource = $moduleResource;
+        $this->responseFactory = $responseFactory;
     }
 
     /**
      * {@inheritdoc}
      */
     public function updateSettings($websiteId = 0, $accountParam, $integrationToken) {
+        $response = $this->responseFactory->create();
         $website = $this->storeManager->getWebsite($websiteId);
         $config = $this->configFactory->createFromWebsiteId($websiteId);
         $config->setAccountParam($accountParam);
         $config->setIntegrationToken($integrationToken);
-        return ['account_param' => $config->getAccountParam(), 'integration_token' => $config->getIntegrationToken()];
+        $response->setData([
+            'account_param' => $config->getAccountParam(),
+            'integration_token' => $config->getIntegrationToken(),
+            'magento_version' => $this->productMetadata->getVersion(),
+            'plugin_version' => $this->moduleResource->getDbVersion('Drip_Connect')
+        ]);
+
+        return $response;
     }
 
     /**
      * {@inheritdoc}
      */
     public function showStatus($websiteId = 0) {
+        $response = $this->responseFactory->create();
         $website = $this->storeManager->getWebsite($websiteId);
         $config = $this->configFactory->createFromWebsiteId($websiteId);
-        return [
+        $response->setData([
             'account_param' => $config->getAccountParam(),
             'integration_token' => $config->getIntegrationToken(),
             'magento_version' => $this->productMetadata->getVersion(),
             'plugin_version' => $this->moduleResource->getDbVersion('Drip_Connect')
-        ];
+        ]);
+
+        return $response;
     }
 }

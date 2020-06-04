@@ -1,12 +1,9 @@
 <?php
 namespace Drip\Connect\Api;
-use Drip\Connect\Api\ResourceDetailsInterface;
+use Drip\Connect\Api\ProductDetailsInterface;
 
-class ResourceDetails implements ResourceDetailsInterface
+class ProductDetails implements ProductDetailsInterface
 {
-    /** @var \Magento\Sales\Block\Adminhtml\Order\View\Info */
-    protected $orderViewInfo;
-
     /**
      * @var \Magento\Catalog\Model\ProductFactory
      */
@@ -17,33 +14,34 @@ class ResourceDetails implements ResourceDetailsInterface
      */
     protected $catalogProductMediaConfigFactory;
 
+        /**
+    * @var \Drip\Connect\Api\ProductDetailsResponseFactory
+    */
+    protected $responseFactory;
+
     public function __construct(
-        \Magento\Sales\Block\Adminhtml\Order\View\Info $orderViewInfo,
         \Magento\Catalog\Model\ProductFactory $catalogProductFactory,
-        \Magento\Catalog\Model\Product\Media\ConfigFactory $catalogProductMediaConfigFactory
+        \Magento\Catalog\Model\Product\Media\ConfigFactory $catalogProductMediaConfigFactory,
+        \Drip\Connect\Api\ProductDetailsResponseFactory $responseFactory
     ) {
-        $this->orderViewInfo = $orderViewInfo;
         $this->catalogProductFactory = $catalogProductFactory;
         $this->catalogProductMediaConfigFactory = $catalogProductMediaConfigFactory;
+        $this->responseFactory = $responseFactory;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function orderDetails($orderId) {
-        $url = $this->orderViewInfo->getViewUrl($orderId);
-        return ['order_url' => $url];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function productDetails($productId) {
+    public function showDetails($productId) {
+        $response = $this->responseFactory->create();
         $product = $this->catalogProductFactory->create()->load($productId);
         $productImage = $product->getImage();
         if (!empty($productImage)) {
             $productImage = $this->catalogProductMediaConfigFactory->create()->getMediaUrl($productImage);
         }
-        return ['product_url' => $product->getProductUrl(), 'image_url' => $productImage];
+
+        $response->setData(['product_url' => $product->getProductUrl(), 'image_url' => $productImage]);
+
+        return $response;
     }
 }
