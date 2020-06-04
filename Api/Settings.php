@@ -31,7 +31,7 @@ class Settings implements SettingsInterface
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\App\ProductMetadata $productMetadata,
         \Magento\Framework\Module\ResourceInterface $moduleResource,
-        \Drip\Connect\Api\ResponseFactory $responseFactory
+        \Drip\Connect\Api\SettingsResponseFactory $responseFactory
     ) {
         $this->configFactory = $configFactory;
         $this->storeManager = $storeManager;
