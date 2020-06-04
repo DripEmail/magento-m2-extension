@@ -1,8 +1,7 @@
 <?php
 namespace Drip\Connect\Api;
-use Drip\Connect\Api\SettingsInterface;
 
-class Settings implements SettingsInterface
+class Settings
 {
     /** @var \Drip\Connect\Model\ConfigurationFactory */
     protected $configFactory;
@@ -41,7 +40,11 @@ class Settings implements SettingsInterface
     }
 
     /**
-     * {@inheritdoc}
+     * POST for integration settings API
+     * @param string $websiteId
+     * @param string $accountParam
+     * @param string $integrationToken
+     * @return \Drip\Connect\Api\SettingsResponse
      */
     public function updateSettings($websiteId = 0, $accountParam, $integrationToken) {
         $response = $this->responseFactory->create();
@@ -60,7 +63,9 @@ class Settings implements SettingsInterface
     }
 
     /**
-     * {@inheritdoc}
+     * GET for integration settings API
+     * @param string $websiteId]
+     * @return \Drip\Connect\Api\SettingsResponse
      */
     public function showStatus($websiteId = 0) {
         $response = $this->responseFactory->create();

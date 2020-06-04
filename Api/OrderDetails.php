@@ -1,8 +1,7 @@
 <?php
 namespace Drip\Connect\Api;
-use Drip\Connect\Api\OrderDetailsInterface;
 
-class OrderDetails implements OrderDetailsInterface
+class OrderDetails
 {
     /** @var \Magento\Sales\Block\Adminhtml\Order\View\Info */
     protected $orderViewInfo;
@@ -32,7 +31,9 @@ class OrderDetails implements OrderDetailsInterface
     }
 
     /**
-     * {@inheritdoc}
+     * GET for order details
+     * @param string $orderId
+     * @return \Drip\Connect\Api\OrderDetailsResponse
      */
     public function showDetails($orderId) {
         $response = $this->responseFactory->create();
