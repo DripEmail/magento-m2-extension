@@ -4,14 +4,14 @@ interface ResourceDetailsInterface {
     /**
      * GET for order details
      * @param string $orderId
-     * @return string
+     * @return \Drip\Connect\Api\Response
      */
     public function orderDetails($orderId);
 
     /**
      * POST for product details
      * @param string $productId
-     * @return string
+     * @return \Drip\Connect\Api\Response
      */
     public function productDetails($productId);
 }

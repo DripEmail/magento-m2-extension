@@ -106,7 +106,7 @@ Then('an authorized status request gives the correct response', function(site) {
       }
     }).then((response) => {
       expect(response.status).to.eq(200)
-      const body = JSON.parse(response.body)
+      const body = response.body
       expect(body["account_param"]).to.eq('123456')
       expect(body["integration_token"]).to.eq('abcdefg')
       expect(body["magento_version"]).to.eq("2.3.2")
@@ -138,7 +138,7 @@ Then('an authorized order details request gives the correct response', function(
       }
     }).then((response) => {
       expect(response.status).to.eq(200)
-      const body = JSON.parse(response.body)
+      const body = response.body
       expect(body["order_url"]).to.eq('http://main.magento.localhost:3006/sales/order/view/order_id/1/')
     })
   })
@@ -158,7 +158,7 @@ Then('an authorized product details request gives the correct response', functio
       }
     }).then((response) => {
       expect(response.status).to.eq(200)
-      const body = JSON.parse(response.body)
+      const body = response.body
       expect(body.product_url).to.eq('http://main.magento.localhost:3006/widget-1.html')
       expect(body.image_url).to.eq('http://main.magento.localhost:3006/media/catalog/product/my_image.png')
     })
