@@ -13,13 +13,13 @@
         </resources>
     </route>
     <route method="GET" url="/V1/drip/order/:orderId">
-        <service class="Drip\Connect\Api\ResourceDetailsInterface" method="orderDetails"/>
+        <service class="Drip\Connect\Api\OrderDetailsInterface" method="showDetails"/>
         <resources>
             <resource ref="Drip::settings"/>
         </resources>
     </route>
     <route method="GET" url="/V1/drip/product/:productId">
-        <service class="Drip\Connect\Api\ResourceDetailsInterface" method="productDetails"/>
+        <service class="Drip\Connect\Api\ProductDetailsInterface" method="showDetails"/>
         <resources>
             <resource ref="Drip::settings"/>
         </resources>
