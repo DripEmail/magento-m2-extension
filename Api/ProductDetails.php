@@ -1,12 +1,9 @@
 <?php
 namespace Drip\Connect\Api;
-use Drip\Connect\Api\ResourceDetailsInterface;
+use Drip\Connect\Api\ProductDetailsInterface;
 
-class ResourceDetails implements ResourceDetailsInterface
+class ProductDetails implements ProductDetailsInterface
 {
-    /** @var \Magento\Sales\Block\Adminhtml\Order\View\Info */
-    protected $orderViewInfo;
-
     /**
      * @var \Magento\Catalog\Model\ProductFactory
      */
@@ -17,47 +14,26 @@ class ResourceDetails implements ResourceDetailsInterface
      */
     protected $catalogProductMediaConfigFactory;
 
-    /**
-    * @var \Drip\Connect\Api\OrderDetailsResponseFactory
-    */
-    protected $responseFactory1;
-
 		/**
     * @var \Drip\Connect\Api\ProductDetailsResponseFactory
     */
-    protected $responseFactory2;
+    protected $responseFactory;
 
     public function __construct(
-        \Magento\Sales\Block\Adminhtml\Order\View\Info $orderViewInfo,
         \Magento\Catalog\Model\ProductFactory $catalogProductFactory,
         \Magento\Catalog\Model\Product\Media\ConfigFactory $catalogProductMediaConfigFactory,
-        \Drip\Connect\Api\OrderDetailsResponseFactory $responseFactory1,
-        \Drip\Connect\Api\ProductDetailsResponseFactory $responseFactory2
+        \Drip\Connect\Api\ProductDetailsResponseFactory $responseFactory
     ) {
-        $this->orderViewInfo = $orderViewInfo;
         $this->catalogProductFactory = $catalogProductFactory;
         $this->catalogProductMediaConfigFactory = $catalogProductMediaConfigFactory;
-        $this->responseFactory1 = $responseFactory1;
-        $this->responseFactory2 = $responseFactory2;
+        $this->responseFactory = $responseFactory;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function orderDetails($orderId) {
-        $response = $this->responseFactory1->create();
-        $url = $this->orderViewInfo->getViewUrl($orderId);
-
-        $response->setData(['order_url' => $url]);
-
-        return $response;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function productDetails($productId) {
-        $response = $this->responseFactory2->create();
+    public function showDetails($productId) {
+        $response = $this->responseFactory->create();
         $product = $this->catalogProductFactory->create()->load($productId);
         $productImage = $product->getImage();
         if (!empty($productImage)) {
