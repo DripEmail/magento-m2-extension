@@ -13,7 +13,7 @@ class Settings
     protected $moduleResource;
 
     /**
-    * @var \Drip\Connect\Api\ResponseFactory
+    * @var \Drip\Connect\Api\SettingsResponseFactory
     */
     protected $responseFactory;
 
