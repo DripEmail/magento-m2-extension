@@ -10,7 +10,7 @@ class SendEventPayload extends \Drip\Connect\Model\ApiCalls\Helper
         \Drip\Connect\Model\Configuration $config,
         array $payload
     ) {
-        $accountId = $config->getAccountId();
+        $accountId = $config->getAccountParam();
         $integrationParam = $config->getApiIntegrationParam();
 
         $this->apiClient = $connectApiCallsWooBaseFactory->create([

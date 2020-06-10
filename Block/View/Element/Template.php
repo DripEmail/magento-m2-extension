@@ -80,9 +80,9 @@ class Template extends \Magento\Framework\View\Element\Template
         return $this->_storeManager->getStore();
     }
 
-    public function getAccountId()
+    public function getAccountParam()
     {
-        return $this->config->getAccountId();
+        return $this->config->getAccountParam();
     }
 
     /**

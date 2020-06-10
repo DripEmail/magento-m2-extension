@@ -21,7 +21,7 @@ class GetSubscriberList extends \Drip\Connect\Model\ApiCalls\Helper
         ], $data);
 
         $this->apiClient = $connectApiCallsBaseFactory->create([
-            'endpoint' => $config->getAccountId() . '/' . self::ENDPOINT_SUBSCRIBERS,
+            'endpoint' => $config->getAccountParam() . '/' . self::ENDPOINT_SUBSCRIBERS,
             'config' => $config,
         ]);
 
