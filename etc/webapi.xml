@@ -6,6 +6,12 @@
             <resource ref="Drip::settings"/>
         </resources>
     </route>
+    <route method="DELETE" url="/V1/drip/integration">
+        <service class="Drip\Connect\Api\Settings" method="removeIntegration"/>
+        <resources>
+            <resource ref="Drip::settings"/>
+        </resources>
+    </route>
     <route method="GET" url="/V1/drip/status">
         <service class="Drip\Connect\Api\Settings" method="showStatus"/>
         <resources>
