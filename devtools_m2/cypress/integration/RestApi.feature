@@ -32,6 +32,11 @@ Feature: REST API Interactions
     Given I am logged into the admin interface
     Then an unauthorized integration request gives the correct response
 
+  Scenario: Authorized request to remove integration token
+    Given I am logged into the admin interface
+      And I have set up Drip via the API
+    Then an authorized delete integration request gives the correct response
+
   Scenario: Authorized request for status
     Given I am logged into the admin interface
       And I have set up Drip via the API
