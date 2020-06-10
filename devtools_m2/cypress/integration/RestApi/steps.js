@@ -62,6 +62,26 @@ Then('an authorized integration request gives the correct response', function(si
   })
 })
 
+Then('an authorized delete integration request gives the correct response', function(site) {
+  cy.request({
+    url: "http://main.magento.localhost:3006/rest/V1/integration/admin/token",
+    method: "POST",
+    body: {"username":"admin", "password":"abc1234567890"}
+  }).then((token_response) => {
+    cy.request({
+      url: "http://main.magento.localhost:3006/rest/V1/drip/integration?websiteId=1",
+      method: "DELETE",
+      auth: {
+        bearer: token_response.body
+      }
+    }).then((response) => {
+      expect(response.status).to.eq(200)
+      expect(response.body["account_param"]).to.be.null
+      expect(response.body["integration_token"]).to.be.null
+    })
+  })
+})
+
 Then('an authorized integration request for a non-existent site gives the correct response', function(site) {
   cy.request({
     url: "http://main.magento.localhost:3006/rest/V1/integration/admin/token",
