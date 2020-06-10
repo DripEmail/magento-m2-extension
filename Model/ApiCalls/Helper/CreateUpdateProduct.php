@@ -16,7 +16,7 @@ class CreateUpdateProduct extends \Drip\Connect\Model\ApiCalls\Helper
         $data = []
     ) {
         $this->apiClient = $connectApiCallsBaseFactory->create([
-            'endpoint' => $config->getAccountId() . '/' . self::ENDPOINT_PRODUCT,
+            'endpoint' => $config->getAccountParam() . '/' . self::ENDPOINT_PRODUCT,
             'config' => $config,
             'v3' => true,
         ]);

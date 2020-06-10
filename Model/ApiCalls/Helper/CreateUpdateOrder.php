@@ -19,8 +19,9 @@ class CreateUpdateOrder extends \Drip\Connect\Model\ApiCalls\Helper
         \Drip\Connect\Helper\Data $connectHelper,
         $data = []
     ) {
+
         $this->apiClient = $connectApiCallsBaseFactory->create([
-            'endpoint' => $config->getAccountId() . '/' . self::ENDPOINT_ORDERS,
+            'endpoint' => $config->getAccountParam() . '/' . self::ENDPOINT_ORDERS,
             'config' => $config,
             'v3' => true,
         ]);
