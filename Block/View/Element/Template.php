@@ -90,7 +90,7 @@ class Template extends \Magento\Framework\View\Element\Template
      */
     public function isModuleActive()
     {
-        return !is_null($this->configFactory->createForCurrentScope()->getIntegrationToken());
+        return !is_null($this->config->getIntegrationToken());
     }
 
     /**
