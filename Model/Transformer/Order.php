@@ -70,7 +70,7 @@ class Order
     protected function getCommonOrderData()
     {
         $data = [
-            'order_id' => (string) $this->order->getIncrementId()
+            'order_id' => (string) $this->order->getIncrementId(),
         ];
 
         return $data;
@@ -188,10 +188,10 @@ class Order
     {
         $orderData = $this->getOrderDataNew();
 
-        $response = $this->connectApiCallsHelperSendEventPayloadFactory->create([
+        $caller = $this->connectApiCallsHelperSendEventPayloadFactory->create([
             'config' => $this->config,
-            'payload' => $orderData
-        ])->call();
+            'payload' => $orderData,
+        ])->call();;
     }
 
     public function proceedOrderCompleted()
@@ -200,7 +200,7 @@ class Order
 
         $response = $this->connectApiCallsHelperSendEventPayloadFactory->create([
             'config' => $this->config,
-            'payload' => $orderData
+            'payload' => $orderData,
         ])->call();
     }
 
@@ -210,7 +210,7 @@ class Order
 
         $response = $this->connectApiCallsHelperSendEventPayloadFactory->create([
             'config' => $this->config,
-            'payload' => $orderData
+            'payload' => $orderData,
         ])->call();
     }
 
@@ -223,7 +223,7 @@ class Order
 
         $response = $this->connectApiCallsHelperSendEventPayloadFactory->create([
             'config' => $this->config,
-            'payload' => $orderData
+            'payload' => $orderData,
         ])->call();
     }
 
@@ -233,7 +233,7 @@ class Order
 
         $response = $this->connectApiCallsHelperSendEventPayloadFactory->create([
             'config' => $this->config,
-            'payload' => $orderData
+            'payload' => $orderData,
         ])->call();
     }
 }
