@@ -17,7 +17,7 @@ class SendEventPayload extends \Drip\Connect\Model\ApiCalls\Helper
             'config' => $config,
             // TODO: Allow tests to override this path.
             // 'url' => "https://woo.drip.sh/${accountId}/integrations/${integrationParam}/events",
-            'url' => "localhost:1080/${accountId}/integrations/${integrationParam}/events"
+            'url' => "http://mock:1080/${accountId}/integrations/${integrationParam}/events"
         ]);
 
         $this->request = $connectApiCallsRequestBaseFactory->create()
