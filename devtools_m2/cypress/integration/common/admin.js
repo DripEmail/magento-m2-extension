@@ -8,6 +8,23 @@ Given('I am logged into the admin interface', function() {
   cy.contains('Sign in').click()
 })
 
+When('I have set up Drip via the API', function(site) {
+  cy.request({
+    url: "http://main.magento.localhost:3006/rest/V1/integration/admin/token",
+    method: "POST",
+    body: {"username":"admin", "password":"abc1234567890"}
+  }).then((token_response) => {
+    cy.request({
+      url: "http://main.magento.localhost:3006/rest/V1/drip/integration",
+      method: "POST",
+      auth: {
+        bearer: token_response.body
+      },
+      body: {"websiteId":"1", "accountParam":"123456", "integrationToken": "abcdefg"}
+    })
+  })
+})
+
 Given('I have set up a multi-store configuration', function() {
   cy.contains('All Stores').click({ force: true })
 
