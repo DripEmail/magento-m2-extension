@@ -5,12 +5,12 @@ Feature: Customer Subscription Interactions
   Scenario: A customer creates a subscribed account and then unsubscribes
     Given I am logged into the admin interface
       And I have set up a multi-store configuration
-      And I have configured Drip to be enabled for 'main'
+      And I have set up Drip via the API for 'main'
     When I open the 'main' homepage
       And I create a 'subscribed' account
-    Then A new 'subscribed' subscriber event should be sent to Drip
+    Then A 'Customer/AfterSave' event should be sent to the WIS
     When I 'unsubscribe' from the general newsletter
-    Then A 'unsubscribed' event should be sent to Drip
+    Then A 'Customer/AfterSave' event should be sent to the WIS
 
   Scenario: A customer creates an unsubscribed account and then subscribes
     Given I am logged into the admin interface

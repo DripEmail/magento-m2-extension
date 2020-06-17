@@ -143,3 +143,17 @@ Then('A {string} event should be sent to Drip', function(state) {
     expect(custCreatedBody.events[0].properties.version).to.match(/^Magento 2\.3\.2, Drip Extension \d+\.\d+\.\d+$/)
   })
 })
+
+Then('A {string} event should be sent to the WIS', function(action) {
+  cy.wrap(Mockclient.retrieveRecordedRequests({
+    'path': '/123456/integrations/abcdefg/events'
+  })).then(function(recordedRequests) {
+    expect(recordedRequests.find((elm) => {
+        let body = JSON.parse(elm.body.string);
+        let actionMatch = body.action == action;
+        let customerIdMatch = body.customer_id && /^\d+$/.test(body.customer_id);
+        let emailMatch = body.email && body.email == 'testuser@example.com';
+        return actionMatch && (customerIdMatch || emailMatch);
+    })).to.exist
+  })
+})
