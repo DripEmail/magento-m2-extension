@@ -24,10 +24,10 @@ class Login extends \Drip\Connect\Observer\Base
      */
     public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)
     {
-        return;
-        // $customer = $observer->getCustomer();
-        // $config = $this->configFactory->createForCurrentScope();
-        //
-        // $this->connectCustomerHelper->proceedLogin($customer, $config);
+        return $this->customerHelper->sendObserverCustomerEvent(
+            $observer,
+            $this->configFactory,
+            'Customer/Login'
+        );
     }
 }
