@@ -20,7 +20,7 @@ When('I have set up Drip via the API', function(site) {
       auth: {
         bearer: token_response.body
       },
-      body: {"websiteId":"1", "accountParam":"123456", "integrationToken": "abcdefg"}
+      body: {"websiteId":"1", "accountParam":"123456", "integrationToken": "abcdefg", "testMode": "1" }
     })
   })
 })

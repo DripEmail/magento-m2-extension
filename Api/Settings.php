@@ -39,13 +39,15 @@ class Settings
      * @param string $websiteId
      * @param string $accountParam
      * @param string $integrationToken
+     * @param string $testMode
      * @return \Drip\Connect\Api\SettingsResponse
      */
-    public function updateSettings($websiteId = 0, $accountParam, $integrationToken) {
+    public function updateSettings($websiteId = 0, $accountParam, $integrationToken, $testMode = 0) {
         $response = $this->responseFactory->create();
         $config = $this->configFactory->createFromWebsiteId($websiteId);
         $config->setAccountParam($accountParam);
         $config->setIntegrationToken($integrationToken);
+        $config->setTestMode($testMode);
         $response->setData([
             'account_param' => $config->getAccountParam(),
             'integration_token' => $config->getIntegrationToken(),

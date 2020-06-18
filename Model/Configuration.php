@@ -5,6 +5,7 @@ namespace Drip\Connect\Model;
 class Configuration
 {
     const ACCOUNT_PARAM_PATH = 'dripconnect_general/api_settings/account_param';
+    const TEST_MODE_PATH = 'dripconnect_general/api_settings/test_mode';
     const WIS_URL_PATH = 'dripconnect_general/api_settings/wis_url';
     const INTEGRATION_TOKEN = 'dripconnect_general/api_settings/integration_token';
     const SALT_PATH = 'dripconnect_general/module_settings/salt';
@@ -85,6 +86,11 @@ class Configuration
         return $this->getConfig(self::SALT_PATH);
     }
 
+    public function getTestMode()
+    {
+        return $this->getConfig(self::TEST_MODE_PATH);
+    }
+
     public function getLogSettings()
     {
         return $this->getConfig(self::LOG_SETTINGS_PATH);
@@ -96,6 +102,14 @@ class Configuration
     public function setAccountParam($accountParam)
     {
         $this->setConfig(self::ACCOUNT_PARAM_PATH, $accountParam);
+    }
+
+    /**
+     * @param bool
+     */
+    public function setTestMode($value)
+    {
+        $this->setConfig(self::TEST_MODE_PATH, $value);
     }
 
         /**
