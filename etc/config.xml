@@ -9,6 +9,7 @@
                 <wis_url>https://woo.drip.sh</wis_url>
                 <account_param></account_param>
                 <integration_token></integration_token>
+                <test_mode>0</test_mode>
             </api_settings>
         </dripconnect_general>
     </default>

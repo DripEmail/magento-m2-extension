@@ -13,11 +13,12 @@ class SendEventPayload extends \Drip\Connect\Model\ApiCalls\Helper
         $accountId = $config->getAccountParam();
         $integrationParam = $config->getIntegrationToken();
 
+        // TODO: Find a better way to do this
+        $url = ($config->getTestMode()) ? "http://mock:1080/${accountId}/integrations/${integrationParam}/events" : "https://woo.drip.sh/${accountId}/integrations/${integrationParam}/events";
+
         $this->apiClient = $connectApiCallsWooBaseFactory->create([
             'config' => $config,
-            // TODO: Allow tests to override this path.
-            // 'url' => "https://woo.drip.sh/${accountId}/integrations/${integrationParam}/events",
-            'url' => "http://mock:1080/${accountId}/integrations/${integrationParam}/events",
+            'url' => $url,
         ]);
 
         $this->request = $connectApiCallsRequestBaseFactory->create()
