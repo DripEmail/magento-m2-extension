@@ -14,7 +14,7 @@ class SendEventPayload extends \Drip\Connect\Model\ApiCalls\Helper
         $integrationParam = $config->getIntegrationToken();
 
         // TODO: Find a better way to do this
-        $url = ($config->getTestMode()) ? "http://mock:1080/${accountId}/integrations/${integrationParam}/events" : "https://woo.drip.sh/${accountId}/integrations/${integrationParam}/events";
+        $url = ($config->getTestMode()) ? "http://mock:1080/${accountId}/integrations/${integrationParam}/events" : "https://dfol6w1g6b.execute-api.us-east-1.amazonaws.com/v1/${accountId}/integrations/${integrationParam}/events";
 
         $this->apiClient = $connectApiCallsWooBaseFactory->create([
             'config' => $config,
