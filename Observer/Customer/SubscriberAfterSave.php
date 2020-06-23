@@ -22,22 +22,22 @@ class SubscriberAfterSave extends \Drip\Connect\Observer\Base
      */
     public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)
     {
-        $route = $this->request->getRouteName();
-        $controller = $this->request->getControllerName();
-        $action = $this->request->getActionName();
-        $allowedActions = [
-            'customer_index_massSubscribe',
-            'customer_index_massUnsubscribe',
-            'newsletter_subscriber_massUnsubscribe'
-        ];
-
-        $config = $this->configFactory->createForCurrentScope();
-
-        // unlike to M1 treate all massactions here (from the both newsletters and customers grids)
-        // but still avoid to run it on other customer changes
-        if (in_array($route . '_' . $controller . '_' . $action, $allowedActions)) {
-            $subscriber = $observer->getSubscriber();
-            $this->connectCustomerHelper->proceedSubscriberSave($subscriber, $config);
-        }
+        // $route = $this->request->getRouteName();
+        // $controller = $this->request->getControllerName();
+        // $action = $this->request->getActionName();
+        // $allowedActions = [
+        //     'customer_index_massSubscribe',
+        //     'customer_index_massUnsubscribe',
+        //     'newsletter_subscriber_massUnsubscribe'
+        // ];
+				//
+        // $config = $this->configFactory->createForCurrentScope();
+				//
+        // // unlike to M1 treate all massactions here (from the both newsletters and customers grids)
+        // // but still avoid to run it on other customer changes
+        // if (in_array($route . '_' . $controller . '_' . $action, $allowedActions)) {
+        //     $subscriber = $observer->getSubscriber();
+        //     $this->connectCustomerHelper->proceedSubscriberSave($subscriber, $config);
+        // }
     }
 }

@@ -93,6 +93,7 @@ When('I check out as a guest', function() {
 
   cy.contains('Check / Money order')
   cy.get('input[name="billing-address-same-as-shipping"]').check()
+
   cy.contains('Place Order', {timeout: 30000}).click()
 
   cy.contains('Thank you for your purchase!')
@@ -105,26 +106,21 @@ When('I logout', function() {
 Then('A simple cart event should be sent to Drip', function() {
   cy.log('Validating that the cart call has everything we need')
   cy.wrap(Mockclient.retrieveRecordedRequests({
-    'path': '/123456/integrations/xyz123/events'
+    path: '/123456/integrations/abcdefg/events',
+    body: {
+      "type": "JSON_PATH",
+      "jsonPath": "$[?(@.cart_id)]"
+    }
   })).then(function(recordedRequests) {
-    // First when logged in and second with actual cart.
-    expect(recordedRequests).to.have.lengthOf(2)
+    const body1 = JSON.parse(recordedRequests[0].body.string)
+    expect(body1.action).to.eq('created')
+    expect(body1.cart_id).to.eq('1')
 
-    const emptyBody = JSON.parse(recordedRequests[0].body.string)
-    expect(emptyBody.base_object.fields.items_count).to.eq(0)
-    expect(emptyBody.related_objects).to.have.lengthOf(1)
-    expect(emptyBody.related_objects).to.have.lengthOf(1)
-    expect(emptyBody.related_objects[0].fields.subscriber_status).to.eq('1')
-
-    const body = JSON.parse(recordedRequests[1].body.string)
-    expect(body.event_name).to.eq('saved_quote')
-    expect(body.base_object.fields.customer_email).to.eq('testuser@example.com')
-    expect(body.related_objects).to.have.lengthOf(3)
-    expect(emptyBody.related_objects[0].fields.subscriber_status).to.eq('1')
-
-    // Cucumber runs scenarios in a World object. Step definitions are run in the context of the current World instance. Data can be used between steps using the self prefix.
-    self.carturl = body.base_object.ancillary_data.cart_url
-    self.item = body.related_objects[1].fields.name
+    if (recordedRequests[1] !== undefined) {
+      const body2 = JSON.parse(recordedRequests[1].body.string)
+      expect(body2.action).to.eq('updated')
+      expect(body2.cart_id).to.eq('1')
+    }
   })
 })
 
@@ -234,20 +230,16 @@ When('I check out with only a virtual product', function() {
 Then('A simple order event should be sent to Drip', function() {
   cy.log('Validating that the order call has everything we need')
   cy.wrap(Mockclient.retrieveRecordedRequests({
-    'path': '/v3/123456/shopper_activity/order'
+    path: "/123456/integrations/abcdefg/events",
+    body: {
+      "type": "JSON_PATH",
+      "jsonPath": "$[?(@.order_id)]"
+    }
   })).then(function(recordedRequests) {
     expect(recordedRequests).to.have.lengthOf(1)
     const body = JSON.parse(recordedRequests[0].body.string)
     expect(body.action).to.eq('placed')
-    expect(body.email).to.eq('testuser@example.com')
-    expect(body.grand_total).to.eq(16.22)
-    expect(body.initial_status).to.eq('active')
-    expect(body.items_count).to.eq(1)
-    expect(body.total_shipping).to.eq(5)
-    expect(body.items).to.have.lengthOf(1)
-
-    basicOrderBodyAssertions(body)
-    validateSimpleProduct(body.items[0])
+    expect(body.order_id).to.eq('000000001')
   })
 })
 
