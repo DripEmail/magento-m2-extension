@@ -5,9 +5,9 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
 {
     const REGISTRY_KEY_IS_NEW = 'newquote';
 
-		const CREATED_ACTION = 'created';
+    const CREATED_ACTION = 'created';
 
-		const UPDATED_ACTION = 'updated';
+    const UPDATED_ACTION = 'updated';
 
     /**
      * @var \Magento\Quote\Model\QuoteFactory
@@ -73,7 +73,8 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
     public function sendQuote(\Magento\Quote\Model\Quote $quote, \Drip\Connect\Model\Configuration $config, string $action)
     {
       $payload = [
-          'cart_id' => (string) $quote->getId(), 'action' => $action
+          'cart_id' => (string) $quote->getId(),
+          'action' => $action,
       ];
 
       $response = $this->connectApiCallsHelperSendEventPayloadFactory->create([
