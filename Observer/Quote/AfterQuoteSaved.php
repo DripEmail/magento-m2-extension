@@ -28,9 +28,13 @@ class AfterQuoteSaved extends \Drip\Connect\Observer\Base
         $config = $this->configFactory->createForCurrentScope();
         $quote = $observer->getEvent()->getQuote();
 
-        $this->connectQuoteHelper->sendRawQuote($quote, $config, null, [
-            'is_new' => $this->registry->registry(\Drip\Connect\Helper\Quote::REGISTRY_KEY_IS_NEW)
-        ]);
+        if ($this->registry->registry(\Drip\Connect\Helper\Quote::REGISTRY_KEY_IS_NEW)) {
+           $action = (string) \Drip\Connect\Helper\Quote::CREATED_ACTION;
+        } else {
+           $action = (string) \Drip\Connect\Helper\Quote::UPDATED_ACTION;
+        }
+
+        $this->connectQuoteHelper->sendQuote($quote, $config, $action);
 
         $this->registry->unregister(\Drip\Connect\Helper\Quote::REGISTRY_KEY_IS_NEW);
     }

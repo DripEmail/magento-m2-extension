@@ -5,6 +5,10 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
 {
     const REGISTRY_KEY_IS_NEW = 'newquote';
 
+		const CREATED_ACTION = 'created';
+
+		const UPDATED_ACTION = 'updated';
+
     /**
      * @var \Magento\Quote\Model\QuoteFactory
      */
@@ -66,97 +70,15 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
         );
     }
 
-    public function sendRawQuote(\Magento\Quote\Model\Quote $quote, \Drip\Connect\Model\Configuration $config, string $email = null, array $ancillary_data = [])
+    public function sendQuote(\Magento\Quote\Model\Quote $quote, \Drip\Connect\Model\Configuration $config, string $action)
     {
-        /** @var \Magento\Newsletter\Model\Subscriber */
-        $subscriber = $this->subscriberFactory->create()->loadByEmail($email ?? $this->checkoutSession->getGuestEmail() ?? $quote->getCustomerEmail());
+      $payload = [
+          'cart_id' => (string) $quote->getId(), 'action' => $action
+      ];
 
-        //////////////////// Generate payload ////////////////////
-        $payload = [
-            'magento_version' => $this->productMetadata->getVersion(),
-            'plugin_version' => $this->moduleResource->getDbVersion('Drip_Connect'),
-            'magento_source' => $this->connectHelper->getArea(),
-            'event_name' => 'saved_quote',
-            'base_object' => [
-                'class_name' => get_class($quote),
-                'resource_name' => $quote->getResourceName(),
-                'fields' => $quote->getData(),
-                'ancillary_data' => \array_merge([
-                    'cart_url' => $this->connectHelper->getAbandonedCartUrl($quote),
-                    'guest_checkout_email' => $this->checkoutSession->getGuestEmail(),
-                    'provided_email' => $email,
-                ], $ancillary_data),
-            ],
-            'related_objects' => [],
-        ];
-
-        if ($subscriber->getId()) {
-            $payload['related_objects'][] = [
-                'class_name' => get_class($subscriber),
-                'resource_name' => $subscriber->getResourceName(),
-                'fields' => $subscriber->getData(),
-            ];
-        }
-
-        // All items includes both parent and child products.
-        foreach ($quote->getAllItems() as $item) {
-            $payload['related_objects'][] = [
-                'class_name' => get_class($item),
-                'resource_name' => $item->getResourceName(),
-                'fields' => $item->getData(),
-            ];
-            $product = $this->catalogProductFactory->create()->load($item->getProduct()->getId());
-            if ($product) {
-                // Categories
-                $productCategoryNames = explode(',', $this->connectHelper->getProductCategoryNames($product));
-                if ($productCategoryNames === '' || empty($productCategoryNames)) {
-                    $productCategoryNames = [];
-                }
-
-                // Image
-                $productImage = $product->getImage();
-                if (!empty($productImage)) {
-                    $productImage = $this->catalogProductMediaConfigFactory->create()->getMediaUrl($productImage);
-                }
-
-                $payload['related_objects'][] = [
-                    'class_name' => get_class($product),
-                    'resource_name' => $product->getResourceName(),
-                    'fields' => $product->getData(),
-                    'ancillary_data' => [
-                        'product_catalog_names' => $productCategoryNames,
-                        'image' => $productImage,
-                    ],
-                ];
-            }
-        }
-
-
-
-
-
-        //////////////////// Send payload ////////////////////
-
-        // TODO: Log responses.
-        $response = $this->connectApiCallsHelperSendEventPayloadFactory->create([
-            'config' => $config,
-            'payload' => $payload,
-        ])->call();
-    }
-
-    /**
-     * @todo Consider moving this into the cart controller.
-     * @param \Magento\Quote\Api\Data\CartInterface $oldQuote
-     */
-    public function recreateCartFromQuote($oldQuote)
-    {
-        $quote = $this->checkoutSession->getQuote();
-
-        if ($quote->getId() !== $oldQuote->getId()) {
-            $quote->removeAllItems();
-            $quote->merge($oldQuote);
-            $quote->collectTotals()->save();
-        }
-        $this->checkoutSession->setQuoteId($quote->getId());
+      $response = $this->connectApiCallsHelperSendEventPayloadFactory->create([
+          'config' => $config,
+          'payload' => $payload,
+      ])->call();
     }
 }

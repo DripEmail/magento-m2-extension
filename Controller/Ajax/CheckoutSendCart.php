@@ -50,10 +50,7 @@ class CheckoutSendCart extends \Magento\Framework\App\Action\Action
                     $config = $this->configFactory->createForCurrentScope();
 
                     // TODO: See if we still need this.
-                    $result = $this->connectQuoteHelper->sendRawQuote($quote, $config, $email, [
-                        'is_new' => true,
-                        'from_checkout_send_cart' => true,
-                    ]);
+                    $result = $this->connectQuoteHelper->sendQuote($quote, $config, \Drip\Connect\Helper\Quote::CREATED_ACTION);
                 } else {
                     $result = 1; // do not need to send call
                 }
