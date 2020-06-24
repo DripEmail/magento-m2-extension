@@ -4,7 +4,7 @@ Feature: Customer Cart Interactions
 
   Scenario: A customer adds a simple product to their cart
     Given I am logged into the admin interface
-      And I have configured Drip to be enabled for 'main'
+      And I have set up Drip via the API
     Given I have configured a simple widget for 'main'
     When I open the 'main' homepage
       And I create an account
@@ -13,106 +13,13 @@ Feature: Customer Cart Interactions
     When I check out
     Then A simple order event should be sent to Drip
 
-  Scenario: A customer adds a configurable product to their cart and sees data about the sub-item
-    Given I am logged into the admin interface
-      And I have configured Drip to be enabled for 'main'
-      And I have configured a configurable widget
-    When I open the 'main' homepage
-      And I create an account
-      And I add a 'configurable' widget to my cart
-    Then A configurable cart event should be sent to Drip
-    When I check out
-    Then A configurable order event should be sent to Drip
-
-  Scenario: A customer adds a grouped product to their cart and sees all the individual items
-    Given I am logged into the admin interface
-      And I have configured Drip to be enabled for 'main'
-      And I have configured a grouped widget
-    When I open the 'main' homepage
-      And I create an account
-      And I add a 'grouped' widget to my cart
-    Then A grouped cart event should be sent to Drip
-    When I check out
-    Then A grouped order event should be sent to Drip
-
-  # Note that we skip a test for virtual and downloadable products since they
-  # are essentially the same as simple products, as far as we are concerned.
-
-  Scenario: A customer adds a bundle product to their cart and sees the parent item
-    Given I am logged into the admin interface
-      And I have configured Drip to be enabled for 'main'
-      And I have configured a bundle widget
-    When I open the 'main' homepage
-      And I create an account
-      And I add a 'bundle' widget to my cart
-    Then A bundle cart event should be sent to Drip
-    When I check out
-    Then A bundle order event should be sent to Drip
-
-  Scenario: A customer adds a simple product to their cart when only that store is configured for Drip
-    Given I am logged into the admin interface
-      And I have set up a multi-store configuration
-      And I have configured Drip to be enabled for 'site1'
-      And I have configured a simple widget for 'site1'
-    When I open the 'site1' homepage
-      And I create an account
-      And I add a 'simple' widget to my cart
-    Then A simple cart event should be sent to Drip
-    When I check out
-    Then A simple order event should be sent to Drip
-
-  Scenario: A customer adds a simple product to their cart when a different store is configured for Drip
-    Given I am logged into the admin interface
-      And I have set up a multi-store configuration
-      And I have configured Drip to be enabled for 'site1'
-      And I have configured a simple widget for 'main'
-    When I open the 'main' homepage
-      And I create an account
-      And I add a 'simple' widget to my cart
-    Then No web requests are sent
-    When I check out
-    Then No web requests are sent
-
   Scenario: A customer adds a simple product to their cart, and checks out as a guest.
     Given I am logged into the admin interface
-      And I have configured Drip to be enabled for 'main'
+      And I have set up Drip via the API
       And I have configured a simple widget for 'main'
     When I open the 'main' homepage
       And I logout
       And I add a 'simple' widget to my cart
-      And I check out as a guest
-    Then A simple order event should be sent to Drip
-
-  Scenario: A customer adds a simple product to their cart and drip receives a working abandoned cart url
-    Given I am logged into the admin interface
-      And I have set up a multi-store configuration
-      And I have configured Drip to be enabled for 'site1'
-      And I have configured a simple widget for 'site1'
-    When I open the 'site1' homepage
-      And I create an account
-      And I add a 'simple' widget to my cart
     Then A simple cart event should be sent to Drip
-    When I open the abandoned cart url
-    Then my item is there
-
-  Scenario: A customer adds a virtual product to their cart
-    Given I am logged into the admin interface
-      And I have configured Drip to be enabled for 'main'
-    Given I have configured a virtual widget for 'main'
-    When I open the 'main' homepage
-      And I create an account
-      And I add a 'virtual' widget to my cart
-      And I check out with only a virtual product
-    Then A virtual order event should be sent to Drip
-
-  Scenario: A customer adds a mixed products to their cart
-    Given I am logged into the admin interface
-      And I have configured Drip to be enabled for 'main'
-      And I have configured a simple widget for 'main'
-      And I have configured a virtual widget for 'main'
-    When I open the 'main' homepage
-      And I create an account
-      And I add a 'simple' widget to my cart
-      And I add a 'virtual' widget to my cart
-      And I check out
-    Then A mixed order event should be sent to Drip
+    When I check out as a guest
+    Then A simple order event should be sent to Drip
