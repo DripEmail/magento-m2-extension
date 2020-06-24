@@ -82,4 +82,16 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
           'payload' => $payload,
       ])->call();
     }
+
+    public function recreateCartFromQuote($oldQuote)
+     {
+         $quote = $this->checkoutSession->getQuote();
+
+         if ($quote->getId() !== $oldQuote->getId()) {
+             $quote->removeAllItems();
+             $quote->merge($oldQuote);
+             $quote->collectTotals()->save();
+         }
+         $this->checkoutSession->setQuoteId($quote->getId());
+     }
 }
