@@ -3,6 +3,15 @@ import { mockServerClient } from "mockserver-client"
 
 const Mockclient = mockServerClient("localhost", 1080);
 
+When('I add a widget to my cart', function(type) {
+  cy.route('POST', 'checkout/cart/add/**').as('addToCartRequest')
+  cy.visit("http://main.magento.localhost:3006/widget-1.html")
+
+  cy.get('#product-addtocart-button').click()
+  cy.wait('@addToCartRequest') // Make sure that the cart addition has finished before continuing.
+  self.item = "Widget 1"
+})
+
 Then('an authorized integration request with no websiteId gives the correct response', function(site) {
   cy.request({
     url: "http://main.magento.localhost:3006/rest/V1/integration/admin/token",
@@ -113,7 +122,7 @@ Then('an authorized status request gives the correct response', function(site) {
       expect(body["account_param"]).to.eq('123456')
       expect(body["integration_token"]).to.eq('abcdefg')
       expect(body["magento_version"]).to.eq("2.3.2")
-      expect(body["plugin_version"]).to.eq("1.8.5")
+      expect(body["plugin_version"]).to.eq("1.8.6")
     })
   })
 })
@@ -166,4 +175,39 @@ Then('an authorized product details request gives the correct response', functio
       expect(body.image_url).to.eq('http://main.magento.localhost:3006/media/catalog/product/my_image.png')
     })
   })
+})
+
+
+Then('an authorized cart details request gives the correct response', function() {
+  cy.request({
+    url: "http://main.magento.localhost:3006/rest/V1/integration/admin/token",
+    method: "POST",
+    body: {"username":"admin", "password":"abc1234567890"}
+  }).then((token_response) => {
+    cy.request({
+      url: "http://main.magento.localhost:3006/rest/V1/drip/cart/1",
+      method: "GET",
+      auth: {
+        bearer: token_response.body
+      }
+    }).then((response) => {
+      expect(response.status).to.eq(200)
+      const body = response.body
+      expect(body.cart_url).to.startWith("http://main.magento.localhost:3006/drip/cart/index/q/1/s/1/k/")
+      self.cart_url = body.cart_url
+    })
+  })
+})
+
+Then('I open the abandoned cart url', function(){
+  cy.log('Resetting mocks')
+  cy.wrap(Mockclient.reset())
+  // To use this step, a previous step has to fill the abandonedCartUrl property. See 'A simple cart event should be sent to Drip' for an example.
+  cy.visit(self.cart_url)
+})
+
+Then("my item is there", function(){
+
+  // To use this step, a previous step has to set the item property. See 'A simple cart event should be sent to Drip' for an example.
+  cy.contains(self.item)
 })
