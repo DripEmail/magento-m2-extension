@@ -1,7 +1,7 @@
 <?php
 namespace Drip\Connect\Api;
 
-class CartDetailsResponse  extends \Magento\Framework\DataObject
+class CartDetailsResponse extends \Magento\Framework\DataObject
 {
     /**
      * Get order url

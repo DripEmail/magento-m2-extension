@@ -83,6 +83,9 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
       ])->call();
     }
 
+    /**
+     * @param \Magento\Quote\Api\Data\CartInterface $oldQuote
+     */
     public function recreateCartFromQuote($oldQuote)
      {
          $quote = $this->checkoutSession->getQuote();

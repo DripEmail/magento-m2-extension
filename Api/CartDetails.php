@@ -8,12 +8,12 @@ class CartDetails
 
     /**
      * @var \Drip\Connect\Helper\Data
-    */
+     */
     protected $connectHelper;
 
     /**
      * @var \Drip\Connect\Api\CartDetailsResponseFactory
-    */
+     */
     protected $responseFactory;
 
 
@@ -24,7 +24,7 @@ class CartDetails
     ) {
         $this->cartRepository = $cartRepository;
         $this->responseFactory = $responseFactory;
-				$this->connectHelper = $connectHelper;
+        $this->connectHelper = $connectHelper;
     }
 
     /**
