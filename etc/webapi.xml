@@ -30,4 +30,10 @@
             <resource ref="Drip::settings"/>
         </resources>
     </route>
+    <route method="GET" url="/V1/drip/cart/:cartId">
+        <service class="Drip\Connect\Api\CartDetails" method="showDetails"/>
+        <resources>
+            <resource ref="Drip::settings"/>
+        </resources>
+    </route>
 </routes>

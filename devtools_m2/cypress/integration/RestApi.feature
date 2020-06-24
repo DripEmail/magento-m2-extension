@@ -16,6 +16,15 @@ Feature: REST API Interactions
       And I have configured a simple widget for 'main'
     Then an authorized product details request gives the correct response
 
+  Scenario: Authorized request for cart details
+    Given I am logged into the admin interface
+      And I have set up Drip via the API
+      And I have configured a simple widget for 'main'
+      And I add a widget to my cart
+    Then an authorized cart details request gives the correct response
+    When I open the abandoned cart url
+    Then my item is there
+
   Scenario: Authorized request to set integration token
     Given I am logged into the admin interface
     Then an authorized integration request gives the correct response
