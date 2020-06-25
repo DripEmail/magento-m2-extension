@@ -76,7 +76,7 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
       foreach ($quote->getAllItems() as $item) {
           $items[] = [
             'item_id' => $item->getId(),
-            'product_id' => $item->getProduct()->getId(),
+            'product_id' => $item->getProductId(),
           ];
       }
 
