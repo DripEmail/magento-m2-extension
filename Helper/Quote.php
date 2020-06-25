@@ -74,11 +74,10 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
     {
       $items = [];
       foreach ($quote->getAllItems() as $item) {
-          $itemData = [
+          $items[] = [
             'item_id' => $item->getId(),
             'product_id' => $item->getProduct()->getId(),
           ];
-          $items[] = $itemData;
       }
 
       $payload = [
