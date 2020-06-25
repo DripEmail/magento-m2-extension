@@ -72,8 +72,18 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function sendQuote(\Magento\Quote\Model\Quote $quote, \Drip\Connect\Model\Configuration $config, string $action)
     {
+      $items = [];
+      foreach ($quote->getAllItems() as $item) {
+          $itemData = [
+            'item_id' => $item->getId(),
+            'product_id' => $item->getProduct()->getId(),
+          ];
+          $items[] = $itemData;
+      }
+
       $payload = [
           'cart_id' => (string) $quote->getId(),
+          'items' => $items,
           'action' => $action,
       ];
 

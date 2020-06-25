@@ -4,7 +4,7 @@ namespace Drip\Connect\Api;
 class CartDetailsResponse extends \Magento\Framework\DataObject
 {
     /**
-     * Get order url
+     * Get cart url
      *
      * @return string
      */

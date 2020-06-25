@@ -120,6 +120,9 @@ Then('A simple cart event should be sent to Drip', function() {
       const body2 = JSON.parse(recordedRequests[1].body.string)
       expect(body2.action).to.eq('updated')
       expect(body2.cart_id).to.eq('1')
+      expect(body2.items).to.have.lengthOf(1)
+      expect(body2.items[0]['item_id']).to.eq('1')
+      expect(body2.items[0]['product_id']).to.eq('1')
     }
   })
 })
