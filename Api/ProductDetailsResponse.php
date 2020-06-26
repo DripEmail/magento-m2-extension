@@ -1,14 +1,18 @@
 <?php
 namespace Drip\Connect\Api;
 
-class ProductDetailsResponse  extends \Magento\Framework\DataObject
+/**
+ * Response object for product details.
+ */
+class ProductDetailsResponse extends \Magento\Framework\DataObject
 {
     /**
      * Get product url
      *
      * @return string
      */
-    public function getProductUrl() {
+    public function getProductUrl()
+    {
         return $this->getData('product_url');
     }
 
@@ -17,7 +21,8 @@ class ProductDetailsResponse  extends \Magento\Framework\DataObject
      *
      * @return string
      */
-    public function getImageUrl() {
+    public function getImageUrl()
+    {
         return $this->getData('image_url');
     }
 }

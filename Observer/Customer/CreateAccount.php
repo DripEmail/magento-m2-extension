@@ -7,7 +7,6 @@ namespace Drip\Connect\Observer\Customer;
  * subscribed before in the admin/saveAfter and saveAfter customer observers.
  * ~wjohnston 2019-08-29
  */
-
 class CreateAccount extends \Drip\Connect\Observer\Base
 {
     /** @var \Magento\Framework\App\Request\Http */
@@ -37,8 +36,9 @@ class CreateAccount extends \Drip\Connect\Observer\Base
      */
     public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)
     {
+        return;
         // $acceptsMarketing = $this->request->getParam('is_subscribed', false);
-				//
+        //
         // $this->registry->unregister(self::REGISTRY_KEY_NEW_USER_SUBSCRIBE_STATE);
         // $this->registry->register(self::REGISTRY_KEY_NEW_USER_SUBSCRIBE_STATE, $acceptsMarketing);
     }

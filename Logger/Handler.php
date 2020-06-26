@@ -3,6 +3,9 @@ namespace Drip\Connect\Logger;
 
 use Monolog\Logger;
 
+/**
+ * Stick logs into our log file
+ */
 class Handler extends \Magento\Framework\Logger\Handler\Base
 {
     /**

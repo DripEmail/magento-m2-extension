@@ -1,6 +1,9 @@
 <?php
 namespace Drip\Connect\Api;
 
+/**
+ * Order details REST API
+ */
 class OrderDetails
 {
     /** @var \Magento\Sales\Block\Adminhtml\Order\View\Info */
@@ -18,9 +21,8 @@ class OrderDetails
 
     /**
      * @var \Drip\Connect\Api\OrderDetailsResponseFactory
-    */
+     */
     protected $responseFactory;
-
 
     public function __construct(
         \Magento\Sales\Block\Adminhtml\Order\View\Info $orderViewInfo,
@@ -35,7 +37,8 @@ class OrderDetails
      * @param string $orderId
      * @return \Drip\Connect\Api\OrderDetailsResponse
      */
-    public function showDetails($orderId) {
+    public function showDetails($orderId)
+    {
         $response = $this->responseFactory->create();
         $url = $this->orderViewInfo->getViewUrl($orderId);
 

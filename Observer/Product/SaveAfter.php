@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Observer\Product;
 
+/**
+ * Product after save observer
+ */
 class SaveAfter extends \Drip\Connect\Observer\Base
 {
     /** @var \Magento\Catalog\Model\ProductRepository */

@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Observer\Customer;
 
+/**
+ * Subscriber after delete observer
+ */
 class SubscriberAfterDelete extends \Drip\Connect\Observer\Base
 {
     /** @var \Drip\Connect\Helper\Customer */

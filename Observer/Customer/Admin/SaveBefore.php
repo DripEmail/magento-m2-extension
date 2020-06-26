@@ -6,7 +6,6 @@ namespace Drip\Connect\Observer\Customer\Admin;
  * This observer exists to allow the SaveAfter observer to know what the data
  * looked like before. This is accomplished with the Registry.
  */
-
 class SaveBefore extends \Drip\Connect\Observer\Customer\Admin\Base
 {
     /** @var \Magento\Newsletter\Model\SubscriberFactory */

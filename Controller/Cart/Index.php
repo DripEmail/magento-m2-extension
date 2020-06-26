@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Controller\Cart;
 
+/**
+ * Cart controller for abandoned cart.
+ */
 class Index extends \Magento\Framework\App\Action\Action
 {
     /** @var \Drip\Connect\Model\ConfigurationFactory */
@@ -54,7 +57,7 @@ class Index extends \Magento\Framework\App\Action\Action
 
         $config = $this->configFactory->createForCurrentScope();
 
-        if (is_null($config->getIntegrationToken())) {
+        if ($config->getIntegrationToken() === null) {
             $resultRedirect->setPath('/');
             return $resultRedirect;
         }

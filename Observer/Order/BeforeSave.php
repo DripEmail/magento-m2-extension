@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Observer\Order;
 
+/**
+ * Order before save observer
+ */
 class BeforeSave extends \Drip\Connect\Observer\Base
 {
     /** @var \Magento\Framework\Registry */

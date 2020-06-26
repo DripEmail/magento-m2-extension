@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Observer\Wishlist;
 
+/**
+ * Wishlist add product observer.
+ */
 class AddProduct extends \Drip\Connect\Observer\Base
 {
     /**

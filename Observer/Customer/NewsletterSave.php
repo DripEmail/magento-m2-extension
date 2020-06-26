@@ -11,7 +11,6 @@ namespace Drip\Connect\Observer\Customer;
  * core code to reverse engineer what we expect the newsletter status to be
  * upon a successful save. :facepalm:
  */
-
 class NewsletterSave extends \Drip\Connect\Observer\Base
 {
     /** @var \Drip\Connect\Helper\Customer */

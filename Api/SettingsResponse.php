@@ -1,14 +1,18 @@
 <?php
 namespace Drip\Connect\Api;
 
-class SettingsResponse  extends \Magento\Framework\DataObject
+/**
+ * Response object for Settings REST API
+ */
+class SettingsResponse extends \Magento\Framework\DataObject
 {
     /**
      * Get account param
      *
      * @return string
      */
-    public function getAccountParam() {
+    public function getAccountParam()
+    {
         return $this->getData('account_param');
     }
 
@@ -17,7 +21,8 @@ class SettingsResponse  extends \Magento\Framework\DataObject
      *
      * @return string
      */
-    public function getIntegrationToken() {
+    public function getIntegrationToken()
+    {
         return $this->getData('integration_token');
     }
 
@@ -26,7 +31,8 @@ class SettingsResponse  extends \Magento\Framework\DataObject
      *
      * @return string
      */
-    public function getPluginVersion() {
+    public function getPluginVersion()
+    {
         return $this->getData('plugin_version');
     }
 
@@ -35,7 +41,8 @@ class SettingsResponse  extends \Magento\Framework\DataObject
      *
      * @return string
      */
-    public function getMagentoVersion() {
+    public function getMagentoVersion()
+    {
         return $this->getData('magento_version');
     }
 }
