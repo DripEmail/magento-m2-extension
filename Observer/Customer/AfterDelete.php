@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Observer\Customer;
 
+/**
+ * Customer after delete observer
+ */
 class AfterDelete extends \Drip\Connect\Observer\Base
 {
     /** @var \Drip\Connect\Helper\Customer */
@@ -15,6 +18,7 @@ class AfterDelete extends \Drip\Connect\Observer\Base
         parent::__construct($configFactory, $logger);
         $this->connectCustomerHelper = $connectCustomerHelper;
     }
+
     /**
      * @param \Magento\Framework\Event\Observer $observer
      */

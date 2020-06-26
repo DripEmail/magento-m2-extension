@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Controller\Ajax;
 
+/**
+ * Shim to get additional checkout data
+ */
 class CheckoutSendCart extends \Magento\Framework\App\Action\Action
 {
     /** @var \Magento\Framework\Controller\Result\JsonFactory */
@@ -50,7 +53,11 @@ class CheckoutSendCart extends \Magento\Framework\App\Action\Action
                     $config = $this->configFactory->createForCurrentScope();
 
                     // TODO: See if we still need this.
-                    $result = $this->connectQuoteHelper->sendQuote($quote, $config, \Drip\Connect\Helper\Quote::CREATED_ACTION);
+                    $result = $this->connectQuoteHelper->sendQuote(
+                        $quote,
+                        $config,
+                        \Drip\Connect\Helper\Quote::CREATED_ACTION
+                    );
                 } else {
                     $result = 1; // do not need to send call
                 }

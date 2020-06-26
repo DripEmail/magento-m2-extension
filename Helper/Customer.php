@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Helper;
 
+/**
+ * Customer helpers
+ */
 class Customer extends \Magento\Framework\App\Helper\AbstractHelper
 {
     /** @var \Drip\Connect\Logger\Logger */
@@ -198,8 +201,10 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      * @param \Magento\Sales\Model\Order $order
      * @param \Drip\Connect\Model\Configuration $config
      */
-    public function accountActionsForGuestCheckout(\Magento\Sales\Model\Order $order, \Drip\Connect\Model\Configuration $config)
-    {
+    public function accountActionsForGuestCheckout(
+        \Magento\Sales\Model\Order $order,
+        \Drip\Connect\Model\Configuration $config
+    ) {
         $customerData = $this->prepareCustomerDataForGuestCheckout($order);
 
         $this->apiCallsCreateUpdateSubscriberFactory->create([
@@ -347,8 +352,11 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      * @param \Drip\Connect\Model\Configuration $config
      * @param bool $forceStatus
      */
-    public function proceedGuestSubscriberNew(\Magento\Newsletter\Model\Subscriber $subscriber, \Drip\Connect\Model\Configuration $config, $forceStatus = false)
-    {
+    public function proceedGuestSubscriberNew(
+        \Magento\Newsletter\Model\Subscriber $subscriber,
+        \Drip\Connect\Model\Configuration $config,
+        $forceStatus = false
+    ) {
         $email = $subscriber->getSubscriberEmail();
         if (!$this->connectHelper->isEmailValid($email)) {
             $this->logger->notice("Skipping guest subscriber create due to invalid email ({$email})");
@@ -393,8 +401,10 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      * @param \Magento\Newsletter\Model\Subscriber $subscriber
      * @param \Drip\Connect\Model\Configuration $config
      */
-    public function proceedSubscriberSave(\Magento\Newsletter\Model\Subscriber $subscriber, \Drip\Connect\Model\Configuration $config)
-    {
+    public function proceedSubscriberSave(
+        \Magento\Newsletter\Model\Subscriber $subscriber,
+        \Drip\Connect\Model\Configuration $config
+    ) {
         $data = $this->prepareGuestSubscriberData($subscriber);
 
         $this->apiCallsCreateUpdateSubscriberFactory->create([
@@ -409,8 +419,10 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      * @param \Magento\Newsletter\Model\Subscriber $subscriber
      * @param \Drip\Connect\Model\Configuration $config
      */
-    public function proceedSubscriberDelete(\Magento\Newsletter\Model\Subscriber $subscriber, \Drip\Connect\Model\Configuration $config)
-    {
+    public function proceedSubscriberDelete(
+        \Magento\Newsletter\Model\Subscriber $subscriber,
+        \Drip\Connect\Model\Configuration $config
+    ) {
         $data = $this->prepareGuestSubscriberData($subscriber);
         $data['custom_fields']['accepts_marketing'] = 'no';
         $data['status'] = 'unsubscribed';
@@ -427,8 +439,10 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      * @param \Magento\Customer\Model\Customer $customer
      * @param \Drip\Connect\Model\Configuration $config
      */
-    public function proceedAccountDelete(\Magento\Customer\Model\Customer $customer, \Drip\Connect\Model\Configuration $config)
-    {
+    public function proceedAccountDelete(
+        \Magento\Customer\Model\Customer $customer,
+        \Drip\Connect\Model\Configuration $config
+    ) {
         $this->connectApiCallsHelperRecordAnEventFactory->create([
             'config' => $config,
             'data' => [

@@ -1,6 +1,9 @@
 <?php
 namespace Drip\Connect\Helper;
 
+/**
+ * Quote helpers
+ */
 class Quote extends \Magento\Framework\App\Helper\AbstractHelper
 {
     const REGISTRY_KEY_IS_NEW = 'newquote';
@@ -9,24 +12,16 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
 
     const UPDATED_ACTION = 'updated';
 
-    /**
-     * @var \Magento\Quote\Model\QuoteFactory
-     */
+    /** @var \Magento\Quote\Model\QuoteFactory */
     protected $quoteQuoteFactory;
 
-    /**
-     * @var \Drip\Connect\Helper\Data
-     */
+    /** @var \Drip\Connect\Helper\Data */
     protected $connectHelper;
 
-    /**
-     * @var \Magento\Catalog\Model\ProductFactory
-     */
+    /** @var \Magento\Catalog\Model\ProductFactory */
     protected $catalogProductFactory;
 
-    /**
-     * @var \Magento\Catalog\Model\Product\Media\ConfigFactory
-     */
+    /** @var \Magento\Catalog\Model\Product\Media\ConfigFactory */
     protected $catalogProductMediaConfigFactory;
 
     /** @var \Magento\Checkout\Model\Session */
@@ -72,39 +67,39 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function sendQuote(\Magento\Quote\Model\Quote $quote, \Drip\Connect\Model\Configuration $config, string $action)
     {
-      $items = [];
-      foreach ($quote->getAllItems() as $item) {
-          $items[] = [
-            'item_id' => $item->getId(),
-            'product_id' => $item->getProductId(),
-            'product_parent_id' => $item->getParentItemId()
-          ];
-      }
+        $items = [];
+        foreach ($quote->getAllItems() as $item) {
+            $items[] = [
+              'item_id' => $item->getId(),
+              'product_id' => $item->getProductId(),
+              'product_parent_id' => $item->getParentItemId()
+            ];
+        }
 
-      $payload = [
-          'cart_id' => (string) $quote->getId(),
-          'items' => $items,
-          'action' => $action,
-      ];
+        $payload = [
+            'cart_id' => (string) $quote->getId(),
+            'items' => $items,
+            'action' => $action,
+        ];
 
-      $response = $this->connectApiCallsHelperSendEventPayloadFactory->create([
-          'config' => $config,
-          'payload' => $payload,
-      ])->call();
+        $response = $this->connectApiCallsHelperSendEventPayloadFactory->create([
+            'config' => $config,
+            'payload' => $payload,
+        ])->call();
     }
 
     /**
      * @param \Magento\Quote\Api\Data\CartInterface $oldQuote
      */
     public function recreateCartFromQuote($oldQuote)
-     {
-         $quote = $this->checkoutSession->getQuote();
+    {
+        $quote = $this->checkoutSession->getQuote();
 
-         if ($quote->getId() !== $oldQuote->getId()) {
-             $quote->removeAllItems();
-             $quote->merge($oldQuote);
-             $quote->collectTotals()->save();
-         }
-         $this->checkoutSession->setQuoteId($quote->getId());
+        if ($quote->getId() !== $oldQuote->getId()) {
+            $quote->removeAllItems();
+            $quote->merge($oldQuote);
+            $quote->collectTotals()->save();
+        }
+        $this->checkoutSession->setQuoteId($quote->getId());
      }
 }

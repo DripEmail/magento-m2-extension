@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Observer\Customer;
 
+/**
+ * Guest subscriber created observer
+ */
 class GuestSubscriberCreated extends \Drip\Connect\Observer\Base
 {
     /** @var \Drip\Connect\Helper\Customer */

@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Observer\Quote;
 
+/**
+ * After quote saved observer
+ */
 class AfterQuoteSaved extends \Drip\Connect\Observer\Base
 {
     /** @var \Drip\Connect\Helper\Quote */
@@ -29,9 +32,9 @@ class AfterQuoteSaved extends \Drip\Connect\Observer\Base
         $quote = $observer->getEvent()->getQuote();
 
         if ($this->registry->registry(\Drip\Connect\Helper\Quote::REGISTRY_KEY_IS_NEW)) {
-           $action = (string) \Drip\Connect\Helper\Quote::CREATED_ACTION;
+            $action = (string) \Drip\Connect\Helper\Quote::CREATED_ACTION;
         } else {
-           $action = (string) \Drip\Connect\Helper\Quote::UPDATED_ACTION;
+            $action = (string) \Drip\Connect\Helper\Quote::UPDATED_ACTION;
         }
 
         $this->connectQuoteHelper->sendQuote($quote, $config, $action);

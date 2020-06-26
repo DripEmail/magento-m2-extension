@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Helper;
 
+/**
+ * Product helpers
+ */
 class Product extends \Magento\Framework\App\Helper\AbstractHelper
 {
     const REGISTRY_KEY_IS_NEW = 'newproduct';
@@ -83,8 +86,10 @@ class Product extends \Magento\Framework\App\Helper\AbstractHelper
      * @param \Magento\Catalog\Model\Product $product
      * @param \Drip\Connect\Model\Configuration $config
      */
-    public function proceedProductNew(\Magento\Catalog\Model\Product $product, \Drip\Connect\Model\Configuration $config)
-    {
+    public function proceedProductNew(
+        \Magento\Catalog\Model\Product $product,
+        \Drip\Connect\Model\Configuration $config
+    ) {
         $data = $this->prepareData($product);
         $data['action'] = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateProduct::PRODUCT_NEW;
 
@@ -117,8 +122,10 @@ class Product extends \Magento\Framework\App\Helper\AbstractHelper
      * @param \Magento\Catalog\Model\Product $product
      * @param \Drip\Connect\Model\Configuration $config
      */
-    public function proceedProductDelete(\Magento\Catalog\Model\Product $product, \Drip\Connect\Model\Configuration $config)
-    {
+    public function proceedProductDelete(
+        \Magento\Catalog\Model\Product $product,
+        \Drip\Connect\Model\Configuration $config
+    ) {
         $data = $this->registry->registry(\Drip\Connect\Helper\Product::REGISTRY_KEY_OLD_DATA);
         if ($product->getId() == $data['product_id']) {
             $data['action'] = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateProduct::PRODUCT_DELETED;

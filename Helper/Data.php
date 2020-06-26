@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Helper;
 
+/**
+ * Data helpers
+ */
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
     const QUOTE_KEY = 'q';

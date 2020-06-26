@@ -2,9 +2,11 @@
 
 namespace Drip\Connect\Helper;
 
+/**
+ * Wishlist helpers
+ */
 class Wishlist extends \Magento\Framework\App\Helper\AbstractHelper
 {
-
     /**
      * @var \Magento\Store\Model\StoreManagerInterface
      */

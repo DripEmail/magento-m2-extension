@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Observer\Quote;
 
+/**
+ * Clear cart on login observer.
+ */
 class ClearCartOnLogin extends \Drip\Connect\Observer\Base
 {
     /** @var \Magento\Customer\Model\Session */

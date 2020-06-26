@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Observer\Wishlist;
 
+/**
+ * Wishlist removalal controller index predispatch observer
+ */
 class PredispatchWishlistIndexRemove extends \Drip\Connect\Observer\Base
 {
     /**
