@@ -112,7 +112,6 @@ Then('A simple cart event should be sent to Drip', function() {
       "jsonPath": "$[?(@.cart_id)]"
     }
   })).then(function(recordedRequests) {
-    console.log(recordedRequests)
     const body1 = JSON.parse(recordedRequests[0].body.string)
     expect(body1.action).to.eq('created')
     expect(body1.cart_id).to.eq('1')
