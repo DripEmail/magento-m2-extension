@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Observer\Product;
 
+/**
+ * Product after delete observer
+ */
 class DeleteAfter extends \Drip\Connect\Observer\Base
 {
     /** @var \Drip\Connect\Helper\Product */

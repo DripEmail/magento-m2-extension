@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Observer\Customer;
 
+/**
+ * Before address save observer
+ */
 class BeforeAddressSave extends \Drip\Connect\Observer\Base
 {
     /** @var \Drip\Connect\Helper\Customer */

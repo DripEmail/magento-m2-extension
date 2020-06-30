@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Observer\Order\Item;
 
+/**
+ * Order item after save observer
+ */
 class AfterSave extends \Drip\Connect\Observer\Base
 {
     protected static $counter = 0;
@@ -110,21 +113,15 @@ class AfterSave extends \Drip\Connect\Observer\Base
      * check if order item's data looks like data of complete item
      *
      * @param array $itemData
-     *
      * @return bool
      */
     protected function isOrderItemComplete($itemData)
     {
-        if ((float)$itemData['qty_ordered'] > 0 &&
+        return ((float)$itemData['qty_ordered'] > 0 &&
             (float)$itemData['qty_invoiced'] > 0 &&
             (float)$itemData['qty_shipped'] > 0 &&
             (float)$itemData['qty_backordered'] == 0 &&
             (float)$itemData['qty_canceled'] == 0 &&
-            (float)$itemData['qty_refunded'] == 0
-        ) {
-            return true;
-        }
-
-        return false;
+            (float)$itemData['qty_refunded'] == 0);
     }
 }

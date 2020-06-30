@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Observer\Order\Item;
 
+/**
+ * Order item before save observer
+ */
 class BeforeSave extends \Drip\Connect\Observer\Base
 {
     /** @var \Drip\Connect\Model\Transformer\OrderItemFactory */

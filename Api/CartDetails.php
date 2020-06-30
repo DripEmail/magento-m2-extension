@@ -6,16 +6,11 @@ class CartDetails
     /** @var \Magento\Quote\Api\CartRepositoryInterface */
     protected $cartRepository;
 
-    /**
-     * @var \Drip\Connect\Helper\Data
-     */
+    /** @var \Drip\Connect\Helper\Data */
     protected $connectHelper;
 
-    /**
-     * @var \Drip\Connect\Api\CartDetailsResponseFactory
-     */
+    /** @var \Drip\Connect\Api\CartDetailsResponseFactory */
     protected $responseFactory;
-
 
     public function __construct(
         \Magento\Quote\Api\CartRepositoryInterface $cartRepository,
@@ -32,7 +27,8 @@ class CartDetails
      * @param string $cartId
      * @return \Drip\Connect\Api\CartDetailsResponse
      */
-    public function showDetails($cartId) {
+    public function showDetails($cartId)
+    {
         $response = $this->responseFactory->create();
         $quote = $this->cartRepository->get($cartId);
         $url = $this->connectHelper->getAbandonedCartUrl($quote);

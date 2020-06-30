@@ -1,6 +1,9 @@
 <?php
 namespace Drip\Connect\Api;
 
+/**
+ * Settings REST API endpoint.
+ */
 class Settings
 {
     /** @var \Drip\Connect\Model\ConfigurationFactory */
@@ -12,14 +15,10 @@ class Settings
     /** @var \Magento\Framework\Module\ResourceInterface */
     protected $moduleResource;
 
-    /**
-    * @var \Drip\Connect\Api\SettingsResponseFactory
-    */
+    /** @var \Drip\Connect\Api\SettingsResponseFactory */
     protected $responseFactory;
 
-    /**
-    * @var \Drip\Connect\Api\Response
-    */
+    /** @var \Drip\Connect\Api\Response */
     protected $response;
 
     public function __construct(
@@ -42,7 +41,8 @@ class Settings
      * @param string $testMode
      * @return \Drip\Connect\Api\SettingsResponse
      */
-    public function updateSettings($websiteId = 0, $accountParam, $integrationToken, $testMode = 0) {
+    public function updateSettings($accountParam, $integrationToken, $websiteId = 0, $testMode = 0)
+    {
         $response = $this->responseFactory->create();
         $config = $this->configFactory->createFromWebsiteId($websiteId);
         $config->setAccountParam($accountParam);
@@ -63,7 +63,8 @@ class Settings
      * @param string $websiteId]
      * @return \Drip\Connect\Api\SettingsResponse
      */
-    public function showStatus($websiteId = 0) {
+    public function showStatus($websiteId = 0)
+    {
         $response = $this->responseFactory->create();
         $config = $this->configFactory->createFromWebsiteId($websiteId);
         $response->setData([
@@ -81,7 +82,8 @@ class Settings
      * @param string $websiteId]
      * @return \Drip\Connect\Api\SettingsResponse
      */
-    public function removeIntegration($websiteId = 0) {
+    public function removeIntegration($websiteId = 0)
+    {
         $response = $this->responseFactory->create();
         $config = $this->configFactory->createFromWebsiteId($websiteId);
         $config->setAccountParam(null);

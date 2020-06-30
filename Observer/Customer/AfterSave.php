@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Observer\Customer;
 
+/**
+ * Customer after save observer
+ */
 class AfterSave extends \Drip\Connect\Observer\Base
 {
     /** @var \Drip\Connect\Helper\Customer */
@@ -44,10 +47,12 @@ class AfterSave extends \Drip\Connect\Observer\Base
      */
     public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)
     {
+        return;
+
         // $customer = $observer->getCustomer();
-				//
+        //
         // $config = $this->configFactory->createForCurrentScope();
-				//
+        //
         // if ($this->registry->registry(self::REGISTRY_KEY_CUSTOMER_IS_NEW)) {
         //     $acceptsMarketing = $this->registry->registry(self::REGISTRY_KEY_NEW_USER_SUBSCRIBE_STATE);
         //     $this->customerHelper->proceedAccount(

@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Observer\Quote;
 
+/**
+ * Before quote saved observer
+ */
 class BeforeQuoteSaved extends \Drip\Connect\Observer\Base
 {
     /** @var \Magento\Framework\Registry */

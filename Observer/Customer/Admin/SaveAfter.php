@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Observer\Customer\Admin;
 
+/**
+ * Customer admin save after observer
+ */
 class SaveAfter extends \Drip\Connect\Observer\Customer\Admin\Base
 {
     /** @var \Magento\Newsletter\Model\SubscriberFactory */

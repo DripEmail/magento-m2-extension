@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Observer\Order;
 
+/**
+ * Credit memo after save observer
+ */
 class CreditmemoAfterSave extends \Drip\Connect\Observer\Base
 {
     /** @var \Magento\Framework\Registry */

@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Observer\Customer;
 
+/**
+ * After address save observer
+ */
 class AfterAddressSave extends \Drip\Connect\Observer\Base
 {
     /** @var \Drip\Connect\Helper\Customer */
