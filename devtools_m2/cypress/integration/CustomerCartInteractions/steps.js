@@ -123,6 +123,7 @@ Then('A simple cart event should be sent to Drip', function() {
       expect(body2.items).to.have.lengthOf(1)
       expect(body2.items[0]['item_id']).to.eq('1')
       expect(body2.items[0]['product_id']).to.eq('1')
+      expect(body2.items[0]['product_parent_id']).to.eq(null)
     }
   })
 })
