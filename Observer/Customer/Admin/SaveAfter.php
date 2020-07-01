@@ -27,7 +27,7 @@ class SaveAfter extends \Drip\Connect\Observer\Customer\Admin\Base
         return $this->customerHelper->sendObserverCustomerEvent(
             $observer,
             $this->configFactory,
-            'Customer/Admin/SaveAfter'
+            'customer.updated'
         );
     }
 }

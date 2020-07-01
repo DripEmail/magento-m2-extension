@@ -78,17 +78,13 @@ Then('A {string} event should be sent to the WIS', function(action) {
   cy.wrap(Mockclient.retrieveRecordedRequests({
     'path': '/123456/integrations/abcdefg/events'
   })).then(function(recordedRequests) {
-    expect(recordedRequests).to.have.lengthOf(1)
-    const body = JSON.parse(recordedRequests[0].body.string)
-    expect(body.action).to.eq(action)
-    if (body.customer_id) {
-        expect(body.customer_id).to.match(/^\d+$/)
-    } else if (body.email) {
-        expect(body.email).to.eq('testuser@example.com')
-    } else {
-        fail;
-    }
-    expect(body.store_id).to.match(/^\d+$/)
+    expect(recordedRequests.find((elm) => {
+        let body = JSON.parse(elm.body.string);
+        let actionMatch = body.action == action;
+        let customerIdMatch = body.customer_id && /^\d+$/.test(body.customer_id);
+        let emailMatch = body.email && body.email == 'testuser@example.com';
+        return actionMatch && (customerIdMatch || emailMatch);
+    })).to.exist
   })
 })
 
