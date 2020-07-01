@@ -33,7 +33,7 @@ class AfterSave extends \Drip\Connect\Observer\Base
         return $this->customerHelper->sendObserverCustomerEvent(
             $observer,
             $this->configFactory,
-            'Customer/AfterSave'
+            'customer.updated'
         );
     }
 }
