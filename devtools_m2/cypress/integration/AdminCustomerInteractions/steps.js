@@ -74,6 +74,20 @@ Then('A new {string} subscriber event should be sent to Drip', function(state) {
   })
 })
 
+Then('A {string} event should be sent to the WIS', function(action) {
+  cy.wrap(Mockclient.retrieveRecordedRequests({
+    'path': '/123456/integrations/abcdefg/events'
+  })).then(function(recordedRequests) {
+    expect(recordedRequests.find((elm) => {
+        let body = JSON.parse(elm.body.string);
+        let actionMatch = body.action == action;
+        let customerIdMatch = body.customer_id && /^\d+$/.test(body.customer_id);
+        let emailMatch = body.email && body.email == 'testuser@example.com';
+        return actionMatch && (customerIdMatch || emailMatch);
+    })).to.exist
+  })
+})
+
 When('An admin subscribes to the general newsletter', function() {
   cy.log('Resetting mocks')
   cy.wrap(Mockclient.reset())

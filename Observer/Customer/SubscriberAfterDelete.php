@@ -8,24 +8,25 @@ namespace Drip\Connect\Observer\Customer;
 class SubscriberAfterDelete extends \Drip\Connect\Observer\Base
 {
     /** @var \Drip\Connect\Helper\Customer */
-    protected $connectCustomerHelper;
+    protected $customerHelper;
 
     public function __construct(
         \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Drip\Connect\Logger\Logger $logger,
-        \Drip\Connect\Helper\Customer $connectCustomerHelper
+        \Drip\Connect\Helper\Customer $customerHelper
     ) {
         parent::__construct($configFactory, $logger);
-        $this->connectCustomerHelper = $connectCustomerHelper;
+        $this->customerHelper = $customerHelper;
     }
     /**
      * @param \Magento\Framework\Event\Observer $observer
      */
     public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)
     {
-        $subscriber = $observer->getSubscriber();
-        $config = $this->configFactory->createForCurrentScope();
-
-        $this->connectCustomerHelper->proceedSubscriberDelete($subscriber, $config);
+        return $this->customerHelper->sendObserverCustomerEvent(
+            $observer,
+            $this->configFactory,
+            'customer.deleted'
+        );
     }
 }

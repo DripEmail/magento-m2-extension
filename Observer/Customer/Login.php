@@ -8,15 +8,15 @@ namespace Drip\Connect\Observer\Customer;
 class Login extends \Drip\Connect\Observer\Base
 {
     /** @var \Drip\Connect\Helper\Customer */
-    protected $connectCustomerHelper;
+    protected $customerHelper;
 
     public function __construct(
         \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Drip\Connect\Logger\Logger $logger,
-        \Drip\Connect\Helper\Customer $connectCustomerHelper
+        \Drip\Connect\Helper\Customer $customerHelper
     ) {
         parent::__construct($configFactory, $logger);
-        $this->connectCustomerHelper = $connectCustomerHelper;
+        $this->customerHelper = $customerHelper;
     }
 
     /**
@@ -24,10 +24,10 @@ class Login extends \Drip\Connect\Observer\Base
      */
     public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)
     {
-        return;
-        // $customer = $observer->getCustomer();
-        // $config = $this->configFactory->createForCurrentScope();
-        //
-        // $this->connectCustomerHelper->proceedLogin($customer, $config);
+        return $this->customerHelper->sendObserverCustomerEvent(
+            $observer,
+            $this->configFactory,
+            'customer.login'
+        );
     }
 }
