@@ -65,8 +65,11 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
         );
     }
 
-    public function sendQuote(\Magento\Quote\Model\Quote $quote, \Drip\Connect\Model\Configuration $config, string $action)
-    {
+    public function sendQuote(
+        \Magento\Quote\Model\Quote $quote,
+        \Drip\Connect\Model\Configuration $config,
+        string $action
+    ) {
         $items = [];
         foreach ($quote->getAllItems() as $item) {
             $items[] = [
@@ -101,5 +104,5 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
             $quote->collectTotals()->save();
         }
         $this->checkoutSession->setQuoteId($quote->getId());
-     }
+    }
 }
