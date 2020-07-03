@@ -44,7 +44,7 @@ class BeforeSave extends \Drip\Connect\Observer\Base
         ]);
 
         $items = $this->registry->registry(self::REGISTRY_KEY_ORDER_ITEMS_OLD_DATA);
-        $items[$orderItem->getId()] = $orderItemTransformer->getStatusData(true);
+        $items[$orderItem->getId()] = $orderItemTransformer->getOrigStatusData();
 
         $this->registry->unregister(self::REGISTRY_KEY_ORDER_ITEMS_OLD_DATA);
         $this->registry->register(self::REGISTRY_KEY_ORDER_ITEMS_OLD_DATA, $items);
