@@ -28,14 +28,16 @@ class SendEventPayload extends \Drip\Connect\Model\ApiCalls\Helper
             ->setRawData(json_encode($payload));
     }
 
-    private function integrationUrl() {
+    private function integrationUrl()
+    {
         $accountId = $this->config->getAccountParam();
         $integrationParam = $this->config->getIntegrationToken();
+        $endpoint = "https://dfol6w1g6b.execute-api.us-east-1.amazonaws.com/v1";
 
         if ($this->config->getTestMode()) {
-            return "http://mock:1080/${accountId}/integrations/${integrationParam}/events";
-        } else {
-            return "https://dfol6w1g6b.execute-api.us-east-1.amazonaws.com/v1/${accountId}/integrations/${integrationParam}/events";
+            $endpoint = "http://mock:1080";
         }
+
+        return "${endpoint}/${accountId}/integrations/${integrationParam}/events";
     }
 }
