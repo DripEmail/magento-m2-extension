@@ -94,7 +94,7 @@ class AfterSave extends \Drip\Connect\Observer\Base
             $orderItemTransformer = $this->orderItemTransformerFactory->create([
                 'item' => $item,
             ]);
-            $itemDataCurrent = $orderItemTransformer->getStatusData();
+            $itemDataCurrent = $orderItemTransformer->getLiveStatusData();
             $itemDataOld = $oldItems[$item->getId()];
 
             if ($this->isOrderItemComplete($itemDataCurrent)
