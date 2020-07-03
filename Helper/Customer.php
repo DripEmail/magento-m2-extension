@@ -85,12 +85,12 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     public function sendObserverCustomerEvent(
-      \Magento\Framework\Event\Observer $observer,
-      \Drip\Connect\Model\ConfigurationFactory $configFactory,
-      $action
+        \Magento\Framework\Event\Observer $observer,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
+        $action
     ) {
         $customer = $observer->getCustomer();
-        if (is_null($customer)) {
+        if ($customer === null) {
             return;
         }
 
