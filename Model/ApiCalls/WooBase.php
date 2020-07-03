@@ -1,8 +1,9 @@
 <?php
 namespace Drip\Connect\Model\ApiCalls;
 
-// This is a fork of Base.php, to quickly get this going. Eventually, this should all simplify dramatically.
-
+/**
+ * This is a fork of Base.php, to quickly get this going. Eventually, this should all simplify dramatically.
+ */
 class WooBase extends \Drip\Connect\Model\Restapi\RestapiAbstract
 {
 

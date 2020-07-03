@@ -1,6 +1,9 @@
 <?php
 namespace Drip\Connect\Model\ApiCalls\Helper;
 
+/**
+ * Record a subscriber event
+ */
 class RecordAnEvent extends \Drip\Connect\Model\ApiCalls\Helper
 {
     const EVENT_CUSTOMER_NEW = 'Customer created';
