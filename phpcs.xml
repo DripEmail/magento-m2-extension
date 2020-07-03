@@ -6,13 +6,10 @@
   <arg value="s"/>
 
   <rule ref="Magento2">
-    <!-- <exclude name="PEAR.NamingConventions.ValidFunctionName"/>
-    <exclude name="PEAR.NamingConventions.ValidVariableName"/>
-    <exclude name="PEAR.Commenting.ClassComment"/>
-    <exclude name="PEAR.Commenting.FileComment.MissingCategoryTag"/>
-    <exclude name="PEAR.Commenting.FileComment.MissingPackageTag"/>
-    <exclude name="PEAR.Commenting.FileComment.MissingLinkTag"/>
-    <exclude name="PEAR.Commenting.FileComment.MissingVersion"/>
-    <exclude name="PEAR.Commenting.InlineComment"/> -->
+    <!-- TODO: Important, but tricky. Punt to a future project. -->
+    <exclude name="Magento2.Security.XssTemplate.FoundUnescaped"/>
+    <exclude name="Magento2.Functions.DiscouragedFunction.DiscouragedWithAlternative"/>
+    <exclude name="Magento2.Functions.DiscouragedFunction.Discouraged"/>
+    <exclude name="Magento2.Exceptions.TryProcessSystemResources.MissingTryCatch"/>
   </rule>
 </ruleset>
