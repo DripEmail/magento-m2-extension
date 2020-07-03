@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Model;
 
+/**
+ * Scoped configuration
+ */
 class Configuration
 {
     const ACCOUNT_PARAM_PATH = 'dripconnect_general/api_settings/account_param';
@@ -58,7 +61,6 @@ class Configuration
         } else {
             $this->scope = \Magento\Store\Model\ScopeInterface::SCOPE_WEBSITES;
         }
-
     }
 
     public function getWebsiteId()
@@ -96,7 +98,7 @@ class Configuration
         return $this->getConfig(self::LOG_SETTINGS_PATH);
     }
 
-        /**
+    /**
      * @param string $accountParam
      */
     public function setAccountParam($accountParam)
@@ -112,7 +114,7 @@ class Configuration
         $this->setConfig(self::TEST_MODE_PATH, $value);
     }
 
-        /**
+    /**
      * @param string $integrationToken
      */
     public function setIntegrationToken($integrationToken)
@@ -139,15 +141,14 @@ class Configuration
     protected function setConfig($path, $val)
     {
         $this->configWriter->save(
-                $path,
-                $val,
-                $this->scope,
-                $this->websiteId
+            $path,
+            $val,
+            $this->scope,
+            $this->websiteId
         );
         $stores = $this->storeManager->getStores();
         foreach ($stores as $store) {
-               $store->resetConfig();
-         }
+                $store->resetConfig();
+        }
     }
-
 }

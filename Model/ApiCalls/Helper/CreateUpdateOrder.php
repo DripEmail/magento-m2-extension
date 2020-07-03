@@ -1,6 +1,9 @@
 <?php
 namespace Drip\Connect\Model\ApiCalls\Helper;
 
+/**
+ * Create or update an order
+ */
 class CreateUpdateOrder extends \Drip\Connect\Model\ApiCalls\Helper
 {
     const PROVIDER_NAME = 'magento';

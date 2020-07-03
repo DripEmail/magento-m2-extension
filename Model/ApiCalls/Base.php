@@ -1,6 +1,9 @@
 <?php
 namespace Drip\Connect\Model\ApiCalls;
 
+/**
+ * Restapi base class
+ */
 class Base extends \Drip\Connect\Model\Restapi\RestapiAbstract
 {
 

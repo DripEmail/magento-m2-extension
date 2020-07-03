@@ -1,6 +1,9 @@
 <?php
 namespace Drip\Connect\Model\ApiCalls\Helper;
 
+/**
+ * Create or update a subscriber.
+ */
 class CreateUpdateSubscriber extends \Drip\Connect\Model\ApiCalls\Helper
 {
     public function __construct(
