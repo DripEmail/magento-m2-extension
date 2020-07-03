@@ -15,6 +15,7 @@ matrix:
         - '$MAGENTO_PATH/vendor/bin/phpcs --config-set installed_paths ../../magento/magento-coding-standard/'
         - 'mkdir -p $MAGENTO_PATH/app/code/Drip'
         - 'ln -s $TRAVIS_BUILD_DIR $MAGENTO_PATH/app/code/Drip/Connect'
+        - 'ln -s $TRAVIS_BUILD_DIR/phpcs.xml $MAGENTO_PATH/phpcs.xml'
 
       script:
         - 'cd $MAGENTO_PATH && vendor/bin/phpcs app/code/Drip/Connect'
