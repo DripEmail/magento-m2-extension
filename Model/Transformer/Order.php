@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Model\Transformer;
 
+/**
+ * Order Transformer
+ */
 class Order
 {
     const FULFILLMENT_NO = 'not_fulfilled';
@@ -39,7 +42,6 @@ class Order
         \Magento\Catalog\Model\Product\Media\ConfigFactory $catalogProductMediaConfigFactory,
         \Magento\Newsletter\Model\SubscriberFactory $subscriberFactory,
         \Drip\Connect\Model\ApiCalls\Helper\SendEventPayloadFactory $connectApiCallsHelperSendEventPayloadFactory,
-
         \Magento\Sales\Model\Order $order,
         \Drip\Connect\Model\Configuration $config
     ) {
@@ -49,7 +51,6 @@ class Order
         $this->catalogProductMediaConfigFactory = $catalogProductMediaConfigFactory;
         $this->subscriberFactory = $subscriberFactory;
         $this->connectApiCallsHelperSendEventPayloadFactory = $connectApiCallsHelperSendEventPayloadFactory;
-
         $this->order = $order;
         $this->config = $config;
     }
@@ -153,8 +154,9 @@ class Order
      * simple check for valid stringage
      * @param  mixed $stuff
      * @return bool
-    */
-    private function isNotEmpty($stuff) {
+     */
+    private function isNotEmpty($stuff)
+    {
         return !empty(trim((string) $stuff));
     }
 

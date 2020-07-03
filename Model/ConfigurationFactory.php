@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Model;
 
+/**
+ * Factory for Configuration class
+ */
 class ConfigurationFactory
 {
     /**
@@ -58,7 +61,7 @@ class ConfigurationFactory
     {
         $storeId = $this->request->getParam('store');
         if ($storeId === null) {
-            throw new \Exception("Current store param is null");
+            throw new \UnexpectedValueException("Current store param is null");
         }
         return $this->create((int) $storeId);
     }
@@ -85,7 +88,7 @@ class ConfigurationFactory
     {
         $storeId = $this->storeManager->getStore()->getId();
         if ($storeId === null) {
-            throw new \Exception("Current scope store id is null");
+            throw new \UnexpectedValueException("Current scope store id is null");
         }
         return $this->create((int) $storeId);
     }
