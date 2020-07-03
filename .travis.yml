@@ -17,7 +17,7 @@ matrix:
         - 'ln -s $TRAVIS_BUILD_DIR $MAGENTO_PATH/app/code/Drip/Connect'
 
       script:
-        - 'cd $MAGENTO_PATH && vendor/bin/phpcs --standard=Magento2 app/code/Drip/Connect'
+        - 'cd $MAGENTO_PATH && vendor/bin/phpcs app/code/Drip/Connect'
         - 'cd $MAGENTO_PATH/dev/tests/unit && $MAGENTO_PATH/vendor/bin/phpunit $MAGENTO_PATH/app/code/Drip/Connect/Test/Unit'
     # -
     #   language: node_js
