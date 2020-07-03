@@ -2,7 +2,7 @@
 namespace Drip\Connect\Model\ApiCalls\Helper;
 
 /**
- * Get subscriber list
+ * Get the subscriber list
  *
  * @todo This class doesn't seem to be called from anywhere. Confirm that it is dead.
  */
