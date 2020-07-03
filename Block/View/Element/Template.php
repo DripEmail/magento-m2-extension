@@ -1,6 +1,9 @@
 <?php
 namespace Drip\Connect\Block\View\Element;
 
+/**
+ * Base class for templates
+ */
 class Template extends \Magento\Framework\View\Element\Template
 {
     /** @var \Drip\Connect\Helper\Data */
@@ -90,7 +93,7 @@ class Template extends \Magento\Framework\View\Element\Template
      */
     public function isModuleActive()
     {
-        return !is_null($this->config->getIntegrationToken());
+        return $this->config->getIntegrationToken() !== null;
     }
 
     /**
