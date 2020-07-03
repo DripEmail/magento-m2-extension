@@ -1,8 +1,11 @@
 <?php
 namespace Drip\Connect\Model\ApiCalls\Helper;
 
-// TODO: This class doesn't seem to be called from anywhere. Confirm that it is dead.
-
+/**
+ * Get project list helper
+ *
+ * @todo This class doesn't seem to be called from anywhere. Confirm that it is dead.
+ */
 class GetProjectList extends \Drip\Connect\Model\ApiCalls\Helper
 {
     public function __construct(
