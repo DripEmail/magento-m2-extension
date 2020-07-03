@@ -2,5 +2,17 @@
 <ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="PHP_CodeSniffer" xsi:noNamespaceSchemaLocation="phpcs.xsd">
   <description>Coding standard for Drip's Magento 2 plugin.</description>
 
-  <rule ref="Magento2"></rule>
+  <arg name="colors"/>
+  <arg name="s"/>
+
+  <rule ref="Magento2">
+    <!-- <exclude name="PEAR.NamingConventions.ValidFunctionName"/>
+    <exclude name="PEAR.NamingConventions.ValidVariableName"/>
+    <exclude name="PEAR.Commenting.ClassComment"/>
+    <exclude name="PEAR.Commenting.FileComment.MissingCategoryTag"/>
+    <exclude name="PEAR.Commenting.FileComment.MissingPackageTag"/>
+    <exclude name="PEAR.Commenting.FileComment.MissingLinkTag"/>
+    <exclude name="PEAR.Commenting.FileComment.MissingVersion"/>
+    <exclude name="PEAR.Commenting.InlineComment"/> -->
+  </rule>
 </ruleset>
