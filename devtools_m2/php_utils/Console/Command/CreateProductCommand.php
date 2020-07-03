@@ -68,7 +68,7 @@ class CreateProductCommand extends Command
         $json = json_decode($data, true);
 
         if ($json === null) {
-            throw new \Exception('Null JSON parse');
+            throw new \UnexpectedValueException('Null JSON parse');
         }
 
         $type = array_key_exists('typeId', $json) ? $json['typeId'] : '';
@@ -92,7 +92,7 @@ class CreateProductCommand extends Command
                 $factory = $this->virtualProductCreatorFactory;
                 break;
             default:
-                throw new \Exception("Unsupported type: ${type}");
+                throw new \UnexpectedValueException("Unsupported type: ${type}");
         }
 
         $factory->create(['productData' => $json])->create();

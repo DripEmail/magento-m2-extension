@@ -2,6 +2,9 @@
 
 namespace Drip\TestUtils\Creators;
 
+/**
+ * Create virtual product for tests
+ */
 class VirtualProductCreator
 {
     /** @var \Magento\Catalog\Model\ProductFactory */
@@ -43,7 +46,7 @@ class VirtualProductCreator
 
         $defaultAttrSetId = $product->getDefaultAttributeSetId();
 
-        $defaults = array(
+        $defaults = [
             "storeId" => 1,
             "websiteIds" => [1],
             "typeId" => "virtual",
@@ -56,14 +59,14 @@ class VirtualProductCreator
             "attributeSetId" => $defaultAttrSetId,
             "createdAt" => strtotime('now'),
             "updatedAt" => strtotime('now'),
-            "stockData" => array(
+            "stockData" => [
                 "use_config_manage_stock" => 0,
                 "manage_stock" => 1,
                 "is_in_stock" => 1,
                 "qty" => 901
-            ),
+            ],
             "visibility" => \Magento\Catalog\Model\Product\Visibility::VISIBILITY_BOTH, //catalog and search visibility
-        );
+        ];
         $fullData = array_replace_recursive($defaults, $this->productData);
 
         // This assumes that you properly name all of the attributes. But we control both ends, so it should be fine.
