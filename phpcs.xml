@@ -3,7 +3,7 @@
   <description>Coding standard for Drip's Magento 2 plugin.</description>
 
   <arg name="colors"/>
-  <arg name="s"/>
+  <arg value="s"/>
 
   <rule ref="Magento2">
     <!-- <exclude name="PEAR.NamingConventions.ValidFunctionName"/>
