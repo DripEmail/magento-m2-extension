@@ -12,7 +12,8 @@ class OrderItem
         $this->item = $item;
     }
 
-    public function getOrigStatusData() {
+    public function getOrigStatusData()
+    {
         return [
             'status' => $this->item->getOrigData('status'),
             'qty_backordered' => $this->item->getOrigData('qty_backordered'),
@@ -24,7 +25,8 @@ class OrderItem
         ];
     }
 
-    public function getLiveStatusData() {
+    public function getLiveStatusData()
+    {
         return [
             'status' => $this->item->getStatus(),
             'qty_backordered' => $this->item->getQtyBackordered(),
