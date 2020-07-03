@@ -3,3 +3,4 @@
   <description>Coding standard for Drip's Magento 2 plugin.</description>
 
   <rule ref="Magento2"></rule>
+</ruleset>
