@@ -5,7 +5,7 @@ matrix:
       php:
         - '7.2'
       env:
-        - MAGENTO_VERSION="2.3.2" MAGENTO_PATH="/home/travis/magento"
+        - MAGENTO_VERSION="2.3.5" MAGENTO_PATH="/home/travis/magento"
 
       # Plan: check out a copy of Magento into another directory and symlink the repo into it.
       install:
