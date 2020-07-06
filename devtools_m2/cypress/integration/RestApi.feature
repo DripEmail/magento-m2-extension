@@ -4,7 +4,7 @@ Feature: REST API Interactions
 
   Scenario: Authorized request for order details
     Given I am logged into the admin interface
-      And I have set up Drip via the API
+      And I have set up Drip via the API for 'main'
       And a customer exists for website 'main'
       And I have configured a simple widget for 'main'
     When I create an order for a 'simple' widget
@@ -12,13 +12,13 @@ Feature: REST API Interactions
 
   Scenario: Authorized request for product details
     Given I am logged into the admin interface
-      And I have set up Drip via the API
+      And I have set up Drip via the API for 'main'
       And I have configured a simple widget for 'main'
     Then an authorized product details request gives the correct response
 
   Scenario: Authorized request for cart details
     Given I am logged into the admin interface
-      And I have set up Drip via the API
+      And I have set up Drip via the API for 'main'
       And I have configured a simple widget for 'main'
       And I add a widget to my cart
     Then an authorized cart details request gives the correct response
@@ -43,15 +43,15 @@ Feature: REST API Interactions
 
   Scenario: Authorized request to remove integration token
     Given I am logged into the admin interface
-      And I have set up Drip via the API
+      And I have set up Drip via the API for 'main'
     Then an authorized delete integration request gives the correct response
 
   Scenario: Authorized request for status
     Given I am logged into the admin interface
-      And I have set up Drip via the API
+      And I have set up Drip via the API for 'main'
     Then an authorized status request gives the correct response
 
   Scenario: Unauthorized request for status
     Given I am logged into the admin interface
-      And I have set up Drip via the API
+      And I have set up Drip via the API for 'main'
     Then an unauthorized status request gives the correct response
