@@ -121,7 +121,7 @@ Then('an authorized status request gives the correct response', function(site) {
       const body = response.body
       expect(body["account_param"]).to.eq('123456')
       expect(body["integration_token"]).to.eq('abcdefg')
-      expect(body["magento_version"]).to.eq("2.3.2")
+      expect(body["magento_version"]).to.eq("2.3.5")
       expect(body["plugin_version"]).to.eq("1.8.6")
     })
   })

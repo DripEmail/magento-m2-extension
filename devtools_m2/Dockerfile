@@ -31,7 +31,7 @@ EXPOSE 80
 RUN mkdir -p /var/www/html/magento
 RUN chown -R www-data:www-data /var/www/html/magento
 USER www-data
-RUN git clone --depth 1 --branch 2.3.2 https://github.com/magento/magento2.git /var/www/html/magento
+RUN git clone --depth 1 --branch 2.3.5 https://github.com/magento/magento2.git /var/www/html/magento
 COPY nginx*conf.sample_patch /var/www/html/magento/nginx.conf.sample.patch
 RUN cd /var/www/html/magento && /usr/bin/patch < nginx.conf.sample.patch && rm nginx.conf.sample.patch && cd
 RUN cd /var/www/html/magento && composer install
