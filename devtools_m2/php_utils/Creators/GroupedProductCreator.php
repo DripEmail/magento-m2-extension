@@ -2,6 +2,9 @@
 
 namespace Drip\TestUtils\Creators;
 
+/**
+ * Create grouped product for tests
+ */
 class GroupedProductCreator
 {
     /** @var \Magento\Catalog\Api\ProductRepositoryInterface **/
@@ -31,17 +34,17 @@ class GroupedProductCreator
         unset($this->productData['associated']);
 
         $groupedProduct = $this->simpleProductCreatorFactory->create(['productData' => $this->productData])->build();
-        $groupedProduct->setStockData(array(
+        $groupedProduct->setStockData([
             'use_config_manage_stock' => 0, //'Use config settings' checkbox
             'manage_stock' => 1, //manage stock
             'is_in_stock' => 1, //Stock Availability
-        ));
+        ]);
         // This save mostly happens in order to keep the product creation in
         // the same order as the M1 test suite. This makes things more
         // consistent.
         $this->productRepository->save($groupedProduct);
 
-        $productLinks = array();
+        $productLinks = [];
 
         foreach ($associated as $simpleProductData) {
             $simpleProduct = $this->simpleProductCreatorFactory->create(['productData' => $simpleProductData])->build();

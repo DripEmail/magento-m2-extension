@@ -2,6 +2,9 @@
 
 namespace Drip\TestUtils\Creators;
 
+/**
+ * Create bundle product for tests.
+ */
 class BundleProductCreator
 {
     /** @var \Magento\Catalog\Api\ProductRepositoryInterface **/
@@ -36,35 +39,35 @@ class BundleProductCreator
         unset($this->productData['bundle_options']);
 
         $bundleProduct = $this->simpleProductCreatorFactory->create(['productData' => $this->productData])->build();
-        $bundleProduct->setStockData(array(
+        $bundleProduct->setStockData([
             'use_config_manage_stock' => 0, //'Use config settings' checkbox
             'manage_stock' => 1, //manage stock
             'is_in_stock' => 1, //Stock Availability
-        ));
+        ]);
 
         // Requires title
-        $defaultOptions = array(
+        $defaultOptions = [
             'delete' => '',
             'type' => 'select',
             'required' => '1'
-        );
+        ];
 
         $extOptions = [];
         foreach ($configuredBundleOptions as $option) {
             $productOptions = $option['product_options'];
             unset($option['product_options']);
 
-            $links = array();
+            $links = [];
             foreach ($productOptions as $productData) {
                 $simpleProduct = $this->simpleProductCreatorFactory->create(['productData' => $productData])->build();
                 $this->productRepository->save($simpleProduct);
-                $bundleSelection = array(
+                $bundleSelection = [
                     'product_id' => $simpleProduct->getId(),
                     'delete' => '',
                     'selection_price_value' => $simpleProduct->getPrice(),
                     'selection_qty' => 1,
                     'selection_can_change_qty' => 0
-                );
+                ];
 
                 /** @var \Magento\Bundle\Api\Data\LinkInterface $link */
                 $link = $this->bundleLinkFactory->create(['data' => $bundleSelection]);

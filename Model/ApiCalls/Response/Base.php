@@ -3,6 +3,9 @@ namespace Drip\Connect\Model\ApiCalls\Response;
 
 use \Drip\Connect\Model\Restapi\Response\ResponseInterface as RestapiResponseInterface;
 
+/**
+ * Response base
+ */
 class Base extends \Drip\Connect\Model\Restapi\Response\ResponseAbstract implements RestapiResponseInterface
 {
     /** @var array */

@@ -6,6 +6,9 @@ use Magento\Framework\Setup\InstallSchemaInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
 
+/**
+ * Install the schema
+ */
 class InstallSchema implements InstallSchemaInterface
 {
 

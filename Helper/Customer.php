@@ -85,12 +85,12 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     public function sendObserverCustomerEvent(
-      \Magento\Framework\Event\Observer $observer,
-      \Drip\Connect\Model\ConfigurationFactory $configFactory,
-      $action
+        \Magento\Framework\Event\Observer $observer,
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
+        $action
     ) {
         $customer = $observer->getCustomer();
-        if (is_null($customer)) {
+        if ($customer === null) {
             return;
         }
 
@@ -98,9 +98,9 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     public function sendCustomerEvent(
-      $customer, // maybe \Magento\Customer\Model\Data\Customer OR Magento\Customer\Model\Customer\Interceptor
-      \Drip\Connect\Model\ConfigurationFactory $configFactory,
-      $action
+        $customer, // maybe \Magento\Customer\Model\Data\Customer OR Magento\Customer\Model\Customer\Interceptor
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
+        $action
     ) {
         $storeId = $this->getCustomerStoreId($customer);
         $payload = [
@@ -109,17 +109,16 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         ];
 
         if ($customer->getId() !== null) {
-          $payload['customer_id'] = $customer->getId();
-        } else if ($customer->getEmail() !== null) {
-          $payload['email'] = $customer->getEmail();
+            $payload['customer_id'] = $customer->getId();
+        } elseif ($customer->getEmail() !== null) {
+            $payload['email'] = $customer->getEmail();
         } else {
-          return;
+            return;
         }
 
         $config = $configFactory->create($storeId);
         return $this->sendEvent($payload, $config);
     }
-
 
     /**
      * @param \Magento\Sales\Model\Order $order

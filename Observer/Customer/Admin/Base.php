@@ -26,6 +26,6 @@ abstract class Base extends \Drip\Connect\Observer\Base
         // When running from the admin, we need to do some more digging to determine whether we are active.
         $customer = $observer->getCustomer();
         $storeId = $this->customerHelper->getCustomerStoreId($customer);
-        return !is_null($this->configFactory->create($storeId)->getIntegrationToken());
+        return $this->configFactory->create($storeId)->getIntegrationToken() !== null;
     }
 }

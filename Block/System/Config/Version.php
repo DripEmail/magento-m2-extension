@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Block\System\Config;
 
+/**
+ * Plugin version block
+ */
 class Version extends \Magento\Config\Block\System\Config\Form\Field
 {
     /** @var \Magento\Framework\Module\ResourceInterface */

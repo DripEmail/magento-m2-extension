@@ -1,6 +1,9 @@
 <?php
 namespace Drip\Connect\Model\ApiCalls\Request;
 
+/**
+ * Request base class
+ */
 class Base implements \Drip\Connect\Model\Restapi\Request\RequestInterface
 {
     protected $parametersGet = [];

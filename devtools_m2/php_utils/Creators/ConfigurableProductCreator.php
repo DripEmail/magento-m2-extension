@@ -2,6 +2,9 @@
 
 namespace Drip\TestUtils\Creators;
 
+/**
+ * Create configurable product for tests.
+ */
 class ConfigurableProductCreator
 {
     /** @var \Magento\Catalog\Api\ProductRepositoryInterface **/
@@ -41,25 +44,27 @@ class ConfigurableProductCreator
         unset($this->productData['attributes']);
 
         $configProduct = $this->simpleProductCreatorFactory->create(['productData' => $this->productData])->build();
-        $configProduct->setStockData(array(
+        $configProduct->setStockData([
             'use_config_manage_stock' => 0, //'Use config settings' checkbox
             'manage_stock' => 1, //manage stock
             'is_in_stock' => 1, //Stock Availability
-        ));
+        ]);
 
-        $attributeIds = array();
-        $configurableAttributesData = array();
-        // $configurableProductsData = array();
-        $associatedProductIds = array();
+        $attributeIds = [];
+        $configurableAttributesData = [];
+        // $configurableProductsData = [];
+        $associatedProductIds = [];
 
         foreach ($attributes as $attrName => $attrValues) {
             $attribute = $this->buildAttribute($attrName, array_keys($attrValues));
             $attributeIds[] = $attribute->getId();
 
-            $attributeValues = array();
+            $attributeValues = [];
 
             foreach ($attrValues as $option => $simpleProductData) {
-                $simpleProduct = $this->simpleProductCreatorFactory->create(['productData' => $simpleProductData])->build();
+                $simpleProduct = $this->simpleProductCreatorFactory->create([
+                    'productData' => $simpleProductData,
+                ])->build();
                 $optionId = $attribute->setStoreId(0)->getSource()->getOptionId($option);
                 $simpleProduct->setData($attrName, $optionId);
                 $simpleProduct = $this->productRepository->save($simpleProduct);
@@ -72,15 +77,14 @@ class ConfigurableProductCreator
                 ];
             }
 
-            $configurableAttributesData[] = array(
+            $configurableAttributesData[] = [
                 'attribute_id' => $attribute->getId(),
                 'code' => $attribute->getAttributeCode(),
                 'label' => $attribute->getStoreLabel(),
                 'position' => '0',
                 'values' => $attributeValues,
-            );
+            ];
         }
-
 
         // All the documentation says not to use object manager. But not using object manager breaks in weird ways.
         // This is test harness code. I don't care.
@@ -104,7 +108,7 @@ class ConfigurableProductCreator
         /** @var \Magento\Eav\Setup\EavSetup $eavSetup */
         $eavSetup = $this->eavSetupFactory->create(['setup' => $this->setup]);
 
-        $eavSetup->addAttribute('catalog_product', $title, array(
+        $eavSetup->addAttribute('catalog_product', $title, [
             'group' => 'General',
             'label' => $title,
             'input' => 'select',
@@ -120,9 +124,9 @@ class ConfigurableProductCreator
             'user_defined' => 1,
             'is_configurable' => 0,
             'global' => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_GLOBAL,
-            'option' => array('values' => $options),
+            'option' => ['values' => $options],
             'note' => '',
-        ));
+        ]);
 
         $this->setup->endSetup();
 

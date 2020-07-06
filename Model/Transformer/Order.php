@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Model\Transformer;
 
+/**
+ * Order Transformer
+ */
 class Order
 {
     const FULFILLMENT_NO = 'not_fulfilled';
@@ -39,7 +42,6 @@ class Order
         \Magento\Catalog\Model\Product\Media\ConfigFactory $catalogProductMediaConfigFactory,
         \Magento\Newsletter\Model\SubscriberFactory $subscriberFactory,
         \Drip\Connect\Model\ApiCalls\Helper\SendEventPayloadFactory $connectApiCallsHelperSendEventPayloadFactory,
-
         \Magento\Sales\Model\Order $order,
         \Drip\Connect\Model\Configuration $config
     ) {
@@ -49,7 +51,6 @@ class Order
         $this->catalogProductMediaConfigFactory = $catalogProductMediaConfigFactory;
         $this->subscriberFactory = $subscriberFactory;
         $this->connectApiCallsHelperSendEventPayloadFactory = $connectApiCallsHelperSendEventPayloadFactory;
-
         $this->order = $order;
         $this->config = $config;
     }
@@ -153,9 +154,10 @@ class Order
      * simple check for valid stringage
      * @param  mixed $stuff
      * @return bool
-    */
-    private function isNotEmpty($stuff) {
-        return !empty(trim($stuff));
+     */
+    private function isNotEmpty($stuff)
+    {
+        return !empty(trim((string) $stuff));
     }
 
     /**
@@ -172,17 +174,16 @@ class Order
          *
          * person_id is never used in the plugin, so we don't need to worry about the conditional
         */
-        $foundOrderId = $this->isNotEmpty((string) $this->order->getIncrementId());
-        $foundProvider = $this->isNotEmpty((string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::PROVIDER_NAME);
+        $foundOrderId = $this->isNotEmpty($this->order->getIncrementId());
+        $foundProvider = $this->isNotEmpty(\Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::PROVIDER_NAME);
         $validEmail = $this->connectHelper->isEmailValid($this->order->getCustomerEmail());
-        $foundActions = $this->isNotEmpty((string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_CANCEL) &&
-        $this->isNotEmpty((string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_CHANGE) &&
-        $this->isNotEmpty((string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_FULFILL) &&
-        $this->isNotEmpty((string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_NEW) &&
-        $this->isNotEmpty((string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_REFUND);
+        $foundActions = $this->isNotEmpty(\Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_CANCEL) &&
+        $this->isNotEmpty(\Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_CHANGE) &&
+        $this->isNotEmpty(\Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_FULFILL) &&
+        $this->isNotEmpty(\Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_NEW) &&
+        $this->isNotEmpty(\Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_REFUND);
         return $foundOrderId && $foundProvider && $foundActions && $validEmail;
     }
-
 
     public function proceedOrderNew()
     {
@@ -191,7 +192,7 @@ class Order
         $caller = $this->connectApiCallsHelperSendEventPayloadFactory->create([
             'config' => $this->config,
             'payload' => $orderData,
-        ])->call();;
+        ])->call();
     }
 
     public function proceedOrderCompleted()

@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Model\ApiCalls\Helper;
 
+/**
+ * Create or update a quote
+ */
 class CreateUpdateQuote extends \Drip\Connect\Model\ApiCalls\Helper
 {
     const PROVIDER_NAME = 'magento';

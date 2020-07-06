@@ -6,6 +6,9 @@ use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Customer\Model\Customer;
 
+/**
+ * Upgrade data during version updates.
+ */
 class UpgradeData implements \Magento\Framework\Setup\UpgradeDataInterface
 {
     /** @var \Magento\Framework\Setup\ModuleDataSetupInterface */

@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Model\ApiCalls\Helper;
 
+/**
+ * Create or update product
+ */
 class CreateUpdateProduct extends \Drip\Connect\Model\ApiCalls\Helper
 {
     const PRODUCT_NEW = 'created';

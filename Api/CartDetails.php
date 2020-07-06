@@ -1,6 +1,9 @@
 <?php
 namespace Drip\Connect\Api;
 
+/**
+ * API for additional details related to carts.
+ */
 class CartDetails
 {
     /** @var \Magento\Quote\Api\CartRepositoryInterface */

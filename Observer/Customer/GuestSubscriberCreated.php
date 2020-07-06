@@ -40,7 +40,7 @@ class GuestSubscriberCreated extends \Drip\Connect\Observer\Base
         $config = $this->configFactory->createForCurrentScope();
         $customer = $this->customerHelper->getCustomerByEmail($email, $config);
 
-        if (is_null($customer)) {
+        if ($customer === null) {
             return;
         }
 
