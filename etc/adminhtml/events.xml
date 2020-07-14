@@ -18,24 +18,4 @@
             instance="Drip\Connect\Observer\Customer\SubscriberAfterSave"
             disabled="false" />
     </event>
-    <event name="catalog_product_save_before">
-        <observer
-            name="drip_connect_catalog_product_save_before"
-            instance="Drip\Connect\Observer\Product\SaveBefore" />
-    </event>
-    <event name="catalog_product_save_after">
-        <observer
-            name="drip_connect_catalog_product_save_after"
-            instance="Drip\Connect\Observer\Product\SaveAfter" />
-    </event>
-    <event name="catalog_product_delete_before">
-        <observer
-            name="drip_connect_catalog_product_delete_before"
-            instance="Drip\Connect\Observer\Product\DeleteBefore" />
-    </event>
-    <event name="catalog_product_delete_commit_after">
-        <observer
-            name="drip_connect_catalog_product_delete_commit_after"
-            instance="Drip\Connect\Observer\Product\DeleteAfter" />
-    </event>
 </config>

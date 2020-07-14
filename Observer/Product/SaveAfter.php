@@ -47,8 +47,6 @@ class SaveAfter extends \Drip\Connect\Observer\Base
      */
     public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)
     {
-        file_put_contents("/tmp/blah", "random string");
-        var_dump("BLAH"); exit;
         $product = $observer->getProduct();
 
         if (! $product->getId()) {
@@ -66,7 +64,6 @@ class SaveAfter extends \Drip\Connect\Observer\Base
 
         if ($this->registry->registry(\Drip\Connect\Helper\Product::REGISTRY_KEY_IS_NEW)) {
             $action = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateProduct::PRODUCT_NEW;
-            $this->productHelper->proceedProductNew($product, $config);
         } else {
             $action = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateProduct::PRODUCT_CHANGED;
         }
