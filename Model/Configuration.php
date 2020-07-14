@@ -63,11 +63,6 @@ class Configuration
         }
     }
 
-    public function getStoreId()
-    {
-        return $this->storeId;
-    }
-
     public function getWebsiteId()
     {
         return $this->websiteId;

@@ -45,8 +45,6 @@ class Base extends \Drip\Connect\Model\Restapi\RestapiAbstract
 
         $this->storeManager = $storeManager;
 
-        $this->setStoreId($config->getStoreId());
-
         $this->connectHttpClientFactory = $connectHttpClientFactory;
         $this->_responseModel = \Drip\Connect\Model\ApiCalls\Response\Base::class;
 
