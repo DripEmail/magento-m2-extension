@@ -37,7 +37,6 @@ class AfterSave extends \Drip\Connect\Observer\Base
      */
     public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)
     {
-        var_dump("BLAH"); exit;
         $event = $observer->getEvent();
         $order = $event->getOrder();
 
