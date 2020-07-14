@@ -35,6 +35,10 @@ class DeleteAfter extends \Drip\Connect\Observer\Base
 
         $config = $this->configFactory->createForCurrentScope();
 
-        $this->productHelper->proceedProductDelete($product, $config);
+        $this->productHelper->sendEvent(
+            $product,
+            $config,
+            \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateProduct::PRODUCT_DELETED
+        );
     }
 }

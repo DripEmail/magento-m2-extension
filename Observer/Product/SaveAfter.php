@@ -47,6 +47,8 @@ class SaveAfter extends \Drip\Connect\Observer\Base
      */
     public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)
     {
+        file_put_contents("/tmp/blah", "random string");
+        var_dump("BLAH"); exit;
         $product = $observer->getProduct();
 
         if (! $product->getId()) {
@@ -63,30 +65,36 @@ class SaveAfter extends \Drip\Connect\Observer\Base
         );
 
         if ($this->registry->registry(\Drip\Connect\Helper\Product::REGISTRY_KEY_IS_NEW)) {
+            $action = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateProduct::PRODUCT_NEW;
             $this->productHelper->proceedProductNew($product, $config);
         } else {
-            if ($this->isProductChanged($product)) {
-                $this->productHelper->proceedProduct($product, $config);
-            }
+            $action = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateProduct::PRODUCT_CHANGED;
         }
+
+        $this->productHelper->sendEvent(
+            $product,
+            $config,
+            $action
+        );
+
         $this->registry->unregister(\Drip\Connect\Helper\Product::REGISTRY_KEY_IS_NEW);
         $this->registry->unregister(\Drip\Connect\Helper\Product::REGISTRY_KEY_OLD_DATA);
     }
 
-    /**
-     * compare orig and new data
-     *
-     * @param \Magento\Catalog\Model\Product $product
-     *
-     * @return bool
-     */
-    protected function isProductChanged($product)
-    {
-        $oldData = $this->registry->registry(\Drip\Connect\Helper\Product::REGISTRY_KEY_OLD_DATA);
-        unset($oldData['occurred_at']);
-        $newData = $this->productHelper->prepareData($product);
-        unset($newData['occurred_at']);
+    // /**
+    //  * compare orig and new data
+    //  *
+    //  * @param \Magento\Catalog\Model\Product $product
+    //  *
+    //  * @return bool
+    //  */
+    // protected function isProductChanged($product)
+    // {
+    //     $oldData = $this->registry->registry(\Drip\Connect\Helper\Product::REGISTRY_KEY_OLD_DATA);
+    //     unset($oldData['occurred_at']);
+    //     $newData = $this->productHelper->prepareData($product);
+    //     unset($newData['occurred_at']);
 
-        return ($this->json->serialize($oldData) != $this->json->serialize($newData));
-    }
+    //     return ($this->json->serialize($oldData) != $this->json->serialize($newData));
+    // }
 }

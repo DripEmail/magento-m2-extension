@@ -18,11 +18,6 @@
             instance="Drip\Connect\Observer\Customer\SubscriberAfterSave"
             disabled="false" />
     </event>
-    <!--
-    This is very broken for configurable products, and we don't have a good way
-    of fixing this in the short term. Disable it in order to not make a mess of
-    data while we work on it. Product data will still be sent as part of order
-    and cart events.
     <event name="catalog_product_save_before">
         <observer
             name="drip_connect_catalog_product_save_before"
@@ -43,5 +38,4 @@
             name="drip_connect_catalog_product_delete_commit_after"
             instance="Drip\Connect\Observer\Product\DeleteAfter" />
     </event>
-    -->
 </config>
