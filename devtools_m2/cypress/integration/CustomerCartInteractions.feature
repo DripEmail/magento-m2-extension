@@ -2,9 +2,10 @@ Feature: Customer Cart Interactions
 
   I want to send cart and order events to Drip when a customer interacts with their cart.
 
+  @ focus
   Scenario: A customer adds a simple product to their cart
     Given I am logged into the admin interface
-      And I have set up Drip via the API
+      And I have set up Drip via the API for 'main'
     Given I have configured a simple widget for 'main'
     When I open the 'main' homepage
       And I create an account
@@ -15,7 +16,7 @@ Feature: Customer Cart Interactions
 
   Scenario: A customer adds a simple product to their cart, and checks out as a guest.
     Given I am logged into the admin interface
-      And I have set up Drip via the API
+      And I have set up Drip via the API for 'main'
       And I have configured a simple widget for 'main'
     When I open the 'main' homepage
       And I logout

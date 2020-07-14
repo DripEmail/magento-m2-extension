@@ -25,6 +25,7 @@ abstract class Base implements \Magento\Framework\Event\ObserverInterface
 
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
+        file_put_contents("/tmp/log_observer", get_class($this), FILE_APPEND);
         if (!$this->isActive($observer)) {
             return;
         }
