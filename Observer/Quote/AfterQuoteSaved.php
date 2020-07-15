@@ -28,7 +28,6 @@ class AfterQuoteSaved extends \Drip\Connect\Observer\Base
 
     public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)
     {
-        var_dump("BEHBEHBE"); exit;
         $config = $this->configFactory->createForCurrentScope();
         $quote = $observer->getEvent()->getQuote();
 

@@ -38,14 +38,24 @@ When('I delete the simple widget', function() {
   cy.contains('A total of 1 record(s) have been deleted.')
 })
 
+When('previous product webhooks have already fired', function() {
+  cy.wrap(Mockclient.clear({
+    path: "/123456/integrations/abcdefg/events",
+    body: {
+      "type": "JSON_PATH",
+      "jsonPath": "$[?(@.product_id)]"
+    }
+  }))
+})
+
 Then('a product {string} event is sent to the WIS', function(action) {
   cy.log('Validating that the product call has everything we need')
   cy.wrap(Mockclient.retrieveRecordedRequests({
-    // path: "/123456/integrations/abcdefg/events",
-    // body: {
-    //   "type": "JSON_PATH",
-    //   "jsonPath": "$[?(@.product_id)]"
-    // }
+    path: "/123456/integrations/abcdefg/events",
+    body: {
+      "type": "JSON_PATH",
+      "jsonPath": "$[?(@.product_id)]"
+    }
   })).then(function(recordedRequests) {
     expect(recordedRequests).to.have.lengthOf(1)
     const body = JSON.parse(recordedRequests[0].body.string)
