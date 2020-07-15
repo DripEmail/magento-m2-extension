@@ -21,7 +21,8 @@
             <!-- identify Drip customer -->
             <script type="text/javascript">
             _dcq.push(["identify", {
-                email: "<?= $block->getCustomerEmail()?>"
+                email: "<?= $block->getCustomerEmail()?>",
+                drip_unknown_status: true
             }]);
             </script>
             <!-- end identify -->
