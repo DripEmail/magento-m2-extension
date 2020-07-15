@@ -8,9 +8,9 @@ Feature: Customer Subscription Interactions
       And I have set up Drip via the API for 'main'
     When I open the 'main' homepage
       And I create a 'subscribed' account
-    Then A 'customer.updated' event should be sent to the WIS
+    Then A 'updated' event should be sent to the WIS
     When I 'unsubscribe' from the general newsletter
-    Then A 'customer.updated' event should be sent to the WIS
+    Then A 'updated' event should be sent to the WIS
 
   Scenario: A customer creates an unsubscribed account and then subscribes
     Given I am logged into the admin interface
@@ -18,9 +18,9 @@ Feature: Customer Subscription Interactions
       And I have set up Drip via the API for 'main'
     When I open the 'main' homepage
       And I create a 'unsubscribed' account
-    Then A 'customer.updated' event should be sent to the WIS
+    Then A 'updated' event should be sent to the WIS
     When I 'subscribe' from the general newsletter
-    Then A 'customer.updated' event should be sent to the WIS
+    Then A 'updated' event should be sent to the WIS
 
   # TODO: Understand why this fails
   #Scenario: A customer creates a subscribed account, unsubscribes, and then resubscribes
@@ -31,7 +31,7 @@ Feature: Customer Subscription Interactions
   #    And I create a 'subscribed' account
   #    And I 'unsubscribe' from the general newsletter
   #  When I subscribe on the homepage
-  #  Then A 'customer.updated' event should be sent to the WIS
+  #  Then A 'updated' event should be sent to the WIS
 
   Scenario: A customer creates a subscribed account and then unsubscribes when not configured for Drip
     Given I am logged into the admin interface
