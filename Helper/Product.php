@@ -82,7 +82,7 @@ class Product extends \Magento\Framework\App\Helper\AbstractHelper
 
     /**
      * Send product created, updated, deleted events to WIS
-     * 
+     *
      * @param \Magento\Catalog\Model\Product $product
      * @param \Drip\Connect\Model\Configuration $config
      * @param string $action
