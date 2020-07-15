@@ -27,7 +27,7 @@ class Login extends \Drip\Connect\Observer\Base
         return $this->customerHelper->sendObserverCustomerEvent(
             $observer,
             $this->configFactory,
-            'customer.login'
+            Drip\Connect\Helper\Customer::LOGIN_ACTION
         );
     }
 }
