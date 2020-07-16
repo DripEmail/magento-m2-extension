@@ -7,6 +7,11 @@ namespace Drip\Connect\Helper;
  */
 class Customer extends \Magento\Framework\App\Helper\AbstractHelper
 {
+    const LOGIN_ACTION = 'login';
+    const CREATED_ACTION = 'created';
+    const UPDATED_ACTION = 'updated';
+    const DELETED_ACTION = 'deleted';
+
     /** @var \Drip\Connect\Logger\Logger */
     protected $logger;
 
