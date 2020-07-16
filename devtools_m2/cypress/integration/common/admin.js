@@ -14,13 +14,23 @@ When('I have set up Drip via the API for {string}', function(site) {
     method: "POST",
     body: {"username":"admin", "password":"abc1234567890"}
   }).then((token_response) => {
+    let requestBody = {
+      "accountParam":"123456",
+      "integrationToken": "abcdefg",
+      "testMode": "1"
+    }
+
+    if (site !== 'default') {
+      requestBody["websiteId"] = mapFrontendWebsiteId(site)
+    }
+
     cy.request({
       url: "http://main.magento.localhost:3006/rest/V1/drip/integration",
       method: "POST",
       auth: {
         bearer: token_response.body
       },
-      body: {"websiteId":mapFrontendWebsiteId(site), "accountParam":"123456", "integrationToken": "abcdefg", "testMode": "1"}
+      body: requestBody
     })
   })
 })
