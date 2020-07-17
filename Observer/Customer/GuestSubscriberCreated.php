@@ -47,7 +47,7 @@ class GuestSubscriberCreated extends \Drip\Connect\Observer\Base
         return $this->customerHelper->sendCustomerEvent(
             $customer,
             $this->configFactory,
-            Drip\Connect\Helper\Customer::CREATED_ACTION
+            \Drip\Connect\Helper\Customer::CREATED_ACTION
         );
     }
 }
