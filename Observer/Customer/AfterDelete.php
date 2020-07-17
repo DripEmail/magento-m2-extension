@@ -27,7 +27,7 @@ class AfterDelete extends \Drip\Connect\Observer\Base
         return $this->customerHelper->sendObserverCustomerEvent(
             $observer,
             $this->configFactory,
-            Drip\Connect\Helper\Customer::DELETED_ACTION
+            \Drip\Connect\Helper\Customer::DELETED_ACTION
         );
     }
 }
