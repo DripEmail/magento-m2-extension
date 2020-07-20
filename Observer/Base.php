@@ -58,7 +58,7 @@ abstract class Base implements \Magento\Framework\Event\ObserverInterface
             $config = $this->configFactory->createFromWebsiteId($website->getId());
 
             if ($config->getIntegrationToken() !== null) {
-               $active = true;
+                $active = true;
             }
         }
         return $active;
