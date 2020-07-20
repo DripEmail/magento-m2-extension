@@ -19,11 +19,12 @@ class AfterQuoteSaved extends \Drip\Connect\Observer\Base
         \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Drip\Connect\Logger\Logger $logger,
         \Drip\Connect\Helper\Quote $connectQuoteHelper,
-        \Magento\Framework\Registry $registry
+        \Magento\Framework\Registry $registry,
+        \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
         $this->connectQuoteHelper = $connectQuoteHelper;
         $this->registry = $registry;
-        parent::__construct($configFactory, $logger);
+        parent::__construct($configFactory, $logger, $storeManager);
     }
 
     public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)

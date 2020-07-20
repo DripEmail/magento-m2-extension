@@ -20,9 +20,10 @@ class BeforeSave extends \Drip\Connect\Observer\Base
         \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Drip\Connect\Logger\Logger $logger,
         \Drip\Connect\Model\Transformer\OrderItemFactory $orderItemTransformerFactory,
-        \Magento\Framework\Registry $registry
+        \Magento\Framework\Registry $registry,
+        \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
-        parent::__construct($configFactory, $logger);
+        parent::__construct($configFactory, $logger, $storeManager);
         $this->registry = $registry;
         $this->orderItemTransformerFactory = $orderItemTransformerFactory;
     }
