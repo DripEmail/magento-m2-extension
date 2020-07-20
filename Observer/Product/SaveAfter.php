@@ -57,31 +57,31 @@ class SaveAfter extends \Drip\Connect\Observer\Base
         $websiteIds = $product->getWebsiteIds();
 
         foreach ($websiteIds as $websiteId) {
-          $config = $this->configFactory->createFromWebsiteId($websiteId);
+	          $config = $this->configFactory->createFromWebsiteId($websiteId);
 
-          if ($config->getIntegrationToken()) {
-            $product = $this->productRepository->getById(
-                $product->getId(),
-                false,
-                $this->connectHelper->getAdminEditStoreId(),
-                true
-            );
+	          if ($config->getIntegrationToken()) {
+	            $product = $this->productRepository->getById(
+	                $product->getId(),
+	                false,
+	                $this->connectHelper->getAdminEditStoreId(),
+	                true
+	            );
 
-            if ($this->registry->registry(\Drip\Connect\Helper\Product::REGISTRY_KEY_IS_NEW)) {
-                $action = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateProduct::PRODUCT_NEW;
-            } else {
-                $action = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateProduct::PRODUCT_CHANGED;
-            }
+	            if ($this->registry->registry(\Drip\Connect\Helper\Product::REGISTRY_KEY_IS_NEW)) {
+	                $action = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateProduct::PRODUCT_NEW;
+	            } else {
+	                $action = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateProduct::PRODUCT_CHANGED;
+	            }
 
-            $this->productHelper->sendEvent(
-                $product,
-                $config,
-                $action
-            );
+	            $this->productHelper->sendEvent(
+	                $product,
+	                $config,
+	                $action
+	            );
 
-            $this->registry->unregister(\Drip\Connect\Helper\Product::REGISTRY_KEY_IS_NEW);
-            $this->registry->unregister(\Drip\Connect\Helper\Product::REGISTRY_KEY_OLD_DATA);
-          }
+	            $this->registry->unregister(\Drip\Connect\Helper\Product::REGISTRY_KEY_IS_NEW);
+	            $this->registry->unregister(\Drip\Connect\Helper\Product::REGISTRY_KEY_OLD_DATA);
+	          }
         }
     }
 

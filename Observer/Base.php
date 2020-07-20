@@ -52,15 +52,15 @@ abstract class Base implements \Magento\Framework\Event\ObserverInterface
      */
     protected function isActive(\Magento\Framework\Event\Observer $observer)
     {
-      $websites = $this->storeManager->getWebsites();
+	      $websites = $this->storeManager->getWebsites();
 
-      foreach ($websites as $website) {
-        $config = $this->configFactory->createFromWebsiteId($website->getId());
+	      foreach ($websites as $website) {
+	        $config = $this->configFactory->createFromWebsiteId($website->getId());
 
-        if ($config->getIntegrationToken() !== null) {
-          $active = true;
-        }
-      }
-      return $active;
+	        if ($config->getIntegrationToken() !== null) {
+	          $active = true;
+	        }
+	      }
+	      return $active;
     }
 }
