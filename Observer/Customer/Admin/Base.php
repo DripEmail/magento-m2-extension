@@ -14,9 +14,10 @@ abstract class Base extends \Drip\Connect\Observer\Base
         \Magento\Customer\Model\CustomerFactory $customerCustomerFactory,
         \Drip\Connect\Helper\Customer $customerHelper,
         \Drip\Connect\Model\ConfigurationFactory $configFactory,
-        \Drip\Connect\Logger\Logger $logger
+        \Drip\Connect\Logger\Logger $logger,
+        \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
-        parent::__construct($configFactory, $logger);
+        parent::__construct($configFactory, $logger, $storeManager);
         $this->customerCustomerFactory = $customerCustomerFactory;
         $this->customerHelper = $customerHelper;
     }

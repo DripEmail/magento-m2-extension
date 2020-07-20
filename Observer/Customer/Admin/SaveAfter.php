@@ -14,9 +14,10 @@ class SaveAfter extends \Drip\Connect\Observer\Customer\Admin\Base
         \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Drip\Connect\Helper\Customer $customerHelper,
         \Drip\Connect\Logger\Logger $logger,
-        \Magento\Customer\Model\CustomerFactory $customerCustomerFactory
+        \Magento\Customer\Model\CustomerFactory $customerCustomerFactory,
+        \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
-        parent::__construct($customerCustomerFactory, $customerHelper, $configFactory, $logger);
+        parent::__construct($customerCustomerFactory, $customerHelper, $configFactory, $logger, $storeManager);
     }
 
     /**

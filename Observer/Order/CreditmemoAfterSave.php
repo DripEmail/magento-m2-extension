@@ -32,9 +32,10 @@ class CreditmemoAfterSave extends \Drip\Connect\Observer\Base
         \Drip\Connect\Model\Transformer\OrderFactory $orderTransformerFactory,
         \Magento\Sales\Api\Data\OrderInterface $order,
         \Drip\Connect\Helper\Customer $customerHelper,
-        \Magento\Framework\Registry $registry
+        \Magento\Framework\Registry $registry,
+        \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
-        parent::__construct($configFactory, $logger);
+        parent::__construct($configFactory, $logger, $storeManager);
         $this->connectHelper = $connectHelper;
         $this->registry = $registry;
         $this->orderTransformerFactory = $orderTransformerFactory;

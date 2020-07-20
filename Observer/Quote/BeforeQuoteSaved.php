@@ -13,10 +13,11 @@ class BeforeQuoteSaved extends \Drip\Connect\Observer\Base
     public function __construct(
         \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Drip\Connect\Logger\Logger $logger,
-        \Magento\Framework\Registry $registry
+        \Magento\Framework\Registry $registry,
+        \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
         $this->registry = $registry;
-        parent::__construct($configFactory, $logger);
+        parent::__construct($configFactory, $logger, $storeManager);
     }
 
     public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)
