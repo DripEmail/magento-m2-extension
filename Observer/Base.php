@@ -13,12 +13,17 @@ abstract class Base implements \Magento\Framework\Event\ObserverInterface
     /** @var \Drip\Connect\Logger\Logger */
     protected $logger;
 
+    /** @var \Magento\Store\Model\StoreManagerInterface */
+    protected $storeManager;
+
     public function __construct(
         \Drip\Connect\Model\ConfigurationFactory $configFactory,
-        \Drip\Connect\Logger\Logger $logger
+        \Drip\Connect\Logger\Logger $logger,
+        \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
         $this->configFactory = $configFactory;
         $this->logger = $logger;
+        $this->storeManager = $storeManager;
     }
 
     abstract protected function executeWhenEnabled(\Magento\Framework\Event\Observer $observer);
@@ -41,14 +46,21 @@ abstract class Base implements \Magento\Framework\Event\ObserverInterface
     }
 
     /**
-     * Override when you have a more specific concept of active than just the
-     * current scope.
      *
      * @param \Magento\Framework\Event\Observer $observer
      * @return bool
      */
     protected function isActive(\Magento\Framework\Event\Observer $observer)
     {
-        return $this->configFactory->createForCurrentScope()->getIntegrationToken() !== null;
+      $websites = $this->storeManager->getWebsites();
+
+      foreach ($websites as $website) {
+        $config = $this->configFactory->createFromWebsiteId($website->getId());
+
+        if ($config->getIntegrationToken() !== null) {
+          $active = true;
+        }
+      }
+      return $active;
     }
 }
