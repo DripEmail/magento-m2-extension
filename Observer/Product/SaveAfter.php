@@ -32,14 +32,15 @@ class SaveAfter extends \Drip\Connect\Observer\Base
         \Drip\Connect\Helper\Data $connectHelper,
         \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Magento\Framework\Serialize\Serializer\Json $json,
-        \Magento\Framework\Registry $registry
+        \Magento\Framework\Registry $registry,
+        \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
         $this->productRepository = $productRepository;
         $this->productHelper = $productHelper;
         $this->connectHelper = $connectHelper;
         $this->registry = $registry;
         $this->json = $json;
-        parent::__construct($configFactory, $logger);
+        parent::__construct($configFactory, $logger, $storeManager);
     }
 
     /**
@@ -53,29 +54,35 @@ class SaveAfter extends \Drip\Connect\Observer\Base
             return;
         }
 
-        $config = $this->configFactory->createForCurrentScope();
+        $websiteIds = $product->getWebsiteIds();
 
-        $product = $this->productRepository->getById(
-            $product->getId(),
-            false,
-            $this->connectHelper->getAdminEditStoreId(),
-            true
-        );
+        foreach ($websiteIds as $websiteId) {
+          $config = $this->configFactory->createFromWebsiteId($websiteId);
 
-        if ($this->registry->registry(\Drip\Connect\Helper\Product::REGISTRY_KEY_IS_NEW)) {
-            $action = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateProduct::PRODUCT_NEW;
-        } else {
-            $action = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateProduct::PRODUCT_CHANGED;
+          if ($config->getIntegrationToken()) {
+            $product = $this->productRepository->getById(
+                $product->getId(),
+                false,
+                $this->connectHelper->getAdminEditStoreId(),
+                true
+            );
+
+            if ($this->registry->registry(\Drip\Connect\Helper\Product::REGISTRY_KEY_IS_NEW)) {
+                $action = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateProduct::PRODUCT_NEW;
+            } else {
+                $action = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateProduct::PRODUCT_CHANGED;
+            }
+
+            $this->productHelper->sendEvent(
+                $product,
+                $config,
+                $action
+            );
+
+            $this->registry->unregister(\Drip\Connect\Helper\Product::REGISTRY_KEY_IS_NEW);
+            $this->registry->unregister(\Drip\Connect\Helper\Product::REGISTRY_KEY_OLD_DATA);
+          }
         }
-
-        $this->productHelper->sendEvent(
-            $product,
-            $config,
-            $action
-        );
-
-        $this->registry->unregister(\Drip\Connect\Helper\Product::REGISTRY_KEY_IS_NEW);
-        $this->registry->unregister(\Drip\Connect\Helper\Product::REGISTRY_KEY_OLD_DATA);
     }
 
     // /**
