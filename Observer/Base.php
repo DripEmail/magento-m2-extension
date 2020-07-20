@@ -55,11 +55,11 @@ abstract class Base implements \Magento\Framework\Event\ObserverInterface
         $websites = $this->storeManager->getWebsites();
 
         foreach ($websites as $website) {
-          $config = $this->configFactory->createFromWebsiteId($website->getId());
+            $config = $this->configFactory->createFromWebsiteId($website->getId());
 
-          if ($config->getIntegrationToken() !== null) {
-            $active = true;
-          }
+            if ($config->getIntegrationToken() !== null) {
+               $active = true;
+            }
         }
         return $active;
     }
