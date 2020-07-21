@@ -13,9 +13,10 @@ class SubscriberAfterDelete extends \Drip\Connect\Observer\Base
     public function __construct(
         \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Drip\Connect\Logger\Logger $logger,
-        \Drip\Connect\Helper\Customer $customerHelper
+        \Drip\Connect\Helper\Customer $customerHelper,
+        \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
-        parent::__construct($configFactory, $logger);
+        parent::__construct($configFactory, $logger, $storeManager);
         $this->customerHelper = $customerHelper;
     }
     /**

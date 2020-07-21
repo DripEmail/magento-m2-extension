@@ -19,7 +19,7 @@ Then('an identify call is made to Drip', function() {
   cy.log('Validating that an identify call was made')
   cy.get('script').then((scriptTags) => {
     const identifyTags = scriptTags.toArray().filter(function(tag) {
-      return tag.src.match(/https:\/\/api.getdrip.com\/client\/identify\?time_zone=[a-zA-Z0-9_%]+&visitor_uuid=\w+&email=testuser%40example.com&drip_account_id=123456&callback=/)
+      return tag.src.match(/https:\/\/api.getdrip.com\/client\/identify\?time_zone=[a-zA-Z0-9_%]+&visitor_uuid=\w+&email=testuser%40example.com&drip_unknown_status=true&drip_account_id=123456&callback=/)
     })
     expect(identifyTags).to.not.be.empty
   })

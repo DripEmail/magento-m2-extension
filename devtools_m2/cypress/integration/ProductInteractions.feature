@@ -23,6 +23,14 @@ Feature: Product Interactions
     When I update the simple widget
     Then a product 'updated' event is sent to the WIS
 
+  Scenario: An admin updates a simple product in a non-default site
+    Given I am logged into the admin interface
+      And I have set up Drip via the API for 'main'
+      And I have configured a simple widget for 'main'
+      And previous product webhooks have already fired
+    When I update the simple widget
+    Then a product 'updated' event is sent to the WIS
+
   Scenario: An admin deletes a simple product
     Given I am logged into the admin interface
       And I have set up Drip via the API for 'default'

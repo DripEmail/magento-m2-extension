@@ -6,7 +6,11 @@ const Mockclient = mockServerClient("localhost", 1080);
 Then('an order event is sent to Drip for the {string} widget', function(widgetType) {
   cy.log('Validating that the order call has everything we need')
   cy.wrap(Mockclient.retrieveRecordedRequests({
-    path: "/123456/integrations/abcdefg/events"
+    path: "/123456/integrations/abcdefg/events",
+    body: {
+      "type": "JSON_PATH",
+      "jsonPath": "$[?(@.order_id)]"
+    }
   })).then(function(recordedRequests) {
     expect(recordedRequests).to.have.lengthOf(1)
     const body = JSON.parse(recordedRequests[0].body.string)
