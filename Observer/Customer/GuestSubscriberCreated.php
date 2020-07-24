@@ -13,6 +13,9 @@ class GuestSubscriberCreated extends \Drip\Connect\Observer\Base
     /** @var \Magento\Framework\App\Request\Http */
     protected $request;
 
+    /** @var \Magento\Newsletter\Model\SubscriberFactory */
+    protected $subscriberFactory;
+
     /**
      * constructor
      */
@@ -21,11 +24,13 @@ class GuestSubscriberCreated extends \Drip\Connect\Observer\Base
         \Drip\Connect\Logger\Logger $logger,
         \Drip\Connect\Helper\Customer $customerHelper,
         \Magento\Framework\App\Request\Http $request,
+        \Magento\Newsletter\Model\SubscriberFactory $subscriberFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
         parent::__construct($configFactory, $logger, $storeManager);
         $this->request = $request;
         $this->customerHelper = $customerHelper;
+        $this->subscriberFactory = $subscriberFactory;
     }
 
     /**
@@ -39,16 +44,13 @@ class GuestSubscriberCreated extends \Drip\Connect\Observer\Base
     {
         $email = $this->request->getParam('email');
         $config = $this->configFactory->createForCurrentScope();
-        $customer = $this->customerHelper->getCustomerByEmail($email, $config);
 
-        if ($customer === null) {
-            return;
-        }
+        $subscriber = $this->subscriberFactory->create()->loadByEmail($email);
+        $newSubscriberSubscribed = $subscriber->isSubscribed();
 
-        return $this->customerHelper->sendCustomerEvent(
-            $customer,
-            $this->configFactory,
-            \Drip\Connect\Helper\Customer::CREATED_ACTION
+        return $this->customerHelper->sendSubscriberEvent(
+            $subscriber,
+            $config
         );
     }
 }
