@@ -42,7 +42,7 @@ class AfterSave extends \Drip\Connect\Observer\Subscriber\Base
             $subscriber,
             \Drip\Connect\Helper\Customer::UPDATED_ACTION,
             $this->registry->registry(self::SUBSCRIBER_INITIAL_STATUS_KEY),
-            $config,
+            $config
         );
     }
 }

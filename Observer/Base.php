@@ -46,7 +46,9 @@ abstract class Base implements \Magento\Framework\Event\ObserverInterface
     }
 
     /**
-     * Base activity on current scope. You need to override this when dealing with ORM observers since they might be called from the admin UI.
+     * Base activity on current scope.
+     *
+     * You need to override this when dealing with ORM observers since they might be called from the admin UI.
      *
      * @param \Magento\Framework\Event\Observer $observer
      * @return bool

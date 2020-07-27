@@ -37,7 +37,7 @@ class AfterDelete extends \Drip\Connect\Observer\Subscriber\Base
             $subscriber,
             \Drip\Connect\Helper\Customer::DELETED_ACTION,
             null,
-            $config,
+            $config
         );
     }
 }
