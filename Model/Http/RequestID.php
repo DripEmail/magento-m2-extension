@@ -9,7 +9,8 @@ class RequestID
     /** @var \Magento\Framework\Registry */
     protected $registry;
 
-    public function __construct(\Magento\Framework\Registry $registry) {
+    public function __construct(\Magento\Framework\Registry $registry)
+    {
         $this->registry = $registry;
     }
 
