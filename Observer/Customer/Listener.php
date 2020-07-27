@@ -7,6 +7,19 @@ namespace Drip\Connect\Observer\Customer;
  */
 class Listener extends \Drip\Connect\Observer\Base
 {
+    /** @var \Drip\Connect\Helper\Customer */
+    protected $customerHelper;
+
+    public function __construct(
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
+        \Drip\Connect\Logger\Logger $logger,
+        \Drip\Connect\Helper\Customer $customerHelper,
+        \Magento\Store\Model\StoreManagerInterface $storeManager
+    ) {
+        parent::__construct($configFactory, $logger, $storeManager);
+        $this->customerHelper = $customerHelper;
+    }
+
     /**
      * @param \Magento\Framework\Event\Observer $observer
      */
@@ -23,7 +36,7 @@ class Listener extends \Drip\Connect\Observer\Base
         return $this->customerHelper->sendCustomerEvent(
             $customer,
             $config,
-            $observer->getEventName()
+            $observer->getEvent()->getName()
         );
     }
 
