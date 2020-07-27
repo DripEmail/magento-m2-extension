@@ -125,6 +125,19 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         return $this->sendEvent($payload, $config);
     }
 
+    public function sendSubscriberEvent(
+        $subscriber,
+        \Drip\Connect\Model\Configuration $config
+    ) {
+        $payload = [
+            'email' => $subscriber->getEmail(),
+            'action' => \Drip\Connect\Helper\Customer::CREATED_ACTION,
+            'status' => $subscriber->getSubscriberStatus()
+        ];
+
+        return $this->sendEvent($payload, $config);
+    }
+
     /**
      * @param \Magento\Sales\Model\Order $order
      */
