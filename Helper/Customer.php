@@ -114,13 +114,13 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     public function sendSubscriberEvent(
         $subscriber,
         $action,
-        $initialStatus,
+        $preSaveStatus,
         \Drip\Connect\Model\Configuration $config
     ) {
         $payload = [
             'email' => $subscriber->getEmail(),
             'action' => $action,
-            'initialStatus' => $initialStatus,
+            'pre_save_status' => $preSaveStatus,
             'status' => $subscriber->getStatus()
         ];
 

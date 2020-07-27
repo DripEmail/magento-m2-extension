@@ -3,9 +3,9 @@
 namespace Drip\Connect\Observer\Customer;
 
 /**
- * Base to handle isActive derived from customer website.
+ * Generic customer ORM event handler
  */
-abstract class Base extends \Drip\Connect\Observer\Base
+class Listener extends \Drip\Connect\Observer\Base
 {
     /**
      * @param \Magento\Framework\Event\Observer $observer
