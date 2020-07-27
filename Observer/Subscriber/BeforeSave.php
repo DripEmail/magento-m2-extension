@@ -38,7 +38,7 @@ class BeforeSave extends \Drip\Connect\Observer\Subscriber\Base
             return;
         }
 
-        $initialStatus = DEFAULT_STATUS;
+        $initialStatus = self::DEFAULT_STATUS;
 
         $dbSubscriber = $this->subscriberFactory->create()->load($subscriber->getId());
 
