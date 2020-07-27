@@ -96,6 +96,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     ) {
         $storeId = $this->getCustomerStoreId($customer);
         $payload = [
+            'subject' => 'customer',
             'action' => $action,
             'store_id' => $storeId
         ];
@@ -118,6 +119,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         \Drip\Connect\Model\Configuration $config
     ) {
         $payload = [
+            'subject' => 'subscriber',
             'email' => $subscriber->getEmail(),
             'action' => $action,
             'pre_save_status' => $preSaveStatus,
