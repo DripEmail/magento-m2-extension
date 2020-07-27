@@ -1,11 +1,11 @@
 <?php
 
-namespace Drip\Connect\Observer\Customer;
+namespace Drip\Connect\Observer\Subscriber;
 
 /**
- * Customer login observer
+ * Subscriber after delete observer
  */
-class Login extends \Drip\Connect\Observer\Base
+class AfterDelete extends \Drip\Connect\Observer\Subscriber\Base
 {
     /** @var \Drip\Connect\Helper\Customer */
     protected $customerHelper;
@@ -25,10 +25,19 @@ class Login extends \Drip\Connect\Observer\Base
      */
     public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)
     {
-        return $this->customerHelper->sendObserverCustomerEvent(
-            $observer,
-            $this->configFactory,
-            \Drip\Connect\Helper\Customer::LOGIN_ACTION
+        $subscriber = $observer->getSubscriber();
+        if ($subscriber === null) {
+            // Short circuit without subscriber.
+            return;
+        }
+
+        $config = $this->configFactory->create($subscriber->getStoreId());
+
+        return $this->customerHelper->sendSubscriberEvent(
+            $subscriber,
+            \Drip\Connect\Helper\Customer::DELETED_ACTION,
+            null,
+            $config,
         );
     }
 }

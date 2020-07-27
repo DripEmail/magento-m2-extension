@@ -1,21 +1,9 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
-    <event name="controller_action_postdispatch_newsletter_subscriber_new">
-        <observer
-            name="drip_connect_controller_action_postdispatch_newsletter_subscriber_new"
-            instance="Drip\Connect\Observer\Customer\GuestSubscriberCreated"
-            disabled="false" />
-    </event>
-    <event name="customer_save_commit_after">
-        <observer
-            name="drip_connect_customer_save_commit_after"
-            instance="Drip\Connect\Observer\Customer\AfterSave"
-            disabled="false" />
-    </event>
     <event name="customer_login">
         <observer
             name="drip_connect_customer_login"
-            instance="Drip\Connect\Observer\Customer\Login"
+            instance="Drip\Connect\Observer\Customer\Listener"
             disabled="false" />
     </event>
     <event name="wishlist_add_product">

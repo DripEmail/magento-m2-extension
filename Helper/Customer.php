@@ -89,22 +89,9 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         ])->call();
     }
 
-    public function sendObserverCustomerEvent(
-        \Magento\Framework\Event\Observer $observer,
-        \Drip\Connect\Model\ConfigurationFactory $configFactory,
-        $action
-    ) {
-        $customer = $observer->getCustomer();
-        if ($customer === null) {
-            return;
-        }
-
-        return $this->sendCustomerEvent($customer, $configFactory, $action);
-    }
-
     public function sendCustomerEvent(
         $customer, // maybe \Magento\Customer\Model\Data\Customer OR Magento\Customer\Model\Customer\Interceptor
-        \Drip\Connect\Model\ConfigurationFactory $configFactory,
+        \Drip\Connect\Model\Configuration $config,
         $action
     ) {
         $storeId = $this->getCustomerStoreId($customer);
@@ -121,18 +108,20 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
             return;
         }
 
-        $config = $configFactory->create($storeId);
         return $this->sendEvent($payload, $config);
     }
 
     public function sendSubscriberEvent(
         $subscriber,
+        $action,
+        $initialStatus,
         \Drip\Connect\Model\Configuration $config
     ) {
         $payload = [
             'email' => $subscriber->getEmail(),
-            'action' => \Drip\Connect\Helper\Customer::CREATED_ACTION,
-            'status' => $subscriber->getSubscriberStatus()
+            'action' => $action,
+            'initialStatus' => $initialStatus,
+            'status' => $subscriber->getStatus()
         ];
 
         return $this->sendEvent($payload, $config);
