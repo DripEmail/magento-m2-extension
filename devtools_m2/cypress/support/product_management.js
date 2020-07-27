@@ -24,6 +24,16 @@ Cypress.Commands.add("createCustomer", (desc) => {
   })
 })
 
+Cypress.Commands.add("createScopes", (desc) => {
+  cy.log('Creating magento scopes')
+  const str = JSON.stringify(desc)
+  cy.exec(`echo '${str}' | ./docker_compose.sh exec -u www-data -T web bin/magento drip_testutils:createscopes`, {
+    env: {
+      DRIP_COMPOSE_ENV: 'test'
+    }
+  })
+})
+
 Cypress.Commands.add("runCron", (desc) => {
   cy.log('Running Magento Cron')
   const str = JSON.stringify(desc)

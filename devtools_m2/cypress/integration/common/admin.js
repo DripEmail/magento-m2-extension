@@ -36,35 +36,7 @@ When('I have set up Drip via the API for {string}', function(site) {
 })
 
 Given('I have set up a multi-store configuration', function() {
-  cy.contains('All Stores').click({ force: true })
-
-  // globals.js defines window.setLocation, which is loaded async. We need to wait for this to be loaded.
-  cy.window().its('setLocation')
-
-  cy.contains('Create Website').click()
-  cy.window().its('setLocation')
-  cy.get('input[name="website[name]"]').type('site1_website')
-  cy.get('input[name="website[code]"]').type('site1_website')
-  cy.contains('Save Web Site').click()
-
-  cy.window().its('setLocation')
-  cy.get('button#add_group').click()
-  cy.window().its('setLocation')
-  cy.get('select[name="group[website_id]"]').select('site1_website')
-  cy.get('input[name="group[name]"]').type('site1_store')
-  cy.get('input[name="group[code]"]').type('site1_store')
-  cy.get('select[name="group[root_category_id]"]').select('Default Category')
-  cy.contains('Save Store').click()
-
-  cy.window().its('setLocation')
-  cy.contains('Create Store View').click()
-  cy.window().its('setLocation')
-  cy.get('select[name="store[group_id]"]').select('site1_store')
-  cy.get('input[name="store[name]"]').type('site1_store_view')
-  cy.get('input[name="store[code]"]').type('site1_store_view')
-  cy.get('select[name="store[is_active]"]').select('Enabled')
-  cy.contains('Save Store View').click()
-  cy.contains('OK').click()
+  cy.createScopes({})
 
   // cy.contains('Stores').click()
   cy.get('[data-ui-id="menu-magento-backend-stores-settings"]').within(function() {
