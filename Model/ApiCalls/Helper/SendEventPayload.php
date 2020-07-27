@@ -14,9 +14,12 @@ class SendEventPayload extends \Drip\Connect\Model\ApiCalls\Helper
         \Drip\Connect\Model\ApiCalls\WooBaseFactory $connectApiCallsWooBaseFactory,
         \Drip\Connect\Model\ApiCalls\Request\BaseFactory $connectApiCallsRequestBaseFactory,
         \Drip\Connect\Model\Configuration $config,
+        \Drip\Connect\Model\Http\RequestIDFactory $requestIdFactory,
         array $payload
     ) {
         $this->config = $config;
+
+        $payload['request_id'] = $requestIdFactory->create()->requestId();
 
         $this->apiClient = $connectApiCallsWooBaseFactory->create([
             'config' => $config,
