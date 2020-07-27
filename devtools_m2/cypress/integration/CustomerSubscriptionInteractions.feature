@@ -2,6 +2,7 @@ Feature: Customer Subscription Interactions
 
   I want to send login and subscription change events
 
+  @focus
   Scenario: A customer creates a subscribed account and then unsubscribes
     Given I am logged into the admin interface
       And I have set up a multi-store configuration
