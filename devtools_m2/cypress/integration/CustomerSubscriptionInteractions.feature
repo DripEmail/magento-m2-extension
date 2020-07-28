@@ -2,7 +2,6 @@ Feature: Customer Subscription Interactions
 
   I want to send login and subscription change events
 
-  @focus
   Scenario: A customer creates a subscribed account and then unsubscribes
     Given I have set up a multi-store configuration
       And I have set up Drip via the API for 'main'
@@ -29,7 +28,7 @@ Feature: Customer Subscription Interactions
       And I have disabled email communications
     When I open the 'main' homepage
       And I subscribe on the homepage
-    Then A 'subscriber' 'created' event should be sent to the WIS
+    Then A 'subscriber' 'updated' event should be sent to the WIS
 
   Scenario: A customer creates a subscribed account and then unsubscribes when not configured for Drip
     Given I have set up a multi-store configuration

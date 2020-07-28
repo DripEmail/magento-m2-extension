@@ -6,8 +6,6 @@ const Mockclient = mockServerClient("localhost", 1080);
 
 Given('I have disabled email communications', function() {
   cy.setConfig({
-    scope: "website",
-    scopeCode: "site1_website",
     path: "system/smtp/disable",
     value: "1",
   })
