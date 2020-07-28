@@ -39,7 +39,7 @@ MAGE_MODE=developer ./bin/magento setup:install \
 --admin-email='admin@example.com' \
 --admin-firstname=FIRST_NAME \
 --admin-lastname=LAST_NAME && \
-./bin/magento setup:config:set --backend-frontname='admin_123' && \
+./bin/magento setup:config:set -n --backend-frontname='admin_123' && \
 ./bin/magento config:set admin/security/admin_account_sharing 1 && \
 ./bin/magento config:set catalog/frontend/flat_catalog_product 1 && \
 ./bin/magento config:set admin/security/use_form_key 0 && \
