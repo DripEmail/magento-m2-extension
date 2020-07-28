@@ -26,6 +26,8 @@ When('I create a {string} account', function(state) {
     }
     cy.contains('Create an Account').click()
   })
+
+  cy.contains('Thank you for registering')
 })
 
 Then('A new {string} subscriber event should be sent to Drip', function(state) {
