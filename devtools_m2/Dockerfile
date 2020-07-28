@@ -5,7 +5,7 @@ ARG CONTINUOUS_INTEGRATION
 
 RUN apt-get update && apt-get install -y software-properties-common git wget curl gnupg2 ca-certificates lsb-release vim nginx fcgiwrap unzip
 RUN add-apt-repository ppa:ondrej/php
-RUN apt-get update && apt-get install -y php7.3 php7.3-fpm php7.3-bcmath php7.3-gd php7.3-intl php7.3-pdo-mysql php7.3-soap php7.3-xsl php7.3-zip php7.3-curl php7.3-mbstring php7.3-xml php7.3-dev && apt-get install composer
+RUN apt-get update && apt-get install -y php7.3 php7.3-fpm php7.3-bcmath php7.3-gd php7.3-intl php7.3-pdo-mysql php7.3-soap php7.3-xsl php7.3-zip php7.3-curl php7.3-mbstring php7.3-xml php7.3-dev && apt-get -y install composer
 RUN test "true" = "${CONTINUOUS_INTEGRATION}" && echo "skipping install of php-xdebug" || pecl install xdebug
 RUN apt-get purge -y apache2 && apt-get autoremove
 RUN service nginx stop;service php7.3-fpm stop;echo "nginx and php-fpm stopped"

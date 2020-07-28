@@ -4,9 +4,9 @@
  ;                            (IPv6 and IPv4-mapped) on a specific port;
  ;   '/path/to/unix/socket' - to listen on a unix socket.
  ; Note: This value is mandatory.
--listen = /run/php/php7.2-fpm.sock
+-listen = /run/php/php7.3-fpm.sock
 +listen = 127.0.0.254:65000
- 
+
  ; Set listen(2) backlog.
  ; Default Value: 511 (-1 on FreeBSD and OpenBSD)
 @@ -110,22 +110,22 @@
@@ -15,25 +15,25 @@
  ; Note: This value is mandatory.
 -pm.max_children = 5
 +pm.max_children = 16
- 
+
  ; The number of child processes created on startup.
  ; Note: Used only when pm is set to 'dynamic'
  ; Default Value: min_spare_servers + (max_spare_servers - min_spare_servers) / 2
 -pm.start_servers = 2
 +pm.start_servers = 8
- 
+
  ; The desired minimum number of idle server processes.
  ; Note: Used only when pm is set to 'dynamic'
  ; Note: Mandatory when pm is set to 'dynamic'
 -pm.min_spare_servers = 1
 +pm.min_spare_servers = 6
- 
+
  ; The desired maximum number of idle server processes.
  ; Note: Used only when pm is set to 'dynamic'
  ; Note: Mandatory when pm is set to 'dynamic'
 -pm.max_spare_servers = 3
 +pm.max_spare_servers = 8
- 
+
  ; The number of seconds after which an idle process will be killed.
  ; Note: Used only when pm is set to 'ondemand'
 
