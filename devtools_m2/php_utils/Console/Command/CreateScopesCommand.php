@@ -14,20 +14,24 @@ class CreateScopesCommand extends Command
     /** @var \Magento\Framework\App\State **/
     protected $state;
 
-    /** @var Magento\Store\Model\WebsiteFactory */
+    /** @var \Magento\Store\Model\WebsiteFactory */
     protected $websiteFactory;
 
-    /** @var Magento\Store\Model\GroupFactory */
+    /** @var \Magento\Store\Model\GroupFactory */
     protected $groupFactory;
 
-    /** @var Magento\Store\Model\StoreFactory */
+    /** @var \Magento\Store\Model\StoreFactory */
     protected $storeFactory;
+
+    /** @var \Magento\Store\Model\StoreManagerInterface */
+    protected $storeManagerInterface;
 
     public function __construct(
         \Magento\Framework\App\State $state,
         \Magento\Store\Model\WebsiteFactory $websiteFactory,
         \Magento\Store\Model\GroupFactory $groupFactory,
-        \Magento\Store\Model\StoreFactory $storeFactory
+        \Magento\Store\Model\StoreFactory $storeFactory,
+        \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
         parent::__construct();
 
@@ -35,6 +39,7 @@ class CreateScopesCommand extends Command
         $this->websiteFactory = $websiteFactory;
         $this->groupFactory = $groupFactory;
         $this->storeFactory = $storeFactory;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -61,16 +66,18 @@ class CreateScopesCommand extends Command
             throw new \UnexpectedValueException('Null JSON parse');
         }
 
+        $defaultRootCategoryId = $this->storeManager->getStore()->getRootCategoryId();
+
         $website = $this->websiteFactory->create();
         $website->setName("site1_website")->setCode("site1_website");
         $website->save();
 
         $storeGroup = $this->groupFactory->create();
-        $storeGroup->setName("site1_store")->setCode("site1_store")->setWebsiteId($website->getId());
+        $storeGroup->setName("site1_store")->setCode("site1_store")->setWebsiteId($website->getId())->setRootCategoryId($defaultRootCategoryId);
         $storeGroup->save();
 
         $storeView = $this->storeFactory->create();
-        $storeView->setName("site1_store_view")->setCode("site1_store_view")->setGroupId($storeGroup->getId());
+        $storeView->setName("site1_store_view")->setCode("site1_store_view")->setGroupId($storeGroup->getId())->setIsActive(true);
         $storeView->save();
     }
 }
