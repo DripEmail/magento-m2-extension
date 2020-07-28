@@ -51,6 +51,9 @@ Given('I have set up a multi-store configuration', function() {
     path: "web/unsecure/base_link_url",
     value: "http://site1.magento.localhost:3006/",
   })
+
+  // TODO: Don't think this helps.
+  cy.flushCaches()
 })
 
 Given('I have configured Drip to be enabled for {string}', function(site) {

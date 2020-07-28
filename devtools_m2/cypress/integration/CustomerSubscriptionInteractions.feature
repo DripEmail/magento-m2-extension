@@ -17,8 +17,7 @@ Feature: Customer Subscription Interactions
       And I have set up Drip via the API for 'main'
     When I open the 'main' homepage
       And I create a 'unsubscribed' account
-    Then A 'subscriber' 'updated' event should be sent to the WIS
-    Then A 'customer' 'updated' event should be sent to the WIS
+    Then A 'customer' 'customer_save_commit_after' event should be sent to the WIS
     When I 'subscribe' from the general newsletter
     Then A 'subscriber' 'updated' event should be sent to the WIS
 
