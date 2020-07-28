@@ -77,7 +77,7 @@ class CreateScopesCommand extends Command
         $storeGroup->save();
 
         $storeView = $this->storeFactory->create();
-        $storeView->setName("site1_store_view")->setCode("site1_store_view")->setGroupId($storeGroup->getId())->setIsActive(true);
+        $storeView->setName("site1_store_view")->setCode("site1_store_view")->setGroupId($storeGroup->getId())->setWebsiteId($website->getId())->setIsActive(true);
         $storeView->save();
     }
 }
