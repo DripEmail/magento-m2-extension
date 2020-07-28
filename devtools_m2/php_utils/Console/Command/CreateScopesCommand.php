@@ -73,11 +73,18 @@ class CreateScopesCommand extends Command
         $website->save();
 
         $storeGroup = $this->groupFactory->create();
-        $storeGroup->setName("site1_store")->setCode("site1_store")->setWebsiteId($website->getId())->setRootCategoryId($defaultRootCategoryId);
+        $storeGroup->setName("site1_store")
+                   ->setCode("site1_store")
+                   ->setWebsiteId($website->getId())
+                   ->setRootCategoryId($defaultRootCategoryId);
         $storeGroup->save();
 
         $storeView = $this->storeFactory->create();
-        $storeView->setName("site1_store_view")->setCode("site1_store_view")->setGroupId($storeGroup->getId())->setWebsiteId($website->getId())->setIsActive(true);
+        $storeView->setName("site1_store_view")
+                  ->setCode("site1_store_view")
+                  ->setGroupId($storeGroup->getId())
+                  ->setWebsiteId($website->getId())
+                  ->setIsActive(true);
         $storeView->save();
     }
 }
