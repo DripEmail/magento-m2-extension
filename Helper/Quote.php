@@ -72,11 +72,17 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
     ) {
         $items = [];
         foreach ($quote->getAllItems() as $item) {
-            $items[] = [
+            if ($item->getProduct()->getTypeId() === 'bundle' || $item->getProduct()->getTypeId() === 'configurable') {
+                continue;
+            }
+            $wooItem = [
               'item_id' => $item->getId(),
               'product_id' => $item->getProductId(),
-              'product_parent_id' => $item->getParentItemId()
             ];
+            if ($item->getParentItem()) {
+                $wooItem['product_parent_id'] = $item->getParentItem()->getProductId();
+            }
+            $items[] = $wooItem;
         }
 
         $payload = [
