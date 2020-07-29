@@ -8,7 +8,7 @@
     "cypress": "~4.11",
     "cypress-cucumber-preprocessor": "~2.5",
     "cypress-pipe": "^1.7.0",
-    "mockserver-client": "^5.11.1"
+    "mockserver-client": "=5.7.0"
   },
   "cypress-cucumber-preprocessor": {
     "nonGlobalStepDefinitions": true
