@@ -23,7 +23,6 @@ Feature: Product Interactions
     When I update the simple widget
     Then a product 'updated' event is sent to the WIS
 
-   @focus
   Scenario: An admin updates a simple product in a non-default site
     Given I am logged into the admin interface
       And I have set up Drip via the API for 'main'
