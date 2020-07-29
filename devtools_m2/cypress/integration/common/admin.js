@@ -38,26 +38,22 @@ When('I have set up Drip via the API for {string}', function(site) {
 Given('I have set up a multi-store configuration', function() {
   cy.createScopes({})
 
-  // cy.contains('Stores').click()
-  cy.get('[data-ui-id="menu-magento-backend-stores-settings"]').within(function() {
-    // Forcing since the sidebar opens sporadically at best.
-    cy.contains('Configuration').click({force: true})
+  cy.setConfig({
+    scope: "website",
+    scopeCode: "site1_website",
+    path: "web/unsecure/base_url",
+    value: "http://site1.magento.localhost:3006/",
   })
-  cy.wait(1000) // Some JS has to run before we can successfully click this.
-  cy.get('div.store-switcher').within(function() {
-    // cy.get('button#store-change-button').click({force: true})
-    cy.contains('site1_website').trigger('click', {force: true})
+
+  cy.setConfig({
+    scope: "website",
+    scopeCode: "site1_website",
+    path: "web/unsecure/base_link_url",
+    value: "http://site1.magento.localhost:3006/",
   })
-  cy.contains('OK').click()
-  cy.get('#system_config_tabs').within(function() {
-    cy.contains('Web').click()
-  })
-  cy.contains('Base URLs').click()
-  cy.get('[name="groups[unsecure][fields][base_url][inherit]"]').uncheck()
-  cy.get('[name="groups[unsecure][fields][base_url][value]"]').clear().type(`http://site1.magento.localhost:3006/`)
-  cy.get('[name="groups[unsecure][fields][base_link_url][inherit]"]').uncheck()
-  cy.get('[name="groups[unsecure][fields][base_link_url][value]"]').clear().type(`http://site1.magento.localhost:3006/`)
-  cy.contains('Save Config').click()
+
+  // TODO: Don't think this helps.
+  cy.flushCaches()
 })
 
 Given('I have configured Drip to be enabled for {string}', function(site) {

@@ -123,6 +123,16 @@ class Configuration
     }
 
     /**
+     * Whether the plugin is active for the given scope.
+     *
+     * @return bool
+     */
+    public function isActive()
+    {
+        return $this->getIntegrationToken() !== null;
+    }
+
+    /**
      * @param string $path
      */
     protected function getConfig($path)

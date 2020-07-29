@@ -27,6 +27,7 @@ Feature: Product Interactions
     Given I am logged into the admin interface
       And I have set up Drip via the API for 'main'
       And I have configured a simple widget for 'main'
+    Then a product 'created' event is sent to the WIS
       And previous product webhooks have already fired
     When I update the simple widget
     Then a product 'updated' event is sent to the WIS

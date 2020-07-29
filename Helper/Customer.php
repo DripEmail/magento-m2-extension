@@ -89,26 +89,14 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         ])->call();
     }
 
-    public function sendObserverCustomerEvent(
-        \Magento\Framework\Event\Observer $observer,
-        \Drip\Connect\Model\ConfigurationFactory $configFactory,
-        $action
-    ) {
-        $customer = $observer->getCustomer();
-        if ($customer === null) {
-            return;
-        }
-
-        return $this->sendCustomerEvent($customer, $configFactory, $action);
-    }
-
     public function sendCustomerEvent(
         $customer, // maybe \Magento\Customer\Model\Data\Customer OR Magento\Customer\Model\Customer\Interceptor
-        \Drip\Connect\Model\ConfigurationFactory $configFactory,
+        \Drip\Connect\Model\Configuration $config,
         $action
     ) {
         $storeId = $this->getCustomerStoreId($customer);
         $payload = [
+            'subject' => 'customer',
             'action' => $action,
             'store_id' => $storeId
         ];
@@ -121,18 +109,21 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
             return;
         }
 
-        $config = $configFactory->create($storeId);
         return $this->sendEvent($payload, $config);
     }
 
     public function sendSubscriberEvent(
         $subscriber,
+        $action,
+        $preSaveStatus,
         \Drip\Connect\Model\Configuration $config
     ) {
         $payload = [
+            'subject' => 'subscriber',
             'email' => $subscriber->getEmail(),
-            'action' => \Drip\Connect\Helper\Customer::CREATED_ACTION,
-            'status' => $subscriber->getSubscriberStatus()
+            'action' => $action,
+            'pre_save_status' => $preSaveStatus,
+            'status' => $subscriber->getStatus()
         ];
 
         return $this->sendEvent($payload, $config);

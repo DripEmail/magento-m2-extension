@@ -4,13 +4,11 @@ import { getCurrentFrontendDomain } from "../../lib/frontend_context"
 
 const Mockclient = mockServerClient("localhost", 1080);
 
-Given('I have disabled email communications', function(state) {
-  cy.visit('http://main.magento.localhost:3006/admin_123/admin/system_config/edit/section/system/')
-  cy.contains('Mail Sending Settings').click()
-  cy.get('input[id="system_smtp_disable_inherit"]').uncheck()
-  cy.get('select[id="system_smtp_disable"]').select('Yes')
-  cy.contains('Save Config').click()
-  cy.contains('You saved the configuration.')
+Given('I have disabled email communications', function() {
+  cy.setConfig({
+    path: "system/smtp/disable",
+    value: "1",
+  })
 })
 
 When('I create a {string} account', function(state) {
@@ -26,6 +24,8 @@ When('I create a {string} account', function(state) {
     }
     cy.contains('Create an Account').click()
   })
+
+  cy.contains('Thank you for registering')
 })
 
 Then('A new {string} subscriber event should be sent to Drip', function(state) {
@@ -149,16 +149,17 @@ Then('A {string} event should be sent to Drip', function(state) {
   })
 })
 
-Then('A {string} event should be sent to the WIS', function(action) {
+Then('A {string} {string} event should be sent to the WIS', function(subject, action) {
   cy.wrap(Mockclient.retrieveRecordedRequests({
     'path': '/123456/integrations/abcdefg/events'
   })).then(function(recordedRequests) {
     expect(recordedRequests.find((elm) => {
       let body = JSON.parse(elm.body.string);
       let actionMatch = body.action == action;
+      let subjectMatch = body.subject == subject;
       let customerIdMatch = body.customer_id && /^\d+$/.test(body.customer_id);
       let emailMatch = body.email && body.email == 'testuser@example.com';
-      return actionMatch && (customerIdMatch || emailMatch);
+      return actionMatch && subjectMatch && (customerIdMatch || emailMatch);
     })).to.exist
   })
 })
