@@ -4,28 +4,33 @@ import { mockServerClient } from "mockserver-client"
 const Mockclient = mockServerClient("localhost", 1080);
 
 When('I create a simple product', function () {
-  cy.contains('Products').click()
-  cy.contains('Add Product').click()
+  cy.contains('Products').click({ force: true })
+  cy.wait(300)
+  cy.contains('Add Product').click({ force: true })
 
   cy.get('input[name="product[name]"]').type('Tropical Plant')
   cy.get('input[name="product[sku]"]').clear().type('TROP')
   cy.get('input[name="product[price]"]').type('45.00')
   cy.get('input[name="product[quantity_and_stock_status][qty]"]').type('200')
-  cy.contains('Save').click()
+  cy.contains('Save').click({ force:true })
 
   cy.contains('You saved the product.')
 })
 
 When('I update the simple widget', function() {
-  cy.visit('/admin_123/catalog/product/edit/id/1/', { timeout: 30000 })
+  cy.contains('Products').click({ force: true })
+  cy.wait(500)
+  cy.contains('Edit').click({ force: true })
+
   cy.get('input[name="product[price]"]').clear().type('500.00')
-  cy.contains('Save').click()
+  cy.contains('Save').click({ force:true })
+
   cy.contains('You saved the product.')
 })
 
 When('I delete the simple widget', function() {
-  cy.visit('/admin_123/catalog/product/', {timeout: 30000 })
-  cy.get('#idscheck1').check()
+  cy.contains('Products').click({ force: true })
+  cy.get('input[type="checkbox"]').check({ force: true })
   cy.get('div[class="action-menu-items"]').contains('Delete').click({ force: true })
 
   cy.contains('OK').click()
@@ -52,7 +57,6 @@ Then('a product {string} event is sent to the WIS', function(action) {
       "jsonPath": "$[?(@.product_id)]"
     }
   })).then(function(recordedRequests) {
-    cy.log("reqs... " + recordedRequests)
     expect(recordedRequests).to.have.lengthOf(1)
     const body = JSON.parse(recordedRequests[0].body.string)
     expect(body.action).to.eq(action)
