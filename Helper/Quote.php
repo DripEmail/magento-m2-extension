@@ -71,8 +71,11 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
         string $action
     ) {
         $items = [];
+        $parentItems = [];
         foreach ($quote->getAllItems() as $item) {
-            if ($item->getProduct()->getTypeId() === 'bundle' || $item->getProduct()->getTypeId() === 'configurable') {
+            $product = $item->getProduct();
+            if ($product->getTypeId() === 'bundle' || $product->getTypeId() === 'configurable') {
+                $parentItems[$product->getId()] = $item->getId();
                 continue;
             }
             $wooItem = [
@@ -80,7 +83,9 @@ class Quote extends \Magento\Framework\App\Helper\AbstractHelper
               'product_id' => $item->getProductId(),
             ];
             if ($item->getParentItem()) {
-                $wooItem['product_parent_id'] = $item->getParentItem()->getProductId();
+                $parentId = $item->getParentItem()->getProductId();
+                $wooItem['product_parent_id'] = $parentId;
+                $wooItem['item_id'] = $parentItems[$parentId];
             }
             $items[] = $wooItem;
         }
