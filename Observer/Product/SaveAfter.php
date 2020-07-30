@@ -5,7 +5,7 @@ namespace Drip\Connect\Observer\Product;
 /**
  * Product after save observer
  */
-class SaveAfter extends \Drip\Connect\Observer\Base
+class SaveAfter extends \Drip\Connect\Observer\Product\Base
 {
     /** @var \Magento\Catalog\Model\ProductRepository */
     protected $productRepository;
@@ -84,21 +84,4 @@ class SaveAfter extends \Drip\Connect\Observer\Base
             }
         }
     }
-
-    // /**
-    //  * compare orig and new data
-    //  *
-    //  * @param \Magento\Catalog\Model\Product $product
-    //  *
-    //  * @return bool
-    //  */
-    // protected function isProductChanged($product)
-    // {
-    //     $oldData = $this->registry->registry(\Drip\Connect\Helper\Product::REGISTRY_KEY_OLD_DATA);
-    //     unset($oldData['occurred_at']);
-    //     $newData = $this->productHelper->prepareData($product);
-    //     unset($newData['occurred_at']);
-
-    //     return ($this->json->serialize($oldData) != $this->json->serialize($newData));
-    // }
 }
