@@ -4,9 +4,8 @@ import { mockServerClient } from "mockserver-client"
 const Mockclient = mockServerClient("localhost", 1080);
 
 When('I create a simple product', function () {
-  cy.contains('Products').click()
-  cy.contains('Add Product').click()
-
+  cy.visit('/admin_123/catalog/product/new/set/4/type/simple/', { timeout: 30000 })
+  
   cy.get('input[name="product[name]"]').type('Tropical Plant')
   cy.get('input[name="product[sku]"]').clear().type('TROP')
   cy.get('input[name="product[price]"]').type('45.00')

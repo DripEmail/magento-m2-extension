@@ -5,7 +5,7 @@ namespace Drip\Connect\Observer\Product;
 /**
  * Product before save observer
  */
-class SaveBefore extends \Drip\Connect\Observer\Base
+class SaveBefore extends \Drip\Connect\Observer\Product\Base
 {
     /** @var \Magento\Catalog\Model\ProductRepository */
     protected $productRepository;
