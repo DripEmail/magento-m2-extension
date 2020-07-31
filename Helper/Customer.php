@@ -122,7 +122,7 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
             'subject' => 'subscriber',
             'email' => $subscriber->getEmail(),
             'action' => $action,
-            'pre_save_status' => $preSaveStatus,
+            'pre_save_status' => (int)$preSaveStatus,
             'status' => $subscriber->getStatus()
         ];
 
