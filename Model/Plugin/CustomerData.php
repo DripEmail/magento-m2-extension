@@ -19,7 +19,8 @@ class CustomerData
     {
         if ($this->currentCustomer->getCustomerId()) {
             $customer = $this->currentCustomer->getCustomer();
-            // Add email to the customerData.get("customer") hash. This'll allow us to fetch it uncached by page caching.
+            // Add email to the customerData.get("customer") hash. This'll
+            // allow us to fetch it uncached by page caching.
             $result['email'] = $customer->getEmail();
         }
 
