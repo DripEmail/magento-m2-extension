@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Observer\Order;
 
+/**
+ * Order before save observer
+ */
 class BeforeSave extends \Drip\Connect\Observer\Base
 {
     /** @var \Magento\Framework\Registry */
@@ -13,9 +16,10 @@ class BeforeSave extends \Drip\Connect\Observer\Base
     public function __construct(
         \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Drip\Connect\Logger\Logger $logger,
-        \Magento\Framework\Registry $registry
+        \Magento\Framework\Registry $registry,
+        \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
-        parent::__construct($configFactory, $logger);
+        parent::__construct($configFactory, $logger, $storeManager);
         $this->registry = $registry;
     }
 

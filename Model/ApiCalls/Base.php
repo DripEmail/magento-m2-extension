@@ -1,6 +1,9 @@
 <?php
 namespace Drip\Connect\Model\ApiCalls;
 
+/**
+ * Restapi base class
+ */
 class Base extends \Drip\Connect\Model\Restapi\RestapiAbstract
 {
 
@@ -42,11 +45,8 @@ class Base extends \Drip\Connect\Model\Restapi\RestapiAbstract
 
         $this->storeManager = $storeManager;
 
-        $this->setStoreId($config->getStoreId());
-
         $this->connectHttpClientFactory = $connectHttpClientFactory;
         $this->_responseModel = \Drip\Connect\Model\ApiCalls\Response\Base::class;
-        $this->_behavior = $config->getBehavior();
 
         $url = $config->getUrl() . $endpoint;
         if ($v3) {

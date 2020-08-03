@@ -1,9 +1,33 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="customer_save_commit_after">
+        <observer
+            name="drip_connect_customer_save_commit_after"
+            instance="Drip\Connect\Observer\Customer\Listener"
+            disabled="false" />
+    </event>
+    <!-- <event name="newsletter_subscriber_delete_commit_after">
+        <observer
+            name="drip_connect_newsletter_subscriber_delete_commit_after"
+            instance="Drip\Connect\Observer\Subscriber\AfterDelete"
+            disabled="false" />
+    </event> -->
+    <event name="newsletter_subscriber_save_before">
+        <observer
+            name="drip_connect_newsletter_subscriber_save_before"
+            instance="Drip\Connect\Observer\Subscriber\BeforeSave"
+            disabled="false" />
+    </event>
+    <event name="newsletter_subscriber_save_commit_after">
+        <observer
+            name="drip_connect_newsletter_subscriber_save_commit_after"
+            instance="Drip\Connect\Observer\Subscriber\AfterSave"
+            disabled="false" />
+    </event>
     <event name="customer_delete_commit_after">
         <observer
             name="drip_connect_customer_delete_commit_after"
-            instance="Drip\Connect\Observer\Customer\AfterDelete"
+            instance="Drip\Connect\Observer\Customer\Listener"
             disabled="false" />
     </event>
     <event name="sales_order_save_before">
@@ -41,5 +65,25 @@
             name="drip_connect_sales_order_creditmemo_save_commit_after"
             instance="Drip\Connect\Observer\Order\CreditmemoAfterSave"
             disabled="false" />
+    </event>
+    <event name="catalog_product_save_before">
+        <observer
+            name="drip_connect_catalog_product_save_before"
+            instance="Drip\Connect\Observer\Product\SaveBefore" />
+    </event>
+    <event name="catalog_product_save_after">
+        <observer
+            name="drip_connect_catalog_product_save_after"
+            instance="Drip\Connect\Observer\Product\SaveAfter" />
+    </event>
+    <event name="catalog_product_delete_before">
+        <observer
+            name="drip_connect_catalog_product_delete_before"
+            instance="Drip\Connect\Observer\Product\DeleteBefore" />
+    </event>
+    <event name="catalog_product_delete_commit_after">
+        <observer
+            name="drip_connect_catalog_product_delete_commit_after"
+            instance="Drip\Connect\Observer\Product\DeleteAfter" />
     </event>
 </config>

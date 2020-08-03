@@ -6,6 +6,9 @@ use Magento\Framework\Setup\UninstallInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
 
+/**
+ * Remove attributes.
+ */
 class Uninstall implements UninstallInterface
 {
     protected $eavSetupFactory;

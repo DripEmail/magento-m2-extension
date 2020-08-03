@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Helper;
 
+/**
+ * Data helpers
+ */
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
     const QUOTE_KEY = 'q';
@@ -223,6 +226,12 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * Obtain the Drip specific abandoned cart URL
+     *
+     * Note: This is in here instead of the Quote Transformer because
+     * _urlBuilder is provided by the helper context. Maybe consider moving in
+     * the future.
+     *
      * @param \Magento\Quote\Api\Data\CartInterface $quote
      *
      * @return string

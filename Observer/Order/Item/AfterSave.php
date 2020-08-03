@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Observer\Order\Item;
 
+/**
+ * Order item after save observer
+ */
 class AfterSave extends \Drip\Connect\Observer\Base
 {
     protected static $counter = 0;
@@ -27,9 +30,10 @@ class AfterSave extends \Drip\Connect\Observer\Base
         \Drip\Connect\Model\Transformer\OrderItemFactory $orderItemTransformerFactory,
         \Drip\Connect\Model\Transformer\OrderFactory $orderTransformerFactory,
         \Magento\Sales\Api\Data\OrderInterface $order,
-        \Magento\Framework\Registry $registry
+        \Magento\Framework\Registry $registry,
+        \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
-        parent::__construct($configFactory, $logger);
+        parent::__construct($configFactory, $logger, $storeManager);
         $this->registry = $registry;
         $this->orderItemTransformerFactory = $orderItemTransformerFactory;
         $this->orderTransformerFactory = $orderTransformerFactory;
@@ -91,7 +95,7 @@ class AfterSave extends \Drip\Connect\Observer\Base
             $orderItemTransformer = $this->orderItemTransformerFactory->create([
                 'item' => $item,
             ]);
-            $itemDataCurrent = $orderItemTransformer->getStatusData();
+            $itemDataCurrent = $orderItemTransformer->getLiveStatusData();
             $itemDataOld = $oldItems[$item->getId()];
 
             if ($this->isOrderItemComplete($itemDataCurrent)
@@ -110,21 +114,15 @@ class AfterSave extends \Drip\Connect\Observer\Base
      * check if order item's data looks like data of complete item
      *
      * @param array $itemData
-     *
      * @return bool
      */
     protected function isOrderItemComplete($itemData)
     {
-        if ((float)$itemData['qty_ordered'] > 0 &&
+        return ((float)$itemData['qty_ordered'] > 0 &&
             (float)$itemData['qty_invoiced'] > 0 &&
             (float)$itemData['qty_shipped'] > 0 &&
             (float)$itemData['qty_backordered'] == 0 &&
             (float)$itemData['qty_canceled'] == 0 &&
-            (float)$itemData['qty_refunded'] == 0
-        ) {
-            return true;
-        }
-
-        return false;
+            (float)$itemData['qty_refunded'] == 0);
     }
 }

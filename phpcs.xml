@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="PHP_CodeSniffer" xsi:noNamespaceSchemaLocation="phpcs.xsd">
+  <description>Coding standard for Drip's Magento 2 plugin.</description>
+
+  <arg name="colors"/>
+  <arg value="s"/>
+
+  <rule ref="Magento2">
+    <!-- TODO: Important, but tricky. Punt to a future project. -->
+    <exclude name="Magento2.Security.XssTemplate.FoundUnescaped"/>
+    <exclude name="Magento2.Functions.DiscouragedFunction.DiscouragedWithAlternative"/>
+    <exclude name="Magento2.Functions.DiscouragedFunction.Discouraged"/>
+    <exclude name="Magento2.Exceptions.TryProcessSystemResources.MissingTryCatch"/>
+  </rule>
+</ruleset>

@@ -1,6 +1,9 @@
 <?php
 namespace Drip\Connect\Model\Http;
 
+/**
+ * Rest client
+ */
 class Client extends \Zend_Http_Client
 {
     /** @var \Monolog\Logger */

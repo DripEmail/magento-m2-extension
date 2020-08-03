@@ -4,6 +4,13 @@ import { getCurrentFrontendDomain } from "../../lib/frontend_context"
 
 const Mockclient = mockServerClient("localhost", 1080);
 
+Given('I have disabled email communications', function() {
+  cy.setConfig({
+    path: "system/smtp/disable",
+    value: "1",
+  })
+})
+
 When('I create a {string} account', function(state) {
   cy.contains('Create an Account').click()
   cy.get('#form-validate').within(function() {
@@ -17,6 +24,8 @@ When('I create a {string} account', function(state) {
     }
     cy.contains('Create an Account').click()
   })
+
+  cy.contains('Thank you for registering')
 })
 
 Then('A new {string} subscriber event should be sent to Drip', function(state) {
@@ -89,13 +98,9 @@ When('I {string} from the general newsletter', function(state) {
 })
 
 When('I subscribe on the homepage', function(state) {
-  cy.log('Resetting mocks')
-  cy.wrap(Mockclient.reset())
-
-  cy.visit(`${getCurrentFrontendDomain()}`)
-
   cy.get('#newsletter').type("testuser@example.com")
   cy.contains('Subscribe').click()
+  cy.contains('Thank you for your subscription.')
 })
 
 Then('A {string} event should be sent to Drip', function(state) {
@@ -141,5 +146,20 @@ Then('A {string} event should be sent to Drip', function(state) {
     expect(custCreatedBody.events[0].properties.magento_source).to.eq('Storefront')
     expect(custCreatedBody.events[0].properties.source).to.eq('magento')
     expect(custCreatedBody.events[0].properties.version).to.match(/^Magento 2\.3\.2, Drip Extension \d+\.\d+\.\d+$/)
+  })
+})
+
+Then('A {string} {string} event should be sent to the WIS', function(subject, action) {
+  cy.wrap(Mockclient.retrieveRecordedRequests({
+    'path': '/123456/integrations/abcdefg/events'
+  })).then(function(recordedRequests) {
+    expect(recordedRequests.find((elm) => {
+      let body = JSON.parse(elm.body.string);
+      let actionMatch = body.action == action;
+      let subjectMatch = body.subject == subject;
+      let customerIdMatch = body.customer_id && /^\d+$/.test(body.customer_id);
+      let emailMatch = body.email && body.email == 'testuser@example.com';
+      return actionMatch && subjectMatch && (customerIdMatch || emailMatch);
+    })).to.exist
   })
 })

@@ -2,7 +2,10 @@
 
 namespace Drip\Connect\Observer\Product;
 
-class SaveBefore extends \Drip\Connect\Observer\Base
+/**
+ * Product before save observer
+ */
+class SaveBefore extends \Drip\Connect\Observer\Product\Base
 {
     /** @var \Magento\Catalog\Model\ProductRepository */
     protected $productRepository;
@@ -25,13 +28,14 @@ class SaveBefore extends \Drip\Connect\Observer\Base
         \Drip\Connect\Helper\Data $connectHelper,
         \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Drip\Connect\Logger\Logger $logger,
-        \Magento\Framework\Registry $registry
+        \Magento\Framework\Registry $registry,
+        \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
         $this->productRepository = $productRepository;
         $this->productHelper = $productHelper;
         $this->connectHelper = $connectHelper;
         $this->registry = $registry;
-        parent::__construct($configFactory, $logger);
+        parent::__construct($configFactory, $logger, $storeManager);
     }
 
     /**

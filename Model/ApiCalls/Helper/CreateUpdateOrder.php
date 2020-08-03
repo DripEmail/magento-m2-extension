@@ -1,6 +1,9 @@
 <?php
 namespace Drip\Connect\Model\ApiCalls\Helper;
 
+/**
+ * Create or update an order
+ */
 class CreateUpdateOrder extends \Drip\Connect\Model\ApiCalls\Helper
 {
     const PROVIDER_NAME = 'magento';
@@ -19,8 +22,9 @@ class CreateUpdateOrder extends \Drip\Connect\Model\ApiCalls\Helper
         \Drip\Connect\Helper\Data $connectHelper,
         $data = []
     ) {
+
         $this->apiClient = $connectApiCallsBaseFactory->create([
-            'endpoint' => $config->getAccountId() . '/' . self::ENDPOINT_ORDERS,
+            'endpoint' => $config->getAccountParam() . '/' . self::ENDPOINT_ORDERS,
             'config' => $config,
             'v3' => true,
         ]);

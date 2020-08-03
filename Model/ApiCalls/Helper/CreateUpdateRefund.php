@@ -1,9 +1,11 @@
 <?php
 namespace Drip\Connect\Model\ApiCalls\Helper;
 
-// TODO: It looks like this class is only used for its provider name. If true,
-//       migrate that and nuke this class.
-
+/**
+ * Create or update refund
+ *
+ * @todo It looks like this class is only used for its provider name. If true, migrate that and nuke this class.
+ */
 class CreateUpdateRefund extends \Drip\Connect\Model\ApiCalls\Helper
 {
     const PROVIDER_NAME = 'magento';
@@ -15,7 +17,7 @@ class CreateUpdateRefund extends \Drip\Connect\Model\ApiCalls\Helper
         $data = []
     ) {
         $this->apiClient = $connectApiCallsBaseFactory->create([
-            'endpoint' => $config->getAccountId() . '/' . self::ENDPOINT_REFUNDS,
+            'endpoint' => $config->getAccountParam() . '/' . self::ENDPOINT_REFUNDS,
             'config' => $config,
         ]);
 

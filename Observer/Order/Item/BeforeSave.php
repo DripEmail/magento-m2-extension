@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Observer\Order\Item;
 
+/**
+ * Order item before save observer
+ */
 class BeforeSave extends \Drip\Connect\Observer\Base
 {
     /** @var \Drip\Connect\Model\Transformer\OrderItemFactory */
@@ -17,9 +20,10 @@ class BeforeSave extends \Drip\Connect\Observer\Base
         \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Drip\Connect\Logger\Logger $logger,
         \Drip\Connect\Model\Transformer\OrderItemFactory $orderItemTransformerFactory,
-        \Magento\Framework\Registry $registry
+        \Magento\Framework\Registry $registry,
+        \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
-        parent::__construct($configFactory, $logger);
+        parent::__construct($configFactory, $logger, $storeManager);
         $this->registry = $registry;
         $this->orderItemTransformerFactory = $orderItemTransformerFactory;
     }
@@ -41,7 +45,7 @@ class BeforeSave extends \Drip\Connect\Observer\Base
         ]);
 
         $items = $this->registry->registry(self::REGISTRY_KEY_ORDER_ITEMS_OLD_DATA);
-        $items[$orderItem->getId()] = $orderItemTransformer->getStatusData(true);
+        $items[$orderItem->getId()] = $orderItemTransformer->getOrigStatusData();
 
         $this->registry->unregister(self::REGISTRY_KEY_ORDER_ITEMS_OLD_DATA);
         $this->registry->register(self::REGISTRY_KEY_ORDER_ITEMS_OLD_DATA, $items);

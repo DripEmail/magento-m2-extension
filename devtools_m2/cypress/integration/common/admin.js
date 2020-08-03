@@ -8,57 +8,49 @@ Given('I am logged into the admin interface', function() {
   cy.contains('Sign in').click()
 })
 
+When('I have set up Drip via the API for {string}', function(site) {
+  cy.request({
+    url: "http://main.magento.localhost:3006/rest/V1/integration/admin/token",
+    method: "POST",
+    body: {"username":"admin", "password":"abc1234567890"}
+  }).then((token_response) => {
+    let requestBody = {
+      "accountParam":"123456",
+      "integrationToken": "abcdefg",
+      "testMode": "1"
+    }
+
+    if (site !== 'default') {
+      requestBody["websiteId"] = mapFrontendWebsiteId(site)
+    }
+
+    cy.request({
+      url: "http://main.magento.localhost:3006/rest/V1/drip/integration",
+      method: "POST",
+      auth: {
+        bearer: token_response.body
+      },
+      body: requestBody
+    })
+  })
+})
+
 Given('I have set up a multi-store configuration', function() {
-  cy.contains('All Stores').click({ force: true })
+  cy.createScopes({})
 
-  // globals.js defines window.setLocation, which is loaded async. We need to wait for this to be loaded.
-  cy.window().its('setLocation')
-
-  cy.contains('Create Website').click()
-  cy.window().its('setLocation')
-  cy.get('input[name="website[name]"]').type('site1_website')
-  cy.get('input[name="website[code]"]').type('site1_website')
-  cy.contains('Save Web Site').click()
-
-  cy.window().its('setLocation')
-  cy.get('button#add_group').click()
-  cy.window().its('setLocation')
-  cy.get('select[name="group[website_id]"]').select('site1_website')
-  cy.get('input[name="group[name]"]').type('site1_store')
-  cy.get('input[name="group[code]"]').type('site1_store')
-  cy.get('select[name="group[root_category_id]"]').select('Default Category')
-  cy.contains('Save Store').click()
-
-  cy.window().its('setLocation')
-  cy.contains('Create Store View').click()
-  cy.window().its('setLocation')
-  cy.get('select[name="store[group_id]"]').select('site1_store')
-  cy.get('input[name="store[name]"]').type('site1_store_view')
-  cy.get('input[name="store[code]"]').type('site1_store_view')
-  cy.get('select[name="store[is_active]"]').select('Enabled')
-  cy.contains('Save Store View').click()
-  cy.contains('OK').click()
-
-  // cy.contains('Stores').click()
-  cy.get('[data-ui-id="menu-magento-backend-stores-settings"]').within(function() {
-    // Forcing since the sidebar opens sporadically at best.
-    cy.contains('Configuration').click({force: true})
+  cy.setConfig({
+    scope: "website",
+    scopeCode: "site1_website",
+    path: "web/unsecure/base_url",
+    value: "http://site1.magento.localhost:3006/",
   })
-  cy.wait(1000) // Some JS has to run before we can successfully click this.
-  cy.get('div.store-switcher').within(function() {
-    // cy.get('button#store-change-button').click({force: true})
-    cy.contains('site1_website').trigger('click', {force: true})
+
+  cy.setConfig({
+    scope: "website",
+    scopeCode: "site1_website",
+    path: "web/unsecure/base_link_url",
+    value: "http://site1.magento.localhost:3006/",
   })
-  cy.contains('OK').click()
-  cy.get('#system_config_tabs').within(function() {
-    cy.contains('Web').click()
-  })
-  cy.contains('Base URLs').click()
-  cy.get('[name="groups[unsecure][fields][base_url][inherit]"]').uncheck()
-  cy.get('[name="groups[unsecure][fields][base_url][value]"]').clear().type(`http://site1.magento.localhost:3006/`)
-  cy.get('[name="groups[unsecure][fields][base_link_url][inherit]"]').uncheck()
-  cy.get('[name="groups[unsecure][fields][base_link_url][value]"]').clear().type(`http://site1.magento.localhost:3006/`)
-  cy.contains('Save Config').click()
 })
 
 Given('I have configured Drip to be enabled for {string}', function(site) {
@@ -68,15 +60,9 @@ Given('I have configured Drip to be enabled for {string}', function(site) {
   cy.contains('Module Settings').click()
   cy.contains('API Settings').click()
   if (site !== 'default') {
-    cy.get('input[name="groups[module_settings][fields][is_enabled][inherit]"]').uncheck()
-    cy.get('input[name="groups[api_settings][fields][account_id][inherit]"]').uncheck()
-    cy.get('input[name="groups[api_settings][fields][api_key][inherit]"]').uncheck()
-    cy.get('input[name="groups[api_settings][fields][url][inherit]"]').uncheck()
+    cy.get('input[name="groups[api_settings][fields][account_param][inherit]"]').uncheck()
+    cy.get('input[name="groups[api_settings][fields][integration_token][inherit]"]').uncheck()
   }
-  cy.get('select[name="groups[module_settings][fields][is_enabled][value]"]').select('1')
-  cy.get('input[name="groups[api_settings][fields][account_id][value]"]').type('123456')
-  cy.get('input[name="groups[api_settings][fields][api_key][value]"]').type('abc123')
-  cy.get('input[name="groups[api_settings][fields][url][value]"]').clear().type('http://mock:1080/v2/')
   cy.contains('Save Config').click()
 })
 
@@ -303,7 +289,7 @@ When('I create an order for a {string} widget', function(widgetType) {
 
   cy.contains('Submit Order').click({ force: true })
 
-  cy.contains('Order # 000000001')
+  // cy.contains('Order # 000000001')
 })
 
 When('I create an order for {string}', function(site) {

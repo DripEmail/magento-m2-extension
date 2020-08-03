@@ -8,9 +8,6 @@ abstract class RestapiAbstract
     /** @var string */
     protected $_responseModel;
 
-    /**  @var string */
-    protected $_behavior;
-
     /** @var \Zend_Http_Client */
     protected $_httpClient;
 
@@ -68,7 +65,7 @@ abstract class RestapiAbstract
         }
 
         try {
-            $rawResponse = $this->_callApiWithBehaviorConsidered($request);
+            $rawResponse = $this->_callApi($request);
 
             $className = $this->_responseModel;
             /** @var \Drip\Connect\Model\Restapi\Response\Abstract $response */
@@ -81,44 +78,6 @@ abstract class RestapiAbstract
             $response = new $className(null, $e->getMessage());
             return $response;
         }
-    }
-
-    /**
-     * @param $request
-     *
-     * @return \Zend_Http_Response
-     * @throws \Zend_Http_Client_Exception If a timeout occurs
-     */
-    protected function _callApiWithBehaviorConsidered($request)
-    {
-        switch ($this->_behavior) {
-            case \Drip\Connect\Model\Source\Behavior::FORCE_VALID:
-                $this->_lastResponse = $this->_forceValidResponse($request);
-                break;
-
-            case \Drip\Connect\Model\Source\Behavior::FORCE_INVALID:
-                $this->_lastResponse = $this->_forceInvalidResponse($request);
-                break;
-
-            case \Drip\Connect\Model\Source\Behavior::FORCE_TIMEOUT:
-                $this->_forceTimeout($request);
-                break;
-
-            case \Drip\Connect\Model\Source\Behavior::FORCE_ERROR:
-                $this->_lastResponse = $this->_forceError($request);
-                break;
-
-            case \Drip\Connect\Model\Source\Behavior::FORCE_UNKNOWN_ERROR:
-                $this->_lastResponse = $this->_forceUnknownResponse($request);
-                break;
-
-            case \Drip\Connect\Model\Source\Behavior::CALL_API:
-            default:
-                $this->_lastResponse = $this->_callApi($request);
-                break;
-        }
-
-        return $this->_lastResponse;
     }
 
     /**

@@ -6,6 +6,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Utility command to create products in tests
+ */
 class CreateProductCommand extends Command
 {
     /** @var \Magento\Framework\App\State **/
@@ -23,8 +26,8 @@ class CreateProductCommand extends Command
     /** @var \Drip\TestUtils\Creators\BundleProductCreatorFactory **/
     protected $bundleProductCreatorFactory;
 
-        /** @var \Drip\TestUtils\Creators\VirtualProductCreatorFactory **/
-        protected $virtualProductCreatorFactory;
+    /** @var \Drip\TestUtils\Creators\VirtualProductCreatorFactory **/
+    protected $virtualProductCreatorFactory;
 
     public function __construct(
         \Magento\Framework\App\State $state,
@@ -65,7 +68,7 @@ class CreateProductCommand extends Command
         $json = json_decode($data, true);
 
         if ($json === null) {
-            throw new \Exception('Null JSON parse');
+            throw new \UnexpectedValueException('Null JSON parse');
         }
 
         $type = array_key_exists('typeId', $json) ? $json['typeId'] : '';
@@ -89,7 +92,7 @@ class CreateProductCommand extends Command
                 $factory = $this->virtualProductCreatorFactory;
                 break;
             default:
-                throw new \Exception("Unsupported type: ${type}");
+                throw new \UnexpectedValueException("Unsupported type: ${type}");
         }
 
         $factory->create(['productData' => $json])->create();

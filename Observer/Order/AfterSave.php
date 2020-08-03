@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Observer\Order;
 
+/**
+ * Order after save observer
+ */
 class AfterSave extends \Drip\Connect\Observer\Base
 {
     /** @var \Drip\Connect\Model\Transformer\OrderFactory */
@@ -21,9 +24,10 @@ class AfterSave extends \Drip\Connect\Observer\Base
         \Drip\Connect\Model\Transformer\OrderFactory $orderTransformerFactory,
         \Drip\Connect\Logger\Logger $logger,
         \Drip\Connect\Helper\Customer $customerHelper,
-        \Magento\Framework\Registry $registry
+        \Magento\Framework\Registry $registry,
+        \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
-        parent::__construct($configFactory, $logger);
+        parent::__construct($configFactory, $logger, $storeManager);
         $this->registry = $registry;
         $this->orderTransformerFactory = $orderTransformerFactory;
         $this->customerHelper = $customerHelper;
@@ -44,8 +48,10 @@ class AfterSave extends \Drip\Connect\Observer\Base
         // event if the customer is checking out as a guest,
         // otherwise we'll wait for the more desirable
         // sales_order_save_commit_after event.
-        if ($event->getName() == "sales_order_save_after" ) {
-            if (!$order->getCustomerIsGuest()) return;
+        if ($event->getName() == "sales_order_save_after") {
+            if (!$order->getCustomerIsGuest()) {
+                return;
+            }
         }
 
         if (!$order->getId()) {

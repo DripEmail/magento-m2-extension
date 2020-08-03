@@ -1,6 +1,9 @@
 <?php
 namespace Drip\Connect\Block\View\Element;
 
+/**
+ * Base class for templates
+ */
 class Template extends \Magento\Framework\View\Element\Template
 {
     /** @var \Drip\Connect\Helper\Data */
@@ -80,9 +83,9 @@ class Template extends \Magento\Framework\View\Element\Template
         return $this->_storeManager->getStore();
     }
 
-    public function getAccountId()
+    public function getAccountParam()
     {
-        return $this->config->getAccountId();
+        return $this->config->getAccountParam();
     }
 
     /**
@@ -90,7 +93,7 @@ class Template extends \Magento\Framework\View\Element\Template
      */
     public function isModuleActive()
     {
-        return $this->config->isEnabled();
+        return $this->config->getIntegrationToken() !== null;
     }
 
     /**

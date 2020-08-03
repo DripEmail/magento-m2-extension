@@ -12,21 +12,29 @@ class OrderItem
         $this->item = $item;
     }
 
-    /**
-     * @param bool use normal or orig data
-     *
-     * @return array
-     */
-    public function getStatusData($useOrig = false)
+    public function getOrigStatusData()
     {
         return [
-            'status' => ($useOrig ? $this->item->getOrigData('status') : $this->item->getStatus()),
-            'qty_backordered' => ($useOrig ? $this->item->getOrigData('qty_backordered') : $this->item->getQtyBackordered()),
-            'qty_canceled' => ($useOrig ? $this->item->getOrigData('qty_canceled') : $this->item->getQtyCanceled()),
-            'qty_invoiced' => ($useOrig ? $this->item->getOrigData('qty_invoiced') : $this->item->getQtyInvoiced()),
-            'qty_ordered' => ($useOrig ? $this->item->getOrigData('qty_ordered') : $this->item->getQtyOrdered()),
-            'qty_refunded' => ($useOrig ? $this->item->getOrigData('qty_refunded') : $this->item->getQtyRefunded()),
-            'qty_shipped' => ($useOrig ? $this->item->getOrigData('qty_shipped') : $this->item->getQtyShipped()),
+            'status' => $this->item->getOrigData('status'),
+            'qty_backordered' => $this->item->getOrigData('qty_backordered'),
+            'qty_canceled' => $this->item->getOrigData('qty_canceled'),
+            'qty_invoiced' => $this->item->getOrigData('qty_invoiced'),
+            'qty_ordered' => $this->item->getOrigData('qty_ordered'),
+            'qty_refunded' => $this->item->getOrigData('qty_refunded'),
+            'qty_shipped' => $this->item->getOrigData('qty_shipped'),
+        ];
+    }
+
+    public function getLiveStatusData()
+    {
+        return [
+            'status' => $this->item->getStatus(),
+            'qty_backordered' => $this->item->getQtyBackordered(),
+            'qty_canceled' => $this->item->getQtyCanceled(),
+            'qty_invoiced' => $this->item->getQtyInvoiced(),
+            'qty_ordered' => $this->item->getQtyOrdered(),
+            'qty_refunded' => $this->item->getQtyRefunded(),
+            'qty_shipped' => $this->item->getQtyShipped(),
         ];
     }
 }

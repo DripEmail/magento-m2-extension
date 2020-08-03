@@ -1,8 +1,11 @@
 <?php
 namespace Drip\Connect\Model\ApiCalls\Helper;
 
-// TODO: This class doesn't seem to be called from anywhere. Confirm that it is dead.
-
+/**
+ * Get the subscriber list
+ *
+ * @todo This class doesn't seem to be called from anywhere. Confirm that it is dead.
+ */
 class GetSubscriberList extends \Drip\Connect\Model\ApiCalls\Helper
 {
     public function __construct(
@@ -21,7 +24,7 @@ class GetSubscriberList extends \Drip\Connect\Model\ApiCalls\Helper
         ], $data);
 
         $this->apiClient = $connectApiCallsBaseFactory->create([
-            'endpoint' => $config->getAccountId() . '/' . self::ENDPOINT_SUBSCRIBERS,
+            'endpoint' => $config->getAccountParam() . '/' . self::ENDPOINT_SUBSCRIBERS,
             'config' => $config,
         ]);
 

@@ -2,20 +2,17 @@
 
 namespace Drip\Connect\Model;
 
+/**
+ * Scoped configuration
+ */
 class Configuration
 {
-    const ACCOUNT_ID_PATH = 'dripconnect_general/api_settings/account_id';
-    const BEHAVIOR_PATH = 'dripconnect_general/api_settings/behavior';
-    const API_URL_PATH = 'dripconnect_general/api_settings/url';
-    const API_TIMEOUT_PATH = 'dripconnect_general/api_settings/timeout';
-    const API_KEY_PATH = 'dripconnect_general/api_settings/api_key';
-    const CUSTOMER_DATA_STATE_PATH = 'dripconnect_general/actions/sync_customers_data_state';
-    const ORDER_DATA_STATE_PATH = 'dripconnect_general/actions/sync_orders_data_state';
-    const MODULE_ENABLED_PATH = 'dripconnect_general/module_settings/is_enabled';
+    const ACCOUNT_PARAM_PATH = 'dripconnect_general/api_settings/account_param';
+    const TEST_MODE_PATH = 'dripconnect_general/api_settings/test_mode';
+    const WIS_URL_PATH = 'dripconnect_general/api_settings/wis_url';
+    const INTEGRATION_TOKEN = 'dripconnect_general/api_settings/integration_token';
     const SALT_PATH = 'dripconnect_general/module_settings/salt';
     const LOG_SETTINGS_PATH = 'dripconnect_general/log_settings';
-    const MEMORY_LIMIT_PATH = 'dripconnect_general/api_settings/memory_limit';
-    const BATCH_DELAY_PATH = 'dripconnect_general/api_settings/batch_delay';
 
     /**
      * @var \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
@@ -23,9 +20,9 @@ class Configuration
     protected $scopeConfig;
 
     /**
-     * @var \Magento\Config\Model\ResourceModel\Config $resourceConfig
+     * @var \Magento\Framework\App\Config\Storage\WriterInterface $configWriter
      */
-    protected $resourceConfig;
+    protected $configWriter;
 
     /**
      * @var \Magento\Store\Model\StoreManagerInterface $storeManager
@@ -33,9 +30,9 @@ class Configuration
     protected $storeManager;
 
     /**
-     * @var int The store's ID
+     * @var int The website's ID
      */
-    protected $storeId;
+    protected $websiteId;
 
     /**
      * @var string The config's scope
@@ -43,146 +40,107 @@ class Configuration
     protected $scope;
 
     /**
-     * @param \Magento\Config\Model\ResourceModel\Config $resourceConfig
+     * @param \Magento\Framework\App\Config\Storage\WriterInterface $configWriter,
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager,
-     * @param int $storeId The ID of the Store View (called `store` in the DB and code)
+     * @param int $websiteId The ID of the Website
      */
     public function __construct(
-        \Magento\Config\Model\ResourceModel\Config $resourceConfig,
+        \Magento\Framework\App\Config\Storage\WriterInterface $configWriter,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        int $storeId
+        int $websiteId
     ) {
-        $this->resourceConfig = $resourceConfig;
+        $this->configWriter = $configWriter;
         $this->scopeConfig = $scopeConfig;
         $this->storeManager = $storeManager;
-        $this->storeId = $storeId;
+        $this->websiteId = $websiteId;
 
-        // M2 requires a more modern approach of not using 0 as the default ID,
-        // but rather relying on a scope type. This is great, but we don't need
-        // that complexity. Simplify...
-        if ((int) $storeId === \Magento\Store\Model\Store::DEFAULT_STORE_ID) {
+        if ($this->websiteId == 0) {
             $this->scope = \Magento\Framework\App\Config\ScopeConfigInterface::SCOPE_TYPE_DEFAULT;
         } else {
-            $this->scope = \Magento\Store\Model\ScopeInterface::SCOPE_STORE;
+            $this->scope = \Magento\Store\Model\ScopeInterface::SCOPE_WEBSITES;
         }
     }
 
-    public function getStoreId()
-    {
-        return $this->storeId;
-    }
-
-    /**
-     * The website ID attached to the current store view.
-     *
-     * @return int
-     */
     public function getWebsiteId()
     {
-        return $this->storeManager->getStore($this->storeId)->getWebsiteId();
+        return $this->websiteId;
     }
 
-    public function getAccountId()
+    public function getWisUrl()
     {
-        return $this->getStoreConfig(self::ACCOUNT_ID_PATH);
+        return $this->getConfig(self::WIS_URL_PATH);
     }
 
-    public function getBehavior()
+    public function getIntegrationToken()
     {
-        return $this->getStoreConfig(self::BEHAVIOR_PATH);
+        return $this->getConfig(self::INTEGRATION_TOKEN);
     }
 
-    public function getUrl()
+    public function getAccountParam()
     {
-        return $this->getStoreConfig(self::API_URL_PATH);
-    }
-
-    public function getTimeout()
-    {
-        return $this->getStoreConfig(self::API_TIMEOUT_PATH);
-    }
-
-    /**
-     * @param int $timeout The timeout in seconds.
-     */
-    public function setTimeout($timeout)
-    {
-        $this->setStoreConfig(self::API_TIMEOUT_PATH, $timeout);
-    }
-
-    public function getApiKey()
-    {
-        return $this->getStoreConfig(self::API_KEY_PATH);
-    }
-
-    public function getCustomersSyncState()
-    {
-        return $this->getStoreConfig(self::CUSTOMER_DATA_STATE_PATH);
-    }
-
-    /**
-     * @param int $state
-     */
-    public function setCustomersSyncState($state)
-    {
-        $this->setStoreConfig(self::CUSTOMER_DATA_STATE_PATH, $state);
-    }
-
-    public function getOrdersSyncState()
-    {
-        return $this->getStoreConfig(self::ORDER_DATA_STATE_PATH);
-    }
-
-    /**
-     * @param int $state
-     */
-    public function setOrdersSyncState($state)
-    {
-        $this->setStoreConfig(self::ORDER_DATA_STATE_PATH, $state);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        return (bool) $this->getStoreConfig(self::MODULE_ENABLED_PATH);
+        return $this->getConfig(self::ACCOUNT_PARAM_PATH);
     }
 
     public function getSalt()
     {
-        return $this->getStoreConfig(self::SALT_PATH);
+        return $this->getConfig(self::SALT_PATH);
+    }
+
+    public function getTestMode()
+    {
+        return $this->getConfig(self::TEST_MODE_PATH);
     }
 
     public function getLogSettings()
     {
-        return $this->getStoreConfig(self::LOG_SETTINGS_PATH);
-    }
-
-    public function getMemoryLimit()
-    {
-        return $this->getStoreConfig(self::MEMORY_LIMIT_PATH);
+        return $this->getConfig(self::LOG_SETTINGS_PATH);
     }
 
     /**
-     * @return int
+     * @param string $accountParam
      */
-    public function getBatchDelay()
+    public function setAccountParam($accountParam)
     {
-        return (int) $this->getStoreConfig(self::BATCH_DELAY_PATH);
+        $this->setConfig(self::ACCOUNT_PARAM_PATH, $accountParam);
+    }
+
+    /**
+     * @param bool
+     */
+    public function setTestMode($value)
+    {
+        $this->setConfig(self::TEST_MODE_PATH, $value);
+    }
+
+    /**
+     * @param string $integrationToken
+     */
+    public function setIntegrationToken($integrationToken)
+    {
+        $this->setConfig(self::INTEGRATION_TOKEN, $integrationToken);
+    }
+
+    /**
+     * Whether the plugin is active for the given scope.
+     *
+     * @return bool
+     */
+    public function isActive()
+    {
+        return $this->getIntegrationToken() !== null;
     }
 
     /**
      * @param string $path
      */
-    protected function getStoreConfig($path)
+    protected function getConfig($path)
     {
         return $this->scopeConfig->getValue(
             $path,
             $this->scope,
-            $this->storeId
+            $this->websiteId
         );
     }
 
@@ -190,14 +148,17 @@ class Configuration
      * @param string $path
      * @param mixed $val
      */
-    protected function setStoreConfig($path, $val)
+    protected function setConfig($path, $val)
     {
-        $this->resourceConfig->saveConfig(
+        $this->configWriter->save(
             $path,
             $val,
             $this->scope,
-            $this->storeId
+            $this->websiteId
         );
-        $this->storeManager->getStore($this->storeId)->resetConfig();
+        $stores = $this->storeManager->getStores();
+        foreach ($stores as $store) {
+                $store->resetConfig();
+        }
     }
 }

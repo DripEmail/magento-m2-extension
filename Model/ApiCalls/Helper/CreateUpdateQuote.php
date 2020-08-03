@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Model\ApiCalls\Helper;
 
+/**
+ * Create or update a quote
+ */
 class CreateUpdateQuote extends \Drip\Connect\Model\ApiCalls\Helper
 {
     const PROVIDER_NAME = 'magento';
@@ -16,7 +19,7 @@ class CreateUpdateQuote extends \Drip\Connect\Model\ApiCalls\Helper
         $data = []
     ) {
         $this->apiClient = $connectApiCallsBaseFactory->create([
-            'endpoint' => $config->getAccountId() . '/' . self::ENDPOINT_CART,
+            'endpoint' => $config->getAccountParam() . '/' . self::ENDPOINT_CART,
             'config' => $config,
             'v3' => true,
         ]);

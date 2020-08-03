@@ -4,15 +4,8 @@ namespace Drip\Connect\Observer;
 
 abstract class Base implements \Magento\Framework\Event\ObserverInterface
 {
-    const REGISTRY_KEY_CUSTOMER_IS_NEW = 'newcustomer';
-    const REGISTRY_KEY_CUSTOMER_OLD_ADDR = 'oldcustomeraddress';
-    const REGISTRY_KEY_CUSTOMER_OLD_DATA = 'oldcustomerdata';
-    const REGISTRY_KEY_NEW_GUEST_SUBSCRIBER = 'newguestsubscriber';
-    const REGISTRY_KEY_NEW_USER_SUBSCRIBE_STATE = 'is_new_user_wants_to_subscribe';
     const REGISTRY_KEY_ORDER_ITEMS_OLD_DATA = 'oldorderitemsdata';
     const REGISTRY_KEY_ORDER_OLD_DATA = 'oldorderdata';
-    const REGISTRY_KEY_SUBSCRIBER_PREV_STATE = 'oldsubscriptionstatus';
-    const REGISTRY_KEY_SUBSCRIBER_SUBSCRIBE_INTENT = 'userwantstosubscribe';
 
     /** @var \Drip\Connect\Model\ConfigurationFactory */
     protected $configFactory;
@@ -20,12 +13,17 @@ abstract class Base implements \Magento\Framework\Event\ObserverInterface
     /** @var \Drip\Connect\Logger\Logger */
     protected $logger;
 
+    /** @var \Magento\Store\Model\StoreManagerInterface */
+    protected $storeManager;
+
     public function __construct(
         \Drip\Connect\Model\ConfigurationFactory $configFactory,
-        \Drip\Connect\Logger\Logger $logger
+        \Drip\Connect\Logger\Logger $logger,
+        \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
         $this->configFactory = $configFactory;
         $this->logger = $logger;
+        $this->storeManager = $storeManager;
     }
 
     abstract protected function executeWhenEnabled(\Magento\Framework\Event\Observer $observer);
@@ -48,14 +46,15 @@ abstract class Base implements \Magento\Framework\Event\ObserverInterface
     }
 
     /**
-     * Override when you have a more specific concept of active than just the
-     * current scope.
+     * Base activity on current scope.
+     *
+     * You need to override this when dealing with ORM observers since they might be called from the admin UI.
      *
      * @param \Magento\Framework\Event\Observer $observer
      * @return bool
      */
     protected function isActive(\Magento\Framework\Event\Observer $observer)
     {
-        return $this->configFactory->createForCurrentScope()->isEnabled();
+        return $this->configFactory->createForCurrentScope()->isActive();
     }
 }

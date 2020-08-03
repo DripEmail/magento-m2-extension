@@ -6,6 +6,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Create customer for tests
+ */
 class CreateCustomerCommand extends Command
 {
     /**
@@ -42,17 +45,17 @@ class CreateCustomerCommand extends Command
         $json = json_decode($data, true);
 
         if ($json === null) {
-            throw new \Exception('Null JSON parse');
+            throw new \UnexpectedValueException('Null JSON parse');
         }
 
-        $defaults = array(
+        $defaults = [
             // 'websiteId' => 1,
             // 'store' => 1,
             'firstname' => 'John',
             'lastname' => 'Doe',
             'email' => 'jd1@example.com',
             'password' => 'somepassword',
-        );
+        ];
         $fullData = array_replace_recursive($defaults, $json);
         $customer = $this->customerFactory->create();
         // This assumes that you properly name all of the attributes. But we control both ends, so it should be fine.

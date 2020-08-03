@@ -6,6 +6,9 @@ use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Customer\Model\Customer;
 
+/**
+ * Upgrade data during version updates.
+ */
 class UpgradeData implements \Magento\Framework\Setup\UpgradeDataInterface
 {
     /** @var \Magento\Framework\Setup\ModuleDataSetupInterface */
@@ -89,10 +92,6 @@ class UpgradeData implements \Magento\Framework\Setup\UpgradeDataInterface
             $this->updateCustomerDripAttribute();
         }
 
-        if (version_compare($context->getVersion(), '1.5.2') < 0) {
-            $this->changeTimeout();
-        }
-
         $setup->endSetup();
     }
 
@@ -115,13 +114,5 @@ class UpgradeData implements \Magento\Framework\Setup\UpgradeDataInterface
                 );
             $attribute->save();
         }
-    }
-
-    /**
-     * change api call timeout value
-     */
-    protected function changeTimeout()
-    {
-        $this->configFactory->createForGlobalScope()->setTimeout(30000);
     }
 }

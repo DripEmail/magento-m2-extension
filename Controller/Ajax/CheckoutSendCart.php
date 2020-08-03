@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Controller\Ajax;
 
+/**
+ * Shim to get additional checkout data
+ */
 class CheckoutSendCart extends \Magento\Framework\App\Action\Action
 {
     /** @var \Magento\Framework\Controller\Result\JsonFactory */
@@ -49,8 +52,12 @@ class CheckoutSendCart extends \Magento\Framework\App\Action\Action
                 if ($email != $this->checkoutSession->getGuestEmail()) {
                     $config = $this->configFactory->createForCurrentScope();
 
-                    $result = $this->connectQuoteHelper->proceedQuoteGuestCheckout($quote, $email, $config);
-                    $this->checkoutSession->setGuestEmail($email);
+                    // TODO: See if we still need this.
+                    $result = $this->connectQuoteHelper->sendQuote(
+                        $quote,
+                        $config,
+                        \Drip\Connect\Helper\Quote::CREATED_ACTION
+                    );
                 } else {
                     $result = 1; // do not need to send call
                 }

@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Observer\Product;
 
+/**
+ * Product before delete observer
+ */
 class DeleteBefore extends \Drip\Connect\Observer\Base
 {
     /** @var \Drip\Connect\Helper\Product */
@@ -25,13 +28,14 @@ class DeleteBefore extends \Drip\Connect\Observer\Base
         \Drip\Connect\Model\ConfigurationFactory $configFactory,
         \Drip\Connect\Logger\Logger $logger,
         \Magento\Catalog\Model\ProductRepository $productRepository,
-        \Magento\Framework\Registry $registry
+        \Magento\Framework\Registry $registry,
+        \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
         $this->productHelper = $productHelper;
         $this->connectHelper = $connectHelper;
         $this->productRepository = $productRepository;
         $this->registry = $registry;
-        parent::__construct($configFactory, $logger);
+        parent::__construct($configFactory, $logger, $storeManager);
     }
 
     /**

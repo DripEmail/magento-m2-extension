@@ -1,6 +1,9 @@
 <?php
 namespace Drip\Connect\Model\ApiCalls\Helper;
 
+/**
+ * Record a subscriber event
+ */
 class RecordAnEvent extends \Drip\Connect\Model\ApiCalls\Helper
 {
     const EVENT_CUSTOMER_NEW = 'Customer created';
@@ -22,7 +25,7 @@ class RecordAnEvent extends \Drip\Connect\Model\ApiCalls\Helper
         array $data
     ) {
         $this->apiClient = $connectApiCallsBaseFactory->create([
-            'endpoint' => $config->getAccountId() . '/' . self::ENDPOINT_EVENTS,
+            'endpoint' => $config->getAccountParam() . '/' . self::ENDPOINT_EVENTS,
             'config' => $config,
         ]);
 

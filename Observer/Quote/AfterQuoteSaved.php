@@ -2,11 +2,12 @@
 
 namespace Drip\Connect\Observer\Quote;
 
+/**
+ * After quote saved observer
+ */
 class AfterQuoteSaved extends \Drip\Connect\Observer\Base
 {
-    /**
-     * @var \Drip\Connect\Helper\Quote
-     */
+    /** @var \Drip\Connect\Helper\Quote */
     protected $connectQuoteHelper;
 
     /**
@@ -16,50 +17,29 @@ class AfterQuoteSaved extends \Drip\Connect\Observer\Base
 
     public function __construct(
         \Drip\Connect\Model\ConfigurationFactory $configFactory,
-        \Drip\Connect\Helper\Quote $connectQuoteHelper,
         \Drip\Connect\Logger\Logger $logger,
-        \Magento\Framework\Registry $registry
+        \Drip\Connect\Helper\Quote $connectQuoteHelper,
+        \Magento\Framework\Registry $registry,
+        \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
         $this->connectQuoteHelper = $connectQuoteHelper;
         $this->registry = $registry;
-        parent::__construct($configFactory, $logger);
+        parent::__construct($configFactory, $logger, $storeManager);
     }
 
     public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)
     {
-        //do nothing
-        if ($this->registry->registry(
-            \Drip\Connect\Helper\Quote::REGISTRY_KEY_CUSTOMER_REGISTERED_OR_LOGGED_IN_WITH_EMTPY_QUOTE
-        )
-            ) {
-            return;
-        }
-
+        $config = $this->configFactory->createForCurrentScope();
         $quote = $observer->getEvent()->getQuote();
 
-        if ($this->connectQuoteHelper->isUnknownUser($quote)) {
-            return;
-        }
-
-        $config = $this->configFactory->createForCurrentScope();
-
         if ($this->registry->registry(\Drip\Connect\Helper\Quote::REGISTRY_KEY_IS_NEW)) {
-            $this->connectQuoteHelper->proceedQuoteNew($quote, $config);
+            $action = (string) \Drip\Connect\Helper\Quote::CREATED_ACTION;
         } else {
-            $oldData = $this->registry->registry(\Drip\Connect\Helper\Quote::REGISTRY_KEY_OLD_DATA);
-            if (empty($oldData['items']) || count($oldData['items']) == 0) {
-                //customer logged in previously with empty cart and then adds a product
-                $this->connectQuoteHelper->proceedQuoteNew($quote, $config);
-            } else {
-                if ($this->connectQuoteHelper->isQuoteChanged($quote)) {
-                    $this->connectQuoteHelper->proceedQuote($quote, $config);
-                }
-            }
+            $action = (string) \Drip\Connect\Helper\Quote::UPDATED_ACTION;
         }
+
+        $this->connectQuoteHelper->sendQuote($quote, $config, $action);
+
         $this->registry->unregister(\Drip\Connect\Helper\Quote::REGISTRY_KEY_IS_NEW);
-        $this->registry->unregister(\Drip\Connect\Helper\Quote::REGISTRY_KEY_OLD_DATA);
-        $this->registry->unregister(
-            \Drip\Connect\Helper\Quote::REGISTRY_KEY_CUSTOMER_REGISTERED_OR_LOGGED_IN_WITH_EMTPY_QUOTE
-        );
     }
 }

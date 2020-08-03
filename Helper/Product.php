@@ -2,11 +2,13 @@
 
 namespace Drip\Connect\Helper;
 
+/**
+ * Product helpers
+ */
 class Product extends \Magento\Framework\App\Helper\AbstractHelper
 {
     const REGISTRY_KEY_IS_NEW = 'newproduct';
     const REGISTRY_KEY_OLD_DATA = 'oldproductdata';
-    const SUCCESS_RESPONSE_CODE = 202;
 
     /** @var \Drip\Connect\Helper\Data */
     protected $connectHelper;
@@ -17,8 +19,8 @@ class Product extends \Magento\Framework\App\Helper\AbstractHelper
     /** @var \Magento\Framework\Registry */
     protected $registry;
 
-    /** @var \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateProductFactory */
-    protected $connectApiCallsHelperCreateUpdateProductFactory;
+    /** @var \Drip\Connect\Model\ApiCalls\Helper\SendEventPayloadFactory */
+    protected $connectApiCallsHelperSendEventPayloadFactory;
 
     /** @var \Magento\CatalogInventory\Api\StockStateInterface */
     protected $stockState;
@@ -33,15 +35,15 @@ class Product extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\Registry $registry,
-        \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateProductFactory $connectApiCallsHelperCreateUpdateProductFactory,
         \Magento\CatalogInventory\Api\StockStateInterface $stockState,
         \Magento\Catalog\Model\Product\Media\ConfigInterface $mediaConfig,
-        \Drip\Connect\Helper\Data $connectHelper
+        \Drip\Connect\Helper\Data $connectHelper,
+        \Drip\Connect\Model\ApiCalls\Helper\SendEventPayloadFactory $connectApiCallsHelperSendEventPayloadFactory
     ) {
         $this->storeManager = $storeManager;
         $this->registry = $registry;
         $this->connectHelper = $connectHelper;
-        $this->connectApiCallsHelperCreateUpdateProductFactory = $connectApiCallsHelperCreateUpdateProductFactory;
+        $this->connectApiCallsHelperSendEventPayloadFactory = $connectApiCallsHelperSendEventPayloadFactory;
         $this->stockState = $stockState;
         $this->mediaConfig = $mediaConfig;
         parent::__construct($context);
@@ -79,57 +81,30 @@ class Product extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
-     * drip actions when send product to drip 1st time
+     * Send product created, updated, deleted events to WIS
      *
      * @param \Magento\Catalog\Model\Product $product
      * @param \Drip\Connect\Model\Configuration $config
+     * @param string $action
      */
-    public function proceedProductNew(\Magento\Catalog\Model\Product $product, \Drip\Connect\Model\Configuration $config)
-    {
-        $data = $this->prepareData($product);
-        $data['action'] = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateProduct::PRODUCT_NEW;
-
-        $this->connectApiCallsHelperCreateUpdateProductFactory->create([
-            'config' => $config,
-            'data' => $data,
-        ])->call();
-    }
-
-    /**
-     * drip actions when product gets changed
-     *
-     * @param \Magento\Catalog\Model\Product $product
-     * @param \Drip\Connect\Model\Configuration $config
-     */
-    public function proceedProduct(\Magento\Catalog\Model\Product $product, \Drip\Connect\Model\Configuration $config)
-    {
-        $data = $this->prepareData($product);
-        $data['action'] = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateProduct::PRODUCT_CHANGED;
-
-        $this->connectApiCallsHelperCreateUpdateProductFactory->create([
-            'config' => $config,
-            'data' => $data,
-        ])->call();
-    }
-
-    /**
-     * drip actions when product is deleted
-     *
-     * @param \Magento\Catalog\Model\Product $product
-     * @param \Drip\Connect\Model\Configuration $config
-     */
-    public function proceedProductDelete(\Magento\Catalog\Model\Product $product, \Drip\Connect\Model\Configuration $config)
-    {
-        $data = $this->registry->registry(\Drip\Connect\Helper\Product::REGISTRY_KEY_OLD_DATA);
-        if ($product->getId() == $data['product_id']) {
-            $data['action'] = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateProduct::PRODUCT_DELETED;
-            unset($data['product_url']);
-
-            $this->connectApiCallsHelperCreateUpdateProductFactory->create([
-                'config' => $config,
-                'data' => $data,
-            ])->call();
+    public function sendEvent(
+        \Magento\Catalog\Model\Product $product,
+        \Drip\Connect\Model\Configuration $config,
+        string $action
+    ) {
+        if ($product->getId() === null) {
+            return;
         }
+
+        $payload = [
+            'product_id' => (string) $product->getId(),
+            'action' => $action
+        ];
+
+        return $this->connectApiCallsHelperSendEventPayloadFactory->create([
+            'config' => $config,
+            'payload' => $payload,
+        ])->call();
     }
 
     /**

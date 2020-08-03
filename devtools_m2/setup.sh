@@ -1,7 +1,15 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
 set -e
 
-eval $(aws ecr get-login --no-include-email --registry-ids 648846177135 --region us-east-1)
+if [[ "$(aws --version)" = *"aws-cli/2."* ]]; then
+  aws ecr get-login-password --region us-east-1 \
+  | docker login \
+      --username AWS \
+      --password-stdin 648846177135.dkr.ecr.us-east-1.amazonaws.com
+else
+  eval "$(aws ecr get-login-password --no-include-email --registry-ids 648846177135 --region us-east-1)"
+fi
 
 # Spin up a new instance of Magento
 # Add --build when you need to rebuild the Dockerfile.
@@ -41,7 +49,7 @@ MAGE_MODE=developer ./bin/magento setup:install \
 ./bin/magento config:set dev/css/merge_css_files 1 && \
 ./bin/magento config:set dev/css/minify_files 1 && \
 ./bin/magento setup:static-content:deploy -f && \
-./bin/magento deploy:mode:set production
+./bin/magento deploy:mode:set developer
 SCRIPT
 )
 

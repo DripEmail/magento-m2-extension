@@ -2,8 +2,16 @@
 
 namespace Drip\Connect\Helper;
 
+/**
+ * Customer helpers
+ */
 class Customer extends \Magento\Framework\App\Helper\AbstractHelper
 {
+    const LOGIN_ACTION = 'login';
+    const CREATED_ACTION = 'created';
+    const UPDATED_ACTION = 'updated';
+    const DELETED_ACTION = 'deleted';
+
     /** @var \Drip\Connect\Logger\Logger */
     protected $logger;
 
@@ -37,6 +45,9 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     /** @var \Magento\Framework\Registry */
     protected $registry;
 
+    /** @var \Drip\Connect\Model\ApiCalls\Helper\SendEventPayloadFactory */
+    protected $connectApiCallsHelperSendEventPayloadFactory;
+
     /**
      * constructor
      */
@@ -46,13 +57,13 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Customer\Model\GroupFactory $customerGroupFactory,
         \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateSubscriberFactory $apiCallsCreateUpdateSubscriberFactory,
         \Drip\Connect\Model\ApiCalls\Helper\RecordAnEventFactory $connectApiCallsHelperRecordAnEventFactory,
-        \Drip\Connect\Model\ApiCalls\Helper\Batches\SubscribersFactory $connectApiCallsHelperBatchesSubscribersFactory,
         \Drip\Connect\Helper\Quote $quoteHelper,
         \Magento\Customer\Model\CustomerFactory $customerCustomerFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Newsletter\Model\SubscriberFactory $subscriberFactory,
         \Magento\Framework\Registry $registry,
-        \Drip\Connect\Helper\Data $connectHelper
+        \Drip\Connect\Helper\Data $connectHelper,
+        \Drip\Connect\Model\ApiCalls\Helper\SendEventPayloadFactory $connectApiCallsHelperSendEventPayloadFactory
     ) {
         parent::__construct($context);
         $this->logger = $logger;
@@ -60,7 +71,6 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         $this->remoteAddress = $context->getRemoteAddress();
         $this->apiCallsCreateUpdateSubscriberFactory = $apiCallsCreateUpdateSubscriberFactory;
         $this->connectApiCallsHelperRecordAnEventFactory = $connectApiCallsHelperRecordAnEventFactory;
-        $this->connectApiCallsHelperBatchesSubscribersFactory = $connectApiCallsHelperBatchesSubscribersFactory;
         $this->header = $context->getHttpHeader();
         $this->quoteHelper = $quoteHelper;
         $this->customerCustomerFactory = $customerCustomerFactory;
@@ -68,106 +78,55 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
         $this->subscriberFactory = $subscriberFactory;
         $this->registry = $registry;
         $this->connectHelper = $connectHelper;
+        $this->connectApiCallsHelperSendEventPayloadFactory = $connectApiCallsHelperSendEventPayloadFactory;
     }
 
-    /**
-     * prepare array of guest subscriber data
-     *
-     * @param \Magento\Newsletter\Model\Subscriber $subscriber
-     * @param bool $updatableOnly leave only those fields which are used in update action
-     *
-     * @return array
-     */
-    public function prepareGuestSubscriberData($subscriber, $updatableOnly = true, $statusChanged = false)
+    public function sendEvent($payload, \Drip\Connect\Model\Configuration $config)
     {
-        $acceptsMarketing = $subscriber->isSubscribed();
-
-        $data =  [
-            'email' => (string) $subscriber->getSubscriberEmail(),
-            'ip_address' => (string) $this->remoteAddress->getRemoteAddress(),
-            'initial_status' => $acceptsMarketing ? 'active' : 'unsubscribed',
-            'custom_fields' => [
-                'accepts_marketing' => $acceptsMarketing ? 'yes' : 'no',
-            ],
-        ];
-
-        if ($statusChanged) {
-            $data['status'] = $acceptsMarketing ? 'active' : 'unsubscribed';
-        }
-
-        if ($updatableOnly) {
-            unset($data['ip_address']);
-        }
-
-        return $data;
+        return $this->connectApiCallsHelperSendEventPayloadFactory->create([
+            'config' => $config,
+            'payload' => $payload,
+        ])->call();
     }
 
-    /**
-     * prepare array of customer data we use to send in drip
-     *
-     * @param Mage_Customer_Model_Customer $customer
-     * @param bool $updatableOnly leave only those fields which are used in update action
-     * @param bool $statusChanged whether the status has changed and should be synced
-     * @param bool $overriddenStatus whether the status should be something other than what is on the customer's
-     *                               is_subscribed field.
-     */
-    public function prepareCustomerData(
-        $customer,
-        $updatableOnly = true,
-        $statusChanged = false,
-        $overriddenStatus = null
+    public function sendCustomerEvent(
+        $customer, // maybe \Magento\Customer\Model\Data\Customer OR Magento\Customer\Model\Customer\Interceptor
+        \Drip\Connect\Model\Configuration $config,
+        $action
     ) {
-        if ($customer->getOrigData() && $customer->getData('email') != $customer->getOrigData('email')) {
-            $newEmail = $customer->getData('email');
-        } else {
-            $newEmail = '';
-        }
-
-        if ($overriddenStatus !== null) {
-            $status = $overriddenStatus;
-        } else {
-            $subscriber = $this->subscriberFactory->create()->loadByCustomerId($customer->getId());
-            $status = $subscriber->isSubscribed();
-        }
-
-        $data =  [
-            'email' => (string) $customer->getEmail(),
-            'new_email' => ($newEmail ? $newEmail : ''),
-            'ip_address' => (string) $this->remoteAddress->getRemoteAddress(),
-            'user_agent' => (string) $this->header->getHttpUserAgent(),
-            'initial_status' => $status ? 'active' : 'unsubscribed',
-            'custom_fields' => [
-                'first_name' => $customer->getFirstname(),
-                'last_name' => $customer->getLastname(),
-                'birthday' => $customer->getDob(),
-                'gender' => $this->getGenderText($customer->getGender()),
-                'magento_source' => $this->connectHelper->getArea(),
-                'magento_account_created' => $customer->getCreatedAt(),
-                'magento_customer_group' => $this->customerGroupFactory->create()
-                                                                       ->load($customer->getGroupId())
-                                                                       ->getCustomerGroupCode(),
-                'magento_store' => (int) $customer->getStoreId(),
-                'accepts_marketing' => ($status ? 'yes' : 'no'),
-            ],
+        $storeId = $this->getCustomerStoreId($customer);
+        $payload = [
+            'subject' => 'customer',
+            'action' => $action,
+            'store_id' => $storeId
         ];
 
-        if ($statusChanged) {
-            $data['status'] = $status ? 'active' : 'unsubscribed';
+        if ($customer->getId() !== null) {
+            $payload['customer_id'] = $customer->getId();
+        } elseif ($customer->getEmail() !== null) {
+            $payload['email'] = $customer->getEmail();
+        } else {
+            return;
         }
 
-        /*if ($customer->getDefaultShippingAddress()) {
-            $data = array_merge_recursive($data, array(
-                'custom_fields'=>$this->getAddressFields($customer->getDefaultShippingAddress())
-            ));
-        }*/
+        return $this->sendEvent($payload, $config);
+    }
 
-        if ($updatableOnly) {
-            unset($data['custom_fields']['magento_account_created']);
-            unset($data['ip_address']);
-            unset($data['user_agent']);
-        }
+    public function sendSubscriberEvent(
+        $subscriber,
+        $action,
+        $preSaveStatus,
+        \Drip\Connect\Model\Configuration $config
+    ) {
+        $payload = [
+            'subject' => 'subscriber',
+            'email' => $subscriber->getEmail(),
+            'action' => $action,
+            'pre_save_status' => (int)$preSaveStatus,
+            'status' => $subscriber->getStatus()
+        ];
 
-        return $data;
+        return $this->sendEvent($payload, $config);
     }
 
     /**
@@ -200,8 +159,10 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
      * @param \Magento\Sales\Model\Order $order
      * @param \Drip\Connect\Model\Configuration $config
      */
-    public function accountActionsForGuestCheckout(\Magento\Sales\Model\Order $order, \Drip\Connect\Model\Configuration $config)
-    {
+    public function accountActionsForGuestCheckout(
+        \Magento\Sales\Model\Order $order,
+        \Drip\Connect\Model\Configuration $config
+    ) {
         $customerData = $this->prepareCustomerDataForGuestCheckout($order);
 
         $this->apiCallsCreateUpdateSubscriberFactory->create([
@@ -287,45 +248,6 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
-     * drip actions for customer account change
-     *
-     * @param \Magento\Customer\Model\Customer $customer
-     * @param \Drip\Connect\Model\Configuration $config
-     * @param bool $acceptsMarketing whether the customer accepts marketing. Overrides the customer is_subscribed
-     *                               record.
-     * @param string $event The updated/created/deleted event.
-     * @param bool $forceStatus Whether the customer has changed marketing preferences which should be synced to Drip.
-     */
-    public function proceedAccount(
-        \Magento\Customer\Model\Customer $customer,
-        \Drip\Connect\Model\Configuration $config,
-        $acceptsMarketing = null,
-        $event = \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_UPDATED,
-        $forceStatus = false
-    ) {
-        $email = $customer->getEmail();
-        if (!$this->connectHelper->isEmailValid($email)) {
-            $this->logger->notice("Skipping customer account update due to invalid email ({$email})");
-            return;
-        }
-
-        $customerData = $this->prepareCustomerData($customer, true, $forceStatus, $acceptsMarketing);
-
-        $this->apiCallsCreateUpdateSubscriberFactory->create([
-            'config' => $config,
-            'data' => $customerData
-        ])->call();
-
-        $this->connectApiCallsHelperRecordAnEventFactory->create([
-            'config' => $config,
-            'data' => [
-                'email' => $email,
-                'action' => $event,
-            ]
-        ])->call();
-    }
-
-    /**
      * Gets the first store when a customer is in website scope.
      *
      * @param \Magento\Customer\Api\Data\CustomerInterface $customer Customer object
@@ -342,119 +264,5 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
             $storeId = current($storeIds);
         }
         return $storeId;
-    }
-
-    /**
-     * @param \Magento\Newsletter\Model\Subscriber $subscriber
-     * @param \Drip\Connect\Model\Configuration $config
-     * @param bool $forceStatus
-     */
-    public function proceedGuestSubscriberNew(\Magento\Newsletter\Model\Subscriber $subscriber, \Drip\Connect\Model\Configuration $config, $forceStatus = false)
-    {
-        $email = $subscriber->getSubscriberEmail();
-        if (!$this->connectHelper->isEmailValid($email)) {
-            $this->logger->notice("Skipping guest subscriber create due to invalid email ({$email})");
-            return;
-        }
-        $data = $this->prepareGuestSubscriberData($subscriber, false, $forceStatus);
-
-        $this->apiCallsCreateUpdateSubscriberFactory->create([
-            'config' => $config,
-            'data' => $data
-        ])->call();
-
-        $this->connectApiCallsHelperRecordAnEventFactory->create([
-            'config' => $config,
-            'data' => [
-                'email' => $email,
-                'action' => \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_NEW,
-            ]
-        ])->call();
-    }
-
-    /**
-     * drip actions for customer log in
-     *
-     * @param \Magento\Customer\Model\Customer $customer
-     * @param \Drip\Connect\Model\Configuration $config
-     */
-    public function proceedLogin(\Magento\Customer\Model\Customer $customer, \Drip\Connect\Model\Configuration $config)
-    {
-        $this->quoteHelper->checkForEmptyQuote($customer);
-
-        $this->connectApiCallsHelperRecordAnEventFactory->create([
-            'config' => $config,
-            'data' => [
-                'email' => $customer->getEmail(),
-                'action' => \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_LOGIN,
-            ]
-        ])->call();
-    }
-
-    /**
-     * drip actions for subscriber save
-     *
-     * @param \Magento\Newsletter\Model\Subscriber $subscriber
-     * @param \Drip\Connect\Model\Configuration $config
-     */
-    public function proceedSubscriberSave(\Magento\Newsletter\Model\Subscriber $subscriber, \Drip\Connect\Model\Configuration $config)
-    {
-        $data = $this->prepareGuestSubscriberData($subscriber);
-
-        $this->apiCallsCreateUpdateSubscriberFactory->create([
-            'config' => $config,
-            'data' => $data
-        ])->call();
-    }
-
-    /**
-     * drip actions for subscriber delete
-     *
-     * @param \Magento\Newsletter\Model\Subscriber $subscriber
-     * @param \Drip\Connect\Model\Configuration $config
-     */
-    public function proceedSubscriberDelete(\Magento\Newsletter\Model\Subscriber $subscriber, \Drip\Connect\Model\Configuration $config)
-    {
-        $data = $this->prepareGuestSubscriberData($subscriber);
-        $data['custom_fields']['accepts_marketing'] = 'no';
-        $data['status'] = 'unsubscribed';
-
-        $this->apiCallsCreateUpdateSubscriberFactory->create([
-            'config' => $config,
-            'data' => $data
-        ])->call();
-    }
-
-    /**
-     * drip actions for customer account delete
-     *
-     * @param \Magento\Customer\Model\Customer $customer
-     * @param \Drip\Connect\Model\Configuration $config
-     */
-    public function proceedAccountDelete(\Magento\Customer\Model\Customer $customer, \Drip\Connect\Model\Configuration $config)
-    {
-        $this->connectApiCallsHelperRecordAnEventFactory->create([
-            'config' => $config,
-            'data' => [
-                'email' => $customer->getEmail(),
-                'action' => \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_CUSTOMER_DELETED,
-            ]
-        ])->call();
-    }
-
-    /**
-     * batch customer update
-     *
-     * @param array $batch
-     * @param \Drip\Connect\Model\Configuration $config
-     *
-     * @return \Drip\Connect\Model\Restapi\Response\ResponseAbstract
-     */
-    public function proceedAccountBatch(array $batch, \Drip\Connect\Model\Configuration $config)
-    {
-        return $this->connectApiCallsHelperBatchesSubscribersFactory->create([
-            'config' => $config,
-            'batch' => $batch,
-        ])->call();
     }
 }

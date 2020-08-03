@@ -6,7 +6,8 @@ define([
   function identifyCustomer(email) {
     if (email) {
       window._dcq.push(["identify", {
-        email: email
+        email: email,
+        drip_unknown_status: true
       }]);
     }
   }

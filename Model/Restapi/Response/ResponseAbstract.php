@@ -1,6 +1,9 @@
 <?php
 namespace Drip\Connect\Model\Restapi\Response;
 
+/**
+ * Abstract base class for responses.
+ */
 class ResponseAbstract
 {
     /**

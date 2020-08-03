@@ -2,6 +2,9 @@
 
 namespace Drip\Connect\Observer\Quote;
 
+/**
+ * Clear cart on login observer.
+ */
 class ClearCartOnLogin extends \Drip\Connect\Observer\Base
 {
     /** @var \Magento\Customer\Model\Session */
@@ -17,11 +20,12 @@ class ClearCartOnLogin extends \Drip\Connect\Observer\Base
         \Magento\Customer\Model\Session $customerSession,
         \Magento\Framework\App\Request\Http $request,
         \Drip\Connect\Logger\Logger $logger,
-        \Drip\Connect\Model\ConfigurationFactory $configFactory
+        \Drip\Connect\Model\ConfigurationFactory $configFactory,
+        \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
         $this->customerSession = $customerSession;
         $this->request = $request;
-        parent::__construct($configFactory, $logger);
+        parent::__construct($configFactory, $logger, $storeManager);
     }
 
     /**

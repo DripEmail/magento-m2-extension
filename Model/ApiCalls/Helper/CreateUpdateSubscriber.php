@@ -1,6 +1,9 @@
 <?php
 namespace Drip\Connect\Model\ApiCalls\Helper;
 
+/**
+ * Create or update a subscriber.
+ */
 class CreateUpdateSubscriber extends \Drip\Connect\Model\ApiCalls\Helper
 {
     public function __construct(
@@ -10,7 +13,7 @@ class CreateUpdateSubscriber extends \Drip\Connect\Model\ApiCalls\Helper
         $data = []
     ) {
         $this->apiClient = $connectApiCallsBaseFactory->create([
-            'endpoint' => $config->getAccountId() . '/' . self::ENDPOINT_SUBSCRIBERS,
+            'endpoint' => $config->getAccountParam() . '/' . self::ENDPOINT_SUBSCRIBERS,
             'config' => $config,
         ]);
 
