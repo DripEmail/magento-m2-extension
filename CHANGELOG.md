@@ -1,6 +1,9 @@
 # Magento 2 Drip Connect Changelog
 
-## Next
+## 2.0.0-beta1 (Unreleased)
+
+* Rebuild plugin to send more raw data to a specialized service and allow us to debug problems and ship fixes faster, without requiring you to always upgrade.
+* Support product sync
 
 ## 1.8.6
 
