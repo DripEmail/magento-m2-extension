@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
 
-DRIP_COMPOSE_ENV2=${DRIP_COMPOSE_ENV:-"test"}
+echo "[DEPRECATED] ./docker_compose.sh is deprecated in favor of using docker-compose directly."
 
-docker-compose -p "devtools_m2_${DRIP_COMPOSE_ENV2}" -f docker-compose.base.yml -f "docker-compose.${DRIP_COMPOSE_ENV2}.yml" "$@"
+docker-compose "$@"

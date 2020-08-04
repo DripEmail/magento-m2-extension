@@ -60,9 +60,5 @@ Cypress.Commands.add("switchAdminContext", (site) => {
 
 Cypress.Commands.add("runArbitrarySQL", (sql) => {
   cy.log('running SQL command')
-  cy.exec(`./docker_compose.sh exec -T -e MYSQL_PWD=magento db mysql -u magento magento -e "${sql}"`, {
-    env: {
-      DRIP_COMPOSE_ENV: 'test'
-    }
-  })
+  cy.exec(`docker-compose exec -T -e MYSQL_PWD=magento db mysql -u magento magento -e "${sql}"`)
 })

@@ -7,31 +7,19 @@ Cypress.Commands.add("createProduct", (desc) => {
 
   cy.log('Creating magento product')
   const str = JSON.stringify(desc)
-  cy.exec(`echo '${str}' | ./docker_compose.sh exec -u www-data -T web bin/magento drip_testutils:createproduct`, {
-    env: {
-      DRIP_COMPOSE_ENV: 'test'
-    }
-  })
+  cy.exec(`echo '${str}' | docker-compose exec -u www-data -T web bin/magento drip_testutils:createproduct`)
 })
 
 Cypress.Commands.add("createCustomer", (desc) => {
   cy.log('Creating magento customer')
   const str = JSON.stringify(desc)
-  cy.exec(`echo '${str}' | ./docker_compose.sh exec -u www-data -T web bin/magento drip_testutils:createcustomer`, {
-    env: {
-      DRIP_COMPOSE_ENV: 'test'
-    }
-  })
+  cy.exec(`echo '${str}' | docker-compose exec -u www-data -T web bin/magento drip_testutils:createcustomer`)
 })
 
 Cypress.Commands.add("createScopes", (desc) => {
   cy.log('Creating magento scopes')
   const str = JSON.stringify(desc)
-  cy.exec(`echo '${str}' | ./docker_compose.sh exec -u www-data -T web bin/magento drip_testutils:createscopes`, {
-    env: {
-      DRIP_COMPOSE_ENV: 'test'
-    }
-  })
+  cy.exec(`echo '${str}' | docker-compose exec -u www-data -T web bin/magento drip_testutils:createscopes`)
 })
 
 Cypress.Commands.add("setConfig", (desc) => {
@@ -46,19 +34,11 @@ Cypress.Commands.add("setConfig", (desc) => {
   }
   cmd += ` "${desc['path']}" "${desc['value']}"`
 
-  cy.exec(`./docker_compose.sh exec -u www-data -T web ${cmd}`, {
-    env: {
-      DRIP_COMPOSE_ENV: 'test'
-    }
-  })
+  cy.exec(`docker-compose exec -u www-data -T web ${cmd}`)
 })
 
 Cypress.Commands.add("runCron", (desc) => {
   cy.log('Running Magento Cron')
   const str = JSON.stringify(desc)
-  cy.exec(`./cron.sh`, {
-    env: {
-      DRIP_COMPOSE_ENV: 'test'
-    }
-  })
+  cy.exec(`./cron.sh`)
 })

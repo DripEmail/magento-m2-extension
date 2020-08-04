@@ -13,16 +13,16 @@ fi
 
 # Spin up a new instance of Magento
 # Add --build when you need to rebuild the Dockerfile.
-./docker_compose.sh up -d
+docker-compose up -d
 
-port=$(./docker_compose.sh port web 80 | cut -d':' -f2)
-web_container=$(./docker_compose.sh ps -q web)
+port=$(docker-compose port web 80 | cut -d':' -f2)
+web_container=$(docker-compose ps -q web)
 
 # Wait for the DB to be up.
-./docker_compose.sh exec -T db /bin/bash -c 'while ! mysql --protocol TCP -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" -e "show databases;" > /dev/null 2>&1; do sleep 1; done'
+docker-compose exec -T db /bin/bash -c 'while ! mysql --protocol TCP -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" -e "show databases;" > /dev/null 2>&1; do sleep 1; done'
 
 # Install a couple nice-to-haves on db
-./docker_compose.sh exec -T db /bin/bash -c "apt update -y > /dev/null 2>&1 && apt install -y procps vim > /dev/null 2>&1"
+docker-compose exec -T db /bin/bash -c "apt update -y > /dev/null 2>&1 && apt install -y procps vim > /dev/null 2>&1"
 
 magento_setup_script=$(cat <<SCRIPT
 cd /var/www/html/magento/ && \
@@ -53,8 +53,8 @@ MAGE_MODE=developer ./bin/magento setup:install \
 SCRIPT
 )
 
-./docker_compose.sh exec -T -u www-data web /bin/bash -c "$magento_setup_script"
+docker-compose exec -T -u www-data web /bin/bash -c "$magento_setup_script"
 
 echo "Backing up database for later reset"
 mkdir -p db_data
-./docker_compose.sh exec -e MYSQL_PWD=magento db mysqldump -u magento magento > db_data/dump.sql
+docker-compose exec -e MYSQL_PWD=magento db mysqldump -u magento magento > db_data/dump.sql

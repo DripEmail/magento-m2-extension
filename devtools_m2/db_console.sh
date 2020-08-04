@@ -2,4 +2,4 @@
 
 set -e
 
-./docker_compose.sh exec db mysql -u magento -pmagento magento
+docker-compose exec db mysql -u magento -pmagento magento
