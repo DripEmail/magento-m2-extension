@@ -39,7 +39,7 @@ cd devtools_m2/
 
 ```bash
 cd devtools_m2/
-./docker_compose.sh down
+docker-compose down
 rm -rf db_data/
 ```
 
