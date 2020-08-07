@@ -35,7 +35,7 @@ class SendEventPayload extends \Drip\Connect\Model\ApiCalls\Helper
     {
         $accountId = $this->config->getAccountParam();
         $integrationParam = $this->config->getIntegrationToken();
-        $endpoint = "https://dfol6w1g6b.execute-api.us-east-1.amazonaws.com/v1";
+        $endpoint = "https://external-production.woo.drip.sh";
 
         if ($this->config->getTestMode()) {
             $endpoint = "http://mock:1080";
