@@ -1,5 +1,8 @@
 # Magento 2 Drip Connect Changelog
 
+## Next to release
+* Changed default domain for Drip integration service 
+
 ## 2.0.0-beta1 (Unreleased)
 
 * Rebuild plugin to send more raw data to a specialized service and allow us to debug problems and ship fixes faster, without requiring you to always upgrade.
