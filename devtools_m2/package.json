@@ -13,5 +13,8 @@
   },
   "cypress-cucumber-preprocessor": {
     "nonGlobalStepDefinitions": true
+  },
+  "scripts": {
+    "cypress": "npx cypress open"
   }
 }
