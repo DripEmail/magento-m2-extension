@@ -9,9 +9,17 @@ class Client extends \Zend_Http_Client
     /** @var \Monolog\Logger */
     protected $logger;
 
-    public function __construct($uri, array $config, \Monolog\Logger $logger)
-    {
+    /** @var \Drip\Connect\Model\Http\RequestIDFactory */
+    protected $requestIdFactory;
+
+    public function __construct(
+        $uri,
+        array $config,
+        \Monolog\Logger $logger,
+        \Drip\Connect\Model\Http\RequestIDFactory $requestIdFactory
+    ) {
         $this->logger = $logger;
+        $this->requestIdFactory = $requestIdFactory;
         parent::__construct($uri, $config);
     }
 
@@ -24,8 +32,15 @@ class Client extends \Zend_Http_Client
      */
     public function request($method = null)
     {
+        // ID unique to each outgoing API request.
         $requestId = uniqid();
         $this->setHeaders('X-Drip-Connect-Request-Id', $requestId);
+
+        // ID unique to each triggering Magento page load. Useful for
+        // debouncing multiple events within a single Magento request.
+        $magentoRequestId = $requestIdFactory->create()->requestId();
+        $this->setHeaders('X-OMS-Request-Id', $magentoRequestId);
+
         $requestBody = $this->_prepareBody();
         $requestUrl = $this->getUri(true);
         $response = parent::request($method);
