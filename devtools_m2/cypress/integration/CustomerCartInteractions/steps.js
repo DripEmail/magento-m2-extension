@@ -112,6 +112,7 @@ Then('A simple cart event should be sent to Drip', function() {
       "jsonPath": "$[?(@.cart_id)]"
     }
   })).then(function(recordedRequests) {
+    expect(recordedRequests[0].headers["X-Drip-Connect-Plugin-Version"]).to.exist
     const body1 = JSON.parse(recordedRequests[0].body.string)
     expect(body1.action).to.eq('created')
     expect(body1.cart_id).to.eq('1')
@@ -137,11 +138,13 @@ Then('A configurable cart event should be sent to Drip', function() {
       "jsonPath": "$[?(@.cart_id)]"
     }
   })).then(function(recordedRequests) {
+    expect(recordedRequests[0].headers["X-Drip-Connect-Plugin-Version"]).to.exist
     const body1 = JSON.parse(recordedRequests[0].body.string)
     expect(body1.action).to.eq('created')
     expect(body1.cart_id).to.eq('1')
 
     if (recordedRequests[1] !== undefined) {
+      expect(recordedRequests[1].headers["X-Drip-Connect-Plugin-Version"]).to.exist
       const body2 = JSON.parse(recordedRequests[1].body.string)
       expect(body2.action).to.eq('updated')
       expect(body2.cart_id).to.eq('1')
@@ -150,28 +153,6 @@ Then('A configurable cart event should be sent to Drip', function() {
       expect(body2.items[0]['product_id']).to.eq('1')
       expect(body2.items[0]['product_parent_id']).to.eq('3')
     }
-  })
-})
-
-Then('A grouped cart event should be sent to Drip', function() {
-  cy.log('Validating that the cart call has everything we need')
-  cy.wrap(Mockclient.retrieveRecordedRequests({
-    'path': '/123456/integrations/xyz123/events'
-  })).then(function(recordedRequests) {
-    expect(recordedRequests).to.have.lengthOf(2)
-    const body = JSON.parse(recordedRequests[1].body.string)
-    expect(body.related_objects).to.have.lengthOf(5)
-  })
-})
-
-Then('A bundle cart event should be sent to Drip', function() {
-  cy.log('Validating that the cart call has everything we need')
-  cy.wrap(Mockclient.retrieveRecordedRequests({
-    'path': '/123456/integrations/xyz123/events'
-  })).then(function(recordedRequests) {
-    expect(recordedRequests).to.have.lengthOf(2)
-    const body = JSON.parse(recordedRequests[1].body.string)
-    expect(body.related_objects).to.have.lengthOf(7)
   })
 })
 
@@ -258,140 +239,6 @@ Then('An order event should be sent to Drip', function() {
     const body = JSON.parse(recordedRequests[0].body.string)
     expect(body.action).to.eq('placed')
     expect(body.order_id).to.eq('000000001')
-  })
-})
-
-Then('A virtual order event should be sent to Drip', function() {
-  cy.log('Validating that the order call has everything we need')
-  cy.wrap(Mockclient.retrieveRecordedRequests({
-    'path': '/v3/123456/shopper_activity/order'
-  })).then(function(recordedRequests) {
-    expect(recordedRequests).to.have.lengthOf(1)
-    const body = JSON.parse(recordedRequests[0].body.string)
-    expect(body.action).to.eq('placed')
-    expect(body.email).to.eq('testuser@example.com')
-    expect(body.grand_total).to.eq(0.01)
-    expect(body.initial_status).to.eq('active')
-    expect(body.items_count).to.eq(1)
-    expect(body.items).to.have.lengthOf(1)
-    expect(body.total_shipping).to.eq(0)
-
-    expect(Object.keys(body)).to.not.contain('shipping_address')
-
-    basicOrderBodyAssertions(body, false)
-
-    validateVirtualProduct(body.items[0])
-  })
-})
-
-Then('A grouped order event should be sent to Drip', function() {
-  cy.log('Validating that the order call has everything we need')
-  cy.wrap(Mockclient.retrieveRecordedRequests({
-    'path': '/v3/123456/shopper_activity/order'
-  })).then(function(recordedRequests) {
-    expect(recordedRequests).to.have.lengthOf(1)
-    const body = JSON.parse(recordedRequests[0].body.string)
-    expect(body.action).to.eq('placed')
-    expect(body.email).to.eq('testuser@example.com')
-    expect(body.grand_total).to.eq(32.44)
-    expect(body.initial_status).to.eq('active')
-    expect(body.items_count).to.eq(2)
-    expect(body.total_shipping).to.eq(10)
-    expect(body.items).to.have.lengthOf(2)
-
-    basicOrderBodyAssertions(body)
-
-    const item1 = body.items[0]
-    expect(item1.categories).to.be.empty
-    expect(item1.discounts).to.eq(0)
-    expect(item1.image_url).to.eq(`${getCurrentFrontendDomain()}/media/catalog/product/`)
-    expect(item1.name).to.eq('Widget 1 Sub 1')
-    expect(item1.price).to.eq(11.22)
-    expect(item1.product_id).to.eq('2')
-    expect(item1.product_variant_id).to.eq('2')
-    expect(item1.product_url).to.eq(`${getCurrentFrontendDomain()}/widget-1-sub-1.html`)
-    expect(item1.quantity).to.eq(1)
-    expect(item1.sku).to.eq('widg-1-sub1')
-    expect(item1.taxes).to.eq(0)
-    expect(item1.total).to.eq(11.22)
-
-    const item2 = body.items[1]
-    expect(item2.categories).to.be.empty
-    expect(item2.discounts).to.eq(0)
-    expect(item2.image_url).to.eq(`${getCurrentFrontendDomain()}/media/catalog/product/`)
-    expect(item2.name).to.eq('Widget 1 Sub 2')
-    expect(item2.price).to.eq(11.22)
-    expect(item2.product_id).to.eq('3')
-    expect(item2.product_variant_id).to.eq('3')
-    expect(item2.product_url).to.eq(`${getCurrentFrontendDomain()}/widget-1-sub-2.html`)
-    expect(item2.quantity).to.eq(1)
-    expect(item2.sku).to.eq('widg-1-sub2')
-    expect(item2.taxes).to.eq(0)
-    expect(item2.total).to.eq(11.22)
-  })
-})
-
-Then('A bundle order event should be sent to Drip', function() {
-  cy.log('Validating that the order call has everything we need')
-  cy.wrap(Mockclient.retrieveRecordedRequests({
-    'path': '/v3/123456/shopper_activity/order'
-  })).then(function(recordedRequests) {
-    expect(recordedRequests).to.have.lengthOf(1)
-    const body = JSON.parse(recordedRequests[0].body.string)
-    expect(body.action).to.eq('placed')
-    expect(body.email).to.eq('testuser@example.com')
-    expect(body.grand_total).to.eq(27.44)
-    expect(body.initial_status).to.eq('active')
-    expect(body.items_count).to.eq(1)
-    expect(body.total_shipping).to.eq(5)
-    expect(body.items).to.have.lengthOf(1)
-
-    basicOrderBodyAssertions(body)
-
-    const item = body.items[0]
-    expect(item.categories).to.be.empty
-    expect(item.discounts).to.eq(0)
-    expect(item.image_url).to.eq(`${getCurrentFrontendDomain()}/media/catalog/product/`)
-    expect(item.name).to.eq('Widget 1')
-    expect(item.price).to.eq(22.44)
-    expect(item.product_id).to.eq('3')
-    expect(item.product_variant_id).to.eq('3')
-    expect(item.product_url).to.eq(`${getCurrentFrontendDomain()}/widget-1.html`)
-    expect(item.quantity).to.eq(1)
-    expect(item.sku).to.eq('widg-1')
-    expect(item.taxes).to.eq(0)
-    expect(item.total).to.eq(22.44)
-  })
-})
-
-Then('A mixed order event should be sent to Drip', function() {
-  cy.log('Validating that the order call has everything we need')
-  cy.wrap(Mockclient.retrieveRecordedRequests({
-    'path': '/v3/123456/shopper_activity/order'
-  })).then(function(recordedRequests) {
-    expect(recordedRequests).to.have.lengthOf(1)
-    const body = JSON.parse(recordedRequests[0].body.string)
-    expect(body.action).to.eq('placed')
-    expect(body.email).to.eq('testuser@example.com')
-    expect(body.grand_total).to.eq(16.23)
-    expect(body.initial_status).to.eq('active')
-    expect(body.items_count).to.eq(2)
-    expect(body.items).to.have.lengthOf(2)
-
-    basicOrderBodyAssertions(body)
-
-    body.items.forEach(item => {
-      switch(item.name) {
-        case 'Virtual Widget 1':
-          validateVirtualProduct(item)
-          break;
-        case 'Widget 1':
-          validateSimpleProduct(item)
-          break;
-        default:
-          throw 'Errr... What?'
-      }
-    })
   })
 })
 

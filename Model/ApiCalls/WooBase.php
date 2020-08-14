@@ -17,7 +17,9 @@ class WooBase extends \Drip\Connect\Model\Restapi\RestapiAbstract
      */
     protected $connectHttpClientFactory;
 
-    /** @var \Magento\Store\Model\StoreManagerInterface */
+    /**
+     * @var \Magento\Store\Model\StoreManagerInterface
+     */
     protected $storeManager;
 
     /**
@@ -29,6 +31,7 @@ class WooBase extends \Drip\Connect\Model\Restapi\RestapiAbstract
         \Magento\Framework\App\Config\Storage\WriterInterface $configWriter,
         \Magento\Framework\ArchiveFactory $archiveFactory,
         \Magento\Framework\Filesystem\DirectoryList $directory,
+        \Magento\Framework\Module\ResourceInterface $moduleResource,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Drip\Connect\Model\Http\ClientFactory $connectHttpClientFactory,
         \Drip\Connect\Model\Configuration $config,
@@ -56,9 +59,12 @@ class WooBase extends \Drip\Connect\Model\Restapi\RestapiAbstract
             'logger' => $this->logger,
         ]);
 
+        $version = $moduleResource->getDbVersion('Drip_Connect');
+
         $this->_httpClient->setHeaders([
             'Accept' => 'application/json',
-            'Content-Type' => 'application/json'
+            'Content-Type' => 'application/json',
+            'X-Drip-Connect-Plugin-Version' => $version
         ]);
     }
 
