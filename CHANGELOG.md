@@ -1,7 +1,9 @@
 # Magento 2 Drip Connect Changelog
 
 ## Next to release
-* Changed default domain for Drip integration service 
+
+* Changed default domain for Drip integration service
+* Clarify request ID headers
 
 ## 2.0.0-beta1 (Unreleased)
 
