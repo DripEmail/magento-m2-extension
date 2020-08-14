@@ -2,6 +2,15 @@
 
 set -e
 
+build=
+
+while [ "$1" != "" ]; do
+    case $1 in
+        -b | --build )    build=1
+    esac
+    shift
+done
+
 # if [[ "$(aws --version)" = *"aws-cli/2."* ]]; then
 #   aws ecr get-login-password --region us-east-1 \
 #   | docker login \
@@ -13,7 +22,11 @@ set -e
 
 # Spin up a new instance of Magento
 # Add --build when you need to rebuild the Dockerfile.
-docker-compose up -d
+if [ "$build" = "1" ]; then
+  docker-compose up -d --build
+else
+  docker-compose up -d
+fi
 
 port=$(docker-compose port web 80 | cut -d':' -f2)
 web_container=$(docker-compose ps -q web)
