@@ -4,6 +4,7 @@
 
 * Changed default domain for Drip integration service
 * Clarify request ID headers
+* Send plugin version in webhook headers
 
 ## 2.0.0-beta1 (Unreleased)
 
