@@ -18,11 +18,9 @@ Please send support requests to our team within Drip.
 
 ## Contributing
 
-Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
+Pull requests are welcome!
 
 Please make sure to update tests as appropriate.
-
-If the change is not specific to Magento 2, we need to backport everything to Magento 1. Generally, we have changes start in Magento 1 and then get ported rather than the other way around.
 
 ## License
 
