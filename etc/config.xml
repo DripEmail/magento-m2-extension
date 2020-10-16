@@ -11,6 +11,9 @@
                 <integration_token></integration_token>
                 <test_mode>0</test_mode>
             </api_settings>
+            <drip_actions>
+                <sync>https://getdrip.com/integrations/magento</sync>
+            </drip_actions>
         </dripconnect_general>
     </default>
 </config>

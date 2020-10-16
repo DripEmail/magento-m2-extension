@@ -43,6 +43,13 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
             </group>
+            <group id="drip_actions" sortOrder="1000" showInDefault="1" showInWebsite="0" showInStore="0" translate="label">
+                <label>Drip Actions</label>
+                <field id="sync" translate="label" type="link" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Sync All Customers or Orders</label>
+                    <comment>Sync historical data and check connection status from your Drip account.</comment>
+                </field>
+            </group>
         </section>
     </system>
 </config>
