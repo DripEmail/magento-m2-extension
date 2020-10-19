@@ -104,11 +104,22 @@ class Order
      * determine if this order only has virtual products or not
      * @return boolean
     */
-    protected function hasPhysicalProduct() {
-        foreach ($this->order->getAllItems() as $item) {
-            if($item->getProductType() != 'virtual') { return true; }
+    protected function hasPhysicalProduct()
+    {
+        $isPhysical = false;
+        $countItems = 0;
+        foreach ($this->order->getAllItems() as $_item) {
+            /* @var $_item \Magento\Quote\Model\Quote\Item */
+            if ($_item->isDeleted() || $_item->getParentItemId()) {
+                continue;
+            }
+            $countItems++;
+            if (!$_item->getProduct()->getIsVirtual()) {
+                $isPhysical = true;
+                break;
+            }
         }
-        return false;
+        return $countItems == 0 ? false : $isPhysical;
     }
 
     /**
