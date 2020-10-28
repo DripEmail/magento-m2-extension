@@ -38,7 +38,7 @@ class Client extends \Zend_Http_Client
 
         // ID unique to each triggering Magento page load. Useful for
         // debouncing multiple events within a single Magento request.
-        $magentoRequestId = $requestIdFactory->create()->requestId();
+        $magentoRequestId = $this->requestIdFactory->create()->requestId();
         $this->setHeaders('X-OMS-Request-Id', $magentoRequestId);
 
         $requestBody = $this->_prepareBody();

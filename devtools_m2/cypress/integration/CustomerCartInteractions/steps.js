@@ -5,7 +5,7 @@ import { getCurrentFrontendDomain, getCurrentFrontendStoreViewId, getCurrentFron
 const Mockclient = mockServerClient("localhost", 1080);
 
 When('I create an account', function() {
-  cy.contains('Create an Account').click()
+  cy.visit('/customer/account/create/')
   cy.get('#form-validate').within(function() {
     cy.get('input[name="firstname"]').type('Test')
     cy.get('input[name="lastname"]').type('User')
@@ -16,7 +16,6 @@ When('I create an account', function() {
     cy.contains('Create an Account').click()
   })
   cy.get('.message-success > div').contains('Thank you for registering with')
-  cy.visit('/lib/web/blank.html')
 })
 
 When('I add a {string} widget to my cart', function(type) {
