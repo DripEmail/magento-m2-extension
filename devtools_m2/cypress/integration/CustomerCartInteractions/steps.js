@@ -16,7 +16,7 @@ When('I create an account', function() {
     cy.contains('Create an Account').click()
   })
   cy.get('.message-success > div').contains('Thank you for registering with')
-  cy.visit('/lib/web/blank.html')
+  cy.visit('/lib/web/blank.html', {failOnStatusCode: false})
 })
 
 When('I add a {string} widget to my cart', function(type) {
