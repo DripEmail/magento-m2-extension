@@ -2,11 +2,19 @@
 
 ## Next to release
 
+* Add changelog here.
+
+## 2.0.0-beta3
+
+* Fix bug in request ID reporting.
+
+## 2.0.0-beta2
+
 * Changed default domain for Drip integration service
 * Clarify request ID headers
 * Send plugin version in webhook headers
 
-## 2.0.0-beta1 (Unreleased)
+## 2.0.0-beta1
 
 * Rebuild plugin to send more raw data to a specialized service and allow us to debug problems and ship fixes faster, without requiring you to always upgrade.
 * Support product sync
