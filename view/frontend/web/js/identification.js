@@ -17,7 +17,7 @@ define([
 
     // This data is cached in localstorage. It may have changed, so refetch if we don't have it.
     if (typeof (email) === "undefined") {
-      customerData.reload("customer").then(function() {
+      customerData.reload(["customer"]).then(function() {
         email = customerData.get("customer")().email;
         identifyCustomer(email);
       });
