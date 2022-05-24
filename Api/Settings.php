@@ -61,7 +61,7 @@ class Settings
 
     /**
      * GET for integration settings API
-     * @param string $websiteId]
+     * @param string $websiteId
      * @return \Drip\Connect\Api\SettingsResponse
      */
     public function showStatus($websiteId = 0)
@@ -80,7 +80,7 @@ class Settings
 
     /**
      * DELETE for integration settings API
-     * @param string $websiteId]
+     * @param string $websiteId
      * @return \Drip\Connect\Api\SettingsResponse
      */
     public function removeIntegration($websiteId = 0)
