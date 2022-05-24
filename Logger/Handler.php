@@ -49,7 +49,7 @@ class Handler extends \Magento\Framework\Logger\Handler\Base
     /**
      * @inheritDoc
      */
-    public function write(array $record)
+    public function write(array $record): void
     {
         if ($this->isEnabled) {
             parent::write($record);
