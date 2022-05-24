@@ -11,31 +11,22 @@ while [ "$1" != "" ]; do
     shift
 done
 
-# if [[ "$(aws --version)" = *"aws-cli/2."* ]]; then
-#   aws ecr get-login-password --region us-east-1 \
-#   | docker login \
-#       --username AWS \
-#       --password-stdin 648846177135.dkr.ecr.us-east-1.amazonaws.com
-# else
-#   eval "$(aws ecr get-login-password --no-include-email --registry-ids 648846177135 --region us-east-1)"
-# fi
-
-# Spin up a new instance of Magento
 # Add --build when you need to rebuild the Dockerfile.
 if [ "$build" = "1" ]; then
+  echo "Spinning up a new instance of Magento with build"
   docker-compose up -d --build
 else
+  echo "Spinning up a new instance of Magento"
   docker-compose up -d
 fi
 
 port=$(docker-compose port web 80 | cut -d':' -f2)
-web_container=$(docker-compose ps -q web)
 
-# Wait for the DB to be up.
-docker-compose exec -T db /bin/bash -c 'while ! mysql --protocol TCP -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" -e "show databases;" > /dev/null 2>&1; do sleep 1; done'
+echo "Waiting for the db to come up..."
+docker-compose exec -T db /bin/bash -c 'while ! mariadb --protocol TCP -u"$MARIADB_USER" -p"$MARIADB_PASSWORD" -e "show databases;" > /dev/null 2>&1; do sleep 1; done'
 
-# Install a couple nice-to-haves on db
-docker-compose exec -T db /bin/bash -c "apt update -y > /dev/null 2>&1 && apt install -y procps vim > /dev/null 2>&1"
+echo "Installing a few extra packages on db"
+docker-compose exec -T db /bin/bash -c "apt update -y > /dev/null 2>&1 && apt install -y procps vim > /dev/null 2>&1 || true"
 
 magento_setup_script=$(cat <<SCRIPT
 cd /var/www/html/magento/ && \
@@ -45,6 +36,9 @@ MAGE_MODE=developer ./bin/magento setup:install \
 --db-name=magento \
 --db-user=magento \
 --db-password=magento \
+--elasticsearch-host=opensearch \
+--elasticsearch-username=admin \
+--elasticsearch-password=admin \
 --base-url='http://main.magento.localhost:$port' \
 --use-rewrites=1 \
 --admin-user=admin \
@@ -52,7 +46,7 @@ MAGE_MODE=developer ./bin/magento setup:install \
 --admin-email='admin@example.com' \
 --admin-firstname=FIRST_NAME \
 --admin-lastname=LAST_NAME && \
-./bin/magento setup:config:set --backend-frontname='admin_123' && \
+./bin/magento setup:config:set -n --backend-frontname='admin_123' && \
 ./bin/magento config:set admin/security/admin_account_sharing 1 && \
 ./bin/magento config:set catalog/frontend/flat_catalog_product 1 && \
 ./bin/magento config:set admin/security/use_form_key 0 && \
@@ -67,8 +61,11 @@ MAGE_MODE=developer ./bin/magento setup:install \
 SCRIPT
 )
 
+echo "Installing Magento"
 docker-compose exec -T -u www-data web /bin/bash -c "$magento_setup_script"
 
 echo "Backing up database for later reset"
 mkdir -p db_data
 docker-compose exec -e MYSQL_PWD=magento db mysqldump -u magento magento > db_data/dump.sql
+
+echo "Done with setup"

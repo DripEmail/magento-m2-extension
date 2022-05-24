@@ -1,13 +1,13 @@
 version: '3.7'
 services:
   web:
-    # image: 648846177135.dkr.ecr.us-east-1.amazonaws.com/eci/magento-m2-extension:2.3.2
     build: .
     ports:
       - 3006:80
     links:
       - db
       - mock
+      - opensearch
     environment:
       - MYSQL_DATABASE=magento
       - MYSQL_USER=magento
@@ -22,12 +22,18 @@ services:
         target: /var/www/html/magento/app/code/Drip/TestUtils
         consistency: cached
   db:
-    image: mysql:5.7.27
+    image: mariadb:10.4
     environment:
-      - MYSQL_DATABASE=magento
-      - MYSQL_USER=magento
-      - MYSQL_PASSWORD=magento
-      - MYSQL_RANDOM_ROOT_PASSWORD=true
+      - MARIADB_DATABASE=magento
+      - MARIADB_USER=magento
+      - MARIADB_PASSWORD=magento
+      - MARIADB_RANDOM_ROOT_PASSWORD=true
+    tmpfs: /var/lib/mysql
+  opensearch:
+    image: opensearchproject/opensearch:1.2.4
+    environment:
+      - discovery.type=single-node
+      - DISABLE_SECURITY_PLUGIN=true
     tmpfs: /var/lib/mysql
   mock:
     image: jamesdbloom/mockserver:mockserver-5.7.0
