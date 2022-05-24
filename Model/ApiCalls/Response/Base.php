@@ -1,4 +1,5 @@
 <?php
+
 namespace Drip\Connect\Model\ApiCalls\Response;
 
 use \Drip\Connect\Model\Restapi\Response\ResponseInterface as RestapiResponseInterface;

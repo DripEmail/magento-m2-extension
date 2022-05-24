@@ -1,4 +1,5 @@
 <?php
+
 namespace Drip\Connect\Logger;
 
 use Monolog\Logger;
