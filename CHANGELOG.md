@@ -4,6 +4,17 @@
 
 * Add changelog here.
 
+## 2.0.2
+
+* Support for Magento 2.4 and PHP 8.
+* Stopped observing the `sales_order_save_after` event, since Magento 2.4 fires `sales_order_save_commit_after` for guest checkout now. This might cause guest checkouts to no longer fire in older versions of Magento. It seems like latest 2.3 will still work. Some possibly related upstream tickets:
+  https://github.com/magento/magento2/issues/19034
+  https://github.com/magento/magento2/issues/23340
+
+## 2.0.1
+
+* No changes, just fully releasing the final version. Didn't use `2.0.0` because that was the version number we had to use internally during beta.
+
 ## 2.0.0-beta3
 
 * Fix bug in request ID reporting.
