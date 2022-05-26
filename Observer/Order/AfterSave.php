@@ -137,7 +137,7 @@ class AfterSave extends \Drip\Connect\Observer\Base
     protected function isSameState($order)
     {
         $oldData = $this->registry->registry(self::REGISTRY_KEY_ORDER_OLD_DATA);
-        $oldValue = $oldData === null ? null : $oldData['state'];
+        $oldValue = $oldData['state'] ?? null;
         $newValue = $order->getState();
 
         return ($oldValue == $newValue);

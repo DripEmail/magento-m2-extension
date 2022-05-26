@@ -96,7 +96,7 @@ class AfterSave extends \Drip\Connect\Observer\Base
                 'item' => $item,
             ]);
             $itemDataCurrent = $orderItemTransformer->getLiveStatusData();
-            $itemDataOld = $oldItems === null ? null : $oldItems[$item->getId()];
+            $itemDataOld = $oldItems[$item->getId()] ?? null;
 
             if ($this->isOrderItemComplete($itemDataCurrent)
                 && !$this->isOrderItemComplete($itemDataOld)) {
