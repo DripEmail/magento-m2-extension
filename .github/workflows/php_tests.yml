@@ -1,0 +1,33 @@
+name: Drip Magento Plugin PHP Linting and Tests
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          path: 'plugin'
+      - uses: actions/checkout@v3
+        with:
+          repository: 'https://github.com/magento/magento2.git'
+          ref: ${{ matrix.magento }}
+          path: 'magento'
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+      - run: 'cd magento/ && composer install'
+      - run: 'magento/vendor/bin/phpcs --config-set installed_paths ../../magento/magento-coding-standard/'
+      - run: 'mkdir -p magento/app/code/Drip'
+      - run: 'ln -s plugin/ magento/app/code/Drip/Connect'
+      - run: 'ln -s plugin/phpcs.xml magento/phpcs.xml'
+      # Actual steps
+      - run: 'cd magento/ && vendor/bin/phpcs app/code/Drip/Connect'
+      - run: 'cd magento/dev/tests/unit && magento/vendor/bin/phpunit magento/app/code/Drip/Connect/Test/Unit'
+    strategy:
+      matrix:
+        php:
+          - '7.4'
+          - '8.0'
+          - '8.1'
+        magento:
+          - '2.4.4'
