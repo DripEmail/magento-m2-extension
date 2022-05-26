@@ -19,7 +19,7 @@ jobs:
       - run: 'magento/vendor/bin/phpcs --config-set installed_paths ../../magento/magento-coding-standard/'
       - run: 'mkdir -p magento/app/code/Drip'
       - run: 'ln -s $GITHUB_WORKSPACE/plugin/ $GITHUB_WORKSPACE/magento/app/code/Drip/Connect'
-      - run: 'ln -s $$GITHUB_WORKSPACE/plugin/phpcs.xml $GITHUB_WORKSPACE/magento/phpcs.xml'
+      - run: 'ln -s $GITHUB_WORKSPACE/plugin/phpcs.xml $GITHUB_WORKSPACE/magento/phpcs.xml'
       # Actual steps
       - run: 'cd magento/ && vendor/bin/phpcs app/code/Drip/Connect'
       - run: 'cd magento/dev/tests/unit && magento/vendor/bin/phpunit magento/app/code/Drip/Connect/Test/Unit'
