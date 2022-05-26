@@ -42,6 +42,12 @@ abstract class Base implements \Magento\Framework\Event\ObserverInterface
         } catch (\Exception $e) {
             // We should never blow up a customer's site due to bugs in our code.
             $this->logger->critical($e);
+
+            if (getenv('DRIP_RAISE_EXCEPTIONS') === "true") {
+                // If we're running in a development environment, we want to throw the exception
+                // so that we can see the stack trace.
+                throw $e;
+            }
         }
     }
 

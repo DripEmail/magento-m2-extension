@@ -1,4 +1,5 @@
 <?php
+
 namespace Drip\Connect\Model\Restapi\Request;
 
 interface RequestInterface

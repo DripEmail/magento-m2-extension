@@ -54,12 +54,6 @@
             instance="Drip\Connect\Observer\Order\AfterSave"
             disabled="false" />
     </event>
-        <event name="sales_order_save_after">
-        <observer
-            name="drip_connect_sales_order_save_after"
-            instance="Drip\Connect\Observer\Order\AfterSave"
-            disabled="false" />
-    </event>
     <event name="sales_order_creditmemo_save_after">
         <observer
             name="drip_connect_sales_order_creditmemo_save_commit_after"

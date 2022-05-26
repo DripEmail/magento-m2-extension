@@ -13,8 +13,12 @@ RUN mkdir -p $APACHE_RUN_DIR $APACHE_LOCK_DIR $APACHE_LOG_DIR
 RUN apt-get update && apt-get install -y software-properties-common git wget curl
 RUN add-apt-repository ppa:ondrej/php
 RUN add-apt-repository ppa:ondrej/apache2
-RUN apt-get update && apt-get install -y apache2 unzip php7.2 php7.2-bcmath php7.2-gd php7.2-intl php7.2-pdo-mysql php7.2-soap php7.2-xsl php7.2-zip php7.2-curl php7.2-mbstring php7.2-dev php7.2-cli php7.2-xml composer
+RUN apt-get update && apt-get install -y apache2 unzip php8.1 php8.1-bcmath php8.1-gd php8.1-intl php8.1-pdo-mysql php8.1-soap php8.1-xsl php8.1-zip php8.1-curl php8.1-mbstring php8.1-dev php8.1-cli php8.1-xml composer
 RUN a2enmod rewrite
+
+# Temporary fix for Magento 2.4.4
+# https://github.com/magento/magento2/issues/35325
+COPY docker/magento_2.4.4_js_const.patch /
 
 EXPOSE 80
 
@@ -22,7 +26,8 @@ EXPOSE 80
 RUN mkdir -p /var/www/html/magento
 RUN chown -R www-data:www-data /var/www/html/magento
 USER www-data
-RUN git clone --depth 1 --branch 2.3.2 https://github.com/magento/magento2.git /var/www/html/magento
+RUN git clone --depth 1 --branch 2.4.4 https://github.com/magento/magento2.git /var/www/html/magento
+RUN cd /var/www/html/magento && patch -p1 < /magento_2.4.4_js_const.patch
 RUN cd /var/www/html/magento && composer install
 
 USER root

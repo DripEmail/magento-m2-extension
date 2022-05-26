@@ -1,4 +1,5 @@
 <?php
+
 namespace Drip\Connect\Logger;
 
 use Monolog\Logger;
@@ -49,7 +50,7 @@ class Handler extends \Magento\Framework\Logger\Handler\Base
     /**
      * @inheritDoc
      */
-    public function write(array $record)
+    public function write(array $record): void
     {
         if ($this->isEnabled) {
             parent::write($record);

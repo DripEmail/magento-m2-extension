@@ -26,3 +26,11 @@ chai.use(chaiString)
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+// We don't really care about Magento JS exceptions, since we aren't testing Magento JS code.
+// The specific error that caused this: https://github.com/magento/magento2/issues/35325
+Cypress.on('uncaught:exception', (err, runnable) => {
+  // returning false here prevents Cypress from
+  // failing the test
+  return false
+})
