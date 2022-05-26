@@ -9,7 +9,7 @@ jobs:
           path: 'plugin'
       - uses: actions/checkout@v3
         with:
-          repository: 'https://github.com/magento/magento2.git'
+          repository: 'magento/magento2'
           ref: ${{ matrix.magento }}
           path: 'magento'
       - uses: shivammathur/setup-php@v2
