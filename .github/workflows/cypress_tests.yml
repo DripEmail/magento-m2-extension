@@ -1,0 +1,23 @@
+name: Drip Magento Plugin Cypress integration tests
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.15.0 # keep in sync with devtools_m2/.nvmrc
+      - uses: browser-actions/setup-chrome@latest
+      - run: echo "127.0.0.1 main.magento.localhost site1.magento.localhost" | sudo tee -a /etc/hosts
+      - run: cd devtools_m2/ && npm ci
+      - run: cd devtools_m2/ && ./setup.sh
+      - run: cd devtools_m2/ && CYPRESS_RETRIES=2 $(npm bin)/cypress run --browser chrome #--record
+    strategy:
+      matrix:
+        php:
+          # - '7.4'
+          # - '8.0'
+          - '8.1'
+        magento:
+          - '2.4.4'
