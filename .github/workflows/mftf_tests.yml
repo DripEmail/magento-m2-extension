@@ -47,7 +47,7 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
 
       # Test DB.
-      - run: mariadb --protocol TCP -u"magento" -p"magento" -e "show databases;"
+      - run: mysql --protocol TCP -u"magento" -p"magento" -e "show databases;"
 
       # Install dependencies
       - name: Install Composer dependencies
