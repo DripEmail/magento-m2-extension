@@ -17,7 +17,7 @@ jobs:
           php-version: ${{ matrix.php }}
       - run: 'cd magento/ && composer install'
       # We need the develop version of php-compatibility until https://github.com/PHPCompatibility/PHPCompatibility/issues/1312 is fixed.
-      - run: 'cd magento/ && composer require --dev phpcompatibility/php-compatibility' # We need to pull this in. Not sure how Magento does it.
+      - run: 'cd magento/ && composer require phpcompatibility/php-compatibility' # We need to pull this in. Not sure how Magento does it.
       - run: 'magento/vendor/bin/phpcs --config-set installed_paths ../../magento/magento-coding-standard/'
       - run: 'mkdir -p magento/app/code/Drip'
       - run: 'ln -s $GITHUB_WORKSPACE/plugin/ $GITHUB_WORKSPACE/magento/app/code/Drip/Connect'
