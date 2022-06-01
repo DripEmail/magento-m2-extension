@@ -34,9 +34,6 @@ jobs:
       - name: Setup problem matchers for PHP
         run: echo "::add-matcher::${{ runner.tool_cache }}/php.json"
 
-      # Test DB.
-      - run: mysql --protocol TCP -u"magento" -p"magento" -e "show databases;"
-
       # Pull in source code.
       - name: Download Magento source
         uses: actions/checkout@v3
@@ -63,7 +60,7 @@ jobs:
         run: |
           cd magento/ &&
           ./bin/magento setup:install \
-            --db-host=localhost \
+            --db-host=127.0.0.1 \
             --db-name=magento \
             --db-user=magento \
             --db-password=magento \
