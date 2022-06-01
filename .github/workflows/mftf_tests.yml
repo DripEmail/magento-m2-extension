@@ -72,7 +72,7 @@ jobs:
             --admin-email='admin@example.com' \
             --admin-firstname=FIRST_NAME \
             --admin-lastname=LAST_NAME \
-            --base-url='http://localhost' &&
+            --base-url='http://127.0.0.1' &&
           bin/magento config:set general/locale/timezone America/Los_Angeles &&
           bin/magento config:set admin/security/admin_account_sharing 1 &&
           bin/magento config:set admin/security/use_form_key 0 &&
