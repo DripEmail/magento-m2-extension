@@ -46,6 +46,9 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
+      # Test DB.
+      - run: mariadb --protocol TCP -u"magento" -p"magento" -e "show databases;"
+
       # Install dependencies
       - name: Install Composer dependencies
         run: 'cd magento/ && composer install --prefer-dist'
