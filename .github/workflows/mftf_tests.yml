@@ -8,8 +8,16 @@ jobs:
     services:
       mariadb:
         image: mariadb:10.4
+        env:
+          MARIADB_DATABASE: magento
+          MARIADB_USER: magento
+          MARIADB_PASSWORD: magento
+          MARIADB_RANDOM_ROOT_PASSWORD: true
       opensearch:
         image: opensearchproject/opensearch:1.2.4
+        env:
+          discovery.type: single-node
+          DISABLE_SECURITY_PLUGIN: true
     steps:
       # Set up PHP
       - name: Install PHP
@@ -45,6 +53,13 @@ jobs:
         run: |
           cd magento/ &&
           ./bin/magento setup:install \
+            --db-host=localhost \
+            --db-name=magento \
+            --db-user=magento \
+            --db-password=magento \
+            --elasticsearch-host=localhost \
+            --elasticsearch-username=admin \
+            --elasticsearch-password=admin \
             --admin-user=admin \
             --admin-password=abc1234567890 \
             --admin-email='admin@example.com' \
