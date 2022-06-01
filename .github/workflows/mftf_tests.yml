@@ -1,0 +1,81 @@
+# Some of this is from https://devdocs.magento.com/mftf/docs/guides/cicd.html#obtain-a-magento-instance
+
+name: Drip Magento Plugin Upstream MFTF Tests
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+      mariadb:
+        image: mariadb:10.4
+      opensearch:
+        image: opensearchproject/opensearch:1.2.4
+    steps:
+      # Set up PHP
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+      - name: Setup problem matchers for PHP
+        run: echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+
+      # Pull in source code.
+      - name: Download Magento source
+        uses: actions/checkout@v3
+        with:
+          repository: 'magento/magento2'
+          ref: ${{ matrix.magento }}
+          path: 'magento'
+
+      # Cache composer stuff.
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(cd magento/ && composer config cache-files-dir)"
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      # Install dependencies
+      - name: Install Composer dependencies
+        run: 'cd magento/ && composer install --prefer-dist'
+      - name: Install Magento
+        run: |
+          cd magento/ &&
+          ./bin/magento setup:install \
+            --enable-debug-logging=true \
+            --db-host=mariadb \
+            --db-name=magento \
+            --db-user=magento \
+            --db-password=magento \
+            --elasticsearch-host=opensearch \
+            --elasticsearch-username=admin \
+            --elasticsearch-password=admin \
+            --base-url='http://localhost' \
+            --use-rewrites=1 \
+            --admin-user=admin \
+            --admin-password=abc1234567890 \
+            --admin-email='admin@example.com' \
+            --admin-firstname=FIRST_NAME \
+            --admin-lastname=LAST_NAME &&
+          bin/magento config:set general/locale/timezone America/Los_Angeles &&
+          bin/magento config:set admin/security/admin_account_sharing 1 &&
+          bin/magento config:set admin/security/use_form_key 0 &&
+          bin/magento config:set cms/wysiwyg/enabled disabled
+
+      - name: Generate tests
+        run: cd magento/ && vendor/bin/mftf generate:tests
+
+      - name: Run tests
+        run: cd magento/ && vendor/bin/mftf run:manifest dev/tests/acceptance/tests/functional/Magento/_generated/testManifest.txt
+
+    strategy:
+      matrix:
+        php:
+          # Generally run this on the oldest version we support and the newest. Feel free to add any that have special case breakage.
+          - '7.4'
+          # - '8.1'
+        magento:
+          - '2.4.4'
