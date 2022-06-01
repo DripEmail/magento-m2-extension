@@ -13,11 +13,18 @@ jobs:
           MARIADB_USER: magento
           MARIADB_PASSWORD: magento
           MARIADB_RANDOM_ROOT_PASSWORD: true
+        ports:
+          - 3306:3306
       opensearch:
         image: opensearchproject/opensearch:1.2.4
         env:
           discovery.type: single-node
           DISABLE_SECURITY_PLUGIN: true
+        ports:
+          - 9200:9200
+          - 9300:9300
+          - 9600:9600
+          - 9650:9650
     steps:
       # Set up PHP
       - name: Install PHP
@@ -28,7 +35,7 @@ jobs:
         run: echo "::add-matcher::${{ runner.tool_cache }}/php.json"
 
       # Test DB.
-      - run: mysql --protocol TCP -u"magento" -p"magento" -e "show databases;" -h mariadb
+      - run: mysql --protocol TCP -u"magento" -p"magento" -e "show databases;"
 
       # Pull in source code.
       - name: Download Magento source
@@ -56,11 +63,11 @@ jobs:
         run: |
           cd magento/ &&
           ./bin/magento setup:install \
-            --db-host=mariadb \
+            --db-host=localhost \
             --db-name=magento \
             --db-user=magento \
             --db-password=magento \
-            --elasticsearch-host=opensearch \
+            --elasticsearch-host=localhost \
             --elasticsearch-username=admin \
             --elasticsearch-password=admin \
             --admin-user=admin \
