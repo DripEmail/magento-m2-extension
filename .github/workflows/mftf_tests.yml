@@ -53,11 +53,11 @@ jobs:
         run: |
           cd magento/ &&
           ./bin/magento setup:install \
-            --db-host=localhost \
+            --db-host=mariadb \
             --db-name=magento \
             --db-user=magento \
             --db-password=magento \
-            --elasticsearch-host=localhost \
+            --elasticsearch-host=opensearch \
             --elasticsearch-username=admin \
             --elasticsearch-password=admin \
             --admin-user=admin \
