@@ -44,9 +44,12 @@ jobs:
 
       # Run tests
       # TODO: Reduce and fix the warning severities.
-      - run: 'cd magento/ && vendor/bin/phpcs -i'
-      - run: 'cd magento/ && vendor/bin/phpcs --warning-severity=10 app/code/Drip/Connect'
-      - run: 'cd magento/dev/tests/unit && magento/vendor/bin/phpunit magento/app/code/Drip/Connect/Test/Unit'
+      - name: List linters
+        run: 'cd magento/ && vendor/bin/phpcs -i'
+      - name: Lint Plugin
+        run: 'cd magento/ && vendor/bin/phpcs --warning-severity=10 app/code/Drip/Connect'
+      - name: Run tests
+        run: 'cd magento/ && vendor/bin/phpunit app/code/Drip/Connect/Test/Unit'
     strategy:
       matrix:
         php:
