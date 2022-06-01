@@ -16,9 +16,8 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
       - run: 'cd magento/ && composer install'
-      # We need the develop version of php-compatibility until https://github.com/PHPCompatibility/PHPCompatibility/issues/1312 is fixed.
       - run: 'cd magento/ && composer require phpcompatibility/php-compatibility' # We need to pull this in. Not sure how Magento does it.
-      - run: 'magento/vendor/bin/phpcs --config-set installed_paths ../../magento/magento-coding-standard/'
+      - run: 'cd magento/ && vendor/bin/phpcs --config-set installed_paths ../../magento/magento-coding-standard/'
       - run: 'mkdir -p magento/app/code/Drip'
       - run: 'ln -s $GITHUB_WORKSPACE/plugin/ $GITHUB_WORKSPACE/magento/app/code/Drip/Connect'
       - run: 'ln -s $GITHUB_WORKSPACE/plugin/phpcs.xml $GITHUB_WORKSPACE/magento/phpcs.xml'
@@ -30,6 +29,7 @@ jobs:
       matrix:
         php:
           # Generally run this on the oldest version we support and the newest. Feel free to add any that have special case breakage.
+          # We need to use 7.4 until https://github.com/PHPCompatibility/PHPCompatibility/issues/1312 is fixed.
           - '7.4'
           # - '8.1'
         magento:
