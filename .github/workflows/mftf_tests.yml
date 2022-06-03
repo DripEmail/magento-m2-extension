@@ -11,7 +11,7 @@ jobs:
         ports:
           - 80:80
         volumes:
-          - $GITHUB_WORKSPACE/magento:/var/www/html
+          - ${{ github.workspace }}/magento:/var/www/html
       mariadb:
         image: mariadb:10.4
         env:
