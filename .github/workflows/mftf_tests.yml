@@ -103,9 +103,9 @@ jobs:
         run: |
           cat << EOF > magento/dev/tests/acceptance/.env
           MAGENTO_BASE_URL=http://localhost/
-          MAGENTO_BACKEND_NAME: admin
-          MAGENTO_ADMIN_USERNAME: admin
-          MAGENTO_ADMIN_PASSWORD: admin
+          MAGENTO_BACKEND_NAME=admin
+          MAGENTO_ADMIN_USERNAME=admin
+          MAGENTO_ADMIN_PASSWORD=admin
           SELENIUM_CLOSE_ALL_SESSIONS=true
           BROWSER=chrome
           MODULE_ALLOWLIST=Magento_Framework,ConfigurableProductWishlist,ConfigurableProductCatalogSearch
