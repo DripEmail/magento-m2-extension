@@ -6,6 +6,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     services:
+      apache:
+        image: php:${{ matrix.php }}-apache
+        ports:
+          - 80:80
+        volumes:
+          - $GITHUB_WORKSPACE/magento:/var/www/html
       mariadb:
         image: mariadb:10.4
         env:
@@ -25,12 +31,17 @@ jobs:
           - 9300:9300
           - 9600:9600
           - 9650:9650
+      chrome:
+        image: selenium/standalone-chrome:3.141.59-zirconium
+        ports:
+          - 4444:4444
     steps:
       # Set up PHP
       - name: Install PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
+          extensions: curl, dom, intl, json, openssl
       - name: Setup problem matchers for PHP
         run: echo "::add-matcher::${{ runner.tool_cache }}/php.json"
 
