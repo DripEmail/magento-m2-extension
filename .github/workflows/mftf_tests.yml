@@ -35,6 +35,11 @@ jobs:
         image: selenium/standalone-chrome:3.141.59-zirconium
         ports:
           - 4444:4444
+    env:
+      MAGENTO_BASE_URL: http://localhost
+      MAGENTO_BACKEND_NAME: admin
+      MAGENTO_ADMIN_USERNAME: admin
+      MAGENTO_ADMIN_PASSWORD: admin
     steps:
       # Set up folder for usage. Otherwise the service would create this folder and we don't have access.
       - name: Configure folder permission
@@ -95,6 +100,9 @@ jobs:
           bin/magento config:set admin/security/admin_account_sharing 1 &&
           bin/magento config:set admin/security/use_form_key 0 &&
           bin/magento config:set cms/wysiwyg/enabled disabled
+
+      - name: Build the project
+        run: cd magento/ && vendor/bin/mftf build:project
 
       - name: Generate tests
         run: cd magento/ && vendor/bin/mftf generate:tests
