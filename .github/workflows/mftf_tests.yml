@@ -36,6 +36,10 @@ jobs:
         ports:
           - 4444:4444
     steps:
+      # Set up folder for usage. Otherwise the service would create this folder and we don't have access.
+      - name: Configure folder permission
+        run: mkdir -p magento/ && chown $(whoami) magento/
+
       # Set up PHP
       - name: Install PHP
         uses: shivammathur/setup-php@v2
