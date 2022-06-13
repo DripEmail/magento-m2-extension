@@ -1,0 +1,61 @@
+name: Drip Magento Plugin PHP Linting and Tests
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Set up PHP
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+      - name: Setup problem matchers for PHP
+        run: echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+
+      # Pull in source code.
+      - uses: actions/checkout@v3
+        with:
+          path: 'plugin'
+      - uses: actions/checkout@v3
+        with:
+          repository: 'magento/magento2'
+          ref: ${{ matrix.magento }}
+          path: 'magento'
+
+      # Cache composer stuff.
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(cd magento/ && composer config cache-files-dir)"
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      # Install dependencies
+      - run: 'cd magento/ && composer install --prefer-dist'
+      - run: 'cd magento/ && composer require phpcompatibility/php-compatibility' # We need to pull this in. Not sure how Magento does it.
+
+      # Set up PHPCS
+      - run: 'cd magento/ && vendor/bin/phpcs --config-set installed_paths ../../magento/magento-coding-standard/,../../phpcompatibility/php-compatibility/PHPCompatibility'
+      - run: 'mkdir -p magento/app/code/Drip'
+      - run: 'ln -s $GITHUB_WORKSPACE/plugin/ $GITHUB_WORKSPACE/magento/app/code/Drip/Connect'
+      - run: 'ln -s $GITHUB_WORKSPACE/plugin/phpcs.xml $GITHUB_WORKSPACE/magento/phpcs.xml'
+
+      # Run tests
+      - name: List linters
+        run: 'cd magento/ && vendor/bin/phpcs -i'
+      - name: Lint Plugin
+        # TODO: Reduce and fix the warning severities. Level 10 warnings and all errors cause us to fail submission.
+        run: 'cd magento/ && vendor/bin/phpcs --warning-severity=10 app/code/Drip/Connect'
+      - name: Run tests
+        run: 'cd magento/dev/tests/unit && $GITHUB_WORKSPACE/magento/vendor/bin/phpunit $GITHUB_WORKSPACE/magento/app/code/Drip/Connect/Test/Unit'
+    strategy:
+      matrix:
+        php:
+          # Generally run this on the oldest version we support and the newest. Feel free to add any that have special case breakage.
+          # We need to use 7.4 until https://github.com/PHPCompatibility/PHPCompatibility/issues/1312 is fixed.
+          - '7.4'
+          # - '8.1'
+        magento:
+          - '2.4.4'
