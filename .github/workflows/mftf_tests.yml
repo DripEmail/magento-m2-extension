@@ -6,12 +6,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     services:
-      apache:
-        image: php:${{ matrix.php }}-apache
-        ports:
-          - 80:80
-        volumes:
-          - ${{ github.workspace }}/magento:/var/www/html
       mariadb:
         image: mariadb:10.4
         env:
@@ -42,6 +36,10 @@ jobs:
           whoami;
           mkdir -p magento/ &&
           sudo chown $(whoami) magento/
+
+      # Install packages
+      - name: Install packages
+        run: sudo apt-get install apache2 libapache2-mod-php
 
       # Set up PHP
       - name: Install PHP
