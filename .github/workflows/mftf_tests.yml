@@ -39,7 +39,9 @@ jobs:
 
       # Install packages
       - name: Install packages
-        run: sudo apt-get install apache2 libapache2-mod-php
+        run: sudo apt-get install apache2
+      - name: Set up Apache
+        run: sudo a2enmod rewrite
 
       # Set up PHP
       - name: Install PHP
