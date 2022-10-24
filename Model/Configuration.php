@@ -93,7 +93,7 @@ class Configuration
         return $this->getConfig(self::TEST_MODE_PATH);
     }
 
-    public function getTimeOut()
+    public function getTimeout()
     {
         return 30000;
     }
