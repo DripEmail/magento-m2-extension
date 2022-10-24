@@ -70,7 +70,7 @@ class Base extends RestapiAbstract
             'uri' => $url,
             'config' => [
                 'useragent' => self::USERAGENT,
-                'timeout' => $config->getTimeout(),
+                'timeout' => $config->getTimeout() / 1000,
             ],
             'logger' => $this->logger,
         ]);
