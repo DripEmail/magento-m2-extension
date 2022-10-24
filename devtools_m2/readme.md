@@ -22,7 +22,7 @@ $ npm install
 $ DRIP_COMPOSE_ENV=test ./setup.sh
 ```
 
-You can access the admin at http://main.magento.localhost:3005/admin_123
+You can access the admin at http://main.magento.localhost:3006/admin_123
 
 ## Running the tests
 

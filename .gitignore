@@ -5,3 +5,4 @@
 .idea/
 /vendor
 /htdocs
+node_modules
