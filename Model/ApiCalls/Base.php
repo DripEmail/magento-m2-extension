@@ -48,43 +48,10 @@ class Base extends RestapiAbstract
         $endpoint,
         $v3 = false
     ) {
-        parent::__construct(
-            $logger,
-            $scopeConfig,
-            $configWriter,
-            $archiveFactory,
-            $directory
-        );
-
-        $this->storeManager = $storeManager;
-
-        $this->connectHttpClientFactory = $connectHttpClientFactory;
-        $this->_responseModel = \Drip\Connect\Model\ApiCalls\Response\Base::class;
-
-        $url = $config->getWisUrl() . $endpoint;
-        if ($v3) {
-            $url = str_replace('/v2/', '/v3/', $url);
-        }
-        
-        $this->_httpClient = $this->connectHttpClientFactory->create([
-            'uri' => $url,
-            'config' => [
-                'useragent' => self::USERAGENT,
-                'timeout' => $config->getTimeout() / 1000,
-            ],
-            'logger' => $this->logger,
-        ]);
-
-        $this->_httpClient->setHeaders([
-            'Accept' => 'application/json',
-            'Content-Type' => 'application/json'
-        ]);
-
-        $this->_httpClient->setAuth(
-            $config->getIntegrationToken(),
-            '',
-            \Zend_Http_Client::AUTH_BASIC
-        );
+        /* 
+         * Since the Drip extension is sending data through the WooBase class
+         * we are clearing this to prevent issues in other parts of the codebase. 
+         */
     }
 
     /**
