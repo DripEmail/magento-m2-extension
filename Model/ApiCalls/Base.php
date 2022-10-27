@@ -48,6 +48,13 @@ class Base extends RestapiAbstract
         $endpoint,
         $v3 = false
     ) {
+        parent::__construct(
+            $logger,
+            $scopeConfig,
+            $configWriter,
+            $archiveFactory,
+            $directory
+        );
         /* 
          * Since the Drip extension is sending data through the WooBase class
          * we are clearing this to prevent issues in other parts of the codebase. 
