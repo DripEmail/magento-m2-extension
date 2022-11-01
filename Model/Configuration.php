@@ -93,6 +93,11 @@ class Configuration
         return $this->getConfig(self::TEST_MODE_PATH);
     }
 
+    public function getTimeout()
+    {
+        return 30000;
+    }
+
     public function getLogSettings()
     {
         return $this->getConfig(self::LOG_SETTINGS_PATH);

@@ -2,10 +2,12 @@
 
 namespace Drip\Connect\Model\ApiCalls;
 
+use \Drip\Connect\Model\Restapi\RestapiAbstract;
+
 /**
  * Restapi base class
  */
-class Base extends \Drip\Connect\Model\Restapi\RestapiAbstract
+class Base extends RestapiAbstract
 {
 
     /**
@@ -23,6 +25,16 @@ class Base extends \Drip\Connect\Model\Restapi\RestapiAbstract
 
     /**
      * constructor
+     * @param Logger $logger
+     * @param ScopeConfigInterface $scopeConfig
+     * @param WriterInterface $configWriter
+     * @param ArchiveFactory $archiveFactory
+     * @param DirectoryList $directory
+     * @param StoreManagerInterface $storeManager
+     * @param ClientFactory $connectHttpClientFactory
+     * @param Configuration $config
+     * @param String $endpoint
+     * @param String $v3 API version
      */
     public function __construct(
         \Drip\Connect\Logger\Logger $logger,
@@ -43,36 +55,10 @@ class Base extends \Drip\Connect\Model\Restapi\RestapiAbstract
             $archiveFactory,
             $directory
         );
-
-        $this->storeManager = $storeManager;
-
-        $this->connectHttpClientFactory = $connectHttpClientFactory;
-        $this->_responseModel = \Drip\Connect\Model\ApiCalls\Response\Base::class;
-
-        $url = $config->getUrl() . $endpoint;
-        if ($v3) {
-            $url = str_replace('/v2/', '/v3/', $url);
-        }
-
-        $this->_httpClient = $this->connectHttpClientFactory->create([
-            'uri' => $url,
-            'config' => [
-                'useragent' => self::USERAGENT,
-                'timeout' => $config->getTimeout() / 1000,
-            ],
-            'logger' => $this->logger,
-        ]);
-
-        $this->_httpClient->setHeaders([
-            'Accept' => 'application/json',
-            'Content-Type' => 'application/json'
-        ]);
-
-        $this->_httpClient->setAuth(
-            $config->getApiKey(),
-            '',
-            \Zend_Http_Client::AUTH_BASIC
-        );
+        /* 
+         * Since the Drip extension is sending data through the WooBase class
+         * we are clearing this to prevent issues in other parts of the codebase. 
+         */
     }
 
     /**
