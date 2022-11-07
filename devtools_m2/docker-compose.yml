@@ -36,6 +36,6 @@ services:
       - DISABLE_SECURITY_PLUGIN=true
     tmpfs: /var/lib/mysql
   mock:
-    image: jamesdbloom/mockserver:mockserver-5.7.0
+    image: mockserver/mockserver:mockserver-5.14.0
     ports:
     - 1080:1080
