@@ -4,6 +4,10 @@
 
 * Add changelog here.
 
+## 2.0.3
+
+* Minor fix to prevent errors caused by deprecated methods and classes.
+
 ## 2.0.2
 
 * Support for Magento 2.4 and PHP 8.
