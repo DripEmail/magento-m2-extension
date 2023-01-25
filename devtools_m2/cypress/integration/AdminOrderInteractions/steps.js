@@ -14,7 +14,7 @@ Then('an order event is sent to Drip for the {string} widget', function(widgetTy
   })).then(function(recordedRequests) {
     expect(recordedRequests).to.have.lengthOf(1)
     expect(recordedRequests[0].headers["X-Drip-Connect-Plugin-Version"]).to.exist
-    const body = recordedRequests[0].body
+    const body = recordedRequests[0].body.json
     expect(body.action).to.eq('placed')
     expect(body.order_id).to.eq('000000001')
 

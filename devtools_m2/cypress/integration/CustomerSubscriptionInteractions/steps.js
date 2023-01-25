@@ -54,7 +54,7 @@ Then('A {string} {string} event should be sent to the WIS', function(subject, ac
   })).then(function(recordedRequests) {
     expect(recordedRequests.find((elm) => {
       let versionHeader = elm.headers["X-Drip-Connect-Plugin-Version"]
-      let body = JSON.parse(elm.body.string);
+      let body = elm.body.json;
       let actionMatch = body.action == action;
       let subjectMatch = body.subject == subject;
       let customerIdMatch = body.customer_id && /^\d+$/.test(body.customer_id);
