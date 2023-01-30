@@ -59,7 +59,7 @@ class Product extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $categories = explode(',', $this->connectHelper->getProductCategoryNames($product));
         $data = [
-            "provider" => PROVIDER_NAME,
+            "provider" => self::PROVIDER_NAME,
             "occurred_at" => $this->connectHelper->formatDate($product->getUpdatedAt()),
             "product_id" => $product->getId(),
             "sku" => $product->getSku(),
