@@ -11,6 +11,14 @@ class Order
     const FULFILLMENT_PARTLY = 'partially_fulfilled';
     const FULFILLMENT_YES = 'fulfilled';
 
+    const PROVIDER_NAME = 'magento';
+    const ACTION_NEW = 'placed';
+    const ACTION_CHANGE = 'updated';
+    const ACTION_PAID = 'paid'; // not used?
+    const ACTION_FULFILL = 'fulfilled';
+    const ACTION_REFUND = 'refunded';
+    const ACTION_CANCEL = 'canceled';
+
     /** @var \Drip\Connect\Helper\Data */
     protected $connectHelper;
 
@@ -85,7 +93,7 @@ class Order
     public function getOrderDataNew()
     {
         $data = $this->getCommonOrderData();
-        $data['action'] = (string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_NEW;
+        $data['action'] = (string) self::ACTION_NEW;
 
         return $data;
     }
@@ -98,7 +106,7 @@ class Order
     protected function getOrderDataCompleted()
     {
         $data = $this->getCommonOrderData();
-        $data['action'] = (string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_FULFILL;
+        $data['action'] = (string) self::ACTION_FULFILL;
 
         return $data;
     }
@@ -111,7 +119,7 @@ class Order
     protected function getOrderDataCanceled()
     {
         $data = $this->getCommonOrderData();
-        $data['action'] = (string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_CANCEL;
+        $data['action'] = (string) self::ACTION_CANCEL;
 
         return $data;
     }
@@ -130,7 +138,7 @@ class Order
         $refundId = $refund->getIncrementId();
 
         $data = [
-            'action' => (string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_REFUND,
+            'action' => (string) self::ACTION_REFUND,
             'order_id' => (string) $this->order->getIncrementId()
         ];
 
@@ -145,7 +153,7 @@ class Order
     protected function getOrderDataOther()
     {
         $data = $this->getCommonOrderData();
-        $data['action'] = (string) \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_CHANGE;
+        $data['action'] = (string) self::ACTION_CHANGE;
 
         return $data;
     }
@@ -175,13 +183,13 @@ class Order
          * person_id is never used in the plugin, so we don't need to worry about the conditional
         */
         $foundOrderId = $this->isNotEmpty($this->order->getIncrementId());
-        $foundProvider = $this->isNotEmpty(\Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::PROVIDER_NAME);
+        $foundProvider = $this->isNotEmpty(self::PROVIDER_NAME);
         $validEmail = $this->connectHelper->isEmailValid($this->order->getCustomerEmail());
-        $foundActions = $this->isNotEmpty(\Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_CANCEL) &&
-        $this->isNotEmpty(\Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_CHANGE) &&
-        $this->isNotEmpty(\Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_FULFILL) &&
-        $this->isNotEmpty(\Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_NEW) &&
-        $this->isNotEmpty(\Drip\Connect\Model\ApiCalls\Helper\CreateUpdateOrder::ACTION_REFUND);
+        $foundActions = $this->isNotEmpty(self::ACTION_CANCEL) &&
+        $this->isNotEmpty(self::ACTION_CHANGE) &&
+        $this->isNotEmpty(self::ACTION_FULFILL) &&
+        $this->isNotEmpty(self::ACTION_NEW) &&
+        $this->isNotEmpty(self::ACTION_REFUND);
         return $foundOrderId && $foundProvider && $foundActions && $validEmail;
     }
 

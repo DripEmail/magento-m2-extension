@@ -9,6 +9,7 @@ class Product extends \Magento\Framework\App\Helper\AbstractHelper
 {
     const REGISTRY_KEY_IS_NEW = 'newproduct';
     const REGISTRY_KEY_OLD_DATA = 'oldproductdata';
+    const PROVIDER_NAME = 'magento';
 
     /** @var \Drip\Connect\Helper\Data */
     protected $connectHelper;
@@ -58,7 +59,7 @@ class Product extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $categories = explode(',', $this->connectHelper->getProductCategoryNames($product));
         $data = [
-            "provider" => \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateProduct::PROVIDER_NAME,
+            "provider" => PROVIDER_NAME,
             "occurred_at" => $this->connectHelper->formatDate($product->getUpdatedAt()),
             "product_id" => $product->getId(),
             "sku" => $product->getSku(),

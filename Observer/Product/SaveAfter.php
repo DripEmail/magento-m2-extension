@@ -7,6 +7,9 @@ namespace Drip\Connect\Observer\Product;
  */
 class SaveAfter extends \Drip\Connect\Observer\Product\Base
 {
+    const PRODUCT_NEW = 'created';
+    const PRODUCT_CHANGED = 'updated';
+
     /** @var \Magento\Catalog\Model\ProductRepository */
     protected $productRepository;
 
@@ -68,9 +71,9 @@ class SaveAfter extends \Drip\Connect\Observer\Product\Base
                 );
 
                 if ($this->registry->registry(\Drip\Connect\Helper\Product::REGISTRY_KEY_IS_NEW)) {
-                    $action = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateProduct::PRODUCT_NEW;
+                    $action = self::PRODUCT_NEW;
                 } else {
-                    $action = \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateProduct::PRODUCT_CHANGED;
+                    $action = self::PRODUCT_CHANGED;
                 }
 
                 $this->productHelper->sendEvent(
