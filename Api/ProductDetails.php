@@ -17,6 +17,9 @@ class ProductDetails
      */
     protected $catalogProductMediaConfigFactory;
 
+    /** @var \Magento\CatalogInventory\Api\StockStateInterface */
+    protected $stockState;
+
     /**
      * @var \Drip\Connect\Api\ProductDetailsResponseFactory
      */
@@ -25,10 +28,12 @@ class ProductDetails
     public function __construct(
         \Magento\Catalog\Model\ProductFactory $catalogProductFactory,
         \Magento\Catalog\Model\Product\Media\ConfigFactory $catalogProductMediaConfigFactory,
+        \Magento\CatalogInventory\Api\StockStateInterface $stockState,
         \Drip\Connect\Api\ProductDetailsResponseFactory $responseFactory
     ) {
         $this->catalogProductFactory = $catalogProductFactory;
         $this->catalogProductMediaConfigFactory = $catalogProductMediaConfigFactory;
+        $this->stockState = $stockState;
         $this->responseFactory = $responseFactory;
     }
 
@@ -45,8 +50,9 @@ class ProductDetails
         if (!empty($productImage)) {
             $productImage = $this->catalogProductMediaConfigFactory->create()->getMediaUrl($productImage);
         }
-
-        $response->setData(['product_url' => $product->getProductUrl(), 'image_url' => $productImage]);
+        $qty = $this->stockState->getStockQty($productId);
+    
+        $response->setData(['product_url' => $product->getProductUrl(), 'image_url' => $productImage, 'stock_quantity' => $qty]);
 
         return $response;
     }
