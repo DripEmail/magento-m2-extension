@@ -42,16 +42,16 @@ class AddProduct extends \Drip\Connect\Observer\Base
      */
     public function executeWhenEnabled(\Magento\Framework\Event\Observer $observer)
     {
-        $customer = $this->customerSession->getCustomer();
-        $product = $observer->getProduct();
+        // $customer = $this->customerSession->getCustomer();
+        // $product = $observer->getProduct();
 
-        $config = $this->configFactory->createForCurrentScope();
+        // $config = $this->configFactory->createForCurrentScope();
 
-        $this->wishlistHelper->doWishlistEvent(
-            \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_WISHLIST_ADD_PRODUCT,
-            $config,
-            $customer,
-            $product
-        );
+        // $this->wishlistHelper->doWishlistEvent(
+        //     \Drip\Connect\Model\ApiCalls\Helper\RecordAnEvent::EVENT_WISHLIST_ADD_PRODUCT,
+        //     $config,
+        //     $customer,
+        //     $product
+        // );
     }
 }
