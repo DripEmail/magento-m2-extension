@@ -7,6 +7,7 @@ namespace Drip\Connect\Observer\Product;
  */
 class DeleteAfter extends \Drip\Connect\Observer\Base
 {
+    const PRODUCT_DELETED = 'deleted';
     /** @var \Drip\Connect\Helper\Product */
     protected $productHelper;
 
@@ -39,7 +40,7 @@ class DeleteAfter extends \Drip\Connect\Observer\Base
         $this->productHelper->sendEvent(
             $product,
             $config,
-            \Drip\Connect\Model\ApiCalls\Helper\CreateUpdateProduct::PRODUCT_DELETED
+            self::PRODUCT_DELETED
         );
     }
 }

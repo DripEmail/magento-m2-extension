@@ -26,4 +26,14 @@ class ProductDetailsResponse extends \Magento\Framework\DataObject
     {
         return $this->getData('image_url');
     }
+
+    /**
+     * Get stock quantity
+     *
+     * @return float
+     */
+    public function getStockQuantity()
+    {
+        return $this->getData('stock_quantity');
+    }
 }

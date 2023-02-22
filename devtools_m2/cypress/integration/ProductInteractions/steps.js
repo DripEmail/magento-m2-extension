@@ -53,7 +53,7 @@ Then('a product {string} event is sent to the WIS', function(action) {
   })).then(function(recordedRequests) {
     expect(recordedRequests).to.have.lengthOf(1)
     expect(recordedRequests[0].headers["X-Drip-Connect-Plugin-Version"]).to.exist
-    const body = JSON.parse(recordedRequests[0].body.string)
+    const body = recordedRequests[0].body.json
     expect(body.action).to.eq(action)
     expect(body.product_id).to.eq('1')
   })

@@ -50,6 +50,7 @@ MAGE_MODE=developer ./bin/magento setup:install \
 ./bin/magento config:set admin/security/admin_account_sharing 1 && \
 ./bin/magento config:set catalog/frontend/flat_catalog_product 1 && \
 ./bin/magento config:set admin/security/use_form_key 0 && \
+./bin/magento config:set oauth/consumer/enable_integration_as_bearer 1 && \
 ./bin/magento config:set dev/js/merge_files 1 && \
 ./bin/magento config:set dev/js/enable_js_bundling 1 && \
 ./bin/magento config:set dev/js/minify_files 1 && \
@@ -66,6 +67,7 @@ docker-compose exec -T -u www-data web /bin/bash -c "$magento_setup_script"
 
 echo "Backing up database for later reset"
 mkdir -p db_data
+touch db_data/dump.sql
 docker-compose exec -e MYSQL_PWD=magento db mysqldump -u magento magento > db_data/dump.sql
 
 echo "Done with setup"

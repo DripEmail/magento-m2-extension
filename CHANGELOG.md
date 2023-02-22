@@ -4,6 +4,11 @@
 
 * Add changelog here.
 
+## 2.0.4
+
+* Added stock_quantity data to the drip/product endpoint to prevent import issues when fetching this data using Magento's default endpoint (stokItems/:productSku)
+* Removed unused modules 
+
 ## 2.0.3
 
 * Minor fix to prevent errors caused by deprecated methods and classes.

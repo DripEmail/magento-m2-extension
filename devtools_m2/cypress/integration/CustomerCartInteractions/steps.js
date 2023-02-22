@@ -112,12 +112,12 @@ Then('A simple cart event should be sent to Drip', function() {
     }
   })).then(function(recordedRequests) {
     expect(recordedRequests[0].headers["X-Drip-Connect-Plugin-Version"]).to.exist
-    const body1 = JSON.parse(recordedRequests[0].body.string)
+    const body1 = recordedRequests[0].body.json
     expect(body1.action).to.eq('created')
     expect(body1.cart_id).to.eq('1')
 
     if (recordedRequests[1] !== undefined) {
-      const body2 = JSON.parse(recordedRequests[1].body.string)
+      const body2 = recordedRequests[1].body.json
       expect(body2.action).to.eq('updated')
       expect(body2.cart_id).to.eq('1')
       expect(body2.items).to.have.lengthOf(1)
@@ -138,13 +138,13 @@ Then('A configurable cart event should be sent to Drip', function() {
     }
   })).then(function(recordedRequests) {
     expect(recordedRequests[0].headers["X-Drip-Connect-Plugin-Version"]).to.exist
-    const body1 = JSON.parse(recordedRequests[0].body.string)
+    const body1 = recordedRequests[0].body.json
     expect(body1.action).to.eq('created')
     expect(body1.cart_id).to.eq('1')
 
     if (recordedRequests[1] !== undefined) {
       expect(recordedRequests[1].headers["X-Drip-Connect-Plugin-Version"]).to.exist
-      const body2 = JSON.parse(recordedRequests[1].body.string)
+      const body2 = recordedRequests[1].body.json
       expect(body2.action).to.eq('updated')
       expect(body2.cart_id).to.eq('1')
       expect(body2.items).to.have.lengthOf(1)
@@ -235,7 +235,7 @@ Then('An order event should be sent to Drip', function() {
     }
   })).then(function(recordedRequests) {
     expect(recordedRequests).to.have.lengthOf(1)
-    const body = JSON.parse(recordedRequests[0].body.string)
+    const body = recordedRequests[0].body.json
     expect(body.action).to.eq('placed')
     expect(body.order_id).to.eq('000000001')
   })

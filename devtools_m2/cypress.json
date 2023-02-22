@@ -2,7 +2,7 @@
   "projectId": "35f86d",
   "ignoreTestFiles": "*.js",
   "baseUrl": "http://main.magento.localhost:3006",
-
+  "chromeWebSecurity": false,
   "defaultCommandTimeout": 15000,
   "pageLoadTimeout": 100000,
   "requestTimeout": 15000,

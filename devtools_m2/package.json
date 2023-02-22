@@ -6,9 +6,9 @@
   "dependencies": {
     "chai-string": "^1.5.0",
     "cypress": "^9.6.0",
-    "cypress-cucumber-preprocessor": "^1.13.0",
+    "cypress-cucumber-preprocessor": "^2.0.1",
     "cypress-pipe": "^1.7.0",
-    "mockserver-client": "=5.7.0"
+    "mockserver-client": "=5.14.0"
   },
   "cypress-cucumber-preprocessor": {
     "nonGlobalStepDefinitions": true
