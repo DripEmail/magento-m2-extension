@@ -3,37 +3,37 @@
     <route method="POST" url="/V1/drip/integration">
         <service class="Drip\Connect\Api\Settings" method="updateSettings"/>
         <resources>
-            <resource ref="Drip::settings"/>
+            <resource ref="Drip_Connect::drip"/>
         </resources>
     </route>
     <route method="DELETE" url="/V1/drip/integration">
         <service class="Drip\Connect\Api\Settings" method="removeIntegration"/>
         <resources>
-            <resource ref="Drip::settings"/>
+            <resource ref="Drip_Connect::drip"/>
         </resources>
     </route>
     <route method="GET" url="/V1/drip/status">
         <service class="Drip\Connect\Api\Settings" method="showStatus"/>
         <resources>
-            <resource ref="Drip::settings"/>
+            <resource ref="Drip_Connect::drip"/>
         </resources>
     </route>
     <route method="GET" url="/V1/drip/order/:orderId">
         <service class="Drip\Connect\Api\OrderDetails" method="showDetails"/>
         <resources>
-            <resource ref="Drip::settings"/>
+            <resource ref="Drip_Connect::drip"/>
         </resources>
     </route>
     <route method="GET" url="/V1/drip/product/:productId">
         <service class="Drip\Connect\Api\ProductDetails" method="showDetails"/>
         <resources>
-            <resource ref="Drip::settings"/>
+            <resource ref="Drip_Connect::drip"/>
         </resources>
     </route>
     <route method="GET" url="/V1/drip/cart/:cartId">
         <service class="Drip\Connect\Api\CartDetails" method="showDetails"/>
         <resources>
-            <resource ref="Drip::settings"/>
+            <resource ref="Drip_Connect::drip"/>
         </resources>
     </route>
 </routes>
