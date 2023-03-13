@@ -4,6 +4,10 @@
 
 * Add changelog here.
 
+## 2.0.5
+
+* Proper ACL configuration to setup access to the drip_connect resource
+
 ## 2.0.4
 
 * Added stock_quantity data to the drip/product endpoint to prevent import issues when fetching this data using Magento's default endpoint (stokItems/:productSku)
