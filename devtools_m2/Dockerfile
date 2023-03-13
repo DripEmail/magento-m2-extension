@@ -18,7 +18,7 @@ RUN a2enmod rewrite
 
 # Temporary fix for Magento 2.4.4
 # https://github.com/magento/magento2/issues/35325
-COPY docker/magento_2.4.4_js_const.patch /
+#COPY docker/magento_2.4.4_js_const.patch /
 
 EXPOSE 80
 
@@ -26,8 +26,8 @@ EXPOSE 80
 RUN mkdir -p /var/www/html/magento
 RUN chown -R www-data:www-data /var/www/html/magento
 USER www-data
-RUN git clone --depth 1 --branch 2.4.4 https://github.com/magento/magento2.git /var/www/html/magento
-RUN cd /var/www/html/magento && patch -p1 < /magento_2.4.4_js_const.patch
+RUN git clone --depth 1 --branch 2.4.5 https://github.com/magento/magento2.git /var/www/html/magento
+# RUN cd /var/www/html/magento && patch -p1 < /magento_2.4.4_js_const.patch
 RUN cd /var/www/html/magento && composer install
 
 USER root
