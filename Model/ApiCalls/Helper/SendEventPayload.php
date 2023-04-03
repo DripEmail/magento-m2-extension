@@ -38,6 +38,6 @@ class SendEventPayload extends \Drip\Connect\Model\ApiCalls\Helper
             $endpoint = "http://mock:1080";
         }
 
-        return "${endpoint}/${accountId}/integrations/${integrationParam}/events";
+        return "{$endpoint}/{$accountId}/integrations/{$integrationParam}/events";
     }
 }

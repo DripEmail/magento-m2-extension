@@ -6,32 +6,38 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use \Magento\Framework\App\State;
+use \Magento\Store\Model\WebsiteFactory;
+use \Magento\Store\Model\GroupFactory;
+use \Magento\Store\Model\StoreFactory;
+use \Magento\Store\Model\StoreManagerInterface;
+
 /**
  * Utility command to create scopes in tests
  */
 class CreateScopesCommand extends Command
 {
     /** @var \Magento\Framework\App\State **/
-    protected $state;
+    protected State $state;
 
     /** @var \Magento\Store\Model\WebsiteFactory */
-    protected $websiteFactory;
+    protected WebsiteFactory $websiteFactory;
 
     /** @var \Magento\Store\Model\GroupFactory */
-    protected $groupFactory;
+    protected GroupFactory $groupFactory;
 
     /** @var \Magento\Store\Model\StoreFactory */
-    protected $storeFactory;
+    protected StoreFactory $storeFactory;
 
     /** @var \Magento\Store\Model\StoreManagerInterface */
-    protected $storeManagerInterface;
+    protected StoreManagerInterface $storeManager;
 
     public function __construct(
-        \Magento\Framework\App\State $state,
-        \Magento\Store\Model\WebsiteFactory $websiteFactory,
-        \Magento\Store\Model\GroupFactory $groupFactory,
-        \Magento\Store\Model\StoreFactory $storeFactory,
-        \Magento\Store\Model\StoreManagerInterface $storeManager
+        State $state,
+        WebsiteFactory $websiteFactory,
+        GroupFactory $groupFactory,
+        StoreFactory $storeFactory,
+        StoreManagerInterface $storeManager
     ) {
         parent::__construct();
 
