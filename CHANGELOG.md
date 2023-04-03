@@ -4,6 +4,10 @@
 
 * Add changelog here.
 
+## 2.0.6
+
+* In extension's endpoint (drip/product/:id) fetch configurable product image url when child products don't have one assigned
+
 ## 2.0.5
 
 * Proper ACL configuration to setup access to the drip_connect resource
