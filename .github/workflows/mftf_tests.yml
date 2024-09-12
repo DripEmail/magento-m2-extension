@@ -1,0 +1,129 @@
+# Some of this is from https://devdocs.magento.com/mftf/docs/guides/cicd.html#obtain-a-magento-instance
+
+name: Drip Magento Plugin Upstream MFTF Tests
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+      mariadb:
+        image: mariadb:10.4
+        env:
+          MARIADB_DATABASE: magento
+          MARIADB_USER: magento
+          MARIADB_PASSWORD: magento
+          MARIADB_RANDOM_ROOT_PASSWORD: true
+        ports:
+          - 3306:3306
+      opensearch:
+        image: opensearchproject/opensearch:1.2.4
+        env:
+          discovery.type: single-node
+          DISABLE_SECURITY_PLUGIN: true
+        ports:
+          - 9200:9200
+          - 9300:9300
+          - 9600:9600
+          - 9650:9650
+      chrome:
+        image: selenium/standalone-chrome:3.141.59-zirconium
+        ports:
+          - 4444:4444
+    steps:
+      # Set up folder for usage. Otherwise the service would create this folder and we don't have access.
+      - name: Configure folder permission
+        run: |
+          whoami;
+          mkdir -p magento/ &&
+          sudo chown $(whoami) magento/
+
+      # Install packages
+      - name: Install packages
+        run: sudo apt-get install apache2
+      - name: Set up Apache
+        run: sudo a2enmod rewrite
+
+      # Set up PHP
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: curl, dom, intl, json, openssl
+      - name: Setup problem matchers for PHP
+        run: echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+
+      # Pull in source code.
+      - name: Download Magento source
+        uses: actions/checkout@v3
+        with:
+          repository: 'magento/magento2'
+          ref: ${{ matrix.magento }}
+          path: 'magento'
+
+      # Cache composer stuff.
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(cd magento/ && composer config cache-files-dir)"
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      # Install dependencies
+      - name: Install Composer dependencies
+        run: 'cd magento/ && composer install --prefer-dist'
+      - name: Install Magento
+        run: |
+          cd magento/ &&
+          ./bin/magento setup:install \
+            --db-host=127.0.0.1 \
+            --db-name=magento \
+            --db-user=magento \
+            --db-password=magento \
+            --elasticsearch-host=localhost \
+            --elasticsearch-username=admin \
+            --elasticsearch-password=admin \
+            --admin-user=admin \
+            --admin-password=abc1234567890 \
+            --admin-email='admin@example.com' \
+            --admin-firstname=FIRST_NAME \
+            --admin-lastname=LAST_NAME \
+            --base-url='http://127.0.0.1' &&
+          bin/magento config:set general/locale/timezone America/Los_Angeles &&
+          bin/magento config:set admin/security/admin_account_sharing 1 &&
+          bin/magento config:set admin/security/use_form_key 0 &&
+          bin/magento config:set cms/wysiwyg/enabled disabled
+
+      - name: Build the project
+        run: cd magento/ && vendor/bin/mftf build:project
+
+      - name: Update settings
+        run: |
+          cat << EOF > magento/dev/tests/acceptance/.env
+          MAGENTO_BASE_URL=http://localhost/
+          MAGENTO_BACKEND_NAME=admin
+          MAGENTO_ADMIN_USERNAME=admin
+          MAGENTO_ADMIN_PASSWORD=admin
+          SELENIUM_CLOSE_ALL_SESSIONS=true
+          BROWSER=chrome
+          MODULE_ALLOWLIST=Magento_Framework,ConfigurableProductWishlist,ConfigurableProductCatalogSearch
+          BROWSER_LOG_BLOCKLIST=other
+          ELASTICSEARCH_VERSION=7
+          EOF
+
+      - name: Generate tests
+        run: cd magento/ && vendor/bin/mftf generate:tests
+
+      - name: Run tests
+        run: cd magento/ && vendor/bin/mftf run:manifest dev/tests/acceptance/tests/functional/Magento/_generated/testManifest.txt
+
+    strategy:
+      matrix:
+        php:
+          # Generally run this on the oldest version we support and the newest. Feel free to add any that have special case breakage.
+          - '7.4'
+          # - '8.1'
+        magento:
+          - '2.4.4'
