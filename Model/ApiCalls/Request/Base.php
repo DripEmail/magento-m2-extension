@@ -1,6 +1,7 @@
 <?php
 
 namespace Drip\Connect\Model\ApiCalls\Request;
+use \Laminas\Http\Request;
 
 /**
  * Request base class
@@ -13,7 +14,7 @@ class Base implements \Drip\Connect\Model\Restapi\Request\RequestInterface
 
     protected $rawData = '';
 
-    protected $method = \Zend_Http_Client::GET;
+    protected $method = Request::METHOD_GET;
 
     /**
      * @param array $param

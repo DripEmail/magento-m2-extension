@@ -2,6 +2,11 @@
 
 namespace Drip\Connect\Model\ApiCalls\Helper;
 
+use Drip\Connect\Model\ApiCalls\BaseFactory;
+use Drip\Connect\Model\ApiCalls\Request\BaseFactory as RequestBaseFactory;
+use Drip\Connect\Model\Configuration;
+use Laminas\Http\Request;
+
 /**
  * Get the subscriber list
  *
@@ -9,10 +14,13 @@ namespace Drip\Connect\Model\ApiCalls\Helper;
  */
 class GetSubscriberList extends \Drip\Connect\Model\ApiCalls\Helper
 {
+    protected $apiClient;
+    protected $request;
+
     public function __construct(
-        \Drip\Connect\Model\ApiCalls\BaseFactory $connectApiCallsBaseFactory,
-        \Drip\Connect\Model\ApiCalls\Request\BaseFactory $connectApiCallsRequestBaseFactory,
-        \Drip\Connect\Model\Configuration $config,
+        BaseFactory $connectApiCallsBaseFactory,
+        RequestBaseFactory $connectApiCallsRequestBaseFactory,
+        Configuration $config,
         $data = []
     ) {
         $data = array_merge([
@@ -30,7 +38,7 @@ class GetSubscriberList extends \Drip\Connect\Model\ApiCalls\Helper
         ]);
 
         $this->request = $connectApiCallsRequestBaseFactory->create()
-            ->setMethod(\Zend_Http_Client::GET)
+            ->setMethod(Request::METHOD_GET)
             ->setParametersGet([
                 'status' => $data['status'],
                 'tags' => $data['tags'],

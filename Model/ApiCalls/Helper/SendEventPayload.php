@@ -2,18 +2,23 @@
 
 namespace Drip\Connect\Model\ApiCalls\Helper;
 
+use Drip\Connect\Model\ApiCalls\WooBaseFactory;
+use Drip\Connect\Model\ApiCalls\Request\BaseFactory;
+use Drip\Connect\Model\Configuration;
+use Laminas\Http\Request;
+
 /**
  * Send payload for events
  */
 class SendEventPayload extends \Drip\Connect\Model\ApiCalls\Helper
 {
-    /** @var \Drip\Connect\Model\Configuration */
+    /** @var Configuration */
     protected $config;
 
     public function __construct(
-        \Drip\Connect\Model\ApiCalls\WooBaseFactory $connectApiCallsWooBaseFactory,
-        \Drip\Connect\Model\ApiCalls\Request\BaseFactory $connectApiCallsRequestBaseFactory,
-        \Drip\Connect\Model\Configuration $config,
+        WooBaseFactory $connectApiCallsWooBaseFactory,
+        BaseFactory $connectApiCallsRequestBaseFactory,
+        Configuration $config,
         array $payload
     ) {
         $this->config = $config;
@@ -24,7 +29,7 @@ class SendEventPayload extends \Drip\Connect\Model\ApiCalls\Helper
         ]);
 
         $this->request = $connectApiCallsRequestBaseFactory->create()
-            ->setMethod(\Zend_Http_Client::POST)
+            ->setMethod(Request::METHOD_POST)
             ->setRawData(json_encode($payload));
     }
 
@@ -33,11 +38,12 @@ class SendEventPayload extends \Drip\Connect\Model\ApiCalls\Helper
         $accountId = $this->config->getAccountParam();
         $integrationParam = $this->config->getIntegrationToken();
         $endpoint = "https://external-production.woo.drip.sh";
+        # $endpoint = "https://external-staging.woo.drip.sh";
 
         if ($this->config->getTestMode()) {
             $endpoint = "http://mock:1080";
         }
 
-        return "${endpoint}/${accountId}/integrations/${integrationParam}/events";
+        return "{$endpoint}/{$accountId}/integrations/{$integrationParam}/events";
     }
 }

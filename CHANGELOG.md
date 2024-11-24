@@ -4,6 +4,12 @@
 
 * Add changelog here.
 
+## 2.0.7
+
+* Switch to Laminas HTTP Client: Replaced the existing HTTP client with Laminas for better compatibility and maintainability.
+* Code Style and Deprecation Fixes: Applied PHP code style improvements and resolved deprecation warnings to align with modern PHP standards.
+* Security Enhancement: Updated security settings to allow JavaScript loading from Drip while maintaining application security.
+
 ## 2.0.6
 
 * In extension's endpoint (drip/product/:id) fetch configurable product image url when child products don't have one assigned

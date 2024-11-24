@@ -3,11 +3,12 @@
 namespace Drip\Connect\Model\ApiCalls\Response;
 
 use \Drip\Connect\Model\Restapi\Response\ResponseInterface as RestapiResponseInterface;
+use \Drip\Connect\Model\Restapi\Response\ResponseAbstract;
 
 /**
  * Response base
  */
-class Base extends \Drip\Connect\Model\Restapi\Response\ResponseAbstract implements RestapiResponseInterface
+class Base extends ResponseAbstract implements RestapiResponseInterface
 {
     /** @var array */
     protected $responseData;

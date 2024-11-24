@@ -2,6 +2,12 @@
 
 namespace Drip\Connect\Model\ApiCalls\Helper;
 
+use Drip\Connect\Model\ApiCalls\BaseFactory;
+use Drip\Connect\Model\ApiCalls\Request\BaseFactory as RequestBaseFactory;
+use Drip\Connect\Helper\Data;
+use Drip\Connect\Model\Configuration;
+use Laminas\Http\Request;
+
 /**
  * Record a subscriber event
  */
@@ -19,10 +25,10 @@ class RecordAnEvent extends \Drip\Connect\Model\ApiCalls\Helper
     const EVENT_WISHLIST_REMOVE_PRODUCT = 'Removed item from wishlist';
 
     public function __construct(
-        \Drip\Connect\Model\ApiCalls\BaseFactory $connectApiCallsBaseFactory,
-        \Drip\Connect\Model\ApiCalls\Request\BaseFactory $connectApiCallsRequestBaseFactory,
-        \Drip\Connect\Helper\Data $connectHelper,
-        \Drip\Connect\Model\Configuration $config,
+        BaseFactory $connectApiCallsBaseFactory,
+        RequestBaseFactory $connectApiCallsRequestBaseFactory,
+        Data $connectHelper,
+        Configuration $config,
         array $data
     ) {
         $this->apiClient = $connectApiCallsBaseFactory->create([
@@ -43,7 +49,7 @@ class RecordAnEvent extends \Drip\Connect\Model\ApiCalls\Helper
         ];
 
         $this->request = $connectApiCallsRequestBaseFactory->create()
-            ->setMethod(\Zend_Http_Client::POST)
+            ->setMethod(Request::METHOD_POST)
             ->setRawData(json_encode($eventsInfo));
     }
 }

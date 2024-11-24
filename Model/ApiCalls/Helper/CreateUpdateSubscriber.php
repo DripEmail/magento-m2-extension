@@ -2,15 +2,20 @@
 
 namespace Drip\Connect\Model\ApiCalls\Helper;
 
+use \Drip\Connect\Model\ApiCalls\BaseFactory;
+use \Drip\Connect\Model\ApiCalls\Request\BaseFactory as RequestBaseFactory;
+use \Drip\Connect\Model\Configuration;
+use \Laminas\Http\Request;
+
 /**
  * Create or update a subscriber.
  */
 class CreateUpdateSubscriber extends \Drip\Connect\Model\ApiCalls\Helper
 {
     public function __construct(
-        \Drip\Connect\Model\ApiCalls\BaseFactory $connectApiCallsBaseFactory,
-        \Drip\Connect\Model\ApiCalls\Request\BaseFactory $connectApiCallsRequestBaseFactory,
-        \Drip\Connect\Model\Configuration $config,
+        BaseFactory $connectApiCallsBaseFactory,
+        RequestBaseFactory $connectApiCallsRequestBaseFactory,
+        Configuration $config,
         $data = []
     ) {
         $this->apiClient = $connectApiCallsBaseFactory->create([
@@ -25,7 +30,7 @@ class CreateUpdateSubscriber extends \Drip\Connect\Model\ApiCalls\Helper
         ];
 
         $this->request = $connectApiCallsRequestBaseFactory->create()
-            ->setMethod(\Zend_Http_Client::POST)
+            ->setMethod(Request::METHOD_POST)
             ->setRawData(json_encode($subscribersInfo));
     }
 }
