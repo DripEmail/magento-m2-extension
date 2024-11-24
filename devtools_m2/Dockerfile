@@ -26,7 +26,7 @@ EXPOSE 80
 RUN mkdir -p /var/www/html/magento
 RUN chown -R www-data:www-data /var/www/html/magento
 USER www-data
-RUN git clone --depth 1 --branch 2.4.5 https://github.com/magento/magento2.git /var/www/html/magento
+RUN git clone --depth 1 --branch 2.4.7 https://github.com/magento/magento2.git /var/www/html/magento
 # RUN cd /var/www/html/magento && patch -p1 < /magento_2.4.4_js_const.patch
 RUN cd /var/www/html/magento && composer install
 

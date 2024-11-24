@@ -36,6 +36,7 @@ MAGE_MODE=developer ./bin/magento setup:install \
 --db-name=magento \
 --db-user=magento \
 --db-password=magento \
+--search-engine=elasticsearch7 \
 --elasticsearch-host=opensearch \
 --elasticsearch-username=admin \
 --elasticsearch-password=admin \
@@ -57,8 +58,9 @@ MAGE_MODE=developer ./bin/magento setup:install \
 ./bin/magento config:set dev/css/merge_css_files 1 && \
 ./bin/magento config:set dev/css/minify_files 1 && \
 ./bin/magento config:set dripconnect_general/log_settings/is_enabled 1 && \
-./bin/magento setup:static-content:deploy -f && \
-./bin/magento deploy:mode:set production
+./bin/magento setup:upgrade && \
+./bin/magento deploy:mode:set production && \
+./bin/magento setup:static-content:deploy
 SCRIPT
 )
 

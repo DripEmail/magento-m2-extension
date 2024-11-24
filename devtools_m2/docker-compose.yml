@@ -1,4 +1,4 @@
-version: '3.7'
+name: magento2.4.7
 services:
   web:
     build: .
@@ -23,12 +23,15 @@ services:
         consistency: cached
   db:
     image: mariadb:10.4
+    ports:
+      - 3306:3306
     environment:
       - MARIADB_DATABASE=magento
       - MARIADB_USER=magento
       - MARIADB_PASSWORD=magento
       - MARIADB_RANDOM_ROOT_PASSWORD=true
-    tmpfs: /var/lib/mysql
+    volumes: 
+      - ./db_data/mysql:/var/lib/mysql
   opensearch:
     image: opensearchproject/opensearch:1.2.4
     environment:

@@ -1,0 +1,102 @@
+{
+  "lockfile_version": "1",
+  "packages": {
+    "php83Packages.composer@latest": {
+      "last_modified": "2024-11-16T04:25:12Z",
+      "resolved": "github:NixOS/nixpkgs/34a626458d686f1b58139620a8b2793e9e123bba#php83Packages.composer",
+      "source": "devbox-search",
+      "version": "2.8.1",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/z783rbfic7sqiaa0dz6zkjsy3k40znj8-composer-2.8.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/z783rbfic7sqiaa0dz6zkjsy3k40znj8-composer-2.8.1"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/46wg2d3b494y8a8avmjrhhxknzm2zkhv-composer-2.8.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/46wg2d3b494y8a8avmjrhhxknzm2zkhv-composer-2.8.1"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/rcvpzas98yxdggx26016p06xlfww8rqx-composer-2.8.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/rcvpzas98yxdggx26016p06xlfww8rqx-composer-2.8.1"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/9wbyqqf173agra3f2gw11b5jcl4dzswq-composer-2.8.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/9wbyqqf173agra3f2gw11b5jcl4dzswq-composer-2.8.1"
+        }
+      }
+    },
+    "php@8.3.13": {
+      "last_modified": "2024-11-16T04:25:12Z",
+      "plugin_version": "0.0.3",
+      "resolved": "github:NixOS/nixpkgs/34a626458d686f1b58139620a8b2793e9e123bba#php83",
+      "source": "devbox-search",
+      "version": "8.3.13",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/mfhciqlprywca7n71mwfxwczk10jdxa0-php-with-extensions-8.3.13",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/mfhciqlprywca7n71mwfxwczk10jdxa0-php-with-extensions-8.3.13"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/sd2d5fizi6kvfg49gk7ik3f5f88731z2-php-with-extensions-8.3.13",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/sd2d5fizi6kvfg49gk7ik3f5f88731z2-php-with-extensions-8.3.13"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/svll1a64506chpjlsgj50hx8gw5j3b8b-php-with-extensions-8.3.13",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/svll1a64506chpjlsgj50hx8gw5j3b8b-php-with-extensions-8.3.13"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/r3lgaz85f2p8bvkx7z3d2qi1z4b1dn7k-php-with-extensions-8.3.13",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/r3lgaz85f2p8bvkx7z3d2qi1z4b1dn7k-php-with-extensions-8.3.13"
+        }
+      }
+    }
+  }
+}
