@@ -5,12 +5,13 @@ namespace Drip\Connect\Model\ApiCalls\Helper;
 use Drip\Connect\Model\ApiCalls\WooBaseFactory;
 use Drip\Connect\Model\ApiCalls\Request\BaseFactory;
 use Drip\Connect\Model\Configuration;
+use Drip\Connect\Model\ApiCalls\Helper as ApiCallsHelper;
 use Laminas\Http\Request;
 
 /**
  * Send payload for events
  */
-class SendEventPayload extends \Drip\Connect\Model\ApiCalls\Helper
+class SendEventPayload extends ApiCallsHelper
 {
     /** @var Configuration */
     protected $config;

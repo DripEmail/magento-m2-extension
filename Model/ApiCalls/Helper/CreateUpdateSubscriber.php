@@ -2,15 +2,16 @@
 
 namespace Drip\Connect\Model\ApiCalls\Helper;
 
-use \Drip\Connect\Model\ApiCalls\BaseFactory;
-use \Drip\Connect\Model\ApiCalls\Request\BaseFactory as RequestBaseFactory;
-use \Drip\Connect\Model\Configuration;
+use Drip\Connect\Model\ApiCalls\BaseFactory;
+use Drip\Connect\Model\ApiCalls\Request\BaseFactory as RequestBaseFactory;
+use Drip\Connect\Model\Configuration;
+use Drip\Connect\Model\ApiCalls\Helper as ApiCallsHelper;
 use \Laminas\Http\Request;
 
 /**
  * Create or update a subscriber.
  */
-class CreateUpdateSubscriber extends \Drip\Connect\Model\ApiCalls\Helper
+class CreateUpdateSubscriber extends ApiCallsHelper
 {
     public function __construct(
         BaseFactory $connectApiCallsBaseFactory,

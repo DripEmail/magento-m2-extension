@@ -6,12 +6,13 @@ use Drip\Connect\Model\ApiCalls\BaseFactory;
 use Drip\Connect\Model\ApiCalls\Request\BaseFactory as RequestBaseFactory;
 use Drip\Connect\Helper\Data;
 use Drip\Connect\Model\Configuration;
+use Drip\Connect\Model\ApiCalls\Helper as ApiCallsHelper;
 use Laminas\Http\Request;
 
 /**
  * Record a subscriber event
  */
-class RecordAnEvent extends \Drip\Connect\Model\ApiCalls\Helper
+class RecordAnEvent extends ApiCallsHelper
 {
     const EVENT_CUSTOMER_NEW = 'Customer created';
     const EVENT_CUSTOMER_UPDATED = 'Customer updated';

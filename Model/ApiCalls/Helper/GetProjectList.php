@@ -5,6 +5,7 @@ namespace Drip\Connect\Model\ApiCalls\Helper;
 use Drip\Connect\Model\ApiCalls\BaseFactory;
 use Drip\Connect\Model\ApiCalls\Request\BaseFactory as RequestBaseFactory;
 use Drip\Connect\Model\Configuration;
+use Drip\Connect\Model\ApiCalls\Helper as ApiCallsHelper;
 use Laminas\Http\Request;
 
 /**
@@ -12,7 +13,7 @@ use Laminas\Http\Request;
  *
  * @todo This class doesn't seem to be called from anywhere. Confirm that it is dead.
  */
-class GetProjectList extends Helper
+class GetProjectList extends ApiCallsHelper
 {
     protected $apiClient;
     protected $request;
