@@ -4,7 +4,7 @@
 
 * Add changelog here.
 
-## 2.0.7
+## 2.0.8
 
 * Switch to Laminas HTTP Client: Replaced the existing HTTP client with Laminas for better compatibility and maintainability.
 * Code Style and Deprecation Fixes: Applied PHP code style improvements and resolved deprecation warnings to align with modern PHP standards.
