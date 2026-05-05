@@ -1,12 +1,13 @@
 {
   "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.12.0/.schema/devbox.schema.json",
   "packages": [
-    "php83Packages.composer@latest",
-    "php@8.3.13"
+    "php84Packages.composer@latest",
+    "php@8.4.19"
   ],
   "shell": {
     "init_hook": [
-      "echo 'Welcome to devbox!' > /dev/null"
+      "export PATH=\"$(pwd)/vendor/bin:$PATH\"",
+      "test -f composer.json && (test -d vendor/magento/magento-coding-standard || composer install --no-interaction --no-progress)"
     ],
     "scripts": {
       "test": [
