@@ -10,10 +10,13 @@ ENV APACHE_LOCK_DIR  /var/lock/apache2
 
 RUN mkdir -p $APACHE_RUN_DIR $APACHE_LOCK_DIR $APACHE_LOG_DIR
 
-RUN apt-get update && apt-get install -y software-properties-common git wget curl
-RUN add-apt-repository ppa:ondrej/php
-RUN add-apt-repository ppa:ondrej/apache2
-RUN apt-get update && apt-get install -y apache2 unzip php8.1 php8.1-bcmath php8.1-gd php8.1-intl php8.1-pdo-mysql php8.1-soap php8.1-xsl php8.1-zip php8.1-curl php8.1-mbstring php8.1-dev php8.1-cli php8.1-xml composer
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates git wget curl \
+    apache2 unzip composer \
+    libapache2-mod-php8.1 \
+    php8.1 php8.1-bcmath php8.1-gd php8.1-intl php8.1-mysql php8.1-soap php8.1-xsl \
+    php8.1-zip php8.1-curl php8.1-mbstring php8.1-dev php8.1-cli php8.1-xml \
+    && rm -rf /var/lib/apt/lists/*
 RUN a2enmod rewrite
 
 # Temporary fix for Magento 2.4.4
