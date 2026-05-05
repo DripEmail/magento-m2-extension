@@ -21,10 +21,10 @@ class ResponseAbstract
     protected $_errorMessage = null;
 
     /**
-     * @param LaminasResponse $response
-     * @param string $errorMessage
+     * @param LaminasResponse|null $rawResponse
+     * @param string|null $errorMessage
      */
-    public function __construct(LaminasResponse $rawResponse = null, $errorMessage)
+    public function __construct(?LaminasResponse $rawResponse = null, ?string $errorMessage = null)
     {
         if ($errorMessage) {
             $this->_setError($errorMessage);

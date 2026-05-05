@@ -2,8 +2,9 @@
 
 namespace Drip\Connect\Model\ApiCalls\Response;
 
-use \Drip\Connect\Model\Restapi\Response\ResponseInterface as RestapiResponseInterface;
-use \Drip\Connect\Model\Restapi\Response\ResponseAbstract;
+use Laminas\Http\Response as LaminasResponse;
+use Drip\Connect\Model\Restapi\Response\ResponseInterface as RestapiResponseInterface;
+use Drip\Connect\Model\Restapi\Response\ResponseAbstract;
 
 /**
  * Response base
@@ -16,7 +17,7 @@ class Base extends ResponseAbstract implements RestapiResponseInterface
     /**
      * constructor
      */
-    public function __construct($response = null, $errorMessage = null)
+    public function __construct(?LaminasResponse $response = null, ?string $errorMessage = null)
     {
         parent::__construct($response, $errorMessage);
 
