@@ -39,7 +39,6 @@ class SendEventPayload extends ApiCallsHelper
         $accountId = $this->config->getAccountParam();
         $integrationParam = $this->config->getIntegrationToken();
         $endpoint = "https://external-production.woo.drip.sh";
-        # $endpoint = "https://external-staging.woo.drip.sh";
 
         if ($this->config->getTestMode()) {
             $endpoint = "http://mock:1080";
