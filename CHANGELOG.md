@@ -6,6 +6,12 @@
 
 ## 2.0.8
 
+* Improved Security
+* Code Style and Deprecation Fixes for PHP 8.4
+* Magento 2.4.8 Compatibility Fixes
+
+## 2.0.7
+
 * Switch to Laminas HTTP Client: Replaced the existing HTTP client with Laminas for better compatibility and maintainability.
 * Code Style and Deprecation Fixes: Applied PHP code style improvements and resolved deprecation warnings to align with modern PHP standards.
 * Security Enhancement: Updated security settings to allow JavaScript loading from Drip while maintaining application security.
