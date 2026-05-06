@@ -27,6 +27,9 @@ class Customer extends \Magento\Framework\App\Helper\AbstractHelper
     /** @var \Drip\Connect\Model\ApiCalls\Helper\RecordAnEventFactory */
     protected $connectApiCallsHelperRecordAnEventFactory;
 
+    /** @var \Drip\Connect\Helper\Quote */
+    protected $quoteHelper;
+
     /** @var \Magento\Framework\HTTP\Header */
     protected $header;
 

@@ -26,8 +26,8 @@ class ProductDetails
     protected $responseFactory;
 
     /**
-    * @var \Magento\ConfigurableProduct\Model\Product\Type\Configurable
-    */
+     * @var \Magento\ConfigurableProduct\Model\Product\Type\Configurable
+     */
     protected $configurable;
 
     public function __construct(
@@ -56,11 +56,10 @@ class ProductDetails
         $productImage = $product->getImage();
         if (!empty($productImage)) {
             $productImage = $this->catalogProductMediaConfigFactory->create()->getMediaUrl($productImage);
-        }
-        else {
-            if ($product->getTypeId() != 'configurable'){
+        } else {
+            if ($product->getTypeId() != 'configurable') {
                 $parentProductId = $this->getParentId($productId);
-                if ($parentProductId){
+                if ($parentProductId) {
                     $parentProduct = $this->catalogProductFactory->create()->load($parentProductId);
                     $productImage = $parentProduct->getImage();
                     if (!empty($productImage)) {
@@ -84,9 +83,9 @@ class ProductDetails
     private function getParentId($childId)
     {
         $parentConfigObject = $this->configurable->getParentIdsByChild($childId);
-	    if($parentConfigObject) {
-		return $parentConfigObject[0];
-	    }
-	    return false;
+        if ($parentConfigObject) {
+            return $parentConfigObject[0];
+        }
+        return false;
     }
 }

@@ -6,3 +6,5 @@
 /vendor
 /htdocs
 node_modules
+devtools_m2/vendor
+devtools_m2/devbox.d

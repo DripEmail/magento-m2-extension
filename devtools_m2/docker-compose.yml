@@ -1,4 +1,4 @@
-version: '3.7'
+name: magento2.4.8
 services:
   web:
     build: .
@@ -13,22 +13,70 @@ services:
       - MYSQL_USER=magento
       - MYSQL_PASSWORD=magento
     volumes:
+      # Mount module paths only — binding the whole repo pulled in devtools_m2/vendor (PHPCS) and broke setup:di:compile.
       - type: bind
-        source: './..'
-        target: /var/www/html/magento/app/code/Drip/Connect
+        source: ../Api
+        target: /var/www/html/magento/app/code/Drip/Connect/Api
         consistency: cached
       - type: bind
-        source: './php_utils'
+        source: ../Block
+        target: /var/www/html/magento/app/code/Drip/Connect/Block
+        consistency: cached
+      - type: bind
+        source: ../Controller
+        target: /var/www/html/magento/app/code/Drip/Connect/Controller
+        consistency: cached
+      - type: bind
+        source: ../Helper
+        target: /var/www/html/magento/app/code/Drip/Connect/Helper
+        consistency: cached
+      - type: bind
+        source: ../Logger
+        target: /var/www/html/magento/app/code/Drip/Connect/Logger
+        consistency: cached
+      - type: bind
+        source: ../Model
+        target: /var/www/html/magento/app/code/Drip/Connect/Model
+        consistency: cached
+      - type: bind
+        source: ../Observer
+        target: /var/www/html/magento/app/code/Drip/Connect/Observer
+        consistency: cached
+      - type: bind
+        source: ../Test
+        target: /var/www/html/magento/app/code/Drip/Connect/Test
+        consistency: cached
+      - type: bind
+        source: ../etc
+        target: /var/www/html/magento/app/code/Drip/Connect/etc
+        consistency: cached
+      - type: bind
+        source: ../view
+        target: /var/www/html/magento/app/code/Drip/Connect/view
+        consistency: cached
+      - type: bind
+        source: ../registration.php
+        target: /var/www/html/magento/app/code/Drip/Connect/registration.php
+        consistency: cached
+      - type: bind
+        source: ../composer.json
+        target: /var/www/html/magento/app/code/Drip/Connect/composer.json
+        consistency: cached
+      - type: bind
+        source: ./php_utils
         target: /var/www/html/magento/app/code/Drip/TestUtils
         consistency: cached
   db:
     image: mariadb:10.4
+    ports:
+      - 3306:3306
     environment:
       - MARIADB_DATABASE=magento
       - MARIADB_USER=magento
       - MARIADB_PASSWORD=magento
       - MARIADB_RANDOM_ROOT_PASSWORD=true
-    tmpfs: /var/lib/mysql
+    volumes:
+      - ./db_data/mysql:/var/lib/mysql
   opensearch:
     image: opensearchproject/opensearch:1.2.4
     environment:
@@ -38,4 +86,4 @@ services:
   mock:
     image: mockserver/mockserver:mockserver-5.14.0
     ports:
-    - 1080:1080
+      - 1080:1080

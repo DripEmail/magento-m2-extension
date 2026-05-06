@@ -2,10 +2,12 @@
 
 namespace Drip\Connect\Model\Http;
 
+use Laminas\Http\Client as LaminasHttpClient;
+
 /**
  * Rest client
  */
-class Client extends \Zend_Http_Client
+class Client extends LaminasHttpClient
 {
     /** @var \Monolog\Logger */
     protected $logger;
@@ -28,28 +30,30 @@ class Client extends \Zend_Http_Client
      * Send the HTTP request and return an HTTP response object
      *
      * @param string $method
-     * @return \Zend_Http_Response
-     * @throws \Zend_Http_Client_Exception
+     * @return \Laminas\Http\Response
+     * @throws \Laminas\Http\Client\Exception\ExceptionInterface
      */
     public function request($method = null)
     {
         // ID unique to each outgoing API request.
-        $requestId = uniqid();
-        $this->setHeaders('X-Drip-Connect-Request-Id', $requestId);
-
         // ID unique to each triggering Magento page load. Useful for
         // debouncing multiple events within a single Magento request.
-        $magentoRequestId = $this->requestIdFactory->create()->requestId();
-        $this->setHeaders('X-OMS-Request-Id', $magentoRequestId);
+        $headers = [
+            'X-Drip-Connect-Request-Id' => uniqid(),
+            'X-OMS-Request-Id' => $this->requestIdFactory->create()->requestId(),
+        ];
 
-        $requestBody = $this->_prepareBody();
-        $requestUrl = $this->getUri(true);
-        $response = parent::request($method);
+        $this->setHeaders($headers);
+        $this->setMethod($method);
+
+        $requestBody = $this->getRequest()->getContent();
+        $requestUrl = $this->getUri()->toString();
+        $response = $this->send();
         $responseData = $response->getBody();
 
-        $this->logger->info("[{$requestId}] Request Url: {$requestUrl}");
-        $this->logger->info("[{$requestId}] Request Body: {$requestBody}");
-        $this->logger->info("[{$requestId}] Response: {$responseData}");
+        $this->logger->info("[{$headers['X-Drip-Connect-Request-Id']}] Request Url: {$requestUrl}");
+        $this->logger->info("[{$headers['X-Drip-Connect-Request-Id']}] Request Body: {$requestBody}");
+        $this->logger->info("[{$headers['X-Drip-Connect-Request-Id']}] Response: {$responseData}");
 
         return $response;
     }
