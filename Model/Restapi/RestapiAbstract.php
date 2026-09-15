@@ -2,6 +2,13 @@
 
 namespace Drip\Connect\Model\Restapi;
 
+use Laminas\Http\Response;
+use Drip\Connect\Logger\Logger;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\Config\Storage\WriterInterface;
+use Magento\Framework\ArchiveFactory;
+use Magento\Framework\Filesystem\DirectoryList;
+
 abstract class RestapiAbstract
 {
     const USERAGENT = 'Drip Connect M2';
@@ -9,7 +16,7 @@ abstract class RestapiAbstract
     /** @var string */
     protected $_responseModel;
 
-    /** @var \Zend_Http_Client */
+    /** @var \Laminas\Http\Client */
     protected $_httpClient;
 
     /** @var string */
@@ -18,33 +25,33 @@ abstract class RestapiAbstract
     /** @var string */
     protected $_lastRequest;
 
-    /** @var \Zend_Http_Response */
+    /** @var \Laminas\Http\Response */
     protected $_lastResponse;
 
-    /** @var \Drip\Connect\Logger\Logger */
+    /** @var Logger */
     protected $logger;
 
-    /** @var \Magento\Framework\App\Config\ScopeConfigInterface */
+    /** @var ScopeConfigInterface */
     protected $scopeConfig;
 
-    /** @var \Magento\Framework\Filesystem\DirectoryList */
+    /** @var DirectoryList */
     protected $directory;
 
-    /** @var \Magento\Framework\ArchiveFactory */
+    /** @var ArchiveFactory */
     protected $archiveFactory;
 
-    /** @var \Magento\Framework\App\Config\Storage\WriterInterface */
+    /** @var WriterInterface */
     protected $configWriter;
 
     /** @var int */
     protected $storeId = 0;
 
     public function __construct(
-        \Drip\Connect\Logger\Logger $logger,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Magento\Framework\App\Config\Storage\WriterInterface $configWriter,
-        \Magento\Framework\ArchiveFactory $archiveFactory,
-        \Magento\Framework\Filesystem\DirectoryList $directory
+        Logger $logger,
+        ScopeConfigInterface $scopeConfig,
+        WriterInterface $configWriter,
+        ArchiveFactory $archiveFactory,
+        DirectoryList $directory
     ) {
         $this->archiveFactory = $archiveFactory;
         $this->logger = $logger;
@@ -98,7 +105,7 @@ abstract class RestapiAbstract
     }
 
     /**
-     * @return \Zend_Http_Response
+     * @return \Laminas\Http\Response
      */
     public function getLastResponse()
     {
@@ -117,7 +124,7 @@ abstract class RestapiAbstract
      * Call the API
      *
      * @param $request
-     * @throws \Zend_Http_Client_Exception
+     * @throws \Laminas\Http\Client\Exception\ExceptionInterface
      */
     abstract protected function _callApi($request);
 
@@ -125,7 +132,7 @@ abstract class RestapiAbstract
      * Force a valid response
      *
      * @param $request
-     * @throws \Zend_Http_Client_Exception
+     * @throws \Laminas\Http\Client\Exception\ExceptionInterface
      */
     abstract protected function _forceValidResponse($request);
 
@@ -133,7 +140,7 @@ abstract class RestapiAbstract
      * Force an invalid response
      *
      * @param $request
-     * @throws \Zend_Http_Client_Exception
+     * @throws \Laminas\Http\Client\Exception\ExceptionInterface
      */
     abstract protected function _forceInvalidResponse($request);
 
@@ -141,7 +148,7 @@ abstract class RestapiAbstract
      * Force an error
      *
      * @param $request
-     * @throws \Zend_Http_Client_Exception
+     * @throws \Laminas\Http\Client\Exception\ExceptionInterface
      */
     abstract protected function _forceError($request);
 
@@ -149,7 +156,7 @@ abstract class RestapiAbstract
      * Force a timeout
      *
      * @param $request
-     * @throws \Zend_Http_Client_Exception
+     * @throws \Laminas\Http\Client\Exception\ExceptionInterface
      */
     protected function _forceTimeout($request)
     {
@@ -163,13 +170,19 @@ abstract class RestapiAbstract
      * This is a malformed or unexpected response from the API.
      *
      * @param $request
-     * @return \Zend_Http_Response
+     * @return \Laminas\Http\Response
      */
     protected function _forceUnknownResponse($request)
     {
         $httpStatusCode = 200;
         $headers = [];
         $responseBody = "This is an unknown response.";
-        return new \Zend_Http_Response($httpStatusCode, $headers, $responseBody);
+
+        $response = new Response();
+        $response->setStatusCode($httpStatusCode);
+        $response->getHeaders()->addHeaders($headers);
+        $response->setContent($responseBody);
+
+        return $response;
     }
 }

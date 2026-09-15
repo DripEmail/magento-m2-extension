@@ -1,0 +1,13 @@
+{
+  "name": "drip/devtools-phpcs",
+  "description": "PHPCS standards for devbox (Magento2 + deps); no Magento app bootstrap",
+  "require-dev": {
+    "magento/magento-coding-standard": "^37"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    },
+    "sort-packages": true
+  }
+}

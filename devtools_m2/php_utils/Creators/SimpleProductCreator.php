@@ -16,6 +16,9 @@ class SimpleProductCreator
     /** @var \Magento\Store\Model\StoreManagerInterface **/
     protected $storeManager;
 
+    /** @var array */
+    protected $productData;
+
     public function __construct(
         \Magento\Catalog\Model\ProductFactory $catalogProductFactory,
         \Magento\Catalog\Api\ProductRepositoryInterface $productRepository,

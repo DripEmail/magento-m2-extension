@@ -71,8 +71,8 @@ class CreditmemoAfterSave extends \Drip\Connect\Observer\Base
      */
     protected function refundDiff($order)
     {
-        $oldData = $this->registry->registry(self::REGISTRY_KEY_ORDER_OLD_DATA);
-        $oldValue = $this->connectHelper->priceAsCents($oldData['total_refunded']);
+        $oldData = $this->registry->registry(self::REGISTRY_KEY_ORDER_OLD_DATA) ?? [];
+        $oldValue = isset($oldData['total_refunded']) ? $this->connectHelper->priceAsCents($oldData['total_refunded']) : 0;
         $newValue = $this->connectHelper->priceAsCents($order->getTotalRefunded());
 
         return ($newValue - $oldValue);

@@ -24,7 +24,7 @@ class CreateScopesCommand extends Command
     protected $storeFactory;
 
     /** @var \Magento\Store\Model\StoreManagerInterface */
-    protected $storeManagerInterface;
+    protected $storeManager;
 
     public function __construct(
         \Magento\Framework\App\State $state,
