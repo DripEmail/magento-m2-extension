@@ -9,6 +9,7 @@
 * Improved Security
 * Code Style and Deprecation Fixes for PHP 8.4
 * Magento 2.4.8 Compatibility Fixes
+* Fix product_url on the drip/product/:id endpoint for non-visible products (fallback to parent product URL).
 
 ## 2.0.7
 

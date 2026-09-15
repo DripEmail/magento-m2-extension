@@ -30,18 +30,25 @@ class ProductDetails
      */
     protected $configurable;
 
+    /**
+     * @var \Drip\Connect\Helper\Product
+     */
+    protected $connectProductHelper;
+
     public function __construct(
         \Magento\Catalog\Model\ProductFactory $catalogProductFactory,
         \Magento\Catalog\Model\Product\Media\ConfigFactory $catalogProductMediaConfigFactory,
         \Magento\CatalogInventory\Api\StockStateInterface $stockState,
         \Magento\ConfigurableProduct\Model\Product\Type\Configurable $configurable,
-        \Drip\Connect\Api\ProductDetailsResponseFactory $responseFactory
+        \Drip\Connect\Api\ProductDetailsResponseFactory $responseFactory,
+        \Drip\Connect\Helper\Product $connectProductHelper
     ) {
         $this->catalogProductFactory = $catalogProductFactory;
         $this->catalogProductMediaConfigFactory = $catalogProductMediaConfigFactory;
         $this->stockState = $stockState;
         $this->configurable = $configurable;
         $this->responseFactory = $responseFactory;
+        $this->connectProductHelper = $connectProductHelper;
     }
 
     /**
@@ -53,26 +60,55 @@ class ProductDetails
     {
         $response = $this->responseFactory->create();
         $product = $this->catalogProductFactory->create()->load($productId);
+        $parentProduct = null;
+
         $productImage = $product->getImage();
-        if (!empty($productImage)) {
-            $productImage = $this->catalogProductMediaConfigFactory->create()->getMediaUrl($productImage);
-        } else {
-            if ($product->getTypeId() != 'configurable') {
-                $parentProductId = $this->getParentId($productId);
-                if ($parentProductId) {
-                    $parentProduct = $this->catalogProductFactory->create()->load($parentProductId);
-                    $productImage = $parentProduct->getImage();
-                    if (!empty($productImage)) {
-                        $productImage = $this->catalogProductMediaConfigFactory->create()->getMediaUrl($productImage);
-                    }
-                }
+        if (empty($productImage)) {
+            $parentProduct = $this->getParentProduct($product);
+            if ($parentProduct) {
+                $productImage = $parentProduct->getImage();
             }
         }
+        if (!empty($productImage)) {
+            $productImage = $this->catalogProductMediaConfigFactory->create()->getMediaUrl($productImage);
+        }
         $qty = $this->stockState->getStockQty($productId);
-    
-        $response->setData(['product_url' => $product->getProductUrl(), 'image_url' => $productImage, 'stock_quantity' => $qty]);
+
+        // A child product that is not visible individually has no frontend page of
+        // its own, so its url would 404. Point at the configurable parent instead.
+        $urlProduct = $product;
+        if ($product->getVisibility() == \Magento\Catalog\Model\Product\Visibility::VISIBILITY_NOT_VISIBLE) {
+            if ($parentProduct === null) {
+                $parentProduct = $this->getParentProduct($product);
+            }
+            if ($parentProduct) {
+                $urlProduct = $parentProduct;
+            }
+        }
+        $productUrl = $this->connectProductHelper->getProductUrl($urlProduct);
+
+        $response->setData(['product_url' => $productUrl, 'image_url' => $productImage, 'stock_quantity' => $qty]);
 
         return $response;
+    }
+
+    /**
+     * Loads the configurable parent of a child product
+     * @param \Magento\Catalog\Model\Product $product
+     * @return \Magento\Catalog\Model\Product|false parent product, or false when there is none
+     */
+    private function getParentProduct($product)
+    {
+        if ($product->getTypeId() == 'configurable') {
+            return false;
+        }
+
+        $parentProductId = $this->getParentId($product->getId());
+        if (!$parentProductId) {
+            return false;
+        }
+
+        return $this->catalogProductFactory->create()->load($parentProductId);
     }
 
     /**
