@@ -48,3 +48,20 @@ Then run `setup.sh` to bring a clean instance back up.
 ## To run cron
 
 Run the `cron.sh` script in the `devtools_m2/` directory.
+
+## Troubleshooting
+
+When code or configuration changes are made, flush M2 cache with:
+```sh
+bin/magento cache:flush
+```
+
+When getting `ReflectionException: Class "Magento\Framework\App\Http\Interceptor" does not exist`, run: 
+```sh
+bin/magento setup:di:compile
+```
+
+When updating catalog you will need to perform a reindex if the following error is throwed: `Elasticsearch No mapping found for...`
+```sh
+bin/magento indexer:reindex
+```

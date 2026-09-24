@@ -7,20 +7,20 @@
     <!-- Drip track -->
     <script type="text/javascript">
     _dcq.push(["track", "Viewed a product", {
-        product_id: "<?= $product->getId() ?>",
-        sku: "<?= $product->getSku() ?>",
-        name: "<?= $product->getName() ?>",
-        brand: "<?= $block->getBrandName() ?>",
-        categories: "<?= $block->getHelper()->getProductCategoryNames($product) ?>",
-        price: "<?= $currentPrice ?>",
+        product_id: "<?= $escaper->escapeJs($product->getId()) ?>",
+        sku: "<?= $escaper->escapeJs($product->getSku()) ?>",
+        name: "<?= $escaper->escapeJs($product->getName()) ?>",
+        brand: "<?= $escaper->escapeJs($block->getBrandName()) ?>",
+        categories: "<?= $escaper->escapeJs($block->getHelper()->getProductCategoryNames($product)) ?>",
+        price: "<?= $escaper->escapeJs($currentPrice) ?>",
         <?php if ($currentPrice != $initialPrice): ?>
-        compared_at_price: "<?= $initialPrice ?>",
+        compared_at_price: "<?= $escaper->escapeJs($initialPrice) ?>",
         <?php endif; ?>
-        currency: "<?= $block->getStore()->getCurrentCurrencyCode() ?>",
-        product_url: "<?= $product->getProductUrl() ?>",
-        image_url: "<?= $block->getMediaUrl($product) ?>",
+        currency: "<?= $escaper->escapeJs($block->getStore()->getCurrentCurrencyCode()) ?>",
+        product_url: "<?= $escaper->escapeJs($product->getProductUrl()) ?>",
+        image_url: "<?= $escaper->escapeJs($block->getMediaUrl($product)) ?>",
         source: "magento",
-        version: "Magento <?=$block->getMagentoVersion()?>, Drip Extension <?=$block->getDripVersion()?>"
+        version: "<?= $escaper->escapeJs('Magento ' . $block->getMagentoVersion() . ', Drip Extension ' . $block->getDripVersion()) ?>"
     }]);
     </script>
     <!-- end Drip track -->

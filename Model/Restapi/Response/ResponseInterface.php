@@ -12,7 +12,7 @@ interface ResponseInterface
     /**
      * Gets the response
      *
-     * @return \Zend_Http_Response
+     * @return \Laminas\Http\Response
      */
     public function getResponse();
 

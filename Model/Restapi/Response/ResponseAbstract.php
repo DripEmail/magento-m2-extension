@@ -2,13 +2,15 @@
 
 namespace Drip\Connect\Model\Restapi\Response;
 
+use Laminas\Http\Response as LaminasResponse;
+
 /**
  * Abstract base class for responses.
  */
 class ResponseAbstract
 {
     /**
-     * @var \Zend_Http_Response Response as received from API
+     * @var \Laminas\Http\Response Response as received from API
      */
     protected $_response;
 
@@ -19,22 +21,22 @@ class ResponseAbstract
     protected $_errorMessage = null;
 
     /**
-     * @param \Zend_Http_Response $response
-     * @param string $errorMessage
+     * @param LaminasResponse|null $rawResponse
+     * @param string|null $errorMessage
      */
-    public function __construct(\Zend_Http_Response $rawResponse = null, $errorMessage)
+    public function __construct(?LaminasResponse $rawResponse = null, ?string $errorMessage = null)
     {
         if ($errorMessage) {
             $this->_setError($errorMessage);
         } else {
-            $this->_response = $rawResponse;
+            $this->_response = $rawResponse ?: new LaminasResponse();
         }
     }
 
     /**
-     * Gets the Zend_Http_Response object
+     * Gets the \Laminas\Http\Response object
      *
-     * @return \Zend_Http_Response
+     * @return LaminasResponse
      */
     public function getResponse()
     {

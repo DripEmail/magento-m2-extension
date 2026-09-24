@@ -2,6 +2,11 @@
 
 namespace Drip\Connect\Model;
 
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\Config\Storage\WriterInterface;
+use Magento\Store\Model\StoreManagerInterface;
+use Magento\Store\Model\ScopeInterface;
+
 /**
  * Scoped configuration
  */
@@ -15,17 +20,17 @@ class Configuration
     const LOG_SETTINGS_PATH = 'dripconnect_general/log_settings';
 
     /**
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
+     * @var ScopeConfigInterface $scopeConfig
      */
     protected $scopeConfig;
 
     /**
-     * @var \Magento\Framework\App\Config\Storage\WriterInterface $configWriter
+     * @var WriterInterface $configWriter
      */
     protected $configWriter;
 
     /**
-     * @var \Magento\Store\Model\StoreManagerInterface $storeManager
+     * @var StoreManagerInterface $storeManager
      */
     protected $storeManager;
 
@@ -40,15 +45,15 @@ class Configuration
     protected $scope;
 
     /**
-     * @param \Magento\Framework\App\Config\Storage\WriterInterface $configWriter,
-     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-     * @param \Magento\Store\Model\StoreManagerInterface $storeManager,
+     * @param WriterInterface $configWriter,
+     * @param ScopeConfigInterface $scopeConfig
+     * @param StoreManagerInterface $storeManager,
      * @param int $websiteId The ID of the Website
      */
     public function __construct(
-        \Magento\Framework\App\Config\Storage\WriterInterface $configWriter,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        WriterInterface $configWriter,
+        ScopeConfigInterface $scopeConfig,
+        StoreManagerInterface $storeManager,
         int $websiteId
     ) {
         $this->configWriter = $configWriter;
@@ -57,9 +62,9 @@ class Configuration
         $this->websiteId = $websiteId;
 
         if ($this->websiteId == 0) {
-            $this->scope = \Magento\Framework\App\Config\ScopeConfigInterface::SCOPE_TYPE_DEFAULT;
+            $this->scope = ScopeConfigInterface::SCOPE_TYPE_DEFAULT;
         } else {
-            $this->scope = \Magento\Store\Model\ScopeInterface::SCOPE_WEBSITES;
+            $this->scope = ScopeInterface::SCOPE_WEBSITES;
         }
     }
 

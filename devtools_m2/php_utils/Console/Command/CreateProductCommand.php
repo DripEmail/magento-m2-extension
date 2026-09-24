@@ -92,7 +92,7 @@ class CreateProductCommand extends Command
                 $factory = $this->virtualProductCreatorFactory;
                 break;
             default:
-                throw new \UnexpectedValueException("Unsupported type: ${type}");
+                throw new \UnexpectedValueException("Unsupported type: {$type}");
         }
 
         $factory->create(['productData' => $json])->create();

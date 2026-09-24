@@ -22,6 +22,9 @@ class ConfigurableProductCreator
     /** @var \Magento\Framework\Setup\ModuleDataSetupInterface **/
     protected $setup;
 
+    /** @var array */
+    protected $productData;
+
     public function __construct(
         \Magento\Catalog\Api\ProductRepositoryInterface $productRepository,
         \Drip\TestUtils\Creators\SimpleProductCreatorFactory $simpleProductCreatorFactory,

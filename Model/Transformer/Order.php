@@ -2,6 +2,15 @@
 
 namespace Drip\Connect\Model\Transformer;
 
+use Drip\Connect\Helper\Data;
+use Magento\Sales\Model\Order\AddressFactory;
+use Magento\Catalog\Model\ProductFactory;
+use Magento\Catalog\Model\Product\Media\ConfigFactory;
+use Magento\Newsletter\Model\SubscriberFactory;
+use Drip\Connect\Model\ApiCalls\Helper\SendEventPayloadFactory;
+use Magento\Sales\Model\Order as ModelOrder;
+use Drip\Connect\Model\Configuration;
+
 /**
  * Order Transformer
  */
@@ -19,39 +28,39 @@ class Order
     const ACTION_REFUND = 'refunded';
     const ACTION_CANCEL = 'canceled';
 
-    /** @var \Drip\Connect\Helper\Data */
+    /** @var Data */
     protected $connectHelper;
 
-    /** @var \Magento\Sales\Model\Order\AddressFactory */
+    /** @var AddressFactory */
     protected $salesOrderAddressFactory;
 
-    /** @var \Magento\Catalog\Model\ProductFactory */
+    /** @var ProductFactory */
     protected $catalogProductFactory;
 
-    /** @var \Magento\Catalog\Model\Product\Media\ConfigFactory */
+    /** @var ConfigFactory */
     protected $catalogProductMediaConfigFactory;
 
-    /** @var \Magento\Newsletter\Model\SubscriberFactory */
+    /** @var SubscriberFactory */
     protected $subscriberFactory;
 
-    /** @var \Drip\Connect\Model\ApiCalls\Helper\SendEventPayloadFactory */
+    /** @var SendEventPayloadFactory */
     protected $connectApiCallsHelperSendEventPayloadFactory;
 
-    /** @var \Magento\Sales\Model\Order */
+    /** @var Order */
     protected $order;
 
-    /** @var \Drip\Connect\Model\Configuration */
+    /** @var Configuration */
     protected $config;
 
     public function __construct(
-        \Drip\Connect\Helper\Data $connectHelper,
-        \Magento\Sales\Model\Order\AddressFactory $salesOrderAddressFactory,
-        \Magento\Catalog\Model\ProductFactory $catalogProductFactory,
-        \Magento\Catalog\Model\Product\Media\ConfigFactory $catalogProductMediaConfigFactory,
-        \Magento\Newsletter\Model\SubscriberFactory $subscriberFactory,
-        \Drip\Connect\Model\ApiCalls\Helper\SendEventPayloadFactory $connectApiCallsHelperSendEventPayloadFactory,
-        \Magento\Sales\Model\Order $order,
-        \Drip\Connect\Model\Configuration $config
+        Data $connectHelper,
+        AddressFactory $salesOrderAddressFactory,
+        ProductFactory $catalogProductFactory,
+        ConfigFactory $catalogProductMediaConfigFactory,
+        SubscriberFactory $subscriberFactory,
+        SendEventPayloadFactory $connectApiCallsHelperSendEventPayloadFactory,
+        ModelOrder $order,
+        Configuration $config
     ) {
         $this->connectHelper = $connectHelper;
         $this->salesOrderAddressFactory = $salesOrderAddressFactory;
@@ -64,7 +73,7 @@ class Order
     }
 
     /**
-     * @return \Magento\Sales\Model\Order
+     * @return ModelOrder
      */
     public function getOrder()
     {

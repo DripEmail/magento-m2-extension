@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<csp_whitelist xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Csp:etc/csp_whitelist.xsd">
+    <policies>
+        <policy id="script-src">
+            <values>   
+                <value id="drip-api" type="host">https://api.getdrip.com</value>
+                <value id="drip-js" type="host">https://tag.getdrip.com</value>
+                <value id="sleeknote-js" type="host">https://sleeknotecustomerscripts.sleeknote.com</value>
+                <value id="sleeknote" type="host">https://sleeknotestaticcontent.sleeknote.com</value>
+            </values>
+        </policy>
+    </policies>
+</csp_whitelist>
